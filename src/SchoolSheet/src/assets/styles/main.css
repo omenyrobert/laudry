@@ -1,0 +1,59 @@
+::-webkit-scrollbar {
+    width: 2px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0d6dfd3a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #0d6dfda1;
+    border-radius: 50px;
+    margin-top: 100px;
+  }
+
+.loader{
+    width: 40px;
+    height: 40px;
+/*     background-color: #bbb; */
+    border-radius: 100%;
+    border: 3px solid #0d6dfd3d;
+    border-top: 3px solid #0d6dfd;
+    animation: animate 1s linear infinite;
+}
+@keyframes animate{
+    0%{
+        transform: rotate(0deg);
+    }
+    25%{
+        transform: rotate(90deg);
+    }
+    50%{
+        transform: rotate(180deg);
+    }
+    75%{
+        transform: rotate(270deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
+.showOnHover{
+    display: none;
+}
+.hoverIcon:hover + .showOnHover{
+    display: inline;
+}
+.showOnHover:hover{
+    display: inline;
+}
+.hoverContent{
+    display: none;
+}
+
+
+
+.hoverContent:hover{
+    display: block;
+}
+.hoverbtn:hover + .hoverContent{
+    display: block;
+}
