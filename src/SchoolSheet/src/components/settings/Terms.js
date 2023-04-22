@@ -1,0 +1,266 @@
+import React, { useState, useEffect } from "react";
+import { v4 as uuid } from "uuid";
+import Button from "../Button";
+import { BsPencilSquare } from "react-icons/bs";
+import { MdDeleteOutline } from "react-icons/md";
+import InputField from "../InputField";
+
+import ButtonSecondary from "../ButtonSecondary";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import Localbase from "localbase";
+
+let db = new Localbase("db");
+
+function Terms() {
+	const [showUpdate, setShowUpdate] = useState(false);
+
+	const closeShowUpdate = () => {
+		setShowUpdate(false);
+	};
+
+	const [termsData, setTermsData] = useState([]);
+
+	// edit terms
+	const [editTerm, setEditTerm] = useState("");
+	const [termId, setTermId] = useState("");
+	const [toEdit, setToEdit] = useState("");
+	const [fromEdit, setFromEdit] = useState("");
+	const openShowUpdate = (termItem) => {
+		setShowUpdate(true);
+		setEditTerm(termItem.term);
+		setFromEdit(termItem.from);
+		setToEdit(termItem.to);
+		setTermId(termItem.id);
+	};
+
+	// update terms
+	const updateTerm = () => {
+		db.collection("termsTbl")
+			.doc({ id: termId })
+			.update({
+				term: editTerm,
+				from: fromEdit,
+				to: toEdit,
+				isSelected: 0,
+			})
+			.then((response) => {
+				console.log(response);
+				fetchTerms();
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+				closeShowUpdate();
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+
+		// fetch after
+		// fetchTerms();
+	};
+
+	// delete terms
+
+	const deleteTerm = (termItem) => {
+		Swal.fire({
+			title: "Are you sure?",
+			text: "You won't be able to revert this!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes, delete it!",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				db.collection("termsTbl")
+					.doc({ id: termItem.id })
+					.delete()
+					.then((response) => {
+						fetchTerms();
+
+						Swal.fire({
+							icon: "success",
+							showConfirmButton: false,
+							timer: 500,
+						});
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+
+				// fetch after
+			}
+		});
+	};
+
+	// posting terms
+	const [term, setTerm] = useState("");
+	const [to, setTo] = useState("");
+	const [from, setFrom] = useState("");
+
+	const postTerms = () => {
+		let secId = uuid();
+		let formData = {
+			id: secId,
+			term: term,
+			from: from,
+			to: to,
+			isSelected: 0,
+		};
+		if (term || from || to) {
+			db.collection("termsTbl")
+				.add(formData)
+				.then((response) => {
+					console.log(response);
+					setTerm("");
+					setTo("");
+					setFrom("");
+
+					// fetch after
+					fetchTerms();
+
+					// show alert
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "success",
+						showConfirmButton: false,
+						timer: 500,
+					});
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		}
+	};
+
+	const fetchTerms = async () => {
+		const terms = await db.collection("termsTbl").get();
+		setTermsData(terms);
+	};
+
+	// fetching terms
+	useEffect(() => {
+		fetchTerms();
+	}, []);
+
+	return (
+		<div>
+			<div className="bg-white p-3 rounded-md shadow-md mr-5">
+				<p className="text-primary font-semibold text-xl">Terms</p>
+
+				<div className="flex w-full">
+					<div className="w-1/4">
+						<InputField
+							type="text"
+							placeholder="Enter  term"
+							label="Term"
+							onChange={(e) => setTerm(e.target.value)}
+							value={term}
+						/>
+					</div>
+					<div className="w-1/4 ml-2">
+						<InputField
+							type="date"
+							label="Start Date"
+							onChange={(e) => setFrom(e.target.value)}
+							value={from}
+						/>
+					</div>
+					<div className="w-1/4 ml-2">
+						<InputField
+							type="date"
+							label="End date"
+							onChange={(e) => setTo(e.target.value)}
+							value={to}
+						/>
+					</div>
+					<div className="mt-5 w-1/4 ml-2">
+						<br />
+						<div onClick={postTerms}>
+							<Button value={"Add terms"} />
+						</div>
+					</div>
+				</div>
+
+				<div className="mt-5 flex bg-gray1 text-sm text-gray5 cursor-pointer">
+					<div className="w-2/3 p-2">Term</div>
+					<div className="w-2/3 p-2">Start</div>
+					<div className="w-2/3 p-2">End</div>
+					<div className="w-1/3 p-2">Action</div>
+				</div>
+				{/* edit div statrt */}
+				{showUpdate ? (
+					<div className="absolute shadow-2xl rounded-md border bg-white  border-gray3  p-2 flex w-[750px]">
+						<div className="w-1/4">
+							<InputField
+								type="text"
+								label="terms"
+								value={editTerm}
+								onChange={(e) => setEditTerm(e.target.value)}
+							/>
+						</div>
+						<div className="w-1/4 ml-2">
+							<InputField
+								type="text"
+								label="Start"
+								value={fromEdit}
+								onChange={(e) => setFromEdit(e.target.value)}
+							/>
+						</div>
+						<div className="w-1/4 ml-2">
+							<InputField
+								type="text"
+								label="End"
+								value={toEdit}
+								onChange={(e) => toEdit(e.target.value)}
+							/>
+						</div>
+						<div className="w-1/4 ml-2 mt-14 flex">
+							<div onClick={updateTerm} className="w-3/4">
+								<ButtonSecondary value={"Update"} />
+							</div>
+							<div className="ml-5 mt-2 w-1/4">
+								<p onClick={closeShowUpdate} className="cursor-pointer">
+									X
+								</p>
+							</div>
+						</div>
+					</div>
+				) : (
+					""
+				)}
+				{/* edit div end */}
+				<div className="h-52 overflow-y-auto">
+					{termsData &&
+						termsData.map((termItem) => (
+							<div
+								key={termItem.id}
+								className="flex border-b border-gray2 text-xs  hover:bg-gray1 cursor-pointer"
+							>
+								<div className={termItem.isSelected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.term}</div>
+								<div className={termItem.isSelected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.from}</div>
+								<div className={termItem.isSelected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.to}</div>
+								<div className="w-1/3 p-2 flex">
+									<MdDeleteOutline
+										onClick={() => deleteTerm(termItem)}
+										className="text-red w-4 h-4 ml-5"
+									/>
+
+									<BsPencilSquare
+										onClick={() => openShowUpdate(termItem)}
+										className="text-warning h-4 w-4 ml-5"
+									/>
+									<p className="text-primary ml-5">Select</p>
+								</div>
+							</div>
+						))}
+				</div>
+			</div>
+		</div>
+	);
+}
+export default Terms;

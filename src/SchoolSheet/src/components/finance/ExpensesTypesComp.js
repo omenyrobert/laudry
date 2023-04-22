@@ -1,0 +1,213 @@
+import React, { useState, useEffect } from "react";
+import { v4 as uuid } from "uuid";
+import { MdDeleteOutline } from "react-icons/md";
+import { BsPencilSquare } from "react-icons/bs";
+import InputField from "../InputField";
+import { FaPen } from "react-icons/fa";
+import Button from "../Button";
+import ButtonSecondary from "../ButtonSecondary";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import Localbase from "localbase";
+import "../../assets/styles/main.css";
+
+let db = new Localbase("db");
+
+function ExpensesTypesComp() {
+	// post expense Type
+	const [expenseType, setExpenseType] = useState("")
+	const postExpenseType = () => {
+		let clId = uuid();
+		let formData = {
+			id: clId,
+			expenseType: expenseType,
+		};
+		if (expenseType) {
+			db.collection("expenseTypesTbl")
+				.add(formData)
+				.then((response) => {
+					setExpenseType("");
+					fetchExpenseTypes();
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "success",
+						showConfirmButton: false,
+						timer: 500,
+					});
+				})
+				.catch(console.error());
+		}
+	};
+
+	// fetch expense typess
+	const [expenseTypesData, setExpenseTypesData] = useState([]);
+	const fetchExpenseTypes = () => {
+		db.collection("expenseTypesTbl")
+			.get()
+			.then((expenseTypes) => {
+				const newData = expenseTypes;
+				setExpenseTypesData(newData);
+			});
+	};
+
+	// update
+	const [editData, setEditData] = useState(false);
+	const [expenseTypeEdit, setExpenseTypeEdit] = useState("");
+	const [expenseTypeId, setExpenseTypeId] = useState("");
+	const closeEditData = () => {
+		setEditData(false);
+	};
+	const openEditData = (expenseTypeItem) => {
+		setEditData(true);
+		setExpenseTypeEdit(expenseTypeItem?.expenseType);
+		setExpenseTypeId(expenseTypeItem.id);
+	};
+	const updateExpenseType = () => {
+		db.collection("expenseTypesTbl")
+			.doc({ id: expenseTypeId })
+			.update({
+				expenseType: expenseTypeEdit,
+			})
+			.then((response) => {
+				console.log(response);
+				// fetch after
+				fetchExpenseTypes();
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+				closeEditData();
+			});
+	};
+
+	// delete
+
+	//deleting expense types
+	const deleteExpenseType = (expenseTypeItem) => {
+		Swal.fire({
+			title: "Are you sure?",
+			text: "You won't be able to revert this!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes, delete it!",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				db.collection("expenseTypesTbl")
+					.doc({ id: expenseTypeItem.id })
+					.delete()
+					.then((response) => {
+						// fetch after
+						fetchExpenseTypes();
+
+						Swal.fire({
+							icon: "success",
+							showConfirmButton: false,
+							timer: 500,
+						});
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		});
+	};
+
+	// fetching expense types
+	useEffect(() => {
+		fetchExpenseTypes();
+	}, []);
+	return (
+		<>
+			<h5 className="text-lg font-medium">Expense Types</h5>
+			<div className="w-full h-[80vh]">
+				<div className="bg-white p-5 shadow-lg rounded-md">
+				
+						<InputField
+							type="text"
+							placeholder="Enter Expense Type"
+							label="Expense Type"
+							value={expenseType}
+							onChange={(e)=>setExpenseType(e.target.value)}
+							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+						/>
+
+						
+						<div onClick={postExpenseType}>
+						<Button value={"Add Expense Type"} />
+					
+					</div>
+				</div>
+				<hr className="text-primary" />
+				<table className="mt-10 w-[95%] table-auto">
+					<thead style={{ backgroundColor: "#0d6dfd10" }}>
+						<th className="p-2 text-primary text-sm text-left">Type</th>
+						<th className="p-2 text-primary text-sm text-left">Action</th>
+					</thead>
+					<tbody>
+
+
+						{/* edit popup start */}
+						{ editData ? 
+						<div className="absolute shadow-lg rounded flex w-[400px] p-5 bg-white">
+							<div className="w-2/3 pr-5">
+								<InputField
+									type="text"
+									placeholder="Enter Expense Type"
+									label="Expense Type"
+									value={expenseTypeEdit}
+									onChange={(e)=>setExpenseTypeEdit(e.target.value)}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+							<div className="flex justify-between w-1/3 mt-[55px]">
+								<div onClick={updateExpenseType}>
+									<ButtonSecondary value={"Update"} />
+								</div>
+								<div>
+									<p
+										className="text-black text-lg cursor-pointer"
+										onClick={closeEditData}
+									>
+										X
+									</p>
+								</div>
+							</div>
+						</div>
+						: null }
+						{/* edit popup end */}
+
+
+
+
+						{expenseTypesData.map((expenseTypeItem) => {
+							return (
+								<tr
+									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+									key={expenseTypeItem.id}
+								>
+									<td className="text-xs p-3 text-gray5">
+										{expenseTypeItem.expenseType}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										<div className="flex">
+											<MdDeleteOutline onClick={()=>deleteExpenseType(expenseTypeItem)} className="text-red w-4 h-4" />
+											<BsPencilSquare
+												onClick={()=> openEditData(expenseTypeItem)}
+												className="text-warning h-4 w-4 ml-5"
+											/>
+										</div>
+									</td>
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+			</div>
+		</>
+	);
+}
+export default ExpensesTypesComp;

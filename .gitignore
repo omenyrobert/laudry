@@ -1,0 +1,6 @@
+node_modules
+package-lock.json
+
+src/SchoolSheet/node_modules
+src/SchoolSheet/package-lock.json
+src/SchoolSheet/build
