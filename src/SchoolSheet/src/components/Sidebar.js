@@ -892,8 +892,6 @@ function Sidebar() {
 								</p>
 							</div>
 						</Link>
-
-					
 					</div>
 				) : null}
 
@@ -1076,6 +1074,36 @@ function Sidebar() {
 						</div>
 					</div>
 				) : null}
+
+
+                 {/* E-learning */}
+
+				<div
+					className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+					onClick={toggleLink12}
+				>
+					<div className="w-4/5 flex">
+						<TbBus className="w-4 h-4 mt-[2px] linkicon" />
+						<p className="text-sm font-light linktext ml-6">E-Learning</p>
+					</div>
+					<div className="w-1/5">
+						
+					</div>
+				</div>
+
+                   {/* voting */}
+				<div
+					className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+					onClick={toggleLink12}
+				>
+					<div className="w-4/5 flex">
+						<TbBus className="w-4 h-4 mt-[2px] linkicon" />
+						<p className="text-sm font-light linktext ml-6">Voting</p>
+					</div>
+					<div className="w-1/5">
+						
+					</div>
+				</div>
 
 				{/* Transport */}
 
