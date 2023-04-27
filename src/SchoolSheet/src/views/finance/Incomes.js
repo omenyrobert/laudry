@@ -14,10 +14,10 @@ function Incomes() {
 							Incomes
 						</p>
 						<div className="flex mt-5">
-							<div className="w-1/4 border-r-2 border-gray1 mr-5">
+							<div className="w-2/12 border-r-2 border-gray1 mr-5">
 								<IncomeTypes/>
 							</div>
-							<div className="w-3/4">
+							<div className="w-10/12">
 								<IncomesComp/>
 							</div>
 						</div>

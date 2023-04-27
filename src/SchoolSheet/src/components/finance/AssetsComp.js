@@ -29,13 +29,13 @@ function AssetsComp() {
 	const [purchaseDate, setPurchaseDate] = useState("");
 	const [purchasedFrom, setPurchasedFrom] = useState("");
 	const [sellersContacts, setSellersContacts] = useState("");
-    const [add, setAdd] = useState(false);
-	const openAdd = () =>{
-		setAdd(true)
-	}
-	const closeAdd = () =>{
-		setAdd(false)
-	}
+	const [add, setAdd] = useState(false);
+	const openAdd = () => {
+		setAdd(true);
+	};
+	const closeAdd = () => {
+		setAdd(false);
+	};
 	const postAsset = () => {
 		let clId = uuid();
 		let formData = {
@@ -50,7 +50,7 @@ function AssetsComp() {
 			purchaseDate: purchaseDate,
 		};
 
-			if (assetTypeId || asset || cost || description || date || purchaseDate) {
+		if (assetTypeId || asset || cost || description || date || purchaseDate) {
 			db.collection("assetsTbl")
 				.add(formData)
 				.then((response) => {
@@ -206,115 +206,117 @@ function AssetsComp() {
 
 	return (
 		<>
-			<h5 className="text-lg font-medium text-secondary">Assets</h5>
-			<div onClick={openAdd}>
-			<Button2 value={"Register Asset"}/>
+			<h5 className="text-lg font-medium text-primary">Assets</h5>
+			<div onClick={openAdd} className="w-[200px]">
+				<Button2 value={"Register Asset"} />
 			</div>
-		
-			<div className="w-full h-[80vh]">
-				{add ?
-				<div className="bg-white border border-gray2 absolute w-1/2 shadow-lg rounded-md mr-2">
-				<div className="flex justify-between text-white rounded-md bg-primary p-3">
-					<div>Register Asset</div>
-					<div>
-						<p onClick={closeAdd} className="cursor-pointer">X</p>
-					</div>
-				</div>
-				<div className="flex justify-between px-3">
-					<div className="w-1/4 p-1">
-						<InputField
-							type="date"
-							label="Date"
-							value={date}
-							onChange={(e) => setDate(e.target.value)}
-						/>
-					</div>
-					<div className="w-1/4 p-1">
-						<InputField
-							type="text"
-							placeholder="Enter asset"
-							label="asset"
-							value={asset}
-							onChange={(e) => setAsset(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
-						/>
-					</div>
-					<div className="w-1/4 p-1">
-						<InputField
-							type="number"
-							placeholder="Enter Cost"
-							label="cost"
-							value={cost}
-							onChange={(e) => setCost(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
-						/>
-					</div>
-					<div className="w-1/4 p-1">
-						<SelectComp
-							options={assetTypesData}
-							placeholder="Select asset Type"
-							label="asset Type"
-							setSelectedOptionObj={(value) => {
-								setAssetTypeId(value.id);
-							}}
-						/>
-					</div>
-				</div>
-				<div className="flex justify-between px-3">
-					<div className="w-9/12 p-1">
-						<InputField
-							type="text"
-							placeholder="Enter Description"
-							label="asset Description"
-							value={description}
-							onChange={(e) => setDescription(e.target.value)}
-						/>
-					</div>
 
-					<div className="w-1/4 p-1">
-						<InputField
-							type="date"
-							label="Purchase Date"
-							value={purchaseDate}
-							onChange={(e) => setPurchaseDate(e.target.value)}
-						/>
-					</div>
-				</div>
-				<div className="flex px-3">
-					<div className="w-1/4 p-1">
-						<InputField
-							type="text"
-							placeholder="Enter Purchased From"
-							label="Purchased From"
-							value={purchasedFrom}
-							onChange={(e) => setPurchasedFrom(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
-						/>
-					</div>
-					<div className="w-1/4 p-1">
-						<InputField
-							type="text"
-							placeholder="Enter Sellers Contacts"
-							label="Sellers Contacts"
-							value={sellersContacts}
-							onChange={(e) => setSellersContacts(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
-						/>
-					</div>
-					<div className="w-1/4 p-1">
-						<InputField type="file" label="Photos" />
-					</div>
-					<div className="mt-8 w-1/4 ">
-						<br />
-						<div onClick={postAsset}>
-							<Button value={"Register Asset"} />
+			<div className="w-full h-[80vh]">
+				{add ? (
+					<div className="bg-white border border-gray3 absolute w-1/2 shadow-lg rounded-md mr-2">
+						<div className="flex justify-between font-bold bg-gray1 rounded-md text-primary p-3">
+							<div>Register Asset</div>
+							<div>
+								<p onClick={closeAdd} className="cursor-pointer">
+									X
+								</p>
+							</div>
 						</div>
+						<div className="flex justify-between px-3">
+							<div className="w-1/3 p-1">
+								<InputField
+									type="date"
+									label="Date"
+									value={date}
+									onChange={(e) => setDate(e.target.value)}
+								/>
+							</div>
+							<div className="w-1/3 p-1">
+								<InputField
+									type="text"
+									placeholder="Enter asset"
+									label="asset"
+									value={asset}
+									onChange={(e) => setAsset(e.target.value)}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+							<div className="w-1/3 p-1">
+								<InputField
+									type="number"
+									placeholder="Enter Cost"
+									label="cost"
+									value={cost}
+									onChange={(e) => setCost(e.target.value)}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+						</div>
+						<div className="flex justify-between px-3">
+							<div className="w-1/3 p-1">
+								<SelectComp
+									options={assetTypesData}
+									placeholder="Select asset Type"
+									label="asset Type"
+									setSelectedOptionObj={(value) => {
+										setAssetTypeId(value.id);
+									}}
+								/>
+							</div>
+							<div className="w-1/3 p-1">
+								<InputField
+									type="text"
+									placeholder="Enter Description"
+									label="asset Description"
+									value={description}
+									onChange={(e) => setDescription(e.target.value)}
+								/>
+							</div>
+
+							<div className="w-1/3 p-1">
+								<InputField
+									type="date"
+									label="Purchase Date"
+									value={purchaseDate}
+									onChange={(e) => setPurchaseDate(e.target.value)}
+								/>
+							</div>
+						</div>
+						<div className="flex px-3">
+							<div className="w-1/3 p-1">
+								<InputField
+									type="text"
+									placeholder="Enter Purchased From"
+									label="Purchased From"
+									value={purchasedFrom}
+									onChange={(e) => setPurchasedFrom(e.target.value)}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+							<div className="w-1/3 p-1">
+								<InputField
+									type="text"
+									placeholder="Enter Sellers Contacts"
+									label="Sellers Contacts"
+									value={sellersContacts}
+									onChange={(e) => setSellersContacts(e.target.value)}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+							<div className="w-1/3 p-1">
+								<InputField type="file" label="Photos" />
+							</div>
+							
+						</div>
+						<div className="p-3 flex justify-between">
+								<div></div>
+								<div onClick={postAsset}>
+									<Button value={"Register Asset"} />
+								</div>
+							</div>
 					</div>
-				</div>
-			</div>
-				: null}
-				
-				
+				) : null}
+
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
@@ -419,13 +421,13 @@ function AssetsComp() {
 								>
 									<td className="text-xs p-3 text-gray5">{assetItem.date}</td>
 									<td className="text-xs p-3 text-gray5">{assetItem.asset}</td>
-									<td className="text-xs p-3 text-gray5">
-										1
-									</td>
+									<td className="text-xs p-3 text-gray5">1</td>
 									<td className="text-xs p-3 text-gray5">
 										{Number(assetItem.cost).toLocaleString()}
 									</td>
-									<td className="text-xs p-3 text-gray5">{assetItem.description}</td>
+									<td className="text-xs p-3 text-gray5">
+										{assetItem.description}
+									</td>
 									<td className="text-xs p-3 text-gray5">
 										{assetItem.purchasedFrom}
 									</td>

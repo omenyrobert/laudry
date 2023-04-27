@@ -15,9 +15,9 @@ import {
 	FaUserCog,
 	FaMoneyCheckAlt,
 	FaBriefcase,
-	FaChair,
+	FaPrayingHands,
 } from "react-icons/fa";
-import { MdNavigateNext, MdOutlineSportsSoccer } from "react-icons/md";
+import { MdNavigateNext, MdOutlineSportsSoccer,MdVideoCameraFront,MdHowToVote } from "react-icons/md";
 import { HiOutlineArrowSmRight, HiOutlineCurrencyDollar } from "react-icons/hi";
 import {
 	BsGear,
@@ -670,29 +670,6 @@ function Sidebar() {
 							</div>
 						</Link>
 
-						{/* reports */}
-
-						<Link
-							to="/reports"
-							className={
-								location.pathname === "/reports"
-									? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
-									: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
-							}
-						>
-							<div className="flex">
-								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
-								<p
-									className={
-										location.pathname === "/reports"
-											? "text-sm font-light text-white ml-5"
-											: "text-sm font-light linktext ml-5"
-									}
-								>
-									Balance Sheet
-								</p>
-							</div>
-						</Link>
 
 						{/* invoices */}
 
@@ -718,8 +695,6 @@ function Sidebar() {
 							</div>
 						</Link>
 
-						{/* Payments */}
-
 						{/* receipts */}
 
 						<Link
@@ -744,7 +719,7 @@ function Sidebar() {
 							</div>
 						</Link>
 
-						{/* receipts */}
+						{/* Payments */}
 
 						<Link
 							to="/payments"
@@ -768,7 +743,29 @@ function Sidebar() {
 							</div>
 						</Link>
 
-						{/* Payments */}
+						{/* Bills */}
+
+						<Link
+							to="/bills"
+							className={
+								location.pathname === "/bills"
+									? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
+									: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+							}
+						>
+							<div className="flex">
+								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
+								<p
+									className={
+										location.pathname === "/bills"
+											? "text-sm font-light text-white ml-5"
+											: "text-sm font-light linktext ml-5"
+									}
+								>
+									Bills
+								</p>
+							</div>
+						</Link>
 
 						{/* Stock Management */}
 
@@ -796,8 +793,6 @@ function Sidebar() {
 
 						{/* Stock Management */}
 
-						{/* Stock Management */}
-
 						{/* Assetes */}
 
 						<Link
@@ -822,6 +817,106 @@ function Sidebar() {
 							</div>
 						</Link>
 						{/* Assetes */}
+
+						{/* Liabilities */}
+
+						<Link
+							to="/liabilities"
+							className={
+								location.pathname === "/liabilities"
+									? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
+									: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+							}
+						>
+							<div className="flex">
+								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
+								<p
+									className={
+										location.pathname === "/liabilities"
+											? "text-sm font-light text-white ml-5"
+											: "text-sm font-light linktext ml-5"
+									}
+								>
+									Liabilities
+								</p>
+							</div>
+						</Link>
+						{/* Liabilities */}
+
+						{/* Equity */}
+
+						<Link
+							to="/equity"
+							className={
+								location.pathname === "/equity"
+									? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
+									: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+							}
+						>
+							<div className="flex">
+								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
+								<p
+									className={
+										location.pathname === "/equity"
+											? "text-sm font-light text-white ml-5"
+											: "text-sm font-light linktext ml-5"
+									}
+								>
+									Equity
+								</p>
+							</div>
+						</Link>
+						{/* Equity */}
+
+						{/* Accounts */}
+
+						<Link
+							to="/accounts"
+							className={
+								location.pathname === "/accounts"
+									? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
+									: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+							}
+						>
+							<div className="flex">
+								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
+								<p
+									className={
+										location.pathname === "/accounts"
+											? "text-sm font-light text-white ml-5"
+											: "text-sm font-light linktext ml-5"
+									}
+								>
+									Accounts
+								</p>
+							</div>
+						</Link>
+						{/* Accounts */}
+
+							{/* reports */}
+
+							<Link
+							to="/reports"
+							className={
+								location.pathname === "/reports"
+									? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
+									: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+							}
+						>
+							<div className="flex">
+								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
+								<p
+									className={
+										location.pathname === "/reports"
+											? "text-sm font-light text-white ml-5"
+											: "text-sm font-light linktext ml-5"
+									}
+								>
+									Reports
+								</p>
+							</div>
+						</Link>
+						{/* reports */}
 					</div>
 				) : null}
 
@@ -845,12 +940,12 @@ function Sidebar() {
 				</div>
 				{link6 ? (
 					<div className="ml-4">
-						{/* schedule */}
+						{/* Lessons */}
 
 						<Link
-							to="/schedules"
+							to="/lessons"
 							className={
-								location.pathname === "/schedules"
+								location.pathname === "/lessons"
 									? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
 									: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
 							}
@@ -859,12 +954,36 @@ function Sidebar() {
 								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
 								<p
 									className={
-										location.pathname === "/schedules"
+										location.pathname === "/lessons"
 											? "text-sm font-light text-white ml-5"
 											: "text-sm font-light linktext ml-5"
 									}
 								>
-									Schedules
+									Lessons
+								</p>
+							</div>
+						</Link>
+
+						{/* Exams */}
+
+						<Link
+							to="/exams"
+							className={
+								location.pathname === "/exams"
+									? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
+									: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+							}
+						>
+							<div className="flex">
+								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
+								<p
+									className={
+										location.pathname === "/exams"
+											? "text-sm font-light text-white ml-5"
+											: "text-sm font-light linktext ml-5"
+									}
+								>
+									Exams
 								</p>
 							</div>
 						</Link>
@@ -948,20 +1067,29 @@ function Sidebar() {
 					</div>
 				</div>
 				{link8 ? (
+					// scholarShip
 					<div className="ml-4">
-						<div className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer">
-							<div className="w-4/5 flex">
-								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
-								<p className="text-sm font-light linktext ml-5">Scholarships</p>
-							</div>
-							<div className="w-1/5"></div>
-						</div>
-						<div className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer">
+						<Link
+							to="/scholarShip"
+							className={
+								location.pathname === "/scholarShip"
+									? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
+									: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+							}
+						>
 							<div className="flex">
 								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
-								<p className="text-sm font-light linktext ml-5">Students</p>
+								<p
+									className={
+										location.pathname === "/scholarShip"
+											? "text-sm font-light text-white ml-5"
+											: "text-sm font-light linktext ml-5"
+									}
+								>
+									ScholarShips
+								</p>
 							</div>
-						</div>
+						</Link>
 					</div>
 				) : null}
 
@@ -1075,34 +1203,29 @@ function Sidebar() {
 					</div>
 				) : null}
 
-
-                 {/* E-learning */}
+				{/* E-learning */}
 
 				<div
 					className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
 					onClick={toggleLink12}
 				>
 					<div className="w-4/5 flex">
-						<TbBus className="w-4 h-4 mt-[2px] linkicon" />
+						<MdVideoCameraFront className="w-4 h-4 mt-[2px] linkicon" />
 						<p className="text-sm font-light linktext ml-6">E-Learning</p>
 					</div>
-					<div className="w-1/5">
-						
-					</div>
+					<div className="w-1/5"></div>
 				</div>
 
-                   {/* voting */}
+				{/* voting */}
 				<div
 					className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
 					onClick={toggleLink12}
 				>
 					<div className="w-4/5 flex">
-						<TbBus className="w-4 h-4 mt-[2px] linkicon" />
+						<MdHowToVote className="w-4 h-4 mt-[2px] linkicon" />
 						<p className="text-sm font-light linktext ml-6">Voting</p>
 					</div>
-					<div className="w-1/5">
-						
-					</div>
+					<div className="w-1/5"></div>
 				</div>
 
 				{/* Transport */}
@@ -1140,7 +1263,21 @@ function Sidebar() {
 						</div>
 					</div>
 				) : null}
-				<br />
+				
+
+				{/* Discipline */}
+				<div
+					className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+					onClick={toggleLink12}
+				>
+					<div className="w-4/5 flex">
+						<FaPrayingHands className="w-4 h-4 mt-[2px] linkicon" />
+						<p className="text-sm font-light linktext ml-6">Discipline</p>
+					</div>
+					<div className="w-1/5"></div>
+				</div>
+
+				{/* Transport */}
 			</div>
 			<div className="p-4 m-4 bg-secondary rounded-md h-48">
 				<div className="flex justify-center items-center">

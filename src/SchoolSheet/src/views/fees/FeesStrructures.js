@@ -180,7 +180,7 @@ function FeesStrructures() {
                         <tbody>
                             {/* edit popup start */}
                             {editData2 ? (
-                                <div className='w-[500px] absolute shadow-2xl  overflow-y-auto h-[80vh] p-5 bg-white rounded-md'>
+                                <div className='w-[500px] absolute shadow-2xl  overflow-y-auto h-[40vh] p-5 bg-white rounded-md'>
                                     <div className='flex justify-between'>
                                         <h5 className='text-lg font-medium ml-5'>
                                             Fees Structure

@@ -4,7 +4,7 @@ function ShowStudentsForm(props) {
     const { studentInfoShow, closeShowData } = props;
 
     return (
-        <div className='w-3/4 shadow-lg absolute z-50 bg-white border-gray2 -mt-[12vh] border-2 rounded-md h-[85vh] overflow-y-auto'>
+        <div className='w-[80vw] shadow-lg absolute z-50 bg-white border-gray2 -mt-[50vh] border-2 rounded-md h-[85vh] overflow-y-auto'>
             <div className='flex bg-gray1 p-3 justify-between'>
                 <div>
                     <p className='text-primary font-semibold text-md'>

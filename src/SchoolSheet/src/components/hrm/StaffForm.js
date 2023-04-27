@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import { v4 as uuid } from "uuid";
 import InputSelect from "../InputSelect";
 import { BsSearch } from "react-icons/bs";
+import ButtonSecondary from "../ButtonSecondary";
 
 let db = new Localbase("db");
 
@@ -45,13 +46,10 @@ function StaffForm(props) {
 			});
 	};
 
-
 	// fetching stypes
 	useEffect(() => {
 		fetchStaffTypes();
 	}, []);
-
-
 
 	// staff info form data
 	const [formData, setFormData] = useState({
@@ -75,7 +73,7 @@ function StaffForm(props) {
 			firstName: formData.firstName,
 			middleName: formData.middleName,
 			lastName: formData.lastName,
-			email: formData.email
+			email: formData.email,
 		};
 		if (formData) {
 			db.collection("staffInfo")
@@ -127,7 +125,7 @@ function StaffForm(props) {
 			</div>
 
 			{addStaff ? (
-				<div className="bg-white  shadow-lg rounded-md h-[350px] overflow-y-auto absolute w-[1000px] -ml-32 shadow-3xl border-2 border-gray3 ">
+				<div className="bg-white  shadow-lg rounded-md h-[393px] overflow-y-auto absolute w-[1000px] -ml-32 shadow-3xl border-2 border-gray3 ">
 					<div className="p-3 bg-gray1 flex justify-between">
 						<div>
 							<p className="text-primary text-lg font-semibold">
@@ -190,12 +188,18 @@ function StaffForm(props) {
 								onChange={onChange}
 								icon={<FaPen className="w-3 -ml-7 mt-3" />}
 							/>
-                            <div className="mt-14" onClick={postStaffInfo}>
+						</div>
+					</div>
+					<div className="p-3 bg-gray1 flex justify-between">
+						<div onClick={closeStaffForm}>
+							<ButtonSecondary value={"Close"} />
+						</div>
+						<div>
+							<div onClick={postStaffInfo}>
 								<Button value={"Add Staff"} />
 							</div>
 						</div>
 					</div>
-					
 				</div>
 			) : null}
 		</>

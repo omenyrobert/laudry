@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ButtonSecondary from '../ButtonSecondary';
 import InputField from '../InputField';
 import InputSelect from '../InputSelect';
+import Button from '../Button';
 import Select from 'react-select';
 import { FaRegUserCircle, FaPhone } from 'react-icons/fa';
 import Localbase from 'localbase';
@@ -156,7 +157,7 @@ function EditStudentsForm(props) {
     };
 
     return (
-        <div className='w-3/4 shadow-lg absolute  z-50 bg-white border-gray3  border-2 rounded-md h-[82vh] overflow-y-auto'>
+        <div className='w-[80vw] shadow-lg absolute -mt-32 z-50 bg-white border-gray3  border-2 rounded-md h-[89vh] overflow-y-auto'>
             <div className='flex bg-gray1 p-3 justify-between'>
                 <div>
                     <p className='text-primary font-semibold text-md'>
@@ -401,11 +402,20 @@ function EditStudentsForm(props) {
                         />
                         <br />
                         <br />
-                        <div onClick={updateStudentInfo}>
-                            <ButtonSecondary value={'Update Student'} />
-                        </div>
+                     
                     </div>
                 </div>
+            </div>
+            <div className='flex justify-between p-2 bg-gray1'>
+                <div onClick={closeEditData}>
+                    <ButtonSecondary value={"Close"}/>
+                </div>
+                <div>
+                <div onClick={updateStudentInfo}>
+                            <Button value={'Update Student'} />
+                        </div>
+                </div>
+
             </div>
         </div>
     );

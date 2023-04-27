@@ -238,44 +238,37 @@ function IncomeComp() {
 
 	return (
 		<>
-			<div className="flex justify-between">
-				<div>
-					<h5 className="text-xl text-secondary font-medium">Incomes</h5>
-				</div>
-				<div className="w-1/12">
-					<Button value={"Print"} />
-				</div>
-				<div className="w-2/12" onClick={openAdd}>
-					<Button value={"Add Income"} />
-				</div>
-			</div>
-
-			<div className="mt-5 bg-white p-2 border border-gray1 shadow-xl">
-				<div className="flex">
-					<div className="w-6/12 px-2">
-						<InputField
-							placeholder="Search for Income"
-							type="search"
-							onChange={(e) => searchItems(e.target.value)}
-							icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
-						/>
+			<div className="flex bg-white">
+				<div className="w-10/12 ">
+					<div className="flex">
+						<div className="w-6/12 px-2">
+							<InputField
+								placeholder="Search for Income"
+								type="search"
+								onChange={(e) => searchItems(e.target.value)}
+								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+							/>
+						</div>
+						<div className="w-3/12 px-2">
+							<InputField placeholder="Filter By Type" />
+						</div>{" "}
+						<div className="w-2/12 px-2">
+							<InputField type="date" />
+						</div>
+						<div className="w-2/12">
+							<InputField type="date" />
+						</div>
 					</div>
-					<div className="w-3/12 px-2">
-						<InputField placeholder="Filter By Type" />
-					</div>{" "}
-					<div className="w-2/12 px-2">
-						<InputField type="date" />
-					</div>
-					<div className="w-2/12">
-						<InputField type="date" />
-					</div>
+				</div>
+				<div className="w-2/12 px-3 mt-5" onClick={openAdd}>
+					<Button2 value={"Add Income"} />
 				</div>
 			</div>
 
 			<div className="w-full h-[80vh] relative">
 				{add ? (
-					<div className="bg-white shadow-xl border border-gray2 rounded-md mr-2 absolute w-[800px]">
-						<div className="flex justify-between bg-primary text-white p-3 rounded">
+					<div className="bg-white shadow-xl border border-gray2 rounded-md mr-2 absolute w-[1000px]">
+						<div className="flex justify-between bg-gray1 text-primary p-3 font-semibold rounded">
 							<div>Add Income</div>
 							<div>
 								<p className="cursor-pointer" onClick={closeAdd}>
@@ -284,7 +277,7 @@ function IncomeComp() {
 							</div>
 						</div>
 						<div className="flex px-3 justify-between">
-							<div className="w-1/4 p-1">
+							<div className="w-1/3 p-1">
 								<InputField
 									type="date"
 									label="Date"
@@ -292,7 +285,7 @@ function IncomeComp() {
 									onChange={(e) => setDate(e.target.value)}
 								/>
 							</div>
-							<div className="w-1/4 p-1">
+							<div className="w-1/3 p-1">
 								<InputField
 									type="text"
 									placeholder="Enter Income"
@@ -302,7 +295,7 @@ function IncomeComp() {
 									icon={<FaPen className="w-3 -ml-7 mt-3" />}
 								/>
 							</div>
-							<div className="w-1/4 p-1">
+							<div className="w-1/3 p-1">
 								<InputField
 									type="number"
 									placeholder="Enter Amounnt"
@@ -312,7 +305,9 @@ function IncomeComp() {
 									icon={<FaPen className="w-3 -ml-7 mt-3" />}
 								/>
 							</div>
-							<div className="w-1/4 p-1">
+						</div>
+						<div className="flex px-3 justify-between">
+							<div className="w-1/3 p-1">
 								<SelectComp
 									options={incomeTypesData}
 									placeholder="Select Income Type"
@@ -322,9 +317,7 @@ function IncomeComp() {
 									}}
 								/>
 							</div>
-						</div>
-						<div className="flex px-3 justify-between">
-							<div className="w-1/4 p-1">
+							<div className="w-1/3 p-1">
 								<InputField
 									type="text"
 									placeholder="Enter Source"
@@ -334,23 +327,41 @@ function IncomeComp() {
 									icon={<FaPen className="w-3 -ml-7 mt-3" />}
 								/>
 							</div>
-							<div className="w-1/4">
+							<div className="w-1/3">
 								<InputField
 									type="text"
-									placeholder="Enter Comment"
-									label="Income Comment"
+									placeholder="Enter description"
+									label="Income description"
 									value={comment}
 									onChange={(e) => setComment(e.target.value)}
 									icon={<FaPen className="w-3 -ml-7 mt-3" />}
 								/>
 							</div>
-							<div className="mt-8 mr-5 w-[150px]">
-								<br />
-								<div onClick={postIncome}>
+						</div>
+						<div className="flex p-3 -mt-5">
+							<div className="w-1/3 p-1">
+								<SelectComp
+									options={incomeTypesData}
+									placeholder="Select Account"
+									label="Account"
+									setSelectedOptionObj={(value) => {
+										setIncomeTypeId(value.id);
+									}}
+								/>
+							</div>
+							<div className="w-1/3 mt-14">
+								
+							</div>
+						</div>
+						<div className="flex justify-between bg-gray1  p-3 ounded">
+							<div>
+								<ButtonSecondary value={"Close"}/>
+							</div>
+							<div>
+							<div onClick={postIncome}>
 									<Button value={"Add Income"} />
 								</div>
 							</div>
-							<div className="w-1/4"></div>
 						</div>
 					</div>
 				) : null}
@@ -361,7 +372,7 @@ function IncomeComp() {
 						<th className="p-2 text-primary text-sm text-left">Income Type</th>
 						<th className="p-2 text-primary text-sm text-left">Amount</th>
 						<th className="p-2 text-primary text-sm text-left">Source</th>
-						<th className="p-2 text-primary text-sm text-left">Comment</th>
+						<th className="p-2 text-primary text-sm text-left">Description</th>
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
@@ -378,8 +389,8 @@ function IncomeComp() {
 										</p>
 									</div>
 								</div>
-								<div className="flex px-5">
-									<div className="w-1/4 p-1">
+								<div className="flex px-3 justify-between">
+									<div className="w-1/3 p-1">
 										<InputField
 											type="date"
 											label="Date"
@@ -387,7 +398,7 @@ function IncomeComp() {
 											onChange={(e) => setDateEdit(e.target.value)}
 										/>
 									</div>
-									<div className="w-1/4 p-1">
+									<div className="w-1/3 p-1">
 										<InputField
 											type="text"
 											placeholder="Enter Income"
@@ -397,7 +408,7 @@ function IncomeComp() {
 											icon={<FaPen className="w-3 -ml-7 mt-3" />}
 										/>
 									</div>
-									<div className="w-1/4 p-1">
+									<div className="w-1/3 p-1">
 										<InputField
 											type="number"
 											placeholder="Enter Amounnt"
@@ -407,19 +418,19 @@ function IncomeComp() {
 											icon={<FaPen className="w-3 -ml-7 mt-3" />}
 										/>
 									</div>
-									<div className="w-1/4 p-1">
+								</div>
+								<div className="flex px-3 justify-between">
+									<div className="w-1/3 p-1">
 										<SelectComp
 											options={incomeTypesData}
 											placeholder="Select Income Type"
 											label="Income Type"
 											setSelectedOptionObj={(value) => {
-												setIncomeTypeIdEdit(value.id);
+												setIncomeTypeId(value.id);
 											}}
 										/>
 									</div>
-								</div>
-								<div className="flex px-5">
-									<div className="w-1/4 p-1">
+									<div className="w-1/3 p-1">
 										<InputField
 											type="text"
 											placeholder="Enter Source"
@@ -429,22 +440,33 @@ function IncomeComp() {
 											icon={<FaPen className="w-3 -ml-7 mt-3" />}
 										/>
 									</div>
-									<div className="w-1/4 p-1">
+									<div className="w-1/3">
 										<InputField
 											type="text"
-											placeholder="Enter Comment"
-											label="Income Comment"
+											placeholder="Enter description"
+											label="Income description"
 											value={commentEdit}
 											onChange={(e) => setCommentEdit(e.target.value)}
 											icon={<FaPen className="w-3 -ml-7 mt-3" />}
 										/>
 									</div>
-									<div className="w-1/4 ml-5">
-										<div onClick={updateIncome} className="mt-14">
-											<ButtonSecondary value={"Update"} />
+								</div>
+								<div className="flex p-3 -mt-5">
+									<div className="w-1/3 p-1">
+										<SelectComp
+											options={incomeTypesData}
+											placeholder="Select Account"
+											label="Account"
+											setSelectedOptionObj={(value) => {
+												setIncomeTypeId(value.id);
+											}}
+										/>
+									</div>
+									<div className="w-1/3 mt-14">
+										<div onClick={postIncome}>
+											<Button value={"Update Income"} />
 										</div>
 									</div>
-									<div className="w-1/4"></div>
 								</div>
 							</div>
 						) : null}

@@ -155,7 +155,7 @@ function StaffAttendance() {
 		<div className="w-full relative -ml-7">
 			{attendance ? (
 				<div className="bg-white w-[600px] h-[60vh] overflow-y-auto absolute border border-gray1 rounded shadow-2xl">
-					<div className="flex justify-between font-medium bg-primary text-white p-3">
+					<div className="flex justify-between font-medium text-primary bg-gray1 p-3">
 						<div>Attedance Times</div>
 						<div>
 							<p onClick={closeAttendance} className="cursor-pointer">
@@ -304,10 +304,18 @@ function StaffAttendance() {
 			) : null}
 
 			<div className="rounded-md ml-5 shadow-md bg-white  p-5 h-screen overflow-y-auto mt-2 w-full">
-				<div onClick={openAttendance}>
-					<Button2 value={"Add Attendance Time"} />
+				<div className="flex justify-between">
+					<div onClick={openAttendance} className="w-64">
+						<Button2 value={"Add Attendance Time"} />
+					</div>
+					<div>
+						<p className="text-secondary text-xl mt-2  font-semibold">
+							Staff Attendance
+						</p>
+					</div>
 				</div>
 
+				<br />
 				<AttedanceComp />
 			</div>
 		</div>
