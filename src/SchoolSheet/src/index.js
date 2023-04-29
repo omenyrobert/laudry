@@ -47,7 +47,9 @@ import Bills from "./views/finance/Bills";
 import Equity from "./views/finance/Equity";
 import Accounts from "./views/finance/Accounts";
 import Liabilities from "./views/finance/Liabilities";
-
+import AddStudentForm from "./components/students/AddStudentForm";
+import EditStudentsForm from "./components/students/EditStudentsForm";
+import ShowStudentsForm from "./components/students/ShowStudentsForm";
 const router = createBrowserRouter([
 	{
 		path: "/email",
@@ -103,6 +105,21 @@ const router = createBrowserRouter([
 				path: "/groupsAndTypes",
 				element: <GroupsAndTypes />,
 			},
+
+            // students
+			{
+				path: "/addStudentForm",
+				element: <AddStudentForm/>
+			},
+			{
+				path: "/editStudentsForm",
+				element: <EditStudentsForm/>
+			},
+			{
+             path: "/showStudentsForm",
+			 element: <ShowStudentsForm/>
+			},
+
 
 			//classes
 			{

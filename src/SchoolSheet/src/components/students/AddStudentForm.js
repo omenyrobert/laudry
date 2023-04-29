@@ -9,6 +9,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import { v4 as uuid } from 'uuid';
 import ButtonSecondary from '../ButtonSecondary';
+import { Link } from 'react-router-dom';
 
 let db = new Localbase('db');
 
@@ -159,7 +160,7 @@ function AddStudentForm(props) {
     };
 
     return (
-        <div className='w-[80vw] shadow-lg  z-50 bg-white border-gray3 -mt-32  absolute border-2 rounded-md h-[88vh] overflow-y-auto'>
+        <div className='bg-white h-full'>
             <div className='flex bg-gray1 p-3 justify-between'>
                 <div>
                     <p className='text-primary font-semibold text-md'>
@@ -167,12 +168,10 @@ function AddStudentForm(props) {
                     </p>
                 </div>
                 <div>
-                    <p
-                        className='cursor-pointer'
-                        onClick={handleClickAllStudents}
-                    >
-                        X
-                    </p>
+                    <Link to="/students">
+                    <p>Back</p>
+                    </Link>
+                    
                 </div>
             </div>
             <div>
@@ -446,9 +445,9 @@ function AddStudentForm(props) {
                     </div>
                 </div>
             </div>
-            <div className='flex justify-between p-2 bg-gray1'>
-                <div onClick={handleClickAllStudents}>
-                    <ButtonSecondary value={"Close"}/>
+            <div className='flex justify-between p-2 '>
+                <div>
+                    
                 </div>
                 <div>
                 <div onClick={postStudentInfo}>

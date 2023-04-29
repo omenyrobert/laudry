@@ -306,14 +306,15 @@ function AssetsComp() {
 							<div className="w-1/3 p-1">
 								<InputField type="file" label="Photos" />
 							</div>
-							
 						</div>
-						<div className="p-3 flex justify-between">
-								<div></div>
-								<div onClick={postAsset}>
-									<Button value={"Register Asset"} />
-								</div>
+						<div className="p-3 bg-gray1 flex justify-between">
+							<div onClick={closeAdd}>
+								<ButtonSecondary value={"Close"} />
 							</div>
+							<div onClick={postAsset}>
+								<Button value={"Register Asset"} />
+							</div>
+						</div>
 					</div>
 				) : null}
 
@@ -331,7 +332,7 @@ function AssetsComp() {
 						{/* edit popup start */}
 						{editData ? (
 							<div className="absolute shadow-2xl rounded w-[1000px] bg-white">
-								<div className="flex justify-between bg-primary text-white p-2 rounded-md">
+								<div className="flex justify-between bg-gray1 text-primary p-2 rounded-md">
 									<div>
 										<p>Edit asset</p>
 									</div>
@@ -402,12 +403,18 @@ function AssetsComp() {
 											icon={<FaPen className="w-3 -ml-7 mt-3" />}
 										/>
 									</div>
-									<div className="w-1/4 ml-5">
-										<div onClick={updateasset} className="mt-14">
-											<ButtonSecondary value={"Update"} />
+									<div className="w-1/4 ml-5"></div>
+									<div className="w-1/4"></div>
+								</div>
+								<div className="flex justify-between bg-gray1 text-primary p-2 rounded-md">
+									<div onClick={closeEditData}>
+										<ButtonSecondary value={"Close"} />
+									</div>
+									<div>
+										<div onClick={updateasset} >
+											<Button value={"Update"} />
 										</div>
 									</div>
-									<div className="w-1/4"></div>
 								</div>
 							</div>
 						) : null}

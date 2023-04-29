@@ -323,7 +323,7 @@ function ExpensesComp() {
 								/>
 							</div>
 							<div className="w-1/3 p-1">
-							<InputField
+								<InputField
 									type="text"
 									placeholder="Enter Description"
 									label=" Description"
@@ -332,16 +332,14 @@ function ExpensesComp() {
 									icon={<FaPen className="w-3 -ml-7 mt-3" />}
 								/>
 							</div>
-							<div className="w-1/3 p-1 mt-14">
-								
-							</div>
+							<div className="w-1/3 p-1 mt-14"></div>
 						</div>
 						<div className="flex justify-between bg-gray1  p-3 ounded">
 							<div onClick={closeAdd}>
-								<ButtonSecondary value={"Close"}/>
+								<ButtonSecondary value={"Close"} />
 							</div>
 							<div>
-							<div onClick={postExpense}>
+								<div onClick={postExpense}>
 									<Button value={"Add Expense"} />
 								</div>
 							</div>
@@ -363,7 +361,7 @@ function ExpensesComp() {
 						{/* edit popup start */}
 						{editData ? (
 							<div className="absolute shadow-2xl rounded w-[1000px] bg-white">
-								<div className="flex justify-between bg-primary text-white p-2 rounded-md">
+								<div className="flex justify-between font-semibold text-primary bg-gray1 p-2 rounded-md">
 									<div>
 										<p>Edit expense</p>
 									</div>
@@ -374,94 +372,100 @@ function ExpensesComp() {
 									</div>
 								</div>
 								<div className="flex justify-between mx-3">
-							<div className="w-1/3 p-1">
-								<InputField
-									type="date"
-									label="Date"
-									value={dateEdit}
-									onChange={(e) => setDateEdit(e.target.value)}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<InputField
-									type="text"
-									placeholder="Enter expense"
-									label="Expense"
-									value={expenseEdit}
-									onChange={(e) => setExpenseEdit(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<InputField
-									type="number"
-									placeholder="Enter Amounnt"
-									label="Amount"
-									value={amountEdit}
-									onChange={(e) => setAmountEdit(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-						</div>
-						<div className="flex justify-between mx-3">
-							<div className="w-1/3 p-1">
-								<SelectComp
-									options={expenseTypesData}
-									placeholder="Select expense Type"
-									label="Expense Type"
-									setSelectedOptionObj={(value) => {
-										setExpenseTypeId(value.id);
-									}}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<SelectComp
-									options={expenseTypesData}
-									placeholder="Select Account"
-									label="Account"
-									setSelectedOptionObj={(value) => {
-										setExpenseTypeId(value.id);
-									}}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<InputField
-									type="text"
-									placeholder="Enter Received By "
-									label="Received By"
-									value={toEdit}
-									onChange={(e) => setToEdit(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-						</div>
-						<div className="flex justify-between mx-3">
-							<div className="w-1/3 p-1">
-								<InputField
-									type="text"
-									placeholder="Enter Contacts"
-									label="Expense Contacts"
-									value={contactsEdit}
-									onChange={(e) => setContactsEdit(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-							<InputField
-									type="text"
-									placeholder="Enter Description"
-									label=" Description"
-									value={contactsEdit}
-									onChange={(e) => setContactsEdit(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-							<div className="w-1/3 p-1 mt-14">
-								<div onClick={updateExpense}>
-									<Button value={"Update Expense"} />
+									<div className="w-1/3 p-1">
+										<InputField
+											type="date"
+											label="Date"
+											value={dateEdit}
+											onChange={(e) => setDateEdit(e.target.value)}
+										/>
+									</div>
+									<div className="w-1/3 p-1">
+										<InputField
+											type="text"
+											placeholder="Enter expense"
+											label="Expense"
+											value={expenseEdit}
+											onChange={(e) => setExpenseEdit(e.target.value)}
+											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										/>
+									</div>
+									<div className="w-1/3 p-1">
+										<InputField
+											type="number"
+											placeholder="Enter Amounnt"
+											label="Amount"
+											value={amountEdit}
+											onChange={(e) => setAmountEdit(e.target.value)}
+											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										/>
+									</div>
 								</div>
-							</div>
-						</div>
+								<div className="flex justify-between mx-3">
+									<div className="w-1/3 p-1">
+										<SelectComp
+											options={expenseTypesData}
+											placeholder="Select expense Type"
+											label="Expense Type"
+											setSelectedOptionObj={(value) => {
+												setExpenseTypeId(value.id);
+											}}
+										/>
+									</div>
+									<div className="w-1/3 p-1">
+										<SelectComp
+											options={expenseTypesData}
+											placeholder="Select Account"
+											label="Account"
+											setSelectedOptionObj={(value) => {
+												setExpenseTypeId(value.id);
+											}}
+										/>
+									</div>
+									<div className="w-1/3 p-1">
+										<InputField
+											type="text"
+											placeholder="Enter Received By "
+											label="Received By"
+											value={toEdit}
+											onChange={(e) => setToEdit(e.target.value)}
+											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										/>
+									</div>
+								</div>
+								<div className="flex justify-between mx-3">
+									<div className="w-1/3 p-1">
+										<InputField
+											type="text"
+											placeholder="Enter Contacts"
+											label="Expense Contacts"
+											value={contactsEdit}
+											onChange={(e) => setContactsEdit(e.target.value)}
+											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										/>
+									</div>
+									<div className="w-1/3 p-1">
+										<InputField
+											type="text"
+											placeholder="Enter Description"
+											label=" Description"
+											value={contactsEdit}
+											onChange={(e) => setContactsEdit(e.target.value)}
+											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										/>
+									</div>
+									<div className="w-1/3 p-1 mt-14"></div>
+								</div>
+								<div className="flex justify-between font-semibold text-primary bg-gray1 p-2 rounded-md">
+									<div onClick={closeEditData}>
+										<ButtonSecondary value={"Close"} />
+									</div>
+									<div>
+										<div onClick={updateExpense}>
+											<Button value={"Update Expense"} />
+										</div>
+									</div>
+								</div>
 							</div>
 						) : null}
 						{/* edit popup end */}

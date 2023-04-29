@@ -379,7 +379,7 @@ function IncomeComp() {
 						{/* edit popup start */}
 						{editData ? (
 							<div className="absolute shadow-2xl rounded w-[1000px] bg-white">
-								<div className="flex justify-between bg-primary text-white p-2 rounded-md">
+								<div className="flex justify-between text-primary bg-gray1 font-semibold p-2 rounded-md">
 									<div>
 										<p>Edit Income</p>
 									</div>
@@ -463,7 +463,15 @@ function IncomeComp() {
 										/>
 									</div>
 									<div className="w-1/3 mt-14">
-										<div onClick={postIncome}>
+										
+									</div>
+								</div>
+								<div className="flex justify-between text-primary bg-gray1 font-semibold p-2 rounded-md">
+									<div onClick={closeEditData}>
+										<ButtonSecondary value={"Close"} />
+									</div>
+									<div>
+									<div onClick={postIncome}>
 											<Button value={"Update Income"} />
 										</div>
 									</div>

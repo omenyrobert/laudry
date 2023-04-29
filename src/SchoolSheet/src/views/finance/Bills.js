@@ -12,6 +12,7 @@ import SelectComp from "../../components/SelectComp";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import { BsSearch } from "react-icons/bs";
+import ButtonSecondary from "../../components/ButtonSecondary";
 
 let db = new Localbase("db");
 
@@ -218,7 +219,6 @@ function Bills() {
 								<InputField
 									placeholder="Search for Income"
 									type="search"
-									
 									icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
 								/>
 							</div>
@@ -359,8 +359,15 @@ function Bills() {
 								/>
 							</div>
 							<div className="w-1/4"></div>
-							<div className="w-1/4 mt-14" onClick={postbill}>
-								<Button value={"Add bill"} />
+						</div>
+						<div className="p-3 bg-gray1 flex justify-between">
+							<div onClick={hideAdd}>
+								<ButtonSecondary value={"Close"} />
+							</div>
+							<div>
+								<div className="" onClick={postbill}>
+									<Button value={"Add bill"} />
+								</div>
 							</div>
 						</div>
 					</div>
@@ -380,7 +387,7 @@ function Bills() {
 						{/* edit popup start */}
 						{editData ? (
 							<div className="absolute shadow-2xl rounded w-[1000px] bg-white">
-								<div className="flex justify-between bg-primary text-white p-2 rounded-md">
+								<div className="flex justify-between text-primary bg-gray1 font-semibold p-2 rounded-md">
 									<div>
 										<p>Edit bill</p>
 									</div>
@@ -494,8 +501,15 @@ function Bills() {
 										/>
 									</div>
 									<div className="w-1/4"></div>
-									<div className="w-1/4 mt-14" onClick={postbill}>
-										<Button value={"Update bill"} />
+								</div>
+								<div className="p-3 bg-gray1 flex justify-between">
+									<div onClick={closeEditData}>
+										<ButtonSecondary value={"Close"} />
+									</div>
+									<div>
+										<div className="" onClick={updatebill}>
+											<Button value={"Add bill"} />
+										</div>
 									</div>
 								</div>
 							</div>
