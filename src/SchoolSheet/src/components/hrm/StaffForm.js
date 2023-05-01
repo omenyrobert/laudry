@@ -7,13 +7,9 @@ import { FaPen } from "react-icons/fa";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { BsSearch } from "react-icons/bs";
-<<<<<<< HEAD
 import { useDispatch, useSelector } from 'react-redux';
 import { getStaffTypes, getStaffMembers } from '../../store/schoolSheetSlices/schoolStore';
 import axiosInstance from '../../axios-instance';
-=======
-import ButtonSecondary from "../ButtonSecondary";
->>>>>>> f1b1283dd1e707765aa8ec4684b6b08a8f5b4735
 
 
 const StaffForm = (props) => {
@@ -33,7 +29,6 @@ const StaffForm = (props) => {
 	const typeOptions = [];
 	const { staffTypes } = useSelector((state) => state.schoolStore);
 
-<<<<<<< HEAD
 	staffTypes.forEach((type) => {
 		let newOption = {};
 		newOption.label = type.type;
@@ -45,9 +40,6 @@ const StaffForm = (props) => {
 		setSelectedStaffTypeOption(selected);
 	};
 
-=======
-	// fetching stypes
->>>>>>> f1b1283dd1e707765aa8ec4684b6b08a8f5b4735
 	useEffect(() => {
 		dispatch(getStaffTypes());
 	}, [dispatch]);
@@ -65,7 +57,6 @@ const StaffForm = (props) => {
 	};
 
 	// post staff info
-<<<<<<< HEAD
 	const postStaffInfo = async (e) => {
 		try {
 			e.preventDefault();
@@ -92,36 +83,6 @@ const StaffForm = (props) => {
 			}
 		} catch (error) {
 			console.log(error);
-=======
-	const postStaffInfo = (e) => {
-		e.preventDefault();
-		let stId = uuid();
-		let data = {
-			id: stId,
-			staffType: staffTypes,
-			firstName: formData.firstName,
-			middleName: formData.middleName,
-			lastName: formData.lastName,
-			email: formData.email,
-		};
-		if (formData) {
-			db.collection("staffInfo")
-				.add(data)
-				.then((response) => {
-					console.log("staffInfo", response);
-					setFormData("");
-					fetchStaffInfo();
-					// show alert
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-					closeStaffForm();
-				})
-				.catch(console.error());
->>>>>>> f1b1283dd1e707765aa8ec4684b6b08a8f5b4735
 		}
 	};
 
@@ -218,26 +179,11 @@ const StaffForm = (props) => {
 								onChange={onChange}
 								icon={<FaPen className="w-3 -ml-7 mt-3" />}
 							/>
-<<<<<<< HEAD
 							<div className="mt-14" onClick={postStaffInfo}>
-=======
-						</div>
-					</div>
-					<div className="p-3 bg-gray1 flex justify-between">
-						<div onClick={closeStaffForm}>
-							<ButtonSecondary value={"Close"} />
-						</div>
-						<div>
-							<div onClick={postStaffInfo}>
->>>>>>> f1b1283dd1e707765aa8ec4684b6b08a8f5b4735
 								<Button value={"Add Staff"} />
 							</div>
 						</div>
 					</div>
-<<<<<<< HEAD
-
-=======
->>>>>>> f1b1283dd1e707765aa8ec4684b6b08a8f5b4735
 				</div>
 			) : null}
 		</>
