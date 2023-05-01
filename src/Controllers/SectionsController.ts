@@ -5,7 +5,7 @@ import {
 	updateSections,
 	deleteSections,
 	getSingleSections,
-} from "../Entities/Sections";
+} from "../Entities/Section";
 import { customPayloadResponse } from "../Helpers/Helpers";
 
 export const fetchSections = async (req: Request, res: Response) => {
