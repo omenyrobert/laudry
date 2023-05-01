@@ -4,7 +4,7 @@ import { Stream } from "../Entities/Stream";
 import { StaffType } from "../Entities/StaffType";
 import { SchoolClass } from "../Entities/SchoolClass";
 import { PasswordReset } from "../Entities/PasswordReset";
-import { Sections } from "../Entities/Sections";
+import { Section } from "../Entities/Section";
 
 export const DatabaseConnection = new DataSource({
   host: "localhost",
@@ -14,5 +14,5 @@ export const DatabaseConnection = new DataSource({
   database: "school_soft",
   logging: false,
   synchronize: true,
-  entities: [Stream, SchoolClass, StaffType, Staff, PasswordReset, Sections],
+  entities: [Stream, SchoolClass, StaffType, Staff, PasswordReset, Section],
 });

@@ -3,7 +3,7 @@ import StreamRoutes from "./StreamRoutes";
 import StaffTypeRoutes from "./StaffTypeRoutes";
 import StaffRoutes from "./StaffRoutes";
 import AuthRoutes from "./AuthRoutes";
-import SectionsRoutes from "./SectionsRoutes";
+import SectionRoutes from "./SectionRoutes";
 
 const router = Router();
 
@@ -12,6 +12,6 @@ export default (): Router => {
   StaffTypeRoutes(router);
   StaffRoutes(router);
   AuthRoutes(router);
-  SectionsRoutes(router);
+  SectionRoutes(router);
   return router;
 };
