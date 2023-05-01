@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MdAlternateEmail } from "react-icons/md";
+import { MdLockOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { FaBriefcase } from "react-icons/fa";
 import "../../assets/styles/login.css";
@@ -7,34 +7,31 @@ import Button from "../../components/Button";
 import InputField from "../../components/InputField";
 import axiosInstance from "../../axios-instance";
 
-const Email = () => {
-
+const PasswordReset = () => {
 	const navigate = useNavigate();
-
 	const [formData, setFormData] = useState({
-		email: "",
+		password: "",
+		confirm_password: "",
+		email: localStorage.getItem('resetEmail')
 	});
 
 	const onChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const requestPasswordReset = async () => {
+	const submitPasswords = async () => {
 		try {
-			const response = await axiosInstance.post('/auth/reset-password-request', formData)
+			const response = await axiosInstance.post('/staff/reset-password', formData);
 			const { data } = response;
-			const { status, payload } = data;
+			const { status } = data;
 			if (status) {
-				const { token } = payload;
-				if (token) {
-					navigate('/code');
-				}
+				localStorage.removeItem('resetEmail');
+				navigate('/');
 			}
 		} catch (error) {
 			console.log(error);
 		}
 	};
-
 	return (
 		<div className="flex overflow-hidden h-screen w-full bgdiv">
 			<div className="w-7/12 flex justify-center items-center">
@@ -51,16 +48,25 @@ const Email = () => {
 							School SoftOffice
 						</h1>
 					</div>
-					<p className="text-center text-primary mt-2">Enter Email</p>
+					<p className="text-center text-primary mt-2">Enter Your Passwords</p>
+
 					<InputField
-						type="email"
-						placeholder="Enter Your email"
-						label="Email"
-						name="email"
-						icon={<MdAlternateEmail className="w-10 mt-3" />}
+						type="password"
+						placeholder="Enter Your New password"
+						label="New Password"
+						name="password"
+						icon={<MdLockOutline className="w-10 mt-3" />}
 						onChange={onChange}
 					/>
-					<div onClick={requestPasswordReset}>
+					<InputField
+						type="password"
+						placeholder="Confirm Your password"
+						label="Confirm Password"
+						name="confirm_password"
+						icon={<MdLockOutline className="w-10 mt-3" />}
+						onChange={onChange}
+					/>
+					<div onClick={submitPasswords}>
 						<Button value={"Reset Password"} />
 					</div>
 				</div>
@@ -69,4 +75,4 @@ const Email = () => {
 	);
 }
 
-export default Email;
+export default PasswordReset;

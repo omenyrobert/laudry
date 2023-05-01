@@ -4,52 +4,45 @@ import Button from "../Button";
 import Button2 from "../Button2";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
-import Localbase from "localbase";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import { v4 as uuid } from "uuid";
-import InputSelect from "../InputSelect";
 import { BsSearch } from "react-icons/bs";
+import { useDispatch, useSelector } from 'react-redux';
+import { getStaffTypes, getStaffMembers } from '../../store/schoolSheetSlices/schoolStore';
+import axiosInstance from '../../axios-instance';
 
-let db = new Localbase("db");
 
-function StaffForm(props) {
-	const { fetchStaffInfo } = props;
-
-	// toggle form
+const StaffForm = (props) => {
+	const dispatch = useDispatch();
 
 	const [addStaff, setAddStaff] = useState(false);
 
 	const openStaffForm = () => {
 		setAddStaff(true);
 	};
+
 	const closeStaffForm = () => {
 		setAddStaff(false);
 	};
 
-	const [maritalStatus, setMaritalStatus] = useState("");
-	const [gender, setGender] = useState("");
+	const [selectedStaffTypeOption, setSelectedStaffTypeOption] = useState(null);
+	const typeOptions = [];
+	const { staffTypes } = useSelector((state) => state.schoolStore);
 
-	// fetch stypes
-	const [options, setOptions] = useState();
-	const [staffTypes, setStaffTypes] = useState(null);
-	const fetchStaffTypes = () => {
-		db.collection("staffType")
-			.get()
-			.then((staffType) => {
-				const newData = staffType.map((res) => ({
-					value: res.staffType,
-					label: res.staffType,
-				}));
-				setOptions(newData);
-			});
+	staffTypes.forEach((type) => {
+		let newOption = {};
+		newOption.label = type.type;
+		newOption.value = type.id;
+		typeOptions.push(newOption);
+	});
+
+	const handleStaffTypeChange = (selected) => {
+		setSelectedStaffTypeOption(selected);
 	};
 
-
-	// fetching stypes
 	useEffect(() => {
-		fetchStaffTypes();
-	}, []);
+		dispatch(getStaffTypes());
+	}, [dispatch]);
 
 
 
@@ -66,34 +59,32 @@ function StaffForm(props) {
 	};
 
 	// post staff info
-	const postStaffInfo = (e) => {
-		e.preventDefault();
-		let stId = uuid();
-		let data = {
-			id: stId,
-			staffType: staffTypes,
-			firstName: formData.firstName,
-			middleName: formData.middleName,
-			lastName: formData.lastName,
-			email: formData.email
-		};
-		if (formData) {
-			db.collection("staffInfo")
-				.add(data)
-				.then((response) => {
-					console.log("staffInfo", response);
-					setFormData("");
-					fetchStaffInfo();
-					// show alert
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-					closeStaffForm();
-				})
-				.catch(console.error());
+	const postStaffInfo = async (e) => {
+		try {
+			e.preventDefault();
+			let postData = {
+				staffType: selectedStaffTypeOption.value,
+				firstName: formData.firstName,
+				middleName: formData.middleName,
+				lastName: formData.lastName,
+				email: formData.email
+			};
+			const response = await axiosInstance.post('/staff', postData);
+			const { data } = response;
+			const { status } = data;
+			if (status) {
+				setFormData('');
+				dispatch(getStaffMembers());
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+				closeStaffForm();
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
@@ -147,10 +138,10 @@ function StaffForm(props) {
 
 							<Select
 								placeholder={"Select Staff Type"}
-								defaultValue={staffTypes}
-								onChange={setStaffTypes}
+								defaultValue={selectedStaffTypeOption}
+								onChange={handleStaffTypeChange}
 								className="mt-1"
-								options={options}
+								options={typeOptions}
 							/>
 
 							<InputField
@@ -190,12 +181,12 @@ function StaffForm(props) {
 								onChange={onChange}
 								icon={<FaPen className="w-3 -ml-7 mt-3" />}
 							/>
-                            <div className="mt-14" onClick={postStaffInfo}>
+							<div className="mt-14" onClick={postStaffInfo}>
 								<Button value={"Add Staff"} />
 							</div>
 						</div>
 					</div>
-					
+
 				</div>
 			) : null}
 		</>

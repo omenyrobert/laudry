@@ -9,56 +9,42 @@ import { BsPencilSquare } from 'react-icons/bs';
 import { FaPen } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import Localbase from 'localbase';
-import { v4 as uuid } from 'uuid';
+import { useDispatch, useSelector } from 'react-redux';
+import { getStaffTypes } from '../../store/schoolSheetSlices/schoolStore';
+import axiosInstance from '../../axios-instance';
 
-let db = new Localbase('db');
-
-function Staff() {
+const Staff = () => {
+    const dispatch = useDispatch();
     const [type, setType] = useState('');
     const [editData, setEditData] = useState(false);
     const [typeEdit, setTypeEdit] = useState('');
     const [typeId, setTypeId] = useState('');
 
-    const [staffTypes, setStaffTypes] = useState([]);
-
-    const postStaffType = () => {
-        let stId = uuid();
-        let formData = {
-            id: stId,
-            staffType: type,
-        };
-        if (type) {
-            db.collection('staffType')
-                .add(formData)
-                .then((response) => {
+    const postStaffType = async () => {
+        try {
+            let formData = {
+                staffType: type,
+            };
+            if (type) {
+                const response = await axiosInstance.post('/staffTypes', formData);
+                const { data } = response;
+                const { status } = data;
+                if (status) {
                     setType('');
-                    // fetch after
-                    fetchStaffTypes();
-
-                    // show alert
+                    dispatch(getStaffTypes());
                     const MySwal = withReactContent(Swal);
                     MySwal.fire({
                         icon: 'success',
                         showConfirmButton: false,
                         timer: 500,
                     });
-                })
-                .catch(console.error());
+                }
+            }
+        } catch (error) {
+            console.log(error);
         }
     };
 
-    // fetch stypes
-    const fetchStaffTypes = () => {
-        db.collection('staffType')
-            .get()
-            .then((staffType) => {
-                const newData = staffType;
-                setStaffTypes(newData);
-            });
-    };
-
-    //deleting stypes
     const deleteStaffType = (type) => {
         Swal.fire({
             title: 'Are you sure?',
@@ -68,39 +54,37 @@ function Staff() {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!',
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                db.collection('staffType')
-                    .doc({ id: type.id })
-                    .delete()
-                    .then((response) => {
-                        // fetch after
-                        fetchStaffTypes();
-
+                try {
+                    const response = await axiosInstance.delete(`/staffTypes/${type.id}`);
+                    const { data } = response;
+                    const { status } = data;
+                    if (status) {
+                        dispatch(getStaffTypes());
                         Swal.fire({
                             icon: 'success',
                             showConfirmButton: false,
                             timer: 500,
                         });
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
             }
         });
     };
-
-    // updating stypes
-    const updateStaffType = () => {
-        db.collection('staffType')
-            .doc({ id: typeId })
-            .update({
+    const updateStaffType = async () => {
+        try {
+            let formData = {
                 staffType: typeEdit,
-            })
-            .then((response) => {
-                console.log(response);
-                // fetch after
-                fetchStaffTypes();
+                typeId: typeId
+            }
+            const response = await axiosInstance.put(`/staffTypes`, formData);
+            const { data } = response;
+            const { status } = data;
+            if (status) {
+                dispatch(getStaffTypes());
                 const MySwal = withReactContent(Swal);
                 MySwal.fire({
                     icon: 'success',
@@ -108,22 +92,26 @@ function Staff() {
                     timer: 500,
                 });
                 closeEditData();
-            });
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    // fetching stypes
     useEffect(() => {
-        fetchStaffTypes();
-    }, []);
+        dispatch(getStaffTypes());
+    }, [dispatch]);
 
     const closeEditData = () => {
         setEditData(false);
     };
     const openEditData = (type) => {
         setEditData(true);
-        setTypeEdit(type?.staffType);
-        setTypeId(type.id);
+        setTypeEdit(type?.type);
+        setTypeId(type?.id);
     };
+
+    const { staffTypes } = useSelector((state) => state.schoolStore);
 
     return (
         <div className='w-full'>
@@ -196,7 +184,7 @@ function Staff() {
                                             key={type.id}
                                         >
                                             <td className='text-xs p-3 text-gray5'>
-                                                {type.staffType}
+                                                {type.type}
                                             </td>
                                             <td className='text-xs p-3 text-gray5'>
                                                 <div className='flex'>

@@ -1,32 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import StaffForm from "./StaffForm";
-import Localbase from "localbase";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { getStaffMembers } from '../../store/schoolSheetSlices/schoolStore';
 
-let db = new Localbase("db");
-
-function StaffComp() {
+const StaffComp = () => {
+	const dispatch = useDispatch();
 	const [AllStaff, setAllStaff] = useState(true);
-	const [staffInfo, setStaffInfo] = useState([]);
-	// fetch staff info
-	const fetchStaffInfo = () => {
-		db.collection("staffInfo")
-			.get()
-			.then((staff) => {
-				const newData = staff;
-				setStaffInfo(newData);
-			});
-	};
+
+	const { staffMembers } = useSelector((state) => state.schoolStore);
 
 	useEffect(() => {
-		fetchStaffInfo();
-	}, []);
+		dispatch(getStaffMembers());
+	}, [dispatch]);
 
 	return (
 		<>
 			<div className="w-full h-[80vh]">
-				<StaffForm fetchStaffInfo={fetchStaffInfo} />
+				<StaffForm />
 
 				{AllStaff ? (
 					<table className="mt-10 w-[98%] table-auto">
@@ -48,7 +40,7 @@ function StaffComp() {
 							<th className="p-2 text-primary text-sm text-left">Action</th>
 						</thead>
 						<tbody>
-							{staffInfo.map((staff) => {
+							{staffMembers.map((staff) => {
 								return (
 									<tr
 										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
@@ -56,27 +48,27 @@ function StaffComp() {
 									>
 										<td className="flex">
 											<div className="rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
-												{staff.firstName[0]} {staff.lastName[0]}
+												{staff.first_name[0]} {staff.last_name[0]}
 											</div>
 											<div>
 												<p className="text-sm p-3 -mt-1 text-gray5">
-													{staff.firstName} {staff.middleName} {staff.lastName}
+													{staff.first_name} {staff.middle_name} {staff.last_name}
 												</p>
 											</div>
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{staff.dateOfBirth} -{" "}
+											{/* {staff.dateOfBirth} -{" "}
 											{Math.abs(
 												new Date().getFullYear() -
-													new Date(staff.dateOfBirth).getFullYear()
+												new Date(staff.dateOfBirth).getFullYear()
 											)}
-											yrs
+											yrs */}
 										</td>
 										<td className="text-xs p-3 text-gray5">
 											{staff.residence}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{staff.staffType.value}
+											{staff.staff_type.type}
 										</td>
 										<td className="text-xs p-3 text-gray5">
 											{staff.qualification}

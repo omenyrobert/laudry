@@ -1,5 +1,6 @@
 node_modules
 package-lock.json
+.env
 
 src/SchoolSheet/node_modules
 src/SchoolSheet/package-lock.json

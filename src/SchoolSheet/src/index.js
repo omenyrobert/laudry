@@ -15,7 +15,8 @@ import ErrorPage from "../src/errorPage";
 import Dashboard from "./views/Dashboard";
 import Login from "./views/Login";
 import Email from "./views/auth/Email";
-import PasswordResset from "./views/auth/PasswordResset";
+import Code from "./views/auth/Code";
+import PasswordReset from "./views/auth/PasswordReset";
 import Settings from "./views/settings/Settings";
 import ClassesStreams from "./views/settings/ClassesStreams";
 import SubjectsGrading from "./views/settings/SubjectsGrading";
@@ -50,12 +51,16 @@ const router = createBrowserRouter([
 		element: <Email />,
 	},
 	{
-		path: "/passwordResset",
-		element: <PasswordResset />,
+		path: "/passwordReset",
+		element: <PasswordReset />,
 	},
 	{
 		path: "/",
 		element: <Login />,
+	},
+	{
+		path: "/code",
+		element: <Code />,
 	},
 	{
 		path: "/",
@@ -194,7 +199,6 @@ root.render(
 	<Provider store={store}>
 		<RouterProvider router={router} />
 	</Provider>
-	// </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
