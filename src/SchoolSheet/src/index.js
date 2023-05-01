@@ -39,12 +39,18 @@ import Assessment from "./views/classes/Assessment";
 import ReportCards from "./views/classes/ReportCards";
 import ReportCardTemplate from "./components/classes/ReportCardTemplate";
 import Receipts from "./views/finance/Receipts";
-import TimeTable from "./views/classes/TimeTable";
-import Calendar from "./views/timeTable/Calendar";
-import Schedules from "./views/timeTable/Schedules";
-import TimeTableTemplate from "./views/timeTable/TimeTableTemplate";
 import StaffEditForm from "./components/hrm/StaffEditForm";
-
+import Exams from "./components/timeTable/Exams";
+import Lessons from "./components/timeTable/Lessons";
+import SchoolCalendar from "./components/timeTable/SchoolCalendar";
+import ScholarShip from "./views/scholarship/ScholarShip";
+import Bills from "./views/finance/Bills";
+import Equity from "./views/finance/Equity";
+import Accounts from "./views/finance/Accounts";
+import Liabilities from "./views/finance/Liabilities";
+import AddStudentForm from "./components/students/AddStudentForm";
+import EditStudentsForm from "./components/students/EditStudentsForm";
+import ShowStudentsForm from "./components/students/ShowStudentsForm";
 const router = createBrowserRouter([
 	{
 		path: "/email",
@@ -93,6 +99,10 @@ const router = createBrowserRouter([
 				element: <Fees />,
 			},
 			{
+				path: "/scholarShip",
+				element: <ScholarShip/>
+			},
+			{
 				path: "/students",
 				element: <Students />,
 			},
@@ -100,6 +110,21 @@ const router = createBrowserRouter([
 				path: "/groupsAndTypes",
 				element: <GroupsAndTypes />,
 			},
+
+            // students
+			{
+				path: "/addStudentForm",
+				element: <AddStudentForm/>
+			},
+			{
+				path: "/editStudentsForm",
+				element: <EditStudentsForm/>
+			},
+			{
+             path: "/showStudentsForm",
+			 element: <ShowStudentsForm/>
+			},
+
 
 			//classes
 			{
@@ -114,23 +139,19 @@ const router = createBrowserRouter([
 				path: "/reportCards",
 				element: <ReportCards />,
 			},
-			{
-				path: "/timeTable",
-				element: <TimeTable />,
-			},
 
 			// time table
 			{
 				path: "/calendar",
-				element: <Calendar />,
+				element: <SchoolCalendar />,
 			},
 			{
-				path: "/schedules",
-				element: <Schedules />,
+				path: "/lessons",
+				element: <Lessons />,
 			},
 			{
-				path: "/timeTableTemplate",
-				element: <TimeTableTemplate />,
+				path: "/exams",
+				element: <Exams />,
 			},
 
 			// finance routes
@@ -167,6 +188,28 @@ const router = createBrowserRouter([
 				path: "/receipts",
 				element: <Receipts />,
 			},
+			{
+				path: "/bills",
+				element: <Bills />,
+			},
+			,
+			{
+				path: "/liabilities",
+				element: <Liabilities />,
+			},
+			,
+			{
+				path: "/accounts",
+				element: <Accounts />,
+			},
+			,
+			{
+				path: "/equity",
+				element: <Equity />,
+			},
+
+
+
 
 			//  hrm routes
 

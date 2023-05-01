@@ -321,7 +321,7 @@ function StockComp() {
 						{/* edit popup start */}
 						{editData ? (
 							<div className="absolute shadow-2xl rounded w-[1000px] bg-white">
-								<div className="flex justify-between bg-primary text-white p-2 rounded-md">
+								<div className="flex justify-between text-primary bg-gray1 p-2 rounded-md">
 									<div>
 										<p>Edit stock</p>
 									</div>

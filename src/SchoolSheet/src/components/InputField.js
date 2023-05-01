@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 
+
 function InputField({
 	value,
-	props,
-	ref,
 	label,
 	name,
 	placeholder,
@@ -13,11 +12,12 @@ function InputField({
 }) {
 	const [required, setRequired] = useState(false);
 
-	const validate = (e) => {
-		if (e.target.value === "") {
-			setRequired(true);
-		}
-	};
+const validate = (e)=>{
+if(e.target.vaue === ""){
+	setRequired(true)
+}
+}
+
 	return (
 		<div className="my-5">
 			<label className="text-gray4">{label}</label>

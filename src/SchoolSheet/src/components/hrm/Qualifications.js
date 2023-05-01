@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import InputField from "../InputField";
+import { FaPen } from "react-icons/fa";
+import { Bs3SquareFill, BsFillPencilFill } from "react-icons/bs";
+import Button from "../Button";
 
 function Qualifications() {
 	const [Qualifications, setQualifications] = useState(false);
@@ -11,11 +15,11 @@ function Qualifications() {
 		setQualifications(false);
 	};
 
-	cons[(award, setAward)] = useState("");
-	cons[(from, setFrom)] = useState("");
-	cons[(to, setTo)] = useState("");
-	cons[(school, setSchool)] = useState("");
-	cons[(doc, setDoc)] = useState("");
+	const [award, setAward] = useState("");
+	const [from, setFrom] = useState("");
+	const [to, setTo] = useState("");
+	const [school, setSchool] = useState("");
+	const [doc, setDoc] = useState("");
 
 	return (
 		<>
@@ -30,8 +34,10 @@ function Qualifications() {
 					className="text-sm  flex text-primary cursor-pointer relative p-2 border border-primary rounded h-10 mt-5"
 				>
 					<BsFillPencilFill className="mr-2 mt-1" /> Qualifications
-					{Qualifications ? (
-						<div className="border absolute z-50 -mt-[200px] border-gray3 bg-white shadow h-[30px] rounded w-[700px] overflow-y-auto">
+					
+				</div>
+                {Qualifications ? (
+						<div className="border absolute z-50 -mt-[200px] border-gray3 bg-white shadow h-[400px] rounded w-[700px] overflow-y-auto">
 							<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
 								<div>
 									<p>Add Next Of Kin</p>
@@ -81,12 +87,12 @@ function Qualifications() {
 									/>
 
 									<InputField
-										type="text"
-										placeholder="Enter Document"
+										type="file"
+										
 										label="Document"
 										onChange={(e) => setDoc(e.target.value)}
 										value={doc}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 
 									<div className="mt-14">
@@ -96,25 +102,26 @@ function Qualifications() {
 							</div>
 						</div>
 					) : null}
-				</div>
 			</div>
 			<div className="flex border-b border-gray1">
-				<div className="p-2 w-1/4">Bachelors in Education</div>
-				<div className="p-2 w-1/4">2012-06-01 - 2013-06-09 1yrs</div>
-				<div className="p-2 w-1/4">Makeerere</div>
-				<div className="p-2 w-1/4">file</div>
+				<div className="p-2 w-1/4 text-sm text-gray5 truncate">
+					Bachelors in Education
+				</div>
+				<div className="p-2 w-1/4 text-sm text-gray5 truncate">
+					2012-06-01 - 2013-06-09 1yrs
+				</div>
+				<div className="p-2 w-1/4 text-sm text-gray5 truncate">Makeerere</div>
+				<div className="p-2 w-1/4 text-sm text-gray5 truncate">file</div>
 			</div>
-            <div className="flex border-b border-gray1">
-				<div className="p-2 w-1/4">Bachelors in Education</div>
-				<div className="p-2 w-1/4">2012-06-01 - 2013-06-09 1yrs</div>
-				<div className="p-2 w-1/4">Makeerere</div>
-				<div className="p-2 w-1/4">file</div>
-			</div>
-            <div className="flex border-b border-gray1">
-				<div className="p-2 w-1/4">Bachelors in Education</div>
-				<div className="p-2 w-1/4">2012-06-01 - 2013-06-09 1yrs</div>
-				<div className="p-2 w-1/4">Makeerere</div>
-				<div className="p-2 w-1/4">file</div>
+			<div className="flex border-b border-gray1">
+				<div className="p-2 w-1/4 text-sm text-gray5 truncate">
+					Bachelors in Education
+				</div>
+				<div className="p-2 w-1/4 text-sm text-gray5 truncate">
+					2012-06-01 - 2013-06-09 1yrs
+				</div>
+				<div className="p-2 w-1/4 text-sm text-gray5 truncate">Makeerere</div>
+				<div className="p-2 w-1/4 text-sm text-gray5 truncate">file</div>
 			</div>
 		</>
 	);

@@ -3,7 +3,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
-import Button2 from "../Button2";
+import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import { getStreams } from "../../store/schoolSheetSlices/schoolStore";
@@ -132,7 +132,7 @@ const StreamsComp = () => {
 					<div className="mt-8 mr-5">
 						<br />
 						<div onClick={postStream}>
-							<Button2 value={"Add Stream"} />
+							<Button value={"Add  Stream"} />
 						</div>
 					</div>
 				</div>

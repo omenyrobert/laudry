@@ -4,7 +4,6 @@ import Button from "../Button";
 import { BsPencilSquare } from "react-icons/bs";
 import { MdDeleteOutline } from "react-icons/md";
 import InputField from "../InputField";
-import Button2 from "../Button2";
 import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -150,7 +149,7 @@ function Sections() {
 					</div>
 					<div className="mt-5 ml-5">
 						<div onClick={postSections}>
-							<Button2 value={"Add Section"} />
+							<Button value={"Add Section"} />
 						</div>
 					</div>
 				</div>

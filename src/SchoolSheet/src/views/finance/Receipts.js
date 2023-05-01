@@ -9,6 +9,8 @@ import { v4 as uuid } from "uuid";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
+import { BsSearch } from "react-icons/bs";
+import ButtonSecondary from "../../components/ButtonSecondary";
 
 let db = new Localbase("db");
 
@@ -179,12 +181,36 @@ function Receipts() {
 			{/* enter receipt div */}
 
 			<div className="w-full h-[80vh]">
-				<div onClick={openshow}>
-					<Button2 value={"Register Receipt"} />
+				<div className="flex bg-white p-2">
+					<div className="w-10/12">
+						<div className="flex">
+							<div className="w-6/12 px-2">
+								<InputField
+									placeholder="Search for Income"
+									type="search"
+									icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+								/>
+							</div>
+							<div className="w-3/12 px-2">
+								<InputField placeholder="Filter By Type" />
+							</div>{" "}
+							<div className="w-2/12 px-2">
+								<InputField type="date" />
+							</div>
+							<div className="w-2/12">
+								<InputField type="date" />
+							</div>
+						</div>
+					</div>
+					<div className="w-2/12">
+						<div onClick={openshow} className="w-[200px] ml-5 mt-5">
+							<Button2 value={"Register Receipt"} />
+						</div>
+					</div>
 				</div>
 
 				{show ? (
-					<div className="absolute shadow-2xl bg-white border border-gray2 h-[65vh] overflow-y-auto rounded-md w-[700px]">
+					<div className="absolute float-right shadow-2xl bg-white border border-gray2 rounded-md w-[700px]">
 						<div className="flex justify-between bg-gray1 p-3">
 							<div>
 								<p className="text-primary font-medium">Enter Receipt</p>
@@ -215,9 +241,31 @@ function Receipts() {
 								/>
 							</div>
 						</div>
+						<div className="flex px-3 -mt-[30px]">
+							<div className="w-1/2 p-1">
+								<SelectComp
+									options={suppliersData}
+									placeholder="Select Invoice"
+									label="Invoice"
+									setSelectedOptionObj={(value) => {
+										setSupplierId(value.id);
+									}}
+								/>
+							</div>
+							<div className="w-1/2 p-1">
+								<SelectComp
+									options={suppliersData}
+									placeholder="Select Account"
+									label="Account"
+									setSelectedOptionObj={(value) => {
+										setSupplierId(value.id);
+									}}
+								/>
+							</div>
+						</div>
 
 						<div>
-							<div className="flex mx-2 -mt-5">
+							<div className="flex mx-2">
 								<div className="w-4/12 p-2">
 									<InputField
 										value={item}
@@ -242,14 +290,14 @@ function Receipts() {
 										placeholder="Enter UnitCost"
 									/>
 								</div>
-								<div className="w-2/12 p-2 rounded-md h-10 mt-16">
+								<div className="w-2/12 p-2 rounded-md h-10 mt-14">
 									<div onClick={addItems}>
 										{" "}
 										<Button value={"Add"} />
 									</div>{" "}
 								</div>
 							</div>
-							<div className="flex bg-gray1 mx-5">
+							<div className="flex bg-gray1 mx-5 mt-3">
 								<div className="p-2 w-1/4 text-sm">Item</div>
 								<div className="p-2 w-1/4 text-sm">Qty</div>
 								<div className="p-2 w-1/4 text-sm">UnitCost</div>
@@ -292,8 +340,8 @@ function Receipts() {
 								</div>
 							</div>
 						</div>
-						<div className="flex justify-between p-3">
-							<div></div>
+						<div className="flex justify-between p-3 bg-gray1 mt-4">
+							<div onClick={closeshow} ><ButtonSecondary value={"Close"}/></div>
 							<div onClick={postreceipt}>
 								<Button value={"Add receipt"} />
 							</div>
@@ -303,8 +351,8 @@ function Receipts() {
 
 				{view ? (
 					<>
-						<div className="bg-white absolute border border-gray2 shadow-2xl w-[700px] h-[60vh] overflow-y-auto">
-							<div className="bg-primary p-3 text-white flex justify-between">
+						<div className="bg-white absolute rounded border border-gray2 shadow-2xl w-[700px] h-[60vh] overflow-y-auto">
+							<div className="bg-gray1 p-3 text-primary font-medium flex justify-between">
 								<div>Receipt</div>
 								<div>
 									<p className="cursor-pointer" onClick={closeView}>
@@ -312,16 +360,16 @@ function Receipts() {
 									</p>
 								</div>
 							</div>
-							<div className="p-3 text-white flex">
-								<div className="w-1/3 p-2 text-gray5">
+							<div className="p-3 text-white">
+								<div className=" p-2 text-gray5">
 									<p>Status: {singlereceipt.status}</p>
 
 									<p>Date: {singlereceipt.date}</p>
 
 									{singlereceipt.supplierId}
 								</div>
-								<div className="w-2/3 p-2">
-									<div className="flex bg-gray1 text-black mx-5">
+								<div className="">
+									<div className="flex bg-gray1 text-black mx-1">
 										<div className="p-2 w-1/4">Item</div>
 										<div className="p-2 w-1/4">Qty</div>
 										<div className="p-2 w-1/4">UnitCost</div>
@@ -360,7 +408,8 @@ function Receipts() {
 						</div>
 					</>
 				) : null}
-				<table className="mt-10 w-full table-auto">
+				<h1 className="text-primary mt-5 font-semibold text-xl">Receipts</h1>
+				<table className="mt-2 w-full table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Receipt No</th>
 						<th className="p-2 text-primary text-sm text-left">Date</th>

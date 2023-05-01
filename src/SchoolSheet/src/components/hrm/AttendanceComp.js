@@ -11,6 +11,7 @@ import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
+import Button2 from "../Button2";
 
 let db = new Localbase("db");
 
@@ -126,7 +127,7 @@ function AttedanceComp() {
 		<>
 			{staffList ? (
 				<div className="w-[600px] border border-gray1 absolute bg-white h-[80vh] overflow-y-auto shadow-2xl  z-50">
-					<div className="bg-primary p-3 text-white rounded flex justify-between">
+					<div className="bg-gray1 p-3 text-primary font-semibold rounded flex justify-between">
 						<div>Staff Members</div>
 						<div>
 							<p className="cursor-pointer" onClick={closeStaffList}>
@@ -207,16 +208,7 @@ function AttedanceComp() {
 				</div>
 			) : null}
 
-			<div className="flex justify-between float-right">
-				<div onClick={openStaffList}>
-					<ButtonSecondary value={"Staff Members"} />
-				</div>
-				<div className="ml-20">
-					<p className="text-secondary text-xl mt-2  font-semibold">
-						Staff Attendance
-					</p>
-				</div>
-			</div>
+		
 
 			<div className="flex justify-between">
 				<div className="flex">
@@ -229,7 +221,7 @@ function AttedanceComp() {
 				</div>
 				<div className="w-[300px] ml-2 mt-7">
 					<InputField
-						placeholder="Search for Income"
+						placeholder="Search for Student"
 						type="search"
 						icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
 					/>
@@ -249,6 +241,9 @@ function AttedanceComp() {
 							Next <FaChevronRight className="w-4 h-4 mt-[3px] ml-1" />
 						</div>
 					</div>
+				</div>
+				<div onClick={openStaffList} className="mt-14">
+					<Button2 value={"Staff Members"} />
 				</div>
 			</div>
 

@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import InputField from "../InputField";
 import Button2 from "../Button2";
+import Button from "../Button";
 import { FaPen, FaPhone, FaRegImage, FaRegTrashAlt } from "react-icons/fa";
 import { MdOutlineAlternateEmail, MdLocationPin } from "react-icons/md";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
+import ButtonSecondary from "../ButtonSecondary";
 
 let db = new Localbase("db");
 
@@ -19,7 +21,7 @@ function EditSchoolInfo() {
 	const [description, setDescription] = useState("");
 	const [sites, setSites] = useState("");
 	const [show, setShow] = useState(false);
-	const [aid, setAid] = useState("")
+	const [aid, setAid] = useState("");
 
 	const updateInfo = () => {
 		db.collection("aboutInfoTbl")
@@ -66,7 +68,6 @@ function EditSchoolInfo() {
 		fetchAboutInfo();
 	}, []);
 
-
 	const openShow = () => {
 		setShow(true);
 	};
@@ -76,13 +77,13 @@ function EditSchoolInfo() {
 	return (
 		<>
 			<div className="p-5">
-				<div onClick={openShow}>
+				<div onClick={openShow} className="w-52">
 					<Button2 value={"Edit School Info"} />
 				</div>
 
 				{show ? (
-					<div className="bg-white border border-gray2 absolute shadow-2xl w-[800px] h-[60vh] overflow-y-auto">
-						<div className="bg-primary flex justify-between p-2 text-white">
+					<div className="bg-white border border-gray2 absolute shadow-2xl w-[800px] rounded-md ">
+						<div className="text-primary flex justify-between p-3 bg-gray1 font-semibold">
 							<div>Update School Info</div>
 							<div>
 								<p onClick={closeShow} className="cursor-pointer">
@@ -90,7 +91,7 @@ function EditSchoolInfo() {
 								</p>
 							</div>
 						</div>
-						<div className="p-2 flex">
+						<div className="p-3 flex h-[45vh] overflow-y-auto">
 							<div className="w-1/2">
 								<InputField
 									type="text"
@@ -159,9 +160,15 @@ function EditSchoolInfo() {
 									value={sites}
 									icon={<MdLocationPin className="w-3 -ml-7 mt-3" />}
 								/>
-
+							</div>
+						</div>
+						<div className="flex justify-between p-3 bg-gray1">
+							<div  onClick={closeShow}>
+								<ButtonSecondary value={"Close"} />
+							</div>
+							<div>
 								<div onClick={updateInfo}>
-									<Button2 value={"Update"} />
+									<Button value={"Update"} />
 								</div>
 							</div>
 						</div>

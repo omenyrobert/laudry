@@ -9,6 +9,7 @@ import { v4 as uuid } from "uuid";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
+import ButtonSecondary from "../ButtonSecondary";
 
 let db = new Localbase("db");
 
@@ -176,12 +177,12 @@ function InvoicesList() {
 			{/* enter invoice div */}
 
 			<div className="w-full h-[80vh]">
-				<div onClick={openshow}>
+				<div onClick={openshow} className="w-[200px]">
 					<Button2 value={"Register Invoice"} />
 				</div>
 
 				{show ? (
-					<div className="absolute shadow-2xl bg-white border border-gray2 h-[65vh] overflow-y-auto rounded-md w-[700px]">
+					<div className="absolute shadow-2xl bg-white border border-gray2 rounded-md w-[700px]">
 						<div className="flex justify-between bg-gray1 p-3">
 							<div>
 								<p className="text-primary font-medium">Enter Invoice</p>
@@ -193,15 +194,25 @@ function InvoicesList() {
 							</div>
 						</div>
 						<div className="flex p-3 -mt-8">
-							<div className="w-1/2 p-1">
+							<div className="w-2/3 p-1 flex">
+								<div className="w-1/2">
 								<InputField
 									type="date"
 									value={date}
 									onChange={(e) => setDate(e.target.value)}
 									label="Date"
 								/>
+								</div>
+								<div className="w-1/2 ml-2">
+								<InputField
+									type="date"
+									value={date}
+									onChange={(e) => setDate(e.target.value)}
+									label="Due Date"
+								/>
+								</div>
 							</div>
-							<div className="w-1/2 p-1">
+							<div className="w-1/3 p-1">
 								<SelectComp
 									options={suppliersData}
 									placeholder="Select Supplier"
@@ -289,8 +300,10 @@ function InvoicesList() {
 								</div>
 							</div>
 						</div>
-						<div className="flex justify-between p-3">
-							<div></div>
+						<div className="flex justify-between p-3 mt-5 bg-gray1">
+							<div onClick={closeshow}>
+								<ButtonSecondary value={"Close"}/>
+							</div>
 							<div onClick={postInvoice}>
 								<Button value={"Add Invoice"} />
 							</div>

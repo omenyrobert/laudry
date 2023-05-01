@@ -5,17 +5,26 @@ import { BsPencilSquare } from "react-icons/bs";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
 import Button from "../Button";
+import Button2 from "../Button2";
 import ButtonSecondary from "../ButtonSecondary";
 import SelectComp from "../SelectComp";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
+import { BsSearch } from "react-icons/bs";
 
 let db = new Localbase("db");
 
 function ExpensesComp() {
 	// post expense Type
+	const [add, setAdd] = useState(false);
+	const openAdd = () => {
+		setAdd(true);
+	};
+	const closeAdd = () => {
+		setAdd(false);
+	};
 	const [expenseTypeId, setExpenseTypeId] = useState("");
 	const [expense, setExpense] = useState("");
 	const [amount, setAmount] = useState("");
@@ -60,8 +69,8 @@ function ExpensesComp() {
 	// fetch expense typess
 	const [expenseTypesData, setExpenseTypesData] = useState([]);
 	const fetchExpenseTypes = () => {
-		
-		return db.collection("expenseTypesTbl")
+		return db
+			.collection("expenseTypesTbl")
 			.get()
 			.then((expenseTypes) => {
 				expenseTypes.forEach((element) => {
@@ -84,7 +93,6 @@ function ExpensesComp() {
 		db.collection("expensesTbl")
 			.get()
 			.then((expenses) => {
-
 				const newData = expenses.map((s) => {
 					const expenseTypesObj = expenseTypesData.find((c) => {
 						console.log("idd", c.value.id, s.expenseTypeId);
@@ -103,7 +111,10 @@ function ExpensesComp() {
 					};
 				});
 				setExpensesData(newData);
-				let total = expenses.reduce((acc, item) => acc + parseInt(item.amount), 0);
+				let total = expenses.reduce(
+					(acc, item) => acc + parseInt(item.amount),
+					0
+				);
 				setexpenseTotal(total);
 				// console.log("expenses data", newData);
 			});
@@ -200,81 +211,143 @@ function ExpensesComp() {
 
 	return (
 		<>
-			<h5 className="text-lg font-medium">Expenses</h5>
-			<div className="w-full h-[80vh]">
-				<div className="bg-white p-3 shadow-lg rounded-md mr-2">
-					<div className="flex justify-between">
-						<div className="w-1/4 p-1">
+			<div className="flex bg-white">
+				<div className="w-10/12 ">
+					<div className="flex">
+						<div className="w-6/12 px-2">
 							<InputField
-								type="date"
-								label="Date"
-								value={date}
-								onChange={(e) => setDate(e.target.value)}
+								placeholder="Search for Income"
+								type="search"
+								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
 							/>
 						</div>
-						<div className="w-1/4 p-1">
-							<InputField
-								type="text"
-								placeholder="Enter expense"
-								label="Expense"
-								value={expense}
-								onChange={(e) => setExpense(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
-							/>
+						<div className="w-3/12 px-2">
+							<InputField placeholder="Filter By Type" />
+						</div>{" "}
+						<div className="w-2/12 px-2">
+							<InputField type="date" />
 						</div>
-						<div className="w-1/4 p-1">
-							<InputField
-								type="number"
-								placeholder="Enter Amounnt"
-								label="Amount"
-								value={amount}
-								onChange={(e) => setAmount(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
-							/>
+						<div className="w-2/12">
+							<InputField type="date" />
 						</div>
-						<div className="w-1/4 p-1">
-							<SelectComp
-								options={expenseTypesData}
-								placeholder="Select expense Type"
-								label="Expense Type"
-								setSelectedOptionObj={(value) => {
-									setExpenseTypeId(value.id);
-								}}
-							/>
-						</div>
-					</div>
-					<div className="flex justify-between">
-						<div className="w-1/4 p-1">
-							<InputField
-								type="text"
-								placeholder="Enter Received By "
-								label="Received By"
-								value={to}
-								onChange={(e) => setTo(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
-							/>
-						</div>
-						<div className="w-1/4">
-							<InputField
-								type="text"
-								placeholder="Enter Contacts"
-								label="Expense Contacts"
-								value={contacts}
-								onChange={(e) => setContacts(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
-							/>
-						</div>
-						<div className="mt-8 mr-5 w-[150px]">
-							<br />
-							<div onClick={postExpense}>
-								<Button value={"Add Expense"} />
-							</div>
-						</div>
-						<div className="w-1/4"></div>
 					</div>
 				</div>
-				<hr className="text-primary" />
-				<table className="mt-10 w-[98%] table-auto">
+				<div className="w-2/12 px-3 mt-4" onClick={openAdd}>
+					<Button2 value={"Add Expense"} />
+				</div>
+			</div>
+			<div className="w-full h-[80vh]">
+				{add ? (
+					<div className="bg-white w-[1000px] rounded-md mr-2 absolute border border-gray3 shadow-2xl">
+						<div className="flex bg-gray1 justify-between p-3 text-primary font-semibold">
+							<div>
+								<p>Add Expense</p>
+							</div>
+							<div>
+								<p className="cursor-pointer" onClick={closeAdd}>
+									X
+								</p>
+							</div>
+						</div>
+						<div className="flex justify-between mx-3">
+							<div className="w-1/3 p-1">
+								<InputField
+									type="date"
+									label="Date"
+									value={date}
+									onChange={(e) => setDate(e.target.value)}
+								/>
+							</div>
+							<div className="w-1/3 p-1">
+								<InputField
+									type="text"
+									placeholder="Enter expense"
+									label="Expense"
+									value={expense}
+									onChange={(e) => setExpense(e.target.value)}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+							<div className="w-1/3 p-1">
+								<InputField
+									type="number"
+									placeholder="Enter Amounnt"
+									label="Amount"
+									value={amount}
+									onChange={(e) => setAmount(e.target.value)}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+						</div>
+						<div className="flex justify-between mx-3">
+							<div className="w-1/3 p-1">
+								<SelectComp
+									options={expenseTypesData}
+									placeholder="Select expense Type"
+									label="Expense Type"
+									setSelectedOptionObj={(value) => {
+										setExpenseTypeId(value.id);
+									}}
+								/>
+							</div>
+							<div className="w-1/3 p-1">
+								<SelectComp
+									options={expenseTypesData}
+									placeholder="Select Account"
+									label="Account"
+									setSelectedOptionObj={(value) => {
+										setExpenseTypeId(value.id);
+									}}
+								/>
+							</div>
+							<div className="w-1/3 p-1">
+								<InputField
+									type="text"
+									placeholder="Enter Received By "
+									label="Received By"
+									value={to}
+									onChange={(e) => setTo(e.target.value)}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+						</div>
+						<div className="flex justify-between mx-3">
+							<div className="w-1/3 p-1">
+								<InputField
+									type="text"
+									placeholder="Enter Contacts"
+									label="Expense Contacts"
+									value={contacts}
+									onChange={(e) => setContacts(e.target.value)}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+							<div className="w-1/3 p-1">
+								<InputField
+									type="text"
+									placeholder="Enter Description"
+									label=" Description"
+									value={contacts}
+									onChange={(e) => setContacts(e.target.value)}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+							<div className="w-1/3 p-1 mt-14"></div>
+						</div>
+						<div className="flex justify-between bg-gray1  p-3 ounded">
+							<div onClick={closeAdd}>
+								<ButtonSecondary value={"Close"} />
+							</div>
+							<div>
+								<div onClick={postExpense}>
+									<Button value={"Add Expense"} />
+								</div>
+							</div>
+						</div>
+					</div>
+				) : null}
+
+				<table className="mt-5 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
 						<th className="p-2 text-primary text-sm text-left">expense</th>
@@ -288,7 +361,7 @@ function ExpensesComp() {
 						{/* edit popup start */}
 						{editData ? (
 							<div className="absolute shadow-2xl rounded w-[1000px] bg-white">
-								<div className="flex justify-between bg-primary text-white p-2 rounded-md">
+								<div className="flex justify-between font-semibold text-primary bg-gray1 p-2 rounded-md">
 									<div>
 										<p>Edit expense</p>
 									</div>
@@ -298,8 +371,8 @@ function ExpensesComp() {
 										</p>
 									</div>
 								</div>
-								<div className="flex px-5">
-									<div className="w-1/4 p-1">
+								<div className="flex justify-between mx-3">
+									<div className="w-1/3 p-1">
 										<InputField
 											type="date"
 											label="Date"
@@ -307,17 +380,17 @@ function ExpensesComp() {
 											onChange={(e) => setDateEdit(e.target.value)}
 										/>
 									</div>
-									<div className="w-1/4 p-1">
+									<div className="w-1/3 p-1">
 										<InputField
 											type="text"
-											placeholder="Enter Expense"
-											label="expense"
+											placeholder="Enter expense"
+											label="Expense"
 											value={expenseEdit}
 											onChange={(e) => setExpenseEdit(e.target.value)}
 											icon={<FaPen className="w-3 -ml-7 mt-3" />}
 										/>
 									</div>
-									<div className="w-1/4 p-1">
+									<div className="w-1/3 p-1">
 										<InputField
 											type="number"
 											placeholder="Enter Amounnt"
@@ -327,44 +400,71 @@ function ExpensesComp() {
 											icon={<FaPen className="w-3 -ml-7 mt-3" />}
 										/>
 									</div>
-									<div className="w-1/4 p-1">
+								</div>
+								<div className="flex justify-between mx-3">
+									<div className="w-1/3 p-1">
 										<SelectComp
 											options={expenseTypesData}
-											placeholder="Select Expense Type"
-											label="expense Type"
+											placeholder="Select expense Type"
+											label="Expense Type"
 											setSelectedOptionObj={(value) => {
-												setExpenseTypeIdEdit(value.id);
+												setExpenseTypeId(value.id);
 											}}
 										/>
 									</div>
-								</div>
-								<div className="flex px-5">
-									<div className="w-1/4 p-1">
+									<div className="w-1/3 p-1">
+										<SelectComp
+											options={expenseTypesData}
+											placeholder="Select Account"
+											label="Account"
+											setSelectedOptionObj={(value) => {
+												setExpenseTypeId(value.id);
+											}}
+										/>
+									</div>
+									<div className="w-1/3 p-1">
 										<InputField
 											type="text"
-											placeholder="Enter Received By"
+											placeholder="Enter Received By "
 											label="Received By"
 											value={toEdit}
 											onChange={(e) => setToEdit(e.target.value)}
 											icon={<FaPen className="w-3 -ml-7 mt-3" />}
 										/>
 									</div>
-									<div className="w-1/4 p-1">
+								</div>
+								<div className="flex justify-between mx-3">
+									<div className="w-1/3 p-1">
 										<InputField
 											type="text"
 											placeholder="Enter Contacts"
-											label="expense Contacts"
+											label="Expense Contacts"
 											value={contactsEdit}
 											onChange={(e) => setContactsEdit(e.target.value)}
 											icon={<FaPen className="w-3 -ml-7 mt-3" />}
 										/>
 									</div>
-									<div className="w-1/4 ml-5">
-										<div onClick={updateExpense} className="mt-14">
-											<ButtonSecondary value={"Update"} />
+									<div className="w-1/3 p-1">
+										<InputField
+											type="text"
+											placeholder="Enter Description"
+											label=" Description"
+											value={contactsEdit}
+											onChange={(e) => setContactsEdit(e.target.value)}
+											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										/>
+									</div>
+									<div className="w-1/3 p-1 mt-14"></div>
+								</div>
+								<div className="flex justify-between font-semibold text-primary bg-gray1 p-2 rounded-md">
+									<div onClick={closeEditData}>
+										<ButtonSecondary value={"Close"} />
+									</div>
+									<div>
+										<div onClick={updateExpense}>
+											<Button value={"Update Expense"} />
 										</div>
 									</div>
-									<div className="w-1/4"></div>
 								</div>
 							</div>
 						) : null}
@@ -380,9 +480,11 @@ function ExpensesComp() {
 									<td className="text-xs p-3 text-gray5">
 										{expenseItem.expense}
 									</td>
-									<td className="text-xs p-3 text-gray5">{expenseItem?.expenseTypesObj?.value?.expenseType}</td>
 									<td className="text-xs p-3 text-gray5">
-										{ Number(expenseItem.amount).toLocaleString()}
+										{expenseItem?.expenseTypesObj?.value?.expenseType}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{Number(expenseItem.amount).toLocaleString()}
 									</td>
 									<td className="text-xs p-3 text-gray5">{expenseItem.to}</td>
 									<td className="text-xs p-3 text-gray5">
@@ -401,7 +503,7 @@ function ExpensesComp() {
 								</tr>
 							);
 						})}
-							<tr className="bg-white p-4 text-lg font-semibold">
+						<tr className="bg-white p-4 text-lg font-semibold">
 							<td colSpan="3">Total</td>
 							<td>{Number(expenseTotal).toLocaleString()}</td>
 							<td></td>

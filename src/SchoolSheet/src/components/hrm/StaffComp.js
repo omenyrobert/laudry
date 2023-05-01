@@ -43,10 +43,10 @@ const StaffComp = () => {
 							{staffMembers.map((staff) => {
 								return (
 									<tr
-										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+										className="shadow-sm border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"
 										key={staff.id}
 									>
-										<td className="flex">
+										<td className="flex pl-2">
 											<div className="rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
 												{staff.first_name[0]} {staff.last_name[0]}
 											</div>
