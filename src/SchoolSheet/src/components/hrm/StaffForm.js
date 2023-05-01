@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useSelector, useDispatch } from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import Button from "../Button";
 import Button2 from "../Button2";
@@ -7,8 +7,12 @@ import { FaPen } from "react-icons/fa";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { BsSearch } from "react-icons/bs";
-import ButtonSecondary from "../ButtonSecondary";
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+	getStaffTypes,
+	getStaffMembers,
+} from "../../store/schoolSheetSlices/schoolStore";
+import axiosInstance from "../../axios-instance";
 
 const StaffForm = (props) => {
 	const dispatch = useDispatch();
@@ -27,7 +31,17 @@ const StaffForm = (props) => {
 	const typeOptions = [];
 	const { staffTypes } = useSelector((state) => state.schoolStore);
 
-	// fetching stypes
+	staffTypes.forEach((type) => {
+		let newOption = {};
+		newOption.label = type.type;
+		newOption.value = type.id;
+		typeOptions.push(newOption);
+	});
+
+	const handleStaffTypeChange = (selected) => {
+		setSelectedStaffTypeOption(selected);
+	};
+
 	useEffect(() => {
 		dispatch(getStaffTypes());
 	}, [dispatch]);
@@ -45,47 +59,40 @@ const StaffForm = (props) => {
 	};
 
 	// post staff info
-	const postStaffInfo = (e) => {
-		e.preventDefault();
-		let stId = uuid();
-		let data = {
-			id: stId,
-			staffType: staffTypes,
-			firstName: formData.firstName,
-			middleName: formData.middleName,
-			lastName: formData.lastName,
-			email: formData.email,
-		};
-		if (formData) {
-			db.collection("staffInfo")
-				.add(data)
-				.then((response) => {
-					console.log("staffInfo", response);
-					setFormData("");
-					fetchStaffInfo();
-					// show alert
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-					closeStaffForm();
-				})
-				.catch(console.error());
+	const postStaffInfo = async (e) => {
+		try {
+			e.preventDefault();
+			let postData = {
+				staffType: selectedStaffTypeOption.value,
+				firstName: formData.firstName,
+				middleName: formData.middleName,
+				lastName: formData.lastName,
+				email: formData.email,
+			};
+			const response = await axiosInstance.post("/staff", postData);
+			const { data } = response;
+			const { status } = data;
+			if (status) {
+				setFormData("");
+				dispatch(getStaffMembers());
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+				closeStaffForm();
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
 	return (
 		<>
-			<div className="flex bg-white p-2">
+			<div className="flex bg-white p-2 mr-2">
 				<div className="w-10/12">
 					<div className="flex">
-						<div className="w-2/12">
-							<h5 className="text-xl font-medium mt-5 ml-5 text-primary">
-								Staff Members
-							</h5>
-						</div>
 						<div className="w-6/12 px-2">
 							<InputField
 								placeholder="Search for Income"
@@ -98,7 +105,7 @@ const StaffForm = (props) => {
 						</div>{" "}
 					</div>
 				</div>
-				<div className="w-1/12 mt-5">
+				<div className="w-[210px] mt-5">
 					<div className="w-[210px]" onClick={openStaffForm}>
 						<Button2 value={"Add Staff Member"} />
 					</div>
@@ -169,14 +176,7 @@ const StaffForm = (props) => {
 								onChange={onChange}
 								icon={<FaPen className="w-3 -ml-7 mt-3" />}
 							/>
-						</div>
-					</div>
-					<div className="p-3 bg-gray1 flex justify-between">
-						<div onClick={closeStaffForm}>
-							<ButtonSecondary value={"Close"} />
-						</div>
-						<div>
-							<div onClick={postStaffInfo}>
+							<div className="mt-14" onClick={postStaffInfo}>
 								<Button value={"Add Staff"} />
 							</div>
 						</div>
@@ -185,6 +185,6 @@ const StaffForm = (props) => {
 			) : null}
 		</>
 	);
-}
+};
 
 export default StaffForm;

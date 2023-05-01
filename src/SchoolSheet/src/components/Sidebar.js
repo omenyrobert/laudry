@@ -42,6 +42,9 @@ import TimeTableLinks from "./sidebarFolder/TimeTableLinks";
 import MarketingLinks from "./sidebarFolder/MarketingLinks";
 import DashboardLinks from "./sidebarFolder/DashboardLinks";
 import ScholarshipsLinks from "./sidebarFolder/ScholarshipsLinks";
+import ActivitiesLinks from "./sidebarFolder/ActivitiesLinks";
+import ElearningLinks from "./sidebarFolder/ElearningLinks";
+import DisciplineLinks from "./sidebarFolder/DisciplineLinks";
 
 function Sidebar() {
 	const location = useLocation();
@@ -172,8 +175,8 @@ function Sidebar() {
 				<MarketingLinks />
 
 				{/* Scholarships */}
-				
-				<ScholarshipsLinks/>
+
+				<ScholarshipsLinks />
 
 				{/* Library */}
 
@@ -251,39 +254,7 @@ function Sidebar() {
 
 				{/* Activities */}
 
-				<div
-					className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
-					onClick={toggleLink11}
-				>
-					<div className="w-4/5 flex">
-						<TbTournament className="w-4 h-4 mt-[2px] linkicon" />
-						<p className="text-sm font-light linktext ml-6">Activities</p>
-					</div>
-					<div className="w-1/5">
-						{link11 ? (
-							<TbChevronDown className="w-5" />
-						) : (
-							<MdNavigateNext className="w-5" />
-						)}
-					</div>
-				</div>
-				{link11 ? (
-					<div className="ml-4">
-						<div className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer">
-							<div className="w-4/5 flex">
-								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
-								<p className="text-sm font-light linktext ml-5">Scholarships</p>
-							</div>
-							<div className="w-1/5"></div>
-						</div>
-						<div className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer">
-							<div className="flex">
-								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
-								<p className="text-sm font-light linktext ml-5">Students</p>
-							</div>
-						</div>
-					</div>
-				) : null}
+				<ActivitiesLinks />
 
 				{/* E-learning */}
 
@@ -299,66 +270,14 @@ function Sidebar() {
 				</div>
 
 				{/* voting */}
-				<div
-					className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
-					onClick={toggleLink12}
-				>
-					<div className="w-4/5 flex">
-						<MdHowToVote className="w-4 h-4 mt-[2px] linkicon" />
-						<p className="text-sm font-light linktext ml-6">Voting</p>
-					</div>
-					<div className="w-1/5"></div>
-				</div>
+				<ElearningLinks />
 
-				{/* Transport */}
-
-				<div
-					className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
-					onClick={toggleLink12}
-				>
-					<div className="w-4/5 flex">
-						<TbBus className="w-4 h-4 mt-[2px] linkicon" />
-						<p className="text-sm font-light linktext ml-6">Transport</p>
-					</div>
-					<div className="w-1/5">
-						{link12 ? (
-							<TbChevronDown className="w-5" />
-						) : (
-							<MdNavigateNext className="w-5" />
-						)}
-					</div>
-				</div>
-				{link12 ? (
-					<div className="ml-4">
-						<div className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer">
-							<div className="w-4/5 flex">
-								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
-								<p className="text-sm font-light linktext ml-5">Scholarships</p>
-							</div>
-							<div className="w-1/5"></div>
-						</div>
-						<div className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer">
-							<div className="flex">
-								<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
-								<p className="text-sm font-light linktext ml-5">Students</p>
-							</div>
-						</div>
-					</div>
-				) : null}
+				
 
 				{/* Discipline */}
-				<div
-					className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
-					onClick={toggleLink12}
-				>
-					<div className="w-4/5 flex">
-						<FaPrayingHands className="w-4 h-4 mt-[2px] linkicon" />
-						<p className="text-sm font-light linktext ml-6">Discipline</p>
-					</div>
-					<div className="w-1/5"></div>
-				</div>
+				<DisciplineLinks/>
 
-				{/* Transport */}
+				
 			</div>
 			<div className="p-4 m-4 bg-secondary rounded-md h-48">
 				<div className="flex justify-center items-center">

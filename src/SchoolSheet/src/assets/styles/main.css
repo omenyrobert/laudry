@@ -15,8 +15,17 @@
     height: 40px;
 /*     background-color: #bbb; */
     border-radius: 100%;
-    border: 3px solid #0d6dfd3d;
-    border-top: 3px solid #0d6dfd;
+    border: 5px solid #0d6dfd3d;
+    border-top: 5px solid #193296;
+    animation: animate 1s linear infinite;
+}
+.loader2{
+    width: 30px;
+    height: 30px;
+/*     background-color: #bbb; */
+    border-radius: 100%;
+    border: 3px solid #f5f5f5;
+    border-top: 3px solid #0d6dfda1;
     animation: animate 1s linear infinite;
 }
 @keyframes animate{
