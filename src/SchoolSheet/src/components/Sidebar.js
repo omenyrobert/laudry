@@ -257,20 +257,11 @@ function Sidebar() {
 				<ActivitiesLinks />
 
 				{/* E-learning */}
-
-				<div
-					className="flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
-					onClick={toggleLink12}
-				>
-					<div className="w-4/5 flex">
-						<MdVideoCameraFront className="w-4 h-4 mt-[2px] linkicon" />
-						<p className="text-sm font-light linktext ml-6">E-Learning</p>
-					</div>
-					<div className="w-1/5"></div>
-				</div>
-
-				{/* voting */}
 				<ElearningLinks />
+
+				
+				{/* voting */}
+			
 
 				
 

@@ -150,7 +150,7 @@ function IncomesTypeComp() {
 						
 					
 				</div>
-				<hr className="text-primary" />
+				
 				<table className="mt-10 w-[95%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Type</th>

@@ -142,7 +142,7 @@ function StockTypes() {
 						<Button value={"Save"} />
 					</div>
 				</div>
-				<hr className="text-primary" />
+				
 				<table className="mt-10 table-auto w-full">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Type</th>
