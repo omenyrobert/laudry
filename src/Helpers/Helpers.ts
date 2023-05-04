@@ -1,5 +1,7 @@
 import { hash, compare } from "bcrypt";
 import { sign, verify, decode } from "jsonwebtoken";
+import { createTransport } from "nodemailer";
+
 export const customPayloadResponse = (
   status: boolean,
   payload: any
@@ -75,4 +77,18 @@ export const decodeToken = (token: any) => {
 export const setTokenExpiryToZero = (decodedToken: any) => {
   const modifiedPayload = { ...decodedToken, exp: 0 };
   return modifiedPayload;
+};
+
+export const mailTransporter = (email: any, password: any) => {
+  const transporter = createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: false,
+    service: "gmail",
+    auth: {
+      user: email,
+      pass: password,
+    },
+  });
+  return transporter;
 };
