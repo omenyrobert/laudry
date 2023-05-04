@@ -90,7 +90,7 @@ function OrdersComp() {
 	return (
 		<>
 			<h5 className="text-lg font-medium">Create Order</h5>
-			<hr className="text-primary" />
+			
 			<div className="w-full h-[80vh]">
 				<div className="flex">
 					<div className="w-1/3 px-2">

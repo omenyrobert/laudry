@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Select from "react-select";
 import Button from "../Button";
 import InputField from "../InputField";
@@ -61,12 +62,12 @@ function StaffEditForm(props) {
 						</p>
 					</div>
 					<div>
-						<p
-							onClick={closeEditData}
+						<Link
+							to="/staff"
 							className="font-semibold text-primary cursor-pointer"
 						>
 							Back
-						</p>
+						</Link>
 					</div>
 				</div>
 				<div className="flex p-3">
@@ -97,7 +98,6 @@ function StaffEditForm(props) {
 						<hr className="text-gray2 my-10" />
 						<Qualifications />
 					</div>
-
 				</div>
 				<hr className="text-gray2" />
 

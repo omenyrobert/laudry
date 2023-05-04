@@ -7,10 +7,12 @@ import { FaPen } from "react-icons/fa";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { BsSearch } from "react-icons/bs";
-import { useDispatch, useSelector } from 'react-redux';
-import { getStaffTypes, getStaffMembers } from '../../store/schoolSheetSlices/schoolStore';
-import axiosInstance from '../../axios-instance';
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+	getStaffTypes,
+	getStaffMembers,
+} from "../../store/schoolSheetSlices/schoolStore";
+import axiosInstance from "../../axios-instance";
 
 const StaffForm = (props) => {
 	const dispatch = useDispatch();
@@ -65,13 +67,13 @@ const StaffForm = (props) => {
 				firstName: formData.firstName,
 				middleName: formData.middleName,
 				lastName: formData.lastName,
-				email: formData.email
+				email: formData.email,
 			};
-			const response = await axiosInstance.post('/staff', postData);
+			const response = await axiosInstance.post("/staff", postData);
 			const { data } = response;
 			const { status } = data;
 			if (status) {
-				setFormData('');
+				setFormData("");
 				dispatch(getStaffMembers());
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
@@ -88,14 +90,9 @@ const StaffForm = (props) => {
 
 	return (
 		<>
-			<div className="flex bg-white p-2">
+			<div className="flex bg-white p-2 mr-2">
 				<div className="w-10/12">
 					<div className="flex">
-						<div className="w-2/12">
-							<h5 className="text-xl font-medium mt-5 ml-5 text-primary">
-								Staff Members
-							</h5>
-						</div>
 						<div className="w-6/12 px-2">
 							<InputField
 								placeholder="Search for Income"
@@ -108,7 +105,7 @@ const StaffForm = (props) => {
 						</div>{" "}
 					</div>
 				</div>
-				<div className="w-1/12 mt-5">
+				<div className="w-[210px] mt-5">
 					<div className="w-[210px]" onClick={openStaffForm}>
 						<Button2 value={"Add Staff Member"} />
 					</div>
@@ -188,6 +185,6 @@ const StaffForm = (props) => {
 			) : null}
 		</>
 	);
-}
+};
 
 export default StaffForm;

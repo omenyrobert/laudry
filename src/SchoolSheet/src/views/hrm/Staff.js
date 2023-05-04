@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../../assets/styles/main.css';
 import InputField from '../../components/InputField';
-import Button2 from '../../components/Button2';
+import Button from '../../components/Button';
 import ButtonSecondary from '../../components/ButtonSecondary';
 import StaffComp from '../../components/hrm/StaffComp';
 import { MdDeleteOutline } from 'react-icons/md';
@@ -127,7 +127,7 @@ const Staff = () => {
                             onChange={(e) => setType(e.target.value)}
                         />
                         <div onClick={postStaffType}>
-                            <Button2 value={'Add '} />
+                            <Button value={'Add '} />
                         </div>
 
                         <table className='mt-10 w-[95%] table-auto'>

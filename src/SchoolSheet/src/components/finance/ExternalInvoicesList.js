@@ -39,7 +39,7 @@ function ExternalInvoicesList() {
 		<>
 			<h5 className="text-lg font-medium">External Invoices</h5>
 			<div className="w-full h-[80vh]">
-				<hr className="text-primary" />
+				
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<td className="p-2 text-primary text-sm text-left">Date</td>
