@@ -1,9 +1,11 @@
+require("dotenv").config();
 import { Request, Response } from "express";
 
 import {
   customPayloadResponse,
   randomStringGenerator,
   hashPassword,
+  mailTransporter,
 } from "../Helpers/Helpers";
 
 import {
@@ -70,6 +72,23 @@ export const createStaffMember = async (req: Request, res: Response) => {
     );
 
     if (insertMember) {
+      const mailOptions = {
+        from: process.env.MAIL_USER,
+        to: email,
+        subject: "Temporary Password",
+        html: `Hello ${firstName} your temporary password is <p><b>${password}</b></p>`,
+      };
+
+      const mailTransport = mailTransporter(
+        process.env.MAIL_USER,
+        process.env.MAIL_PASSWORD
+      );
+
+      mailTransport
+        .sendMail(mailOptions)
+        .then(() => {})
+        .catch((error) => console.log(error));
+
       return res
         .json(customPayloadResponse(true, "Member Added"))
         .status(200)
@@ -140,7 +159,7 @@ export const modifyStaffMember = async (req: Request, res: Response) => {
         middleName,
         staffType
       );
-      
+
       if (staffMember) {
         return res
           .json(customPayloadResponse(true, "Staff Updated"))
@@ -185,11 +204,9 @@ export const passwordUpdate = async (req: Request, res: Response) => {
         .end();
     }
     if (password === confirm_password) {
-
       const user = await getMemberByEmail(email);
 
       if (user) {
-
         const hashPwd = await hashPassword(password, 10);
 
         const passwordUpdate = await updatePassword(email, hashPwd);

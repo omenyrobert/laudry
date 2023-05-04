@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Application, Request, Response } from "express";
 import router from "./Router";
 import { DatabaseConnection } from "./Database/database";
 import cors from "cors";
@@ -6,7 +6,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 const PORT: string | 3001 = process.env.PORT || 3001;
 
-const app = express();
+const app: Application = express();
 
 app.use(cors());
 app.use(express.json());

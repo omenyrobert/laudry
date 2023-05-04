@@ -24,7 +24,6 @@ export const JWTAuthMiddleWare = (
     req.user = decoded;
     next();
   } catch (error) {
-    console.log(error);
     return res.status(401).json(customPayloadResponse(false, "Invalid Token"));
   }
 };
