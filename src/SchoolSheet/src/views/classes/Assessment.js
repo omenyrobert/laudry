@@ -94,6 +94,20 @@ function Assessment() {
                     <ExamsTypes />
                 </div>
                 <div className='w-9/12 p-2 ml-2'>
+                    
+                {add ? (
+                        <AssessmentForm
+                            closeAdd={closeAdd}
+                            studentId={studentId}
+                            studentData={studentInfo}
+                            openEditData={openEditData}
+                            assessData={assessData}
+                            fetchAssessment={fetchAssessment}
+                            examTypesData={examTypesData}
+                            subjectsData={subjectsData}
+                        />
+                    ) : null}
+
                     <table className='mt-4 w-full table-auto'>
                         <thead style={{ backgroundColor: '#0d6dfd10' }}>
                             <th className='p-2 text-primary text-sm text-left'>
@@ -179,18 +193,7 @@ function Assessment() {
                             })}
                         </tbody>
                     </table>
-                    {add ? (
-                        <AssessmentForm
-                            closeAdd={closeAdd}
-                            studentId={studentId}
-                            studentData={studentInfo}
-                            openEditData={openEditData}
-                            assessData={assessData}
-                            fetchAssessment={fetchAssessment}
-                            examTypesData={examTypesData}
-                            subjectsData={subjectsData}
-                        />
-                    ) : null}
+                   
                     {editData ? (
                         <EditAssessmentForm
                             studentData={studentInfoEdit}

@@ -4,8 +4,8 @@ import StaffForm from "./StaffForm";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getStaffMembers } from '../../store/schoolSheetSlices/schoolStore';
-import Loader from "../Loader";
-import ButtonLoader from "../ButtonLoader";
+// import Loader from "../Loader";
+// import ButtonLoader from "../ButtonLoader";
 
 const StaffComp = () => {
 	const dispatch = useDispatch();
@@ -91,8 +91,8 @@ const StaffComp = () => {
 						</tbody>
 					</table>
 				) : null}
-				<Loader/>
-				<ButtonLoader/>
+				{/* <Loader/>
+				<ButtonLoader/> */}
 			</div>
 		</>
 	);

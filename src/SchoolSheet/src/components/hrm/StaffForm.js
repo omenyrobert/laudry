@@ -113,7 +113,7 @@ const StaffForm = (props) => {
 			</div>
 
 			{addStaff ? (
-				<div className="bg-white  shadow-lg rounded-md h-[393px] overflow-y-auto absolute w-[1000px] -ml-32 shadow-3xl border-2 border-gray3 ">
+				<div className="bg-white  shadow-lg rounded-md h-[393px] overflow-y-auto absolute w-[1000px]  shadow-3xl border-2 border-gray3 ">
 					<div className="p-3 bg-gray1 flex justify-between">
 						<div>
 							<p className="text-primary text-lg font-semibold">

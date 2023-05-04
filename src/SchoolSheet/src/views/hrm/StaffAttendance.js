@@ -154,7 +154,7 @@ function StaffAttendance() {
 	return (
 		<div className="w-full relative -ml-7">
 			{attendance ? (
-				<div className="bg-white w-[600px] h-[60vh] overflow-y-auto absolute border border-gray1 rounded shadow-2xl">
+				<div className="bg-white w-[600px] h-[90vh] overflow-y-auto absolute border border-gray1 rounded shadow-2xl">
 					<div className="flex justify-between font-medium text-primary bg-gray1 p-3">
 						<div>Attedance Times</div>
 						<div>
