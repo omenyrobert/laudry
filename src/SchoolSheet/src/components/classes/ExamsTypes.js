@@ -15,11 +15,8 @@ import "../../assets/styles/main.css";
 let db = new Localbase("db");
 
 function ExamsTypes() {
-
-
-
 	// post exam Type
-	const [examType, setexamType] = useState("")
+	const [examType, setexamType] = useState("");
 	const [mark, setMark] = useState("");
 	const postexamType = () => {
 		let clId = uuid();
@@ -131,120 +128,116 @@ function ExamsTypes() {
 		fetchexamTypes();
 	}, []);
 
-
-
-
 	return (
 		<>
-			<h5 className="text-lg font-medium text-secondary">exam Types</h5>
-			<div className="w-full h-[80vh]">
-				<div className=" ">
-					
-						<InputField
-							type="text"
-							placeholder="Enter exam Type"
-							label="Exam Type"
-							value={examType}
-							onChange={(e)=>setexamType(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
-						/>
-						<InputField
-							type="text"
-							placeholder="Enter Marks Out of 100%"
-							label="Mark"
-							value={mark}
-							onChange={(e)=>setMark(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
-						/>
-					
-				
-						<div onClick={postexamType}>
-						<Button value={"Add exam Type"} />
-						</div>
-						
-					
-				</div>
 			
-				<table className="mt-10 w-[95%] table-auto">
-					<thead style={{ backgroundColor: "#0d6dfd10" }}>
-						<th className="p-2 text-primary text-sm text-left">Type</th>
-						<th className="p-2 text-primary text-sm text-left">Mark</th>
-						<th className="p-2 text-primary text-sm text-left">Action</th>
-					</thead>
-					<tbody>
+			<div className="w-[100vw] z-50 flex h-full bg-black overflow-y-auto absolute bg-opacity-60">
+				<div className="w-1/3 bg-white p-5">
+				<h5 className="text-lg font-medium text-secondary">exam Types</h5>
+					<div className="w-full h-full">
+						<div className=" ">
+							<InputField
+								type="text"
+								placeholder="Enter exam Type"
+								label="Exam Type"
+								value={examType}
+								onChange={(e) => setexamType(e.target.value)}
+								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							/>
+							<InputField
+								type="text"
+								placeholder="Enter Marks Out of 100%"
+								label="Mark"
+								value={mark}
+								onChange={(e) => setMark(e.target.value)}
+								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							/>
 
-
-						{/* edit popup start */}
-						{ editData ? 
-						<div className="absolute shadow-lg rounded  w-[400px] p-5 bg-white">
-							<div className="w-full pr-5">
-								<InputField
-									type="text"
-									placeholder="Enter exam Type"
-									label="exam Type"
-									value={examTypeEdit}
-									onChange={(e)=>setexamTypeEdit(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-							<div className="w-full pr-5">
-								<InputField
-									type="text"
-									placeholder="Enter Mark"
-									label="Mark"
-									value={markEdit}
-									onChange={(e)=>setMarkEdit(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-							
-							<div className="flex justify-between w-full mt-[55px]">
-							<div>
-									<p
-										className="text-black text-lg cursor-pointer"
-										onClick={closeEditData}
-									>
-									Close
-									</p>
-								</div>
-								<div onClick={updateexamType}>
-									<ButtonSecondary value={"Update"} />
-								</div>
-								
+							<div onClick={postexamType}>
+								<Button value={"Add exam Type"} />
 							</div>
 						</div>
-						: null }
-						{/* edit popup end */}
 
-
-
-
-						{examTypesData.map((examTypeItem) => {
-							return (
-								<tr
-									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={examType.id}
-								>
-									<td className="text-xs p-3 text-gray5">
-										{examTypeItem.examType}
-									</td>
-									<td className="text-xs p-3 text-gray5">
-										{examTypeItem.mark}
-									</td>
-									<td className="text-xs p-3 text-gray5">
-										<div className="flex">
-											<MdDeleteOutline onClick={()=>deleteexamType(examTypeItem)} className="text-red w-4 h-4" />
-											<BsPencilSquare
-												onClick={()=> openEditData(examTypeItem)}
-												className="text-warning h-4 w-4 ml-5"
+						<table className="mt-10 w-[95%] table-auto">
+							<thead style={{ backgroundColor: "#0d6dfd10" }}>
+								<th className="p-2 text-primary text-sm text-left">Type</th>
+								<th className="p-2 text-primary text-sm text-left">Mark</th>
+								<th className="p-2 text-primary text-sm text-left">Action</th>
+							</thead>
+							<tbody>
+								{/* edit popup start */}
+								{editData ? (
+									<div className="absolute shadow-lg rounded  w-[400px] p-5 bg-white">
+										<div className="w-full pr-5">
+											<InputField
+												type="text"
+												placeholder="Enter exam Type"
+												label="exam Type"
+												value={examTypeEdit}
+												onChange={(e) => setexamTypeEdit(e.target.value)}
+												icon={<FaPen className="w-3 -ml-7 mt-3" />}
 											/>
 										</div>
-									</td>
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
+										<div className="w-full pr-5">
+											<InputField
+												type="text"
+												placeholder="Enter Mark"
+												label="Mark"
+												value={markEdit}
+												onChange={(e) => setMarkEdit(e.target.value)}
+												icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											/>
+										</div>
+
+										<div className="flex justify-between w-full mt-[55px]">
+											<div>
+												<p
+													className="text-black text-lg cursor-pointer"
+													onClick={closeEditData}
+												>
+													Close
+												</p>
+											</div>
+											<div onClick={updateexamType}>
+												<ButtonSecondary value={"Update"} />
+											</div>
+										</div>
+									</div>
+								) : null}
+								{/* edit popup end */}
+
+								{examTypesData.map((examTypeItem) => {
+									return (
+										<tr
+											className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+											key={examType.id}
+										>
+											<td className="text-xs p-3 text-gray5">
+												{examTypeItem.examType}
+											</td>
+											<td className="text-xs p-3 text-gray5">
+												{examTypeItem.mark}
+											</td>
+											<td className="text-xs p-3 text-gray5">
+												<div className="flex">
+													<MdDeleteOutline
+														onClick={() => deleteexamType(examTypeItem)}
+														className="text-red w-4 h-4"
+													/>
+													<BsPencilSquare
+														onClick={() => openEditData(examTypeItem)}
+														className="text-warning h-4 w-4 ml-5"
+													/>
+												</div>
+											</td>
+										</tr>
+									);
+								})}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div className="w-2/3 ml-5"></div>
 			</div>
 		</>
 	);
