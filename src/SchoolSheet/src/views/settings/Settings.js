@@ -37,7 +37,7 @@ function Settings() {
 	return (
 		<div className="w-full">
 			<div className=" p-2 h-[92vh] overflow-y-auto mt-2 w-full">
-				<p className="text-primary text-xl font-semibold">About the School</p>
+				<p className="text-secondary text-xl font-semibold">About the School</p>
 				<div className="flex w-full">
 					
 					<div className="w-1/2">

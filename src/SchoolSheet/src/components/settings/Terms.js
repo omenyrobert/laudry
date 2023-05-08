@@ -150,7 +150,7 @@ function Terms() {
 	return (
 		<div>
 			<div className="bg-white p-3 rounded-md shadow-md mr-5">
-				<p className="text-primary font-semibold text-xl">Terms</p>
+				<p className="text-secondary font-semibold text-xl">Terms</p>
 
 				<div className="flex w-full">
 					<div className="w-1/4">

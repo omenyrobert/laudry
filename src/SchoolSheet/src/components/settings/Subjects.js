@@ -131,7 +131,7 @@ function Subject() {
 
 	return (
 		<>
-			<h5 className="text-lg font-medium ml-5">Subject</h5>
+			<h5 className="text-xl font-medium ml-5 text-secondary">Subject</h5>
 			<div className="w-full h-[80vh] ml-5">
 				<div className="flex justify-between bg-white pl-5 shadow-lg rounded-md">
 					<div className="w-1/2">

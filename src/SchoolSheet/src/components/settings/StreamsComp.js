@@ -116,7 +116,7 @@ const StreamsComp = () => {
 	const { streams } = useSelector((state) => state.schoolStore);
 	return (
 		<>
-			<h5 className="text-lg font-medium">Streams</h5>
+			<h5 className="text-xl font-medium text-secondary">Streams</h5>
 			<div className="w-full h-[80vh]">
 				<div className="flex justify-between bg-white pl-4 shadow-lg">
 					<div className="w-1/2">

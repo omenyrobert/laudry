@@ -154,110 +154,113 @@ function StaffAttendance() {
 	return (
 		<div className="w-full relative -ml-7">
 			{attendance ? (
-				<div className="bg-white w-[600px] h-[90vh] overflow-y-auto absolute border border-gray1 rounded shadow-2xl">
-					<div className="flex justify-between font-medium text-primary bg-gray1 p-3">
-						<div>Attedance Times</div>
-						<div>
-							<p onClick={closeAttendance} className="cursor-pointer">
-								X
-							</p>
-						</div>
-					</div>
-					<div className="p-5">
-						<div className=" -mt-2 flex">
-							<div className="w-1/2 p-2">
-								<InputField
-									type="text"
-									placeholder="Enter Attendance Name"
-									label="Attendance Name"
-									name="attendanceType"
-									onChange={onChange}
-								/>
-							</div>
-							<div className="w-1/2 p-2">
-								<InputField
-									type="time"
-									placeholder=""
-									label="Arrival Time"
-									name="arrival"
-									onChange={onChange}
-								/>
+				<div className="w-[100vw] z-50 flex h-full bg-black overflow-y-auto absolute bg-opacity-60">
+					<div className="bg-white w-1/3 h-full border border-gray1">
+						<div className="flex justify-between font-medium text-primary bg-gray1 p-3">
+							<div>Attedance Times</div>
+							<div>
+								<p onClick={closeAttendance} className="cursor-pointer">
+									X
+								</p>
 							</div>
 						</div>
-						<div className="flex -mt-2">
-							<div className="w-1/2 p-2">
-								<InputField
-									type="time"
-									label="Departure time"
-									name="departure"
-									onChange={onChange}
-								/>
-							</div>
-							<div className="w-1/2 p-2 mt-10">
-								<div onClick={postType}>
-									<Button value={"Add Attendance Time"} />
+						<div className="p-5">
+							<div className=" -mt-2 flex">
+								<div className="w-1/2 p-2">
+									<InputField
+										type="text"
+										placeholder="Enter Attendance Name"
+										label="Attendance Name"
+										name="attendanceType"
+										onChange={onChange}
+									/>
+								</div>
+								<div className="w-1/2 p-2">
+									<InputField
+										type="time"
+										placeholder=""
+										label="Arrival Time"
+										name="arrival"
+										onChange={onChange}
+									/>
 								</div>
 							</div>
-						</div>
-						<table className="mt-10 w-[98%] table-auto">
-							<thead style={{ backgroundColor: "#0d6dfd10" }}>
-								<th className="p-2 text-primary text-sm text-left">
-									Attendance Time{" "}
-								</th>
-								<th className="p-2 text-primary text-sm text-left">Arrival</th>
-								<th className="p-2 text-primary text-sm text-left">
-									Departure
-								</th>
-								<th className="p-2 text-primary text-sm text-left">Action</th>
-							</thead>
-							<tbody>
-								{/* edit popup start */}
-								{editData ? (
-									<div className="absolute shadow-2xl rounded w-[400px] p-5 bg-white">
-										<div className="flex justify-between p-3">
-											<div>
-												<p className="text-primary font-semibold text-md">
-													Update Attendance Time
-												</p>
+							<div className="flex -mt-2">
+								<div className="w-1/2 p-2">
+									<InputField
+										type="time"
+										label="Departure time"
+										name="departure"
+										onChange={onChange}
+									/>
+								</div>
+								<div className="w-1/2 p-2 mt-10">
+									<div onClick={postType}>
+										<Button value={"Add Attendance Time"} />
+									</div>
+								</div>
+							</div>
+							<table className="mt-10 w-[98%] table-auto">
+								<thead style={{ backgroundColor: "#0d6dfd10" }}>
+									<th className="p-2 text-primary text-sm text-left">
+										Attendance Time{" "}
+									</th>
+									<th className="p-2 text-primary text-sm text-left">
+										Arrival
+									</th>
+									<th className="p-2 text-primary text-sm text-left">
+										Departure
+									</th>
+									<th className="p-2 text-primary text-sm text-left">Action</th>
+								</thead>
+								<tbody>
+									{/* edit popup start */}
+									{editData ? (
+										<div className="absolute shadow-2xl rounded w-[400px] p-5 bg-white">
+											<div className="flex justify-between p-3">
+												<div>
+													<p className="text-primary font-semibold text-md">
+														Update Attendance Time
+													</p>
+												</div>
+												<div>
+													<p className="cursor-pointer" onClick={closeEditData}>
+														X
+													</p>
+												</div>
 											</div>
-											<div>
-												<p className="cursor-pointer" onClick={closeEditData}>
-													X
-												</p>
+											<div className="pr-5">
+												<InputField
+													type="text"
+													placeholder="Enter Attendance Name"
+													label="Attendance Name"
+													name="attendanceType"
+													onChange={(e) => setTypeEdit(e.target.value)}
+													value={typeEdit}
+													icon={<FaPen className="w-3 -ml-7 mt-3" />}
+												/>
+												<InputField
+													type="time"
+													placeholder=""
+													label="Arrival Time"
+													name="arrival"
+													onChange={(e) => setArrivalEdit(e.target.value)}
+													value={arrivalEdit}
+													icon={<FaPen className="w-3 -ml-7 mt-3" />}
+												/>
+												<InputField
+													type="time"
+													label="Departure time"
+													name="departure"
+													onChange={(e) => setDepartureEdit(e.target.value)}
+													value={departureEdit}
+													icon={<FaPen className="w-3 -ml-7 mt-3" />}
+												/>
+												<div onClick={updateType}>
+													<ButtonSecondary value={"Update"} />
+												</div>
 											</div>
-										</div>
-										<div className="pr-5">
-											<InputField
-												type="text"
-												placeholder="Enter Attendance Name"
-												label="Attendance Name"
-												name="attendanceType"
-												onChange={(e) => setTypeEdit(e.target.value)}
-												value={typeEdit}
-												icon={<FaPen className="w-3 -ml-7 mt-3" />}
-											/>
-											<InputField
-												type="time"
-												placeholder=""
-												label="Arrival Time"
-												name="arrival"
-												onChange={(e) => setArrivalEdit(e.target.value)}
-												value={arrivalEdit}
-												icon={<FaPen className="w-3 -ml-7 mt-3" />}
-											/>
-											<InputField
-												type="time"
-												label="Departure time"
-												name="departure"
-												onChange={(e) => setDepartureEdit(e.target.value)}
-												value={departureEdit}
-												icon={<FaPen className="w-3 -ml-7 mt-3" />}
-											/>
-											<div onClick={updateType}>
-												<ButtonSecondary value={"Update"} />
-											</div>
-										</div>
-										{/* <div className='flex justify-between w-1/3  mt-[55px]'>
+											{/* <div className='flex justify-between w-1/3  mt-[55px]'>
                                 <div>
                                     <p
                                         className='text-black text-lg cursor-pointer'
@@ -267,39 +270,43 @@ function StaffAttendance() {
                                     </p>
                                 </div>
                             </div> */}
-									</div>
-								) : null}
-								{/* edit popup end */}
-								{attendanceTypes.map((type) => {
-									return (
-										<tr
-											className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-											key={type.id}
-										>
-											<td className="text-xs p-3 text-gray5">
-												{type.attendanceType}
-											</td>
-											<td className="text-xs p-3 text-gray5">{type.arrival}</td>
-											<td className="text-xs p-3 text-gray5">
-												{type.departure}
-											</td>
+										</div>
+									) : null}
+									{/* edit popup end */}
+									{attendanceTypes.map((type) => {
+										return (
+											<tr
+												className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+												key={type.id}
+											>
+												<td className="text-xs p-3 text-gray5">
+													{type.attendanceType}
+												</td>
+												<td className="text-xs p-3 text-gray5">
+													{type.arrival}
+												</td>
+												<td className="text-xs p-3 text-gray5">
+													{type.departure}
+												</td>
 
-											<td className="text-xs p-3 text-gray5 flex">
-												<MdDeleteOutline
-													onClick={() => deleteType(type)}
-													className="text-red w-4 h-4"
-												/>
-												<BsPencilSquare
-													className="text-warning h-4 w-4 ml-5"
-													onClick={() => openEditData(type)}
-												/>
-											</td>
-										</tr>
-									);
-								})}
-							</tbody>
-						</table>
+												<td className="text-xs p-3 text-gray5 flex">
+													<MdDeleteOutline
+														onClick={() => deleteType(type)}
+														className="text-red w-4 h-4"
+													/>
+													<BsPencilSquare
+														className="text-warning h-4 w-4 ml-5"
+														onClick={() => openEditData(type)}
+													/>
+												</td>
+											</tr>
+										);
+									})}
+								</tbody>
+							</table>
+						</div>
 					</div>
+					<div className="w-2/3 ml-5" onClick={closeAttendance}></div>
 				</div>
 			) : null}
 

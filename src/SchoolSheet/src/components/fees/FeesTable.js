@@ -804,11 +804,11 @@ function FeesTable(props) {
                 {studentData.map((student) => {
                     return (
                         <tr
-                            className='shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md'
+                            className='shadow-sm border-b hover:border-l-2 hover:border-l-primary border-gray1 cursor-pointer hover:shadow-md'
                             key={student.id}
                         >
                             <td className='flex'>
-                                <div className='rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3'>
+                                <div className='rounded-full ml-2 h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3'>
                                     {student.firstName[0]} {student.lastName[0]}
                                 </div>
                                 <div>

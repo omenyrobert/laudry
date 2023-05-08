@@ -216,7 +216,7 @@ function ClassesComp() {
 
 	return (
 		<>
-			<h5 className="text-lg font-medium ml-5">Classes</h5>
+			<h5 className="text-xl font-medium ml-5 text-secondary">Classes</h5>
 			<div className="w-full h-[80vh] ml-5">
 				<div className="flex justify-between bg-white pl-5 shadow-lg">
 					<div className="w-1/3 p-2">

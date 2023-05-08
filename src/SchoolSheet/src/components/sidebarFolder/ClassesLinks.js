@@ -104,29 +104,7 @@ function ClassesLinks() {
 						</div>
 					</Link>
 
-					{/* Time Table */}
-
-					<Link
-						to="/timeTable"
-						className={
-							location.pathname === "/timeTable"
-								? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
-								: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
-						}
-					>
-						<div className="flex">
-							<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
-							<p
-								className={
-									location.pathname === "/timeTable"
-										? "text-sm font-light text-white ml-5"
-										: "text-sm font-light linktext ml-5"
-								}
-							>
-								Time Table
-							</p>
-						</div>
-					</Link>
+					
 				</div>
 			) : null}
 		</>
