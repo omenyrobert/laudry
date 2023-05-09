@@ -7,6 +7,7 @@ import "../assets/styles/login.css";
 import Button from "../components/Button";
 import InputField from "../components/InputField";
 import axiosInstance from "../axios-instance";
+import ButtonLoader from "../components/ButtonLoader";
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -17,8 +18,11 @@ const Login = () => {
 	const onChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
+
+	const [isLoging, setIsLoging] = useState(false);
 	const handleLogin = async () => {
 		try {
+			setIsLoging(true)
 			const response = await axiosInstance.post('/auth/login', formData);
 			const { data } = response;
 			const { status, payload } = data;
@@ -26,10 +30,12 @@ const Login = () => {
 			if (status) {
 				localStorage.setItem('schoolSoftToken', token);
 				localStorage.setItem('schoolSoftUser', JSON.stringify(user))
+				setIsLoging(false)
 				navigate('/dashboard');
 			}
 		} catch (error) {
 			console.log(error);
+			setIsLoging(false)
 		}
 	};
 	return (
@@ -76,8 +82,10 @@ const Login = () => {
 							</Link>
 						</div>
 					</div>
-					<div onClick={handleLogin}>
-						<Button value={"Login"} />
+					<div >
+						{isLoging ? <ButtonLoader/> : <div onClick={handleLogin}> <Button value={"Login"} /> </div>}
+						
+						
 					</div>
 				</div>
 			</div>

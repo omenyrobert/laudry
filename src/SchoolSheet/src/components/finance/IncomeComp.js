@@ -484,7 +484,7 @@ function IncomeComp() {
 							? filteredIncome.map((incomeItem) => {
 									return (
 										<tr
-											className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+											className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
 											key={incomeItem?.id}
 										>
 											<td className="text-xs p-3 text-gray5">
@@ -521,7 +521,7 @@ function IncomeComp() {
 							: incomesData.map((incomeItem) => {
 									return (
 										<tr
-											className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+											className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
 											key={incomeItem?.id}
 										>
 											<td className="text-xs p-3 text-gray5">

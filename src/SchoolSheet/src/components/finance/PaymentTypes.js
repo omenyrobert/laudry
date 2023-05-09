@@ -122,88 +122,116 @@ function PaymentTypes() {
 		fetchpayamentTypes();
 	}, []);
 
+	const [modal, setModal] = useState(false);
+
+	const showModal = () => {
+		setModal(true);
+	};
+	const closeModal = () => {
+		setModal(false);
+	};
+
 	return (
 		<>
-			<div className="w-full h-[80vh]">
-				<div className=" bg-white p-5 shadow-lg rounded-md">
-					<h5 className="text-xl text-secondary font-medium">Payment Types</h5>
-					<InputField
-						type="text"
-						placeholder="Enter Payment Type"
-						label="Payment Type"
-						value={paymentType}
-						onChange={(e) => setpaymentType(e.target.value)}
-						icon={<FaPen className="w-3 -ml-7 mt-3" />}
-					/>
-
-					<div onClick={postpaymentType}>
-						<Button value={"Add Payment Type"} />
-					</div>
-				</div>
-				
-				<table className="mt-10 w-[95%] table-auto">
-					<thead style={{ backgroundColor: "#0d6dfd10" }}>
-						<th className="p-2 text-primary text-sm text-left">Type</th>
-						<th className="p-2 text-primary text-sm text-left">Action</th>
-					</thead>
-					<tbody>
-						{/* edit popup start */}
-						{editData ? (
-							<div className="absolute shadow-lg rounded flex w-[350px] p-5 bg-white">
-								<div className="w-2/3 pr-5">
+			<div className="w-52" onClick={showModal}>
+				<Button2 value={"Payment Types"} />
+			</div>
+			{modal ? (
+				<div className="w-[100vw] z-50 flex h-full bg-black overflow-y-auto absolute bg-opacity-60">
+					<div className="w-3/12 bg-white h-full">
+						<div className="bg-gray1 p-3 flex justify-between text-primary font-semibold">
+							<div>
+								<h5 className="text-lg font-medium">Payment Types</h5>
+							</div>
+							<div onClick={closeModal}>
+								<p className="cursor-pointer">X</p>
+							</div>
+						</div>
+						<div className="w-full h-[80vh]">
+							<div className="bg-white p-5 flex ">
+								<div className="w-7/12">
 									<InputField
 										type="text"
-										placeholder="Enter payment Type"
-										label="payment Type"
-										value={paymentTypeEdit}
-										onChange={(e) => setpaymentTypeEdit(e.target.value)}
+										placeholder="Enter Payment Type"
+										label="Payment Type"
+										value={paymentType}
+										onChange={(e) => setpaymentType(e.target.value)}
 										icon={<FaPen className="w-3 -ml-7 mt-3" />}
 									/>
 								</div>
-								<div className="flex justify-between w-1/3 mt-[55px]">
-									<div onClick={updatepaymentType}>
-										<ButtonSecondary value={"Update"} />
-									</div>
-									<div className="ml-3">
-										<p
-											className="text-black text-lg cursor-pointer"
-											onClick={closeEditData}
-										>
-											X
-										</p>
-									</div>
+
+								<div className="ml-2 mt-14" onClick={postpaymentType}>
+									<Button value={"Add Payment Type"} />
 								</div>
 							</div>
-						) : null}
-						{/* edit popup end */}
 
-						{paymentTypesData.map((paymentTypeItem) => {
-							return (
-								<tr
-									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={paymentType.id}
-								>
-									<td className="text-xs p-3 text-gray5">
-										{paymentTypeItem.paymentType}
-									</td>
-									<td className="text-xs p-3 text-gray5">
-										<div className="flex">
-											<MdDeleteOutline
-												onClick={() => deletepaymentType(paymentTypeItem)}
-												className="text-red w-4 h-4"
-											/>
-											<BsPencilSquare
-												onClick={() => openEditData(paymentTypeItem)}
-												className="text-warning h-4 w-4 ml-5"
-											/>
+							<table className="mt-10 ml-2 w-[95%] table-auto">
+								<thead style={{ backgroundColor: "#0d6dfd10" }}>
+									<th className="p-2 text-primary text-sm text-left">Type</th>
+									<th className="p-2 text-primary text-sm text-left">Action</th>
+								</thead>
+								<tbody>
+									{/* edit popup start */}
+									{editData ? (
+										<div className="absolute shadow-lg rounded flex w-[350px] p-5 bg-white">
+											<div className="w-2/3 pr-5">
+												<InputField
+													type="text"
+													placeholder="Enter payment Type"
+													label="payment Type"
+													value={paymentTypeEdit}
+													onChange={(e) => setpaymentTypeEdit(e.target.value)}
+													icon={<FaPen className="w-3 -ml-7 mt-3" />}
+												/>
+											</div>
+											<div className="flex justify-between w-1/3 mt-[55px]">
+												<div onClick={updatepaymentType}>
+													<ButtonSecondary value={"Update"} />
+												</div>
+												<div className="ml-3">
+													<p
+														className="text-black text-lg cursor-pointer"
+														onClick={closeEditData}
+													>
+														X
+													</p>
+												</div>
+											</div>
 										</div>
-									</td>
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
-			</div>
+									) : null}
+									{/* edit popup end */}
+
+									{paymentTypesData.map((paymentTypeItem) => {
+										return (
+											<tr
+												className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+												key={paymentType.id}
+											>
+												<td className="text-xs p-3 text-gray5">
+													{paymentTypeItem.paymentType}
+												</td>
+												<td className="text-xs p-3 text-gray5">
+													<div className="flex">
+														<MdDeleteOutline
+															onClick={() => deletepaymentType(paymentTypeItem)}
+															className="text-red w-4 h-4"
+														/>
+														<BsPencilSquare
+															onClick={() => openEditData(paymentTypeItem)}
+															className="text-warning h-4 w-4 ml-5"
+														/>
+													</div>
+												</td>
+											</tr>
+										);
+									})}
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div className="ml-5 w-9/12" onClick={closeModal}></div>
+				</div>
+			) : null}
 		</>
 	);
 }

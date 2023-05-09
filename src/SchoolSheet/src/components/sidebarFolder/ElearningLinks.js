@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { TbChevronDown,TbTournament } from "react-icons/tb";
 import { MdHowToVote,MdNavigateNext } from "react-icons/md";
 import { HiOutlineArrowSmRight } from "react-icons/hi";
+import { FaChalkboardTeacher } from "react-icons/fa";
 
 function ElearningLinks() {
 	const location = useLocation();
@@ -18,8 +19,8 @@ function ElearningLinks() {
 				onClick={toggleLink}
 			>
 				<div className="w-4/5 flex">
-					<TbTournament className="w-4 h-4 mt-[2px] linkicon" />
-					<p className="text-sm font-light linktext ml-6">Activities</p>
+					<FaChalkboardTeacher className="w-4 h-4 mt-[2px] linkicon" />
+					<p className="text-sm font-light linktext ml-6">E-learning</p>
 				</div>
 				<div className="w-1/5">
 					{link ? (

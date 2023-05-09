@@ -6,6 +6,7 @@
   "scripts": {
     "server": "nodemon ./src/index.ts",
     "client": "npm start --prefix ./src/SchoolSheet",
+    "build": "dist --mode production",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Robert",
@@ -36,5 +37,8 @@
     "ts-node": "^10.9.1",
     "typeorm": "^0.3.15",
     "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.1.1"
   }
 }

@@ -13,6 +13,8 @@ import {
 	getStaffMembers,
 } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
+import ButtonSecondary from "../ButtonSecondary";
+import ButtonLoader from "../ButtonLoader";
 
 const StaffForm = (props) => {
 	const dispatch = useDispatch();
@@ -58,9 +60,12 @@ const StaffForm = (props) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
+	const [isPosting, setIsPosting] = useState(false);
+
 	// post staff info
 	const postStaffInfo = async (e) => {
 		try {
+			setIsPosting(true);
 			e.preventDefault();
 			let postData = {
 				staffType: selectedStaffTypeOption.value,
@@ -82,9 +87,11 @@ const StaffForm = (props) => {
 					timer: 500,
 				});
 				closeStaffForm();
+				setIsPosting(false);
 			}
 		} catch (error) {
 			console.log(error);
+			setIsPosting(false);
 		}
 	};
 
@@ -176,8 +183,22 @@ const StaffForm = (props) => {
 								onChange={onChange}
 								icon={<FaPen className="w-3 -ml-7 mt-3" />}
 							/>
-							<div className="mt-14" onClick={postStaffInfo}>
-								<Button value={"Add Staff"} />
+						</div>
+					</div>
+					<div className="p-3 bg-gray1 flex justify-between">
+						<div onClick={closeStaffForm}>
+							<ButtonSecondary value={"Close"} />
+						</div>
+						<div>
+							<div className="w-32">
+								{isPosting ? (
+									<ButtonLoader />
+								) : (
+									<div onClick={postStaffInfo}>
+										{" "}
+										<Button value={"Add Staff"} />{" "}
+									</div>
+								)}
 							</div>
 						</div>
 					</div>
