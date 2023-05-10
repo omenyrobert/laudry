@@ -9,8 +9,21 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import ButtonSecondary from "../ButtonSecondary";
-
+import Modal from "react-modal";
 let db = new Localbase("db");
+
+const customStyles = {
+	overlay: {
+		backgroundColor: "rgba(0, 0, 0, 0.5)", // Customize the overlay color here
+	},
+	content: {
+		width: "1000px",
+		height: "390px",
+		padding: "0px",
+		marginLeft: "25vw",
+		marginTop: "10vw",
+	},
+};
 
 function EditSchoolInfo() {
 	const [name, setName] = useState("");
@@ -36,7 +49,7 @@ function EditSchoolInfo() {
 				description: description,
 			})
 			.then((response) => {
-				closeShow();
+				closeModal();
 				// show alert
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
@@ -68,25 +81,34 @@ function EditSchoolInfo() {
 		fetchAboutInfo();
 	}, []);
 
-	const openShow = () => {
-		setShow(true);
+	const [isOpen, setIsOpen] = useState(false);
+
+	const openModal = () => {
+		setIsOpen(true);
 	};
-	const closeShow = () => {
-		setShow(false);
+
+	const closeModal = () => {
+		setIsOpen(false);
 	};
+
 	return (
 		<>
 			<div className="p-5">
-				<div onClick={openShow} className="w-52">
+				<div onClick={openModal} className="w-52">
 					<Button2 value={"Edit School Info"} />
 				</div>
 
-				{show ? (
+				<Modal
+					isOpen={isOpen}
+					onRequestClose={closeModal}
+					style={customStyles}
+					contentLabel="Example Modal"
+				>
 					<div className="bg-white border border-gray2 absolute shadow-2xl w-[800px] rounded-md ">
 						<div className="text-primary flex justify-between p-3 bg-gray1 font-semibold">
 							<div>Update School Info</div>
 							<div>
-								<p onClick={closeShow} className="cursor-pointer">
+								<p onClick={closeModal} className="cursor-pointer">
 									X
 								</p>
 							</div>
@@ -163,7 +185,7 @@ function EditSchoolInfo() {
 							</div>
 						</div>
 						<div className="flex justify-between p-3 bg-gray1">
-							<div  onClick={closeShow}>
+							<div onClick={closeModal}>
 								<ButtonSecondary value={"Close"} />
 							</div>
 							<div>
@@ -173,7 +195,7 @@ function EditSchoolInfo() {
 							</div>
 						</div>
 					</div>
-				) : null}
+				</Modal>
 			</div>
 		</>
 	);
