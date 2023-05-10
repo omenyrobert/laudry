@@ -17,11 +17,11 @@ const customStyles = {
 		backgroundColor: "rgba(0, 0, 0, 0.5)", // Customize the overlay color here
 	},
 	content: {
-		width: "1000px",
-		height: "390px",
+		width: "800px",
+		height: "540px",
 		padding: "0px",
 		marginLeft: "25vw",
-		marginTop: "10vw",
+		marginTop: "5vw",
 	},
 };
 
@@ -104,7 +104,7 @@ function EditSchoolInfo() {
 					style={customStyles}
 					contentLabel="Example Modal"
 				>
-					<div className="bg-white border border-gray2 absolute shadow-2xl w-[800px] rounded-md ">
+
 						<div className="text-primary flex justify-between p-3 bg-gray1 font-semibold">
 							<div>Update School Info</div>
 							<div>
@@ -193,7 +193,7 @@ function EditSchoolInfo() {
 									<Button value={"Update"} />
 								</div>
 							</div>
-						</div>
+						
 					</div>
 				</Modal>
 			</div>

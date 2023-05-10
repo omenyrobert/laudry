@@ -11,6 +11,7 @@ import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
+import StudentAttendance from "../../views/classes/StudentAttendance";
 
 let db = new Localbase("db");
 
@@ -138,7 +139,9 @@ function StudentAttendanceComp() {
 						<thead style={{ backgroundColor: "#0d6dfd10" }}>
 							<th className="p-2 text-primary text-sm text-left">Full Name</th>
 
-							<th className="p-2 text-primary text-sm text-left">Student Type</th>
+							<th className="p-2 text-primary text-sm text-left">
+								Student Type
+							</th>
 
 							<th className="p-2 text-primary text-sm text-left">Action</th>
 						</thead>
@@ -182,7 +185,8 @@ function StudentAttendanceComp() {
 											</div>
 											<div>
 												<p className="text-sm p-3 -mt-1 text-gray5">
-													{student.firstName} {student.middleName} {student.lastName}
+													{student.firstName} {student.middleName}{" "}
+													{student.lastName}
 												</p>
 											</div>
 										</td>
@@ -207,18 +211,23 @@ function StudentAttendanceComp() {
 				</div>
 			) : null}
 
-			<div className="flex justify-between float-right">
-				<div onClick={openStudentList}>
-					<ButtonSecondary value={"Students"} />
+			<div className="flex justify-between  p-5">
+				<div className="flex">
+					<div onClick={openStudentList}>
+						<ButtonSecondary value={"Students"} />
+					</div>
+					<div className="ml-20">
+						<p className="text-secondary text-xl mt-2  font-semibold">
+							Students
+						</p>
+					</div>
 				</div>
-				<div className="ml-20">
-					<p className="text-secondary text-xl mt-2  font-semibold">
-						Students
-					</p>
+				<div>
+					<StudentAttendance />
 				</div>
 			</div>
 
-			<div className="flex justify-between">
+			<div className="flex justify-between bg-white  px-3">
 				<div className="flex">
 					<div className="text-sm">
 						<InputField label="From Date" type="date" />
@@ -261,7 +270,7 @@ function StudentAttendanceComp() {
 				<div className="w-1/4">Friday</div>
 				<div className="w-1/4">Saturday</div>
 			</div>
-			<div className="flex border-b border-gray2 p-2 ">
+			<div className="flex border-b border-gray2 p-2 bg-white ">
 				<div className="w-1/4 text-sm">Omeny Robert</div>
 				<div className="w-1/4 flex">
 					<TbCheck className="w-5  h-5 text-green" />
