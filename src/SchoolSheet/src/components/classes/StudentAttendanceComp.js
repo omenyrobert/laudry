@@ -10,7 +10,6 @@ import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import Button from "../Button";
-import ButtonSecondary from "../ButtonSecondary";
 import StudentAttendance from "../../views/classes/StudentAttendance";
 
 let db = new Localbase("db");
@@ -167,7 +166,7 @@ function StudentAttendanceComp() {
 											<Button value={"Check In"} />
 										</div>
 										<div className="w-[120px]" onClick={checkOut}>
-											<ButtonSecondary value={"Check Out"} />
+											<Button value={"Check Out"} />
 										</div>
 									</div>
 								</div>
@@ -214,7 +213,7 @@ function StudentAttendanceComp() {
 			<div className="flex justify-between  p-5">
 				<div className="flex">
 					<div onClick={openStudentList}>
-						<ButtonSecondary value={"Students"} />
+						<Button value={"Register"} />
 					</div>
 					<div className="ml-20">
 						<p className="text-secondary text-xl mt-2  font-semibold">

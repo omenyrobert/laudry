@@ -156,7 +156,7 @@ function StudentAttendance() {
 		setTypeId(type.id);
 	};
 
-	const [attendance, setAttendance] = useState(false);
+	// const [attendance, setAttendance] = useState(false);
 
 	const [isOpen, setIsOpen] = useState(false);
 
