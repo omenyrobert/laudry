@@ -100,6 +100,8 @@ function Fees() {
 
     return (
         <>
+        <p className='text-secondary text-xl font-medium'>Fees Payments</p>
+        <br/>
             <div className='flex p-2 bg-white shadow-lg rounded-md'>
                 <div className='w-1/3 flex pl-5'>
                     <div className='w-1/3'>

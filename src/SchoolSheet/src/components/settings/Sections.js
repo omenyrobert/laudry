@@ -7,7 +7,9 @@ import InputField from "../InputField";
 import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { useDispatch, useSelector } from 'react-redux';
 import Localbase from "localbase";
+import { getSections } from "../../store/schoolSheetSlices/schoolStore";
 
 let db = new Localbase("db");
 
@@ -19,7 +21,8 @@ function Sections() {
 	};
 
 	const [section, setSection] = useState("");
-	const [sectionsData, setSections] = useState([]);
+	const dispatch = useDispatch();
+	const { sections } = useSelector((state) => state.schoolStore);
 
 	// edit section
 	const [editSection, setEditSection] = useState("");
@@ -40,7 +43,7 @@ function Sections() {
 			})
 			.then((response) => {
 				console.log(response);
-				fetchSections();
+				dispatch(getSections());
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -54,7 +57,7 @@ function Sections() {
 			});
 
 		// fetch after
-		// fetchSections();
+		// dispatch(getSections());
 	};
 
 	// delete section
@@ -74,7 +77,7 @@ function Sections() {
 					.doc({ id: section.id })
 					.delete()
 					.then((response) => {
-						fetchSections();
+						dispatch(getSections());
 
 						Swal.fire({
 							icon: "success",
@@ -106,7 +109,7 @@ function Sections() {
 					setSection("");
 
 					// fetch after
-					fetchSections();
+					dispatch(getSections());
 
 					// show alert
 					const MySwal = withReactContent(Swal);
@@ -122,21 +125,17 @@ function Sections() {
 		}
 	};
 
-	const fetchSections = async () => {
-		console.log("fetched");
-		const sections = await db.collection("sections").get();
-		setSections(sections);
-	};
+
 
 	// fetching section
 	useEffect(() => {
-		fetchSections();
+		dispatch(getSections());
 	}, []);
 
 	return (
 		<div>
 			<div className="bg-white p-3 rounded-md shadow-md mr-5">
-				<p className="text-primary font-semibold text-lg">Sections</p>
+				<p className="text-secondary font-semibold text-lg">Sections</p>
 
 				<div className="flex w-full">
 					<div className="w-1/2">
@@ -185,8 +184,8 @@ function Sections() {
 				)}
 				{/* edit div end */}
 				<div className="h-52 overflow-y-auto">
-					{sectionsData &&
-						sectionsData.map((section) => (
+					{sections &&
+						sections.map((section) => (
 							<div
 								key={section.id}
 								className="flex border-b border-gray2 text-xs hover:border-b-2 cursor-pointer"

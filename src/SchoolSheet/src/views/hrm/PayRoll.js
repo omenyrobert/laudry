@@ -597,7 +597,7 @@ function PayRoll() {
 				) : null}
 
 				<div className="flex">
-					<div className="w-2/12">
+					<div className="w-3/12">
 						<p className="mt-5 text-lg font-medium text-secondary">
 							Payslip Category
 						</p>
@@ -664,7 +664,7 @@ function PayRoll() {
 							</tbody>
 						</table>
 					</div>
-					<div className="w-10/12 ml-5">
+					<div className="w-9/12 ml-5">
 						<p className="mt-5 text-lg font-medium text-secondary">
 							{" "}
 							Employee Payslip{" "}

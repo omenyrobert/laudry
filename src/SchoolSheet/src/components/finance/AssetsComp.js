@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
-import { BsPencilSquare } from "react-icons/bs";
+import { BsPencilSquare, BsSearch } from "react-icons/bs";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
 import Button from "../Button";
@@ -206,10 +206,22 @@ function AssetsComp() {
 
 	return (
 		<>
-			<h5 className="text-lg font-medium text-primary">Assets</h5>
-			<div onClick={openAdd} className="w-[200px]">
+		<div className="flex justify-between mt-2 bg-white px-3 border border-gray2 rounded-md">
+			<div>
+			<h5 className="text-lg font-medium text-secondary mt-5">Assets</h5>
+			</div>
+			<div className="w-1/2">
+				<InputField type="search" placeholder="Search for Asset" icon={<BsSearch className="w-3 -ml-7 mt-3" />} />
+			</div>
+			<div>
+			<div onClick={openAdd} className="w-[200px] mt-5">
 				<Button2 value={"Register Asset"} />
 			</div>
+			</div>
+
+		</div>
+			
+			
 
 			<div className="w-full h-[80vh]">
 				{add ? (

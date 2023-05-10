@@ -13,6 +13,7 @@ import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import { BsSearch } from "react-icons/bs";
+import Sample from "../../views/Sample";
 
 let db = new Localbase("db");
 
@@ -209,8 +210,13 @@ function ExpensesComp() {
 		});
 	}, []);
 
+
+
 	return (
 		<>
+			
+			<Sample/>
+		
 			<div className="flex bg-white">
 				<div className="w-10/12 ">
 					<div className="flex">

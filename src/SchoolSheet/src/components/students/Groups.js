@@ -135,7 +135,7 @@ function Groups() {
 
 	return (
 		<>
-			<h5 className="text-lg font-medium">Groups/House</h5>
+			<h5 className="text-lg font-medium text-secondary">Groups/House</h5>
 			<div className="w-full h-[80vh]">
 				<div className="flex justify-between bg-white pl-4 shadow-lg">
 					<div className="w-1/2">
