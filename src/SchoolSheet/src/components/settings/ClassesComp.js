@@ -3,81 +3,76 @@ import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import InputField from "../InputField";
-import { FaPen, FaPlusCircle } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
 import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
-import { GrDown } from "react-icons/gr";
+// import { GrDown } from "react-icons/gr";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import Select from "react-select";
+import { useDispatch, useSelector } from "react-redux";
+import axiosInstance from "../../axios-instance";
+import {
+	getClasses,
+	getStreams,
+} from "../../store/schoolSheetSlices/schoolStore";
 
 let db = new Localbase("db");
 
-function ClassesComp() {
-	const [selectedOption, setSelectedOption] = useState(null);
-	const options = [
-		{ value: "Lab Fees", label: "Lab Fees" },
-		{ value: "Consultation", label: "Consulataion" },
-		{ value: "Lab Fees", label: "Lab Fees" },
-		{ value: "Consultation", label: "Consulataion" },
-	];
+const ClassesComp = () => {
 
-	const [streamsData, setStreams] = useState([]);
+	const dispatch = useDispatch();
+
+	const [selectedStream, setSelectedStream] = useState([]);
+
+	const { streams, classes } = useSelector((state) => state.schoolStore);
+
+	const streamOptions = [];
+
+	streams.forEach((stream) => {
+		let new_stream = {};
+		new_stream.value = stream.id;
+		new_stream.label = stream.stream;
+		streamOptions.push(new_stream);
+	});
+
+	const handleStreamChange = (stream) => {
+		setSelectedStream([stream.value]);
+	}
+
 	// posting classes
 	const [sclass, setSclass] = useState("");
-	const [classesData, setClassesData] = useState([]);
 
-	const postClass = () => {
-		let clId = uuid();
-		let formData = {
-			id: clId,
-			sclass: sclass,
-		};
-		if (sclass) {
-			db.collection("classes")
-				.add(formData)
-				.then((response) => {
+	const postClass = async () => {
+		try {
+			let formData = {
+				name: sclass,
+				stream: selectedStream
+			};
+			if (sclass) {
+				const response = await axiosInstance.post('/class', formData);
+				const { data } = response;
+				const { status } = data;
+				if (status) {
 					setSclass("");
-
-					fetchClasses();
+					setSelectedStream([]);
+					dispatch(getClasses());
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
 						showConfirmButton: false,
 						timer: 500,
 					});
-				})
-				.catch(console.error());
+				}
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
-	// fetch streams
-	const fetchClasses = () => {
-		db.collection("classes")
-			.get()
-			.then((classes) => {
-				console.log("classes here", classes);
-				const newData = classes.map((s) => {
-					const streamsObj = streamsClasssesData.filter((c) => {
-						console.log("idd", c);
-						return c.classId === s.id;
-					});
-					const streamsName = streamsData.find((d) => {
-						return d.id === streamsObj.streamId;
-					});
-					return {
-						id: s.id,
-						sclass: s.sclass,
-						streamsObj,
-						streamsName,
-					};
-				});
-				console.log("new array", newData);
-				setClassesData(newData);
-			});
-	};
+
 
 	// update
 	const updateClass = () => {
@@ -90,7 +85,7 @@ function ClassesComp() {
 			.then((response) => {
 				console.log(response);
 				// fetch after
-				fetchClasses();
+				// fetchClasses();
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -111,7 +106,7 @@ function ClassesComp() {
 		db.collection("classesStreamsTbl")
 			.add(formData)
 			.then((response) => {
-				fetchClasses();
+				// fetchClasses();
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -148,7 +143,7 @@ function ClassesComp() {
 					.delete()
 					.then((response) => {
 						// fetch after
-						fetchClasses();
+						// fetchClasses();
 
 						Swal.fire({
 							icon: "success",
@@ -180,39 +175,33 @@ function ClassesComp() {
 	};
 
 	// fetch streams
-	const fetchStreams = () => {
-		return db
-			.collection("streams")
-			.get()
-			.then((streams) => {
-				streams.forEach((stream) => {
-					const newData = streams;
-					setStreams(newData);
-				});
-			});
-	};
+	// const fetchStreams = () => {
+	// 	return db
+	// 		.collection("streams")
+	// 		.get()
+	// 		.then((streams) => {
+	// 			streams.forEach((stream) => {
+	// 				const newData = streams;
+	// 				// setStreams(newData);
+	// 			});
+	// 		});
+	// };
 
-	const [streamsClasssesData, setStreamsClasssesData] = useState([]);
-	const fetchStreamsClasses = () => {
-		return db
-			.collection("classesStreamsTbl")
-			.get()
-			.then((streamsClasses) => {
-				const newData = streamsClasses;
-				setStreamsClasssesData(newData);
-			});
-	};
+	// const [streamsClasssesData, setStreamsClasssesData] = useState([]);
+	// const fetchStreamsClasses = () => {
+	// 	return db
+	// 		.collection("classesStreamsTbl")
+	// 		.get()
+	// 		.then((streamsClasses) => {
+	// 			const newData = streamsClasses;
+	// 			setStreamsClasssesData(newData);
+	// 		});
+	// };
 
-	// useEffect(() => {
-
-	// }, []);
-	// fetching stream
 	useEffect(() => {
-		fetchStreams().then(() => {
-			fetchClasses();
-			fetchStreamsClasses();
-		});
-	}, []);
+		dispatch(getClasses());
+		dispatch(getStreams());
+	}, [dispatch]);
 
 	return (
 		<>
@@ -234,10 +223,10 @@ function ClassesComp() {
 						<label className="text-gray4">Stream</label>
 						<Select
 							placeholder={"Select Stream"}
-							defaultValue={selectedOption}
-							onChange={setSelectedOption}
+							defaultValue={selectedStream}
+							onChange={handleStreamChange}
 							className="mt-1"
-							options={options}
+							options={streamOptions}
 						/>
 					</div>
 
@@ -252,7 +241,7 @@ function ClassesComp() {
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Class</th>
-						<th className="p-2 text-primary text-sm text-left">Streams</th>
+						<th className="p-2 text-primary text-sm text-left">Stream</th>
 
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
@@ -276,10 +265,10 @@ function ClassesComp() {
 									<label className="text-gray4">Stream</label>
 									<Select
 										placeholder={"Select Stream"}
-										defaultValue={selectedOption}
-										onChange={setSelectedOption}
+										defaultValue={selectedStream}
+										onChange={handleStreamChange}
 										className="mt-1"
-										options={options}
+										options={streamOptions}
 									/>
 								</div>
 								<div className=" w-1/5  p-2">
@@ -291,7 +280,7 @@ function ClassesComp() {
 											X
 										</p>
 									</div>
-                                    <br/>
+									<br />
 									<div onClick={updateClass} className="mt-3">
 										<ButtonSecondary value={"Update"} />
 									</div>
@@ -300,14 +289,14 @@ function ClassesComp() {
 						) : null}
 						{/* edit popup end */}
 
-						{classesData.map((sclass) => {
+						{classes.map((sclass) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
 									key={sclass.id}
 								>
-									<td className="text-xs p-3 text-gray5">{sclass.sclass}</td>
-									<td className="text-xs p-3 text-gray5">{sclass.sclass}</td>
+									<td className="text-xs p-3 text-gray5">{sclass.class}</td>
+									<td className="text-xs p-3 text-gray5">{sclass.stream.stream}</td>
 
 									<td className="text-xs p-3 text-gray5 flex">
 										<MdDeleteOutline

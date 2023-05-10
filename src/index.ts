@@ -4,14 +4,14 @@ import { DatabaseConnection } from "./Database/database";
 import cors from "cors";
 import path from "path";
 import cookieParser from "cookie-parser";
-const PORT: string | 3001 = process.env.PORT || 3001;
 
 const app: Application = express();
+const PORT: string | 3001 = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
-app.use("/api", router());
 app.use(cookieParser());
+app.use("/api", router());
 
 app.use(express.static(path.join(__dirname, "SchoolSheet/build")));
 
