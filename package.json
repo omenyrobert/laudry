@@ -6,7 +6,7 @@
   "scripts": {
     "server": "nodemon ./src/index.ts",
     "client": "npm start --prefix ./src/SchoolSheet",
-    "build": "dist --mode production",
+    "build": "tsc --build",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Robert",

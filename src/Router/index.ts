@@ -4,6 +4,7 @@ import StaffTypeRoutes from "./StaffTypeRoutes";
 import StaffRoutes from "./StaffRoutes";
 import AuthRoutes from "./AuthRoutes";
 import SectionRoutes from "./SectionRoutes";
+import ClassRoutes from "./ClassRoutes";
 
 const router = Router();
 
@@ -13,5 +14,6 @@ export default (): Router => {
   StaffRoutes(router);
   AuthRoutes(router);
   SectionRoutes(router);
+  ClassRoutes(router);
   return router;
 };
