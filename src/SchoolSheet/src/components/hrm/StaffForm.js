@@ -15,19 +15,43 @@ import {
 import axiosInstance from "../../axios-instance";
 import ButtonSecondary from "../ButtonSecondary";
 import ButtonLoader from "../ButtonLoader";
+import Modal from "react-modal";
+
+const customStyles = {
+	overlay: {
+		backgroundColor: "rgba(0, 0, 0, 0.5)", // Customize the overlay color here
+	},
+	content: {
+		width: "1000px",
+		height: "390px",
+		padding: '0px',
+		marginLeft: "25vw",
+		marginTop: "10vw",
+	},
+};
+
+
+
+
 
 const StaffForm = (props) => {
+
+	const [isOpen, setIsOpen] = useState(false);
+
+	const openModal = () => {
+		setIsOpen(true);
+	};
+	
+	const closeModal = () => {
+		setIsOpen(false);
+	};
+
+
+
+
 	const dispatch = useDispatch();
 
-	const [addStaff, setAddStaff] = useState(false);
 
-	const openStaffForm = () => {
-		setAddStaff(true);
-	};
-
-	const closeStaffForm = () => {
-		setAddStaff(false);
-	};
 
 	const [selectedStaffTypeOption, setSelectedStaffTypeOption] = useState(null);
 	const typeOptions = [];
@@ -86,7 +110,7 @@ const StaffForm = (props) => {
 					showConfirmButton: false,
 					timer: 500,
 				});
-				closeStaffForm();
+				closeModal();
 				setIsPosting(false);
 			}
 		} catch (error) {
@@ -113,14 +137,19 @@ const StaffForm = (props) => {
 					</div>
 				</div>
 				<div className="w-[210px] mt-5">
-					<div className="w-[210px]" onClick={openStaffForm}>
+					<div className="w-[210px]" onClick={openModal}>
 						<Button2 value={"Add Staff Member"} />
 					</div>
 				</div>
 			</div>
 
-			{addStaff ? (
-				<div className="bg-white  shadow-lg rounded-md h-[393px] overflow-y-auto absolute w-[1000px]  shadow-3xl border-2 border-gray3 ">
+			<Modal
+				isOpen={isOpen}
+				onRequestClose={closeModal}
+				style={customStyles}
+				contentLabel="Example Modal"
+			>
+				<div>
 					<div className="p-3 bg-gray1 flex justify-between">
 						<div>
 							<p className="text-primary text-lg font-semibold">
@@ -128,7 +157,7 @@ const StaffForm = (props) => {
 							</p>
 						</div>
 						<div>
-							<p onClick={closeStaffForm} className="cursor-pointer">
+							<p onClick={closeModal} className="cursor-pointer">
 								X
 							</p>
 						</div>
@@ -186,7 +215,7 @@ const StaffForm = (props) => {
 						</div>
 					</div>
 					<div className="p-3 bg-gray1 flex justify-between">
-						<div onClick={closeStaffForm}>
+						<div onClick={closeModal}>
 							<ButtonSecondary value={"Close"} />
 						</div>
 						<div>
@@ -203,7 +232,9 @@ const StaffForm = (props) => {
 						</div>
 					</div>
 				</div>
-			) : null}
+			</Modal>
+
+			
 		</>
 	);
 };

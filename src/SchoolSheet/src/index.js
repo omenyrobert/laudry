@@ -51,6 +51,7 @@ import Liabilities from "./views/finance/Liabilities";
 import AddStudentForm from "./components/students/AddStudentForm";
 import EditStudentsForm from "./components/students/EditStudentsForm";
 import ShowStudentsForm from "./components/students/ShowStudentsForm";
+import Sample from "./views/Sample";
 const router = createBrowserRouter([
 	{
 		path: "/email",
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
 			{
 				path: "/dashboard",
 				element: <Dashboard />,
+			},
+			{
+				path: "/sample",
+				element: <Sample/>
 			},
 			{
 				path: "/settings",

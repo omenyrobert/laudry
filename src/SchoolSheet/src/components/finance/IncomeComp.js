@@ -264,10 +264,8 @@ function IncomeComp() {
 					<Button2 value={"Add Income"} />
 				</div>
 			</div>
-
-			<div className="w-full h-[80vh] relative">
-				{add ? (
-					<div className="bg-white shadow-xl border border-gray2 rounded-md mr-2 absolute w-[1000px]">
+		
+					{/* <div className="bg-white shadow-xl border border-gray2 rounded-md mr-2  w-[1000px]">
 						<div className="flex justify-between bg-gray1 text-primary p-3 font-semibold rounded">
 							<div>Add Income</div>
 							<div>
@@ -349,22 +347,24 @@ function IncomeComp() {
 									}}
 								/>
 							</div>
-							<div className="w-1/3 mt-14">
-								
-							</div>
+							<div className="w-1/3 mt-14"></div>
 						</div>
 						<div className="flex justify-between bg-gray1  p-3 ounded">
 							<div>
-								<ButtonSecondary value={"Close"}/>
+								<ButtonSecondary value={"Close"} />
 							</div>
 							<div>
-							<div onClick={postIncome}>
+								<div onClick={postIncome}>
 									<Button value={"Add Income"} />
 								</div>
 							</div>
 						</div>
-					</div>
-				) : null}
+					</div> */}
+				
+			<div className="w-full h-[80vh] relative">
+				
+				
+
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
@@ -462,16 +462,14 @@ function IncomeComp() {
 											}}
 										/>
 									</div>
-									<div className="w-1/3 mt-14">
-										
-									</div>
+									<div className="w-1/3 mt-14"></div>
 								</div>
 								<div className="flex justify-between text-primary bg-gray1 font-semibold p-2 rounded-md">
 									<div onClick={closeEditData}>
 										<ButtonSecondary value={"Close"} />
 									</div>
 									<div>
-									<div onClick={postIncome}>
+										<div onClick={postIncome}>
 											<Button value={"Update Income"} />
 										</div>
 									</div>

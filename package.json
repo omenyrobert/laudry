@@ -32,6 +32,7 @@
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.22",
     "npm": "^9.6.5",
+    "react-modal": "^3.16.1",
     "reflect-metadata": "^0.1.13",
     "source-map-loader": "^4.0.1",
     "ts-node": "^10.9.1",
