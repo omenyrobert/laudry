@@ -20,8 +20,8 @@
     animation: animate 1s linear infinite;
 }
 .loader2{
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
 /*     background-color: #bbb; */
     border-radius: 100%;
     border: 3px solid #f5f5f5;
