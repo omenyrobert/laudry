@@ -24,34 +24,24 @@ const customStyles = {
 	content: {
 		width: "1000px",
 		height: "390px",
-		padding: '0px',
+		padding: "0px",
 		marginLeft: "25vw",
 		marginTop: "10vw",
 	},
 };
 
-
-
-
-
 const StaffForm = (props) => {
-
 	const [isOpen, setIsOpen] = useState(false);
 
 	const openModal = () => {
 		setIsOpen(true);
 	};
-	
+
 	const closeModal = () => {
 		setIsOpen(false);
 	};
 
-
-
-
 	const dispatch = useDispatch();
-
-
 
 	const [selectedStaffTypeOption, setSelectedStaffTypeOption] = useState(null);
 	const typeOptions = [];
@@ -124,6 +114,11 @@ const StaffForm = (props) => {
 			<div className="flex bg-white p-2 mr-2">
 				<div className="w-10/12">
 					<div className="flex">
+						<div className="w-[210px] mt-5">
+							<div className="w-[210px]" onClick={openModal}>
+								<Button2 value={"Add Staff Member"} />
+							</div>
+						</div>
 						<div className="w-6/12 px-2">
 							<InputField
 								placeholder="Search for Income"
@@ -134,11 +129,6 @@ const StaffForm = (props) => {
 						<div className="w-4/12 px-2">
 							<InputField placeholder="Filter By Type" />
 						</div>{" "}
-					</div>
-				</div>
-				<div className="w-[210px] mt-5">
-					<div className="w-[210px]" onClick={openModal}>
-						<Button2 value={"Add Staff Member"} />
 					</div>
 				</div>
 			</div>
@@ -233,8 +223,6 @@ const StaffForm = (props) => {
 					</div>
 				</div>
 			</Modal>
-
-			
 		</>
 	);
 };

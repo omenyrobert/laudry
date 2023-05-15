@@ -88,93 +88,88 @@ function Assessment() {
 
 	return (
 		<div>
-			<div className="flex justify-between mr-5">
-				<div>
-					<ExamsTypes />
-				</div>
+			<div className="flex justify-between mr-5 mt-5">
 				<div>
 					<p className="text-secondary font-semibold text-xl">Assessment</p>
 				</div>
+				<div>
+					<ExamsTypes />
+				</div>
 			</div>
 
-			{add ? (
-				<AssessmentForm
-					closeAdd={closeAdd}
-					studentId={studentId}
-					studentData={studentInfo}
-					openEditData={openEditData}
-					assessData={assessData}
-					fetchAssessment={fetchAssessment}
-					examTypesData={examTypesData}
-					subjectsData={subjectsData}
-				/>
-			) : null}
+			<div className="w-full flex">
+				<div className="w-5/12">
+					<table className="mt-4 w-full table-auto">
+						<thead style={{ backgroundColor: "#0d6dfd10" }}>
+							<th className="p-2 text-primary text-sm text-left">Full Name</th>
 
-			<table className="mt-4 w-full table-auto">
-				<thead style={{ backgroundColor: "#0d6dfd10" }}>
-					<th className="p-2 text-primary text-sm text-left">Full Name</th>
+							<th className="p-2 text-primary text-sm text-left">Gender</th>
 
-					<th className="p-2 text-primary text-sm text-left">Gender</th>
-					<th className="p-2 text-primary text-sm text-left">Student Type</th>
-					<th className="p-2 text-primary text-sm text-left">Parents</th>
+							<th className="p-2 text-primary text-sm text-left">Class</th>
 
-					<th className="p-2 text-primary text-sm text-left">Class</th>
-					<th className="p-2 text-primary text-sm text-left">
-						Place Of Residence
-					</th>
-					<th className="p-2 text-primary text-sm text-left">Action</th>
-				</thead>
-				<tbody>
-					{studentData.map((student) => {
-						return (
-							<tr
-								className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-								key={student.id}
-							>
-								<td className="flex">
-									<div className="rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
-										{student.firstName[0]} {student.lastName[0]}
-									</div>
-									<div>
-										<p className="text-sm p-3 -mt-1 text-gray5">
-											{student.firstName} {student.middleName}{" "}
-											{student.lastName}
-										</p>
-										<p className="text-red text-xs -mt-3 ml-3">{student.nin}</p>
-									</div>
-								</td>
-								<td className="text-xs p-3 text-gray5">
-									{student.dateOfBirth} -{" "}
-									{Math.abs(
-										new Date().getFullYear() -
-											new Date(student.dateOfBirth).getFullYear()
-									)}
-									yrs
-								</td>
-								<td className="text-xs p-3 text-gray5">
-									{student.gender.value}
-								</td>
-								<td className="text-xs p-3 text-gray5">
-									{student.studentType.value}
-								</td>
-								<td className="text-xs p-3 text-gray5">
-									{student.fatherContact}
-								</td>
-
-								<td className="text-xs p-3 text-gray5">{student.residence}</td>
-								<td className="text-xs p-3 text-gray5 flex justify-between">
-									<p
-										onClick={() => openAdd(student)}
-										className="p-2 rounded bg-primary3 text-primary"
+							<th className="p-2 text-primary text-sm text-left">Action</th>
+						</thead>
+						<tbody>
+							{studentData.map((student) => {
+								return (
+									<tr
+										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={student.id}
 									>
-										Assess
-									</p>
-								</td>
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
+										<td className="flex">
+											<div className="rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
+												{student.firstName[0]} {student.lastName[0]}
+											</div>
+											<div>
+												<p className="text-sm p-3 -mt-1 text-gray5">
+													{student.firstName} {student.middleName}{" "}
+													{student.lastName}
+												</p>
+												<p className="text-red text-xs -mt-3 ml-3">
+													{student.nin}
+												</p>
+											</div>
+										</td>
+
+										<td className="text-xs p-3 text-gray5">
+											{student.gender.value}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{student.studentType.value}
+										</td>
+
+										<td className="text-xs p-3 text-gray5 flex justify-between">
+											<p
+												onClick={() => openAdd(student)}
+												className="p-2 rounded bg-primary3 text-primary"
+											>
+												Assess
+											</p>
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
+				</div>
+				<div className="w-7/12 ml-5">
+					<p className="text-secondary font-bold text-xl">
+						Assess Student Name
+					</p>
+					{add ? (
+						<AssessmentForm
+							closeAdd={closeAdd}
+							studentId={studentId}
+							studentData={studentInfo}
+							openEditData={openEditData}
+							assessData={assessData}
+							fetchAssessment={fetchAssessment}
+							examTypesData={examTypesData}
+							subjectsData={subjectsData}
+						/>
+					) : null}
+				</div>
+			</div>
 
 			{editData ? (
 				<EditAssessmentForm

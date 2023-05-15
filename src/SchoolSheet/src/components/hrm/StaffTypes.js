@@ -11,7 +11,22 @@ import withReactContent from "sweetalert2-react-content";
 import { useDispatch, useSelector } from "react-redux";
 import { getStaffTypes } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
+import Modal from "react-modal";
 import Button2 from "../Button2";
+
+const customStyles = {
+	overlay: {
+		backgroundColor: "rgba(0, 0, 0, 0.5)", // Customize the overlay color here
+	},
+	content: {
+		width: "30vw",
+		height: "100vh",
+		padding: "0px",
+		marginLeft: "68vw",
+		marginTop: "-39px",
+	},
+};
+
 
 const StaffTypes = () => {
 	const dispatch = useDispatch();
@@ -113,22 +128,28 @@ const StaffTypes = () => {
 
 	const { staffTypes } = useSelector((state) => state.schoolStore);
 
-	const [show, setShow] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
 
-	const openShow = () => {
-		setShow(true);
+	const openModal = () => {
+		setIsOpen(true);
 	};
-	const closeShow = () => {
-		setShow(false);
+
+	const closeModal = () => {
+		setIsOpen(false);
 	};
 	return (
-		<div className="w-full">
-			<div onClick={openShow} className="w-52 relative">
+		<div className="w-full ">
+			<div onClick={openModal} className="w-52 bg-white h-24 relative pt-8  float-right">
 				<Button2 value={"Add Staff Type"} />
 			</div>
-			{show ? (
-				<div className="w-[100vw] z-50 flex h-full bg-black overflow-y-auto absolute bg-opacity-60">
-					<div className="border border-gray2 h-full bg-white w-1/3">
+			
+				
+			<Modal
+				isOpen={isOpen}
+				onRequestClose={closeModal}
+				style={customStyles}
+				contentLabel="Example Modal"
+			>
 						<div className="flex justify-between bg-gray1 p-3">
 							<div>
 								<p className="text-primary text-xl font-semibold">
@@ -136,7 +157,7 @@ const StaffTypes = () => {
 								</p>
 							</div>
 							<div>
-								<p onClick={closeShow} className="cursor-pointer">
+								<p onClick={closeModal} className="cursor-pointer">
 									X
 								</p>
 							</div>
@@ -221,12 +242,10 @@ const StaffTypes = () => {
 								})}
 							</tbody>
 						</table>
+						</Modal>
 					</div>
-					<div className="w-2/3 ml-5" onClick={closeShow}></div>
-				</div>
-			) : null}
-		</div>
+					
 	);
-};
+}
 
 export default StaffTypes;

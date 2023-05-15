@@ -13,7 +13,7 @@ import { GiAlarmClock } from "react-icons/gi";
 function Dashboard() {
 	return (
 		
-			<div className="h-screen overflow-y-auto mt-2 w-full">
+			<div className="h-screen overflow-y-auto w-full">
 				<Cards />
 				<div className="flex w-full">
 					<div className="w-8/12">

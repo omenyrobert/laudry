@@ -52,6 +52,7 @@ import AddStudentForm from "./components/students/AddStudentForm";
 import EditStudentsForm from "./components/students/EditStudentsForm";
 import ShowStudentsForm from "./components/students/ShowStudentsForm";
 import Sample from "./views/Sample";
+import StudentAttendanceComp from "./components/classes/StudentAttendanceComp";
 const router = createBrowserRouter([
 	{
 		path: "/email",
@@ -134,7 +135,7 @@ const router = createBrowserRouter([
 			//classes
 			{
 				path: "/studentAttendance",
-				element: <StudentAttendance />,
+				element: <StudentAttendanceComp />,
 			},
 			{
 				path: "/assessment",
