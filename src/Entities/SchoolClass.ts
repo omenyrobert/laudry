@@ -17,7 +17,11 @@ export class SchoolClass extends BaseEntity {
   @Column()
   class!: string;
 
-  @ManyToMany(() => Stream, (stream) => stream.stream, { cascade: true })
+  @ManyToMany(() => Stream, (stream) => stream.stream, {
+    cascade: true,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
   @JoinTable()
   stream!: Stream[];
 }
@@ -57,7 +61,7 @@ export const deleteClassById = async (id: number) => {
 export const updateClass = async (id: number, name: string, stream: any) => {
   const classToUpdate = await SchoolClass.update(id, {
     class: name,
-    stream: stream,
+    // stream: stream,
   });
   return classToUpdate;
 };

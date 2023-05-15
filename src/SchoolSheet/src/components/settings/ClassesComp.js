@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import InputField from "../InputField";
@@ -9,7 +8,6 @@ import ButtonSecondary from "../ButtonSecondary";
 // import { GrDown } from "react-icons/gr";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,8 +16,6 @@ import {
 	getClasses,
 	getStreams,
 } from "../../store/schoolSheetSlices/schoolStore";
-
-let db = new Localbase("db");
 
 const ClassesComp = () => {
 
@@ -75,58 +71,33 @@ const ClassesComp = () => {
 
 
 	// update
-	const updateClass = () => {
-		db.collection("classes")
-			.doc({ id: classId })
-			.update({
-				sclass: sclassEdit,
-				stream: Edit,
-			})
-			.then((response) => {
-				console.log(response);
-				// fetch after
-				// fetchClasses();
-				const MySwal = withReactContent(Swal);
-				MySwal.fire({
-					icon: "success",
-					showConfirmButton: false,
-					timer: 500,
-				});
+	const updateClass = async () => {
+		try {
+			let form_data = {
+				name: sclassEdit,
+				classId: classId,
+				stream: selectedStream
+			};
+			const response = await axiosInstance.put('/class', form_data);
+			const { data } = response;
+			const { status } = data;
+			if (status) {
+				setSelectedStream([]);
+				dispatch(getClasses());
 				closeEditData();
-			});
-	};
-
-	const addStream = (stream, sclass) => {
-		let scId = uuid();
-		let formData = {
-			id: scId,
-			classId: sclass.id,
-			streamId: stream.id,
-		};
-		db.collection("classesStreamsTbl")
-			.add(formData)
-			.then((response) => {
-				// fetchClasses();
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
 					showConfirmButton: false,
 					timer: 500,
 				});
-			})
-			.catch(console.error());
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
-
-	// const modifiedStream = streamsData.map((s) => {
-	//     const classRoom = classesData.find((c) => c.id === s.id);
-	//     return classRoom;
-	// });
-
-	// console.log(modifiedStream);
 
 	// delete
-
-	//deleting stream
 	const deleteClass = (sclass) => {
 		Swal.fire({
 			title: "Are you sure?",
@@ -136,24 +107,23 @@ const ClassesComp = () => {
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("classes")
-					.doc({ id: sclass.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						// fetchClasses();
-
+				try {
+					const response = await axiosInstance.delete(`/class/${sclass.id}`);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
+						dispatch(getClasses());
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
+					}
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 	};
@@ -163,40 +133,16 @@ const ClassesComp = () => {
 	const [editData, setEditData] = useState(false);
 	const [classId, setclassId] = useState("");
 	const [sclassEdit, setsclassEdit] = useState("");
-	const [Edit, setEdit] = useState("");
+	// const [Edit, setEdit] = useState("");
 
 	const closeEditData = () => {
 		setEditData(false);
 	};
 	const openEditData = (sclass) => {
 		setEditData(true);
-		setsclassEdit(sclass?.sclass);
+		setsclassEdit(sclass?.class);
 		setclassId(sclass.id);
 	};
-
-	// fetch streams
-	// const fetchStreams = () => {
-	// 	return db
-	// 		.collection("streams")
-	// 		.get()
-	// 		.then((streams) => {
-	// 			streams.forEach((stream) => {
-	// 				const newData = streams;
-	// 				// setStreams(newData);
-	// 			});
-	// 		});
-	// };
-
-	// const [streamsClasssesData, setStreamsClasssesData] = useState([]);
-	// const fetchStreamsClasses = () => {
-	// 	return db
-	// 		.collection("classesStreamsTbl")
-	// 		.get()
-	// 		.then((streamsClasses) => {
-	// 			const newData = streamsClasses;
-	// 			setStreamsClasssesData(newData);
-	// 		});
-	// };
 
 	useEffect(() => {
 		dispatch(getClasses());
