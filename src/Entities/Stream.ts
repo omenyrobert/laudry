@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { SchoolClass } from "./SchoolClass";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  In,
+  ManyToMany,
+} from "typeorm";
 
 @Entity()
 export class Stream extends BaseEntity {
@@ -7,6 +15,9 @@ export class Stream extends BaseEntity {
 
   @Column()
   stream!: string;
+
+  @ManyToMany(() => SchoolClass, (schoolclass) => schoolclass.streams)
+  school_classes: SchoolClass[];
 }
 
 export const getStreams = async () => {
@@ -38,4 +49,9 @@ export const updateStream = async (id: number, stream: string) => {
 export const getSingleStream = async (id: number) => {
   const stream = await Stream.findOne({ where: { id: id } });
   return stream;
+};
+
+export const getSelectedStream = async (ids: any) => {
+  const selectedStreams = await Stream.find({ where: { id: In(ids) } });
+  return selectedStreams;
 };

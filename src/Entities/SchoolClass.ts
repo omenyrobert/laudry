@@ -3,11 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  JoinTable,
   ManyToMany,
+  JoinTable,
 } from "typeorm";
 
-import { Stream } from "./Stream";
+import { Stream, getSelectedStream } from "./Stream";
 
 @Entity()
 export class SchoolClass extends BaseEntity {
@@ -17,13 +17,14 @@ export class SchoolClass extends BaseEntity {
   @Column()
   class!: string;
 
-  @ManyToMany(() => Stream, (stream) => stream.stream, {
+  @ManyToMany(() => Stream, {
     cascade: true,
+    eager: false,
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
-  @JoinTable()
-  stream!: Stream[];
+  @JoinTable({ name: "school_class_streams" })
+  streams: Stream[];
 }
 
 export const getClasses = async () => {
@@ -31,17 +32,16 @@ export const getClasses = async () => {
     order: {
       id: "DESC",
     },
-    relations: {
-      stream: true,
-    },
+    relations: ["streams"],
   });
   return classes;
 };
 
 export const createClass = async (name: string, stream: any) => {
-  const classToCreate = await SchoolClass.insert({
+  const selectedStreams = await getSelectedStream(stream);
+  const classToCreate = await SchoolClass.save({
     class: name,
-    stream: stream,
+    streams: selectedStreams,
   });
   return classToCreate;
 };
@@ -59,9 +59,17 @@ export const deleteClassById = async (id: number) => {
 };
 
 export const updateClass = async (id: number, name: string, stream: any) => {
-  const classToUpdate = await SchoolClass.update(id, {
-    class: name,
-    // stream: stream,
-  });
-  return classToUpdate;
+  const selectedStreams = await getSelectedStream(stream);
+  const classUpdate = await getClassById(id);
+  if (classUpdate !== null) {
+    const classToUpdate = await SchoolClass.preload({
+      id: classUpdate.id,
+      class: name,
+      streams: selectedStreams,
+    });
+    if (classToUpdate) {
+      await SchoolClass.save(classToUpdate);
+    }
+    return classToUpdate;
+  }
 };

@@ -22,7 +22,7 @@ export class Staff extends BaseEntity {
   @Column()
   last_name!: string;
 
-  @Column()
+  @Column({ unique: true })
   email!: string;
 
   @ManyToOne(

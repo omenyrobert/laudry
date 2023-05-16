@@ -187,7 +187,7 @@ const ClassesComp = () => {
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Class</th>
-						<th className="p-2 text-primary text-sm text-left">Stream</th>
+						{/* <th className="p-2 text-primary text-sm text-left">Stream</th> */}
 
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
@@ -242,7 +242,7 @@ const ClassesComp = () => {
 									key={sclass.id}
 								>
 									<td className="text-xs p-3 text-gray5">{sclass.class}</td>
-									<td className="text-xs p-3 text-gray5">{sclass.stream.stream}</td>
+									{/* <td className="text-xs p-3 text-gray5">{sclass.stream.stream}</td> */}
 
 									<td className="text-xs p-3 text-gray5 flex">
 										<MdDeleteOutline
