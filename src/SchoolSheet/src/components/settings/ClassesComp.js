@@ -9,7 +9,7 @@ import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import "../../assets/styles/main.css";
-import Select from "react-select";
+// import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../../axios-instance";
 import {
@@ -24,18 +24,17 @@ const ClassesComp = () => {
 
 	const { streams, classes } = useSelector((state) => state.schoolStore);
 
-	const streamOptions = [];
-
-	streams.forEach((stream) => {
-		let new_stream = {};
-		new_stream.value = stream.id;
-		new_stream.label = stream.stream;
-		streamOptions.push(new_stream);
-	});
-
-	const handleStreamChange = (stream) => {
-		setSelectedStream([stream.value]);
+	const handleStreamChange = (streamId) => {
+		let streamIds = selectedStream;
+		streamIds.push(streamId);
+		setSelectedStream(streamIds);
 	};
+
+	const filter = (dataToFilter = [], dataSelected = []) => {
+		return dataToFilter.filter(datum => !dataSelected.includes(datum.id))
+	}
+
+	let streamOptions = filter(streams, selectedStream)
 
 	// posting classes
 	const [sclass, setSclass] = useState("");
@@ -146,14 +145,18 @@ const ClassesComp = () => {
 		dispatch(getStreams());
 	}, [dispatch]);
 
+
 	const [select1, setSelect1] = useState(false);
 
 	const showSelect = () => {
+		streamOptions = filter(streams, selectedStream)
 		setSelect1(true);
 	};
 
 	const closeSelect = () => {
-		setSelect1(false);
+		setTimeout(() => {
+			setSelect1(false);
+		}, 200)
 	};
 
 	const [select2, setSelect2] = useState(false);
@@ -163,7 +166,9 @@ const ClassesComp = () => {
 	};
 
 	const closeSelect2 = () => {
-		setSelect2(false);
+		setTimeout(() => {
+			setSelect2(false);
+		}, 200)
 	};
 
 	return (
@@ -194,11 +199,11 @@ const ClassesComp = () => {
 						/>
 						{select1 ? (
 							<div className="absolute z-50 w-[280px] bg-white shadow-md rounded-md h-52 overflow-y-auto">
-								{streams.map((stream) => {
+								{streamOptions.map((stream) => {
 									return (
-										<div className="p-2 hover:bg-gray1 flex cursor-pointer">
+										<div className="p-2 hover:bg-gray1 flex cursor-pointer" key={stream.id}>
 											<div>
-												<input type="checkbox" />
+												<input type="checkbox" onClick={() => handleStreamChange(stream.id)} className='cursor-pointer' />
 											</div>
 											<div className="text-gray5 ml-5">{stream.stream}</div>
 										</div>
@@ -249,28 +254,28 @@ const ClassesComp = () => {
 								<div className="w-2/5 p-2">
 									<br />
 									<label className="text-gray4">Stream</label>
-									<br/>
+									<br />
 									<input
-							onFocus={showSelect2}
-							onBlur={closeSelect2}
-							type="search"
-							placeholder="Select Streams"
-							className="p-3 w-[280px] relative bg-gray1 text-sm rounded-md"
-						/>
-						{select2 ? (
-							<div className="absolute z-50 w-[280px] bg-white shadow-md rounded-md h-52 overflow-y-auto">
-								{streams.map((stream) => {
-									return (
-										<div className="p-2 hover:bg-gray1 flex cursor-pointer">
-											<div>
-												<input type="checkbox" />
-											</div>
-											<div className="text-gray5 ml-5">{stream.stream}</div>
+										onFocus={showSelect2}
+										onBlur={closeSelect2}
+										type="search"
+										placeholder="Select Streams"
+										className="p-3 w-[280px] relative bg-gray1 text-sm rounded-md"
+									/>
+									{select2 ? (
+										<div className="absolute z-50 w-[280px] bg-white shadow-md rounded-md h-52 overflow-y-auto">
+											{streams.map((stream) => {
+												return (
+													<div className="p-2 hover:bg-gray1 flex cursor-pointer">
+														<div>
+															<input type="checkbox" />
+														</div>
+														<div className="text-gray5 ml-5">{stream.stream}</div>
+													</div>
+												);
+											})}
 										</div>
-									);
-								})}
-							</div>
-						) : null}
+									) : null}
 								</div>
 								<div className=" w-1/5  p-2">
 									<div>
