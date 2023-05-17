@@ -18,7 +18,6 @@ import {
 } from "../../store/schoolSheetSlices/schoolStore";
 
 const ClassesComp = () => {
-
 	const dispatch = useDispatch();
 
 	const [selectedStream, setSelectedStream] = useState([]);
@@ -36,7 +35,7 @@ const ClassesComp = () => {
 
 	const handleStreamChange = (stream) => {
 		setSelectedStream([stream.value]);
-	}
+	};
 
 	// posting classes
 	const [sclass, setSclass] = useState("");
@@ -45,10 +44,10 @@ const ClassesComp = () => {
 		try {
 			let formData = {
 				name: sclass,
-				stream: selectedStream
+				stream: selectedStream,
 			};
 			if (sclass) {
-				const response = await axiosInstance.post('/class', formData);
+				const response = await axiosInstance.post("/class", formData);
 				const { data } = response;
 				const { status } = data;
 				if (status) {
@@ -68,17 +67,15 @@ const ClassesComp = () => {
 		}
 	};
 
-
-
 	// update
 	const updateClass = async () => {
 		try {
 			let form_data = {
 				name: sclassEdit,
 				classId: classId,
-				stream: selectedStream
+				stream: selectedStream,
 			};
-			const response = await axiosInstance.put('/class', form_data);
+			const response = await axiosInstance.put("/class", form_data);
 			const { data } = response;
 			const { status } = data;
 			if (status) {
@@ -149,6 +146,26 @@ const ClassesComp = () => {
 		dispatch(getStreams());
 	}, [dispatch]);
 
+	const [select1, setSelect1] = useState(false);
+
+	const showSelect = () => {
+		setSelect1(true);
+	};
+
+	const closeSelect = () => {
+		setSelect1(false);
+	};
+
+	const [select2, setSelect2] = useState(false);
+
+	const showSelect2 = () => {
+		setSelect2(true);
+	};
+
+	const closeSelect2 = () => {
+		setSelect2(false);
+	};
+
 	return (
 		<>
 			<h5 className="text-xl font-medium ml-5 text-secondary">Classes</h5>
@@ -167,13 +184,36 @@ const ClassesComp = () => {
 					<div className="w-1/3 p-2">
 						<br />
 						<label className="text-gray4">Stream</label>
-						<Select
+						<br />
+						<input
+							onFocus={showSelect}
+							onBlur={closeSelect}
+							type="search"
+							placeholder="Select Streams"
+							className="p-3 w-[280px] relative bg-gray1 text-sm rounded-md"
+						/>
+						{select1 ? (
+							<div className="absolute z-50 w-[280px] bg-white shadow-md rounded-md h-52 overflow-y-auto">
+								{streams.map((stream) => {
+									return (
+										<div className="p-2 hover:bg-gray1 flex cursor-pointer">
+											<div>
+												<input type="checkbox" />
+											</div>
+											<div className="text-gray5 ml-5">{stream.stream}</div>
+										</div>
+									);
+								})}
+							</div>
+						) : null}
+
+						{/* <Select
 							placeholder={"Select Stream"}
 							defaultValue={selectedStream}
 							onChange={handleStreamChange}
 							className="mt-1"
 							options={streamOptions}
-						/>
+						/> */}
 					</div>
 
 					<div className="mt-8 w-1/3 p-2">
@@ -209,13 +249,28 @@ const ClassesComp = () => {
 								<div className="w-2/5 p-2">
 									<br />
 									<label className="text-gray4">Stream</label>
-									<Select
-										placeholder={"Select Stream"}
-										defaultValue={selectedStream}
-										onChange={handleStreamChange}
-										className="mt-1"
-										options={streamOptions}
-									/>
+									<br/>
+									<input
+							onFocus={showSelect2}
+							onBlur={closeSelect2}
+							type="search"
+							placeholder="Select Streams"
+							className="p-3 w-[280px] relative bg-gray1 text-sm rounded-md"
+						/>
+						{select2 ? (
+							<div className="absolute z-50 w-[280px] bg-white shadow-md rounded-md h-52 overflow-y-auto">
+								{streams.map((stream) => {
+									return (
+										<div className="p-2 hover:bg-gray1 flex cursor-pointer">
+											<div>
+												<input type="checkbox" />
+											</div>
+											<div className="text-gray5 ml-5">{stream.stream}</div>
+										</div>
+									);
+								})}
+							</div>
+						) : null}
 								</div>
 								<div className=" w-1/5  p-2">
 									<div>
@@ -263,5 +318,5 @@ const ClassesComp = () => {
 			</div>
 		</>
 	);
-}
+};
 export default ClassesComp;
