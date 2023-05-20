@@ -40,7 +40,7 @@ function Settings() {
 				<p className="text-secondary text-xl font-semibold">About the School</p>
 				<div className="flex w-full">
 					
-					<div className="w-1/2">
+					<div className="w-1/3">
 					<EditSchoolInfo/>
 						<p>Logo</p>
 						<p>Name</p>
@@ -70,7 +70,7 @@ function Settings() {
 							{sites}
 						</p>
 					</div>
-					<div className="w-1/2 ml-10">
+					<div className="w-2/3 ml-10">
 						<Terms/>
 						<br />
 						<Sections />

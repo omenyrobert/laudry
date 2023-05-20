@@ -18,7 +18,7 @@ const customStyles = {
 	},
 	content: {
 		width: "800px",
-		height: "540px",
+		height: "560px",
 		padding: "0px",
 		marginLeft: "25vw",
 		marginTop: "5vw",
@@ -113,7 +113,7 @@ function EditSchoolInfo() {
 								</p>
 							</div>
 						</div>
-						<div className="p-3 flex h-[45vh] overflow-y-auto">
+						<div className="p-3 flex">
 							<div className="w-1/2">
 								<InputField
 									type="text"

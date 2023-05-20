@@ -6,7 +6,7 @@ function Cards() {
 	return (
 		<div className="flex w-full">
 
-			<div className="w-1/5 my-2 mr-2 p-3 h-24  bg-primary text-white shadow  rounded-md">
+			<div className="w-1/4 my-2 mr-2 p-3 h-24  bg-primary text-white shadow  rounded-md">
 				<p className="text-lg font-semibold">Term 1</p>
 				<div className="flex justify-between mt-3 text-sm">
 					<div>3rd Jan 2023</div>
@@ -16,7 +16,7 @@ function Cards() {
 
 			{/* first card */}
 
-			<div className="w-1/5 m-2 p-2 h-32   bg-white shadow hover:bg-blue11 cursor-pointer rounded-md border-b-4 border-blue1">
+			<div className="w-1/4 m-2 p-2 h-32   bg-white shadow hover:bg-blue11 cursor-pointer rounded-md border-b-4 border-blue1">
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">
@@ -39,7 +39,7 @@ function Cards() {
 
 			{/* second card */}
 
-			<div className="w-1/5 m-2 p-2 h-32   bg-white shadow hover:bg-yellow11 cursor-pointer rounded-md border-b-4 border-yellow">
+			<div className="w-1/4 m-2 p-2 h-32   bg-white shadow hover:bg-yellow11 cursor-pointer rounded-md border-b-4 border-yellow">
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">
@@ -62,7 +62,7 @@ function Cards() {
 
 			{/* third card */}
 
-			<div className="w-1/5 m-2 p-2 h-32   bg-white shadow hover:bg-green11 cursor-pointer rounded-md border-b-4 border-green">
+			<div className="w-1/4 m-2 p-2 h-32   bg-white shadow hover:bg-green11 cursor-pointer rounded-md border-b-4 border-green">
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">
@@ -85,7 +85,7 @@ function Cards() {
 
 			{/* fourth card */}
 
-			<div className="w-1/5 m-2 p-2 h-32   bg-white shadow hover:bg-red1 cursor-pointer rounded-md border-b-4 border-red">
+			<div className="w-1/4 m-2 p-2 h-32   bg-white shadow hover:bg-red1 cursor-pointer rounded-md border-b-4 border-red">
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">

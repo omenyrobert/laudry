@@ -24,12 +24,13 @@ const data = {
         data: [3, 10, 13, 15, 21, 10],
         backgroundColor: '#193296',
       }
-    ]
+    ],
+    responsive: true,
     }
 
 
     return (
-    <div>
+    <div className='w-full'>
 
         <Bar data={data} />
   </div>

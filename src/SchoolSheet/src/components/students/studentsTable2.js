@@ -100,10 +100,9 @@ function studentsTable2() {
 		<table className="mt-4 w-full table-auto">
 			<thead style={{ backgroundColor: "#0d6dfd10" }}>
 				<th className="p-2 text-primary text-sm text-left">Full Name</th>
-				<th className="p-2 text-primary text-sm text-left">Gender</th>
-				<th className="p-2 text-primary text-sm text-left">Patient Type</th>
+				<th className="p-2 text-primary text-sm text-left">Class</th>
+				<th className="p-2 text-primary text-sm text-left">Paid</th>
 				<th className="p-2 text-primary text-sm text-left">Contact</th>
-				<th className="p-2 text-primary text-sm text-left">Email</th>
 			</thead>
 			<tbody>
 				{patients.map((patient) => {
@@ -128,7 +127,7 @@ function studentsTable2() {
 							</td>
 						
 							<td className="text-xs p-3 text-gray5">{patient.gender}</td>
-							<td className="text-xs p-3 text-gray5"></td>
+						
 							<td className="text-xs p-3 text-gray5">{patient.contacts[0]}</td>
 							<td className="text-xs p-3 text-gray5">{patient.email}</td>
 							
