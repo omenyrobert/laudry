@@ -195,10 +195,10 @@ const ClassesComp = () => {
 							onBlur={closeSelect}
 							type="search"
 							placeholder="Select Streams"
-							className="p-3 w-[280px] relative bg-gray1 text-sm rounded-md"
+							className="p-3 w-[15vw] relative bg-gray1 text-sm rounded-md"
 						/>
 						{select1 ? (
-							<div className="absolute z-50 w-[280px] bg-white shadow-md rounded-md h-52 overflow-y-auto">
+							<div className="absolute z-50 w-[15vw] bg-white shadow-md rounded-md h-52 overflow-y-auto">
 								{streamOptions.map((stream) => {
 									return (
 										<div className="p-2 hover:bg-gray1 flex cursor-pointer" key={stream.id}>
@@ -221,9 +221,9 @@ const ClassesComp = () => {
 						/> */}
 					</div>
 
-					<div className="mt-8 w-1/3 p-2">
+					<div className="mt-6 mr-8 p-2">
 						<br />
-						<div onClick={postClass} className="w-[200px]">
+						<div onClick={postClass} className="w-auto">
 							<Button value={"Add"} />
 						</div>
 					</div>
@@ -260,10 +260,10 @@ const ClassesComp = () => {
 										onBlur={closeSelect2}
 										type="search"
 										placeholder="Select Streams"
-										className="p-3 w-[280px] relative bg-gray1 text-sm rounded-md"
+										className="p-3 w-[15vw] relative bg-gray1 text-sm rounded-md"
 									/>
 									{select2 ? (
-										<div className="absolute z-50 w-[280px] bg-white shadow-md rounded-md h-52 overflow-y-auto">
+										<div className="absolute z-50 w-[15vw] bg-white shadow-md rounded-md h-52 overflow-y-auto">
 											{streams.map((stream) => {
 												return (
 													<div className="p-2 hover:bg-gray1 flex cursor-pointer">
@@ -301,7 +301,11 @@ const ClassesComp = () => {
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
 									key={sclass.id}
 								>
-									<td className="text-xs p-3 text-gray5">{sclass.class}</td>
+									<td className="text-xs p-3 text-gray5">{sclass.class} { sclass.streams.map((stream)=>{
+										return(
+											<span className="p-1 bg-white shadow rounded m-1">{stream.stream}</span>
+										)
+									})}</td>
 									{/* <td className="text-xs p-3 text-gray5">{sclass.stream.stream}</td> */}
 
 									<td className="text-xs p-3 text-gray5 flex">

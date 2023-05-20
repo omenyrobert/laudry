@@ -21,14 +21,14 @@ function Dashboard() {
 							<p className="text-xl text-primary font-semibold">Fees Payment</p>
 							{/* <BarGraph /> */}
 						</div>
-						<div className="rounded-md w-full shadow-md bg-white h-[50vh] p-5 mt-3">
+						<div className="rounded-md w-full shadow-md overflow-y-auto bg-white h-[50vh] p-5 mt-3">
 							<p className="text-xl text-primary font-semibold">
 								Students With Lowest Payments
 							</p>
 							<PatientTable2 />
 						</div>
 					</div>
-					<div className="w-4/12 rounded-md shadow-md bg-white ml-2 h-[125vh] p-2">
+					<div className="w-4/12 rounded-md shadow-md bg-white ml-2 overflow-y-auto h-[125vh] p-2">
 						{/* <Doughnut /> */}
 						<p className="text-xl text-primary font-semibold">Events</p>
 						<div className="p-2 rounded-md w-full m-2 flex">

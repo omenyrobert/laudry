@@ -18,7 +18,7 @@ const customStyles = {
 	},
 	content: {
 		width: "800px",
-		height: "560px",
+		height: "auto",
 		padding: "0px",
 		marginLeft: "25vw",
 		marginTop: "5vw",

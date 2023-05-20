@@ -6,7 +6,7 @@ function SmallCalendar() {
   const [value, onChange] = useState(new Date());
 
   return (
-    <div>
+    <div className='md:w-[25vw]'>
       <Calendar onChange={onChange} value={value} />
     </div>
   );
