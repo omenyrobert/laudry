@@ -218,7 +218,7 @@ function Students() {
 					<div className="flex w-42">
 						
 						<Link to="/addStudentForm">
-                            <Button2 value={"Add Student"}/>
+                            <Button2 value={"Student"}/>
                         </Link>
 					</div>
 					<div className="w-2/12 -mt-5">

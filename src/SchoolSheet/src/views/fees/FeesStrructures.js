@@ -137,7 +137,7 @@ function FeesStrructures() {
 
     return (
         <div className='flex'>
-            <div className='w-1/3 p-5 bg-white shadow-lg rounded-md overflow-y-auto h-[40vh]'>
+            <div className='w-1/3 p-5 bg-white shadow-lg rounded-mdß'>
                 <h5 className='text-xl font-medium  text-secondary'>Fees Structure</h5>
 
                 <InputField
