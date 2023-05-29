@@ -31,10 +31,10 @@ const ClassesComp = () => {
 	};
 
 	const filter = (dataToFilter = [], dataSelected = []) => {
-		return dataToFilter.filter(datum => !dataSelected.includes(datum.id))
-	}
+		return dataToFilter.filter((datum) => !dataSelected.includes(datum.id));
+	};
 
-	let streamOptions = filter(streams, selectedStream)
+	let streamOptions = filter(streams, selectedStream);
 
 	// posting classes
 	const [sclass, setSclass] = useState("");
@@ -145,18 +145,17 @@ const ClassesComp = () => {
 		dispatch(getStreams());
 	}, [dispatch]);
 
-
 	const [select1, setSelect1] = useState(false);
 
 	const showSelect = () => {
-		streamOptions = filter(streams, selectedStream)
+		streamOptions = filter(streams, selectedStream);
 		setSelect1(true);
 	};
 
 	const closeSelect = () => {
 		setTimeout(() => {
 			setSelect1(false);
-		}, 200)
+		}, 200);
 	};
 
 	const [select2, setSelect2] = useState(false);
@@ -168,7 +167,7 @@ const ClassesComp = () => {
 	const closeSelect2 = () => {
 		setTimeout(() => {
 			setSelect2(false);
-		}, 200)
+		}, 200);
 	};
 
 	return (
@@ -201,9 +200,16 @@ const ClassesComp = () => {
 							<div className="absolute z-50 w-[15vw] bg-white shadow-md rounded-md h-52 overflow-y-auto">
 								{streamOptions.map((stream) => {
 									return (
-										<div className="p-2 hover:bg-gray1 flex cursor-pointer" key={stream.id}>
+										<div
+											className="p-2 hover:bg-gray1 flex cursor-pointer"
+											key={stream.id}
+										>
 											<div>
-												<input type="checkbox" onClick={() => handleStreamChange(stream.id)} className='cursor-pointer' />
+												<input
+													type="checkbox"
+													onClick={() => handleStreamChange(stream.id)}
+													className="cursor-pointer"
+												/>
 											</div>
 											<div className="text-gray5 ml-5">{stream.stream}</div>
 										</div>
@@ -264,13 +270,19 @@ const ClassesComp = () => {
 									/>
 									{select2 ? (
 										<div className="absolute z-50 w-[15vw] bg-white shadow-md rounded-md h-52 overflow-y-auto">
-											{streams.map((stream) => {
+											{streamOptions.map((stream) => {
 												return (
 													<div className="p-2 hover:bg-gray1 flex cursor-pointer">
 														<div>
-															<input type="checkbox" />
+															<input
+																type="checkbox"
+																className="cursor-pointer"
+																onClick={() => handleStreamChange(stream.id)}
+															/>
 														</div>
-														<div className="text-gray5 ml-5">{stream.stream}</div>
+														<div className="text-gray5 ml-5">
+															{stream.stream}
+														</div>
 													</div>
 												);
 											})}
@@ -301,11 +313,16 @@ const ClassesComp = () => {
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
 									key={sclass.id}
 								>
-									<td className="text-xs p-3 text-gray5">{sclass.class} { sclass.streams.map((stream)=>{
-										return(
-											<span className="p-1 bg-white shadow rounded m-1">{stream.stream}</span>
-										)
-									})}</td>
+									<td className="text-xs p-3 text-gray5">
+										{sclass.class}{" "}
+										{sclass.streams.map((stream) => {
+											return (
+												<span className="p-1 bg-white shadow rounded m-1">
+													{stream.stream}
+												</span>
+											);
+										})}
+									</td>
 									{/* <td className="text-xs p-3 text-gray5">{sclass.stream.stream}</td> */}
 
 									<td className="text-xs p-3 text-gray5 flex">
