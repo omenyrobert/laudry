@@ -5,12 +5,11 @@ import InputField from '../../components/InputField';
 import { FaPen } from 'react-icons/fa';
 import Button from '../../components/Button';
 import ButtonSecondary from '../../components/ButtonSecondary';
-import Localbase from 'localbase';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
-import { v4 as uuid } from 'uuid';
+//import { v4 as uuid } from 'uuid';
+import axiosInstance from "../../axios-instance"
 
-let db = new Localbase('db');
 
 function FeesStrructures() {
     const initialFeesData = {
@@ -28,40 +27,52 @@ function FeesStrructures() {
     // post fees info
     const postFeesInfo = (e) => {
         e.preventDefault();
-        let stId = uuid();
+        //let stId = uuid();
         let data = {
-            id: stId,
-            feesName: fees.feesName,
-            feesAmount: fees.feesAmount,
+            name: fees.feesName,
+            amount: fees.feesAmount,
         };
         if (fees) {
-            db.collection('feesInfo')
-                .add(data)
+
+            axiosInstance.post("/fees", data)
                 .then((response) => {
-                    console.log('postFeesInfo: ', response);
-                    setFees(initialFeesData);
-                    fetchFeesInfo();
-                    console.log('field: ', fees);
-                    // show alert
-                    const MySwal = withReactContent(Swal);
-                    MySwal.fire({
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 500,
-                    });
+                    const { data } = response;
+                    const { status } = data;
+                    if (status) {
+                        setFees(initialFeesData);
+                        fetchFeesInfo();
+
+                        const MySwal = withReactContent(Swal);
+                        MySwal.fire({
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 500,
+                        });
+                    }
                 })
-                .catch(console.error());
+                .catch((error) => {
+                    console.log(error);
+                })
         }
     };
 
     // fetch student info
     const fetchFeesInfo = () => {
-        db.collection('feesInfo')
-            .get()
-            .then((student) => {
-                const newData = student;
-                setFeesData(newData);
-            });
+
+
+        axiosInstance.get("/fees")
+            .then((response) => {
+                const { data } = response;
+                const { status, payload } = data;
+                if (status) {
+                    setFeesData(payload);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+
     };
 
     const deleteFee = (fee) => {
@@ -75,22 +86,23 @@ function FeesStrructures() {
             confirmButtonText: 'Yes, delete it!',
         }).then((result) => {
             if (result.isConfirmed) {
-                db.collection('feesInfo')
-                    .doc({ id: fee.id })
-                    .delete()
-                    .then((response) => {
-                        // fetch after
-                        fetchFeesInfo();
 
-                        Swal.fire({
-                            icon: 'success',
-                            showConfirmButton: false,
-                            timer: 500,
-                        });
+                axiosInstance.delete(`/fees/${fee.id}`)
+                    .then((response) => {
+                        const { data } = response;
+                        const { status } = data;
+                        if (status) {
+                            fetchFeesInfo();
+                            Swal.fire({
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 500,
+                            });
+                        }
                     })
                     .catch((error) => {
                         console.log(error);
-                    });
+                    })
             }
         });
     };
@@ -109,30 +121,34 @@ function FeesStrructures() {
     };
     const openEditData2 = (fee) => {
         setEditData2(true);
-        setFeesNameEdit(fee.feesName);
-        setFeesAmountEdit(fee.feesAmount);
+        setFeesNameEdit(fee.name);
+        setFeesAmountEdit(fee.amount);
         setFeesId(fee.id);
     };
 
     const updateFeesInfo = () => {
-        db.collection('feesInfo')
-            .doc({ id: feesId })
-            .update({
-                feesName: feesNameEdit,
-                feesAmount: feesAmountEdit,
-            })
+
+        let data = {
+            id: feesId,
+            name: feesNameEdit,
+            amount: feesAmountEdit,
+        };
+        axiosInstance.put(`/fees`, data)
             .then((response) => {
-                console.log(response);
-                // fetch after
-                fetchFeesInfo();
-                const MySwal = withReactContent(Swal);
-                MySwal.fire({
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 500,
-                });
-                closeEditData2();
-            });
+                const { data } = response;
+                const { status } = data;
+                if (status) {
+                    fetchFeesInfo();
+                    Swal.fire({
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 500,
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
     };
 
     return (
@@ -233,10 +249,10 @@ function FeesStrructures() {
                                         key={fee.id}
                                     >
                                         <td className='text-xs p-3 text-gray5'>
-                                            {fee.feesName}
+                                            {fee.name}
                                         </td>
                                         <td className='text-xs p-3 text-gray5'>
-                                            {fee.feesAmount}
+                                            {fee.amount}
                                         </td>
                                         <td className='text-xs p-3 text-gray5 flex'>
                                             <MdDeleteOutline
