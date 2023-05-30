@@ -36,6 +36,13 @@ export const getClasses = createAsyncThunk('schoolSheet/classes', async () => {
 	if (status) return payload
 });
 
+export const getSubjects = createAsyncThunk("/schoolSheet/subjects", async () => {
+	const subjects = await axiosInstance.get("/subjects");
+	const { data } = subjects;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
 	initialState: {
@@ -44,6 +51,7 @@ export const schoolSheetSlices = createSlice({
 		staffTypes: [],
 		classes: [],
 		sections: [],
+		subjects: [],
 	},
 	extraReducers: {
 		[getStreams.fulfilled]: (state, action) => {
@@ -60,6 +68,9 @@ export const schoolSheetSlices = createSlice({
 		},
 		[getClasses.fulfilled]: (state, action) => {
 			state.classes = action.payload;
+		},
+		[getSubjects.fulfilled]: (state, action) => {
+			state.subjects = action.payload;
 		},
 	},
 });
