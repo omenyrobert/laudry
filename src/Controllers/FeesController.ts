@@ -12,7 +12,6 @@ import { customPayloadResponse } from "../Helpers/Helpers";
 export const fetchFees = async (req: Request, res: Response) => {
   try {
     const fees = await getFees();
-    console.log("fees", fees);
     return res.json(customPayloadResponse(true, fees)).status(200).end();
   } catch (error) {
     return res
@@ -24,7 +23,6 @@ export const fetchFees = async (req: Request, res: Response) => {
 
 export const addFee = async (req: Request, res: Response) => {
   try {
-    console.log("req.body", req.body);
 
     const { name, amount } = req.body;
     if (!name) {
@@ -54,7 +52,6 @@ export const addFee = async (req: Request, res: Response) => {
 
 export const modifyFee = async (req: Request, res: Response) => {
   try {
-    console.log("req.body", req.body)
     const { name, id, amount } = req.body;
     const feeId = id
     if (!name) {
