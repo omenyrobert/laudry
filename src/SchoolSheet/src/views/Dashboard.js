@@ -19,7 +19,7 @@ function Dashboard() {
 					<div className="w-8/12">
 						<div className="rounded-md w-full shadow-md bg-white h-[65vh] p-5">
 							<p className="text-xl text-primary font-semibold">Fees Payment</p>
-							{/* <BarGraph /> */}
+							<BarGraph />
 						</div>
 						<div className="rounded-md w-full shadow-md overflow-y-auto bg-white h-[50vh] p-5 mt-3">
 							<p className="text-xl text-primary font-semibold">
