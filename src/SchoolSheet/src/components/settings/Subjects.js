@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Button from "../Button";
-import { v4 as uuid } from 'uuid';
 import ButtonSecondary from "../ButtonSecondary";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
@@ -8,13 +7,12 @@ import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
-
-let db = new Localbase("db");
+import { useDispatch, useSelector } from "react-redux";
+import { getSubjects } from "../../store/schoolSheetSlices/schoolStore";
+import axiosInstance from "../../axios-instance";
 
 function Subject() {
-
-
+	const dispatch = useDispatch();
 	const [editData, setEditData] = useState(false);
 	const [editSubject, setEditSubject] = useState("");
 	const [subjectId, setSubjectId] = useState("");
@@ -24,57 +22,41 @@ function Subject() {
 	};
 	const openEditData = (subject) => {
 		setEditData(true);
-		setEditSubject(subject.subject);
+		setEditSubject(subject?.subject);
 		setSubjectId(subject.id)
 	};
 
-
-
-	const [subjectData, setSubjectData] = useState([]);
-
 	// posting subject
 	const [subject, setSubject] = useState("");
-	const postSubject = () => {
-		let stId = uuid();
-		let formData = {
-			id: stId,
-			subject: subject,
-		};
-		if (subject) {
-			db.collection("subjects")
-				.add(formData)
-				.then((response) => {
-					setSubject("");
-
-					// fetch after
-					fetchSubject();
-
-					// show alert
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
-				.catch(console.error());
+	const postSubject = async () => {
+		try {
+			let formData = {
+				subject: subject,
+			};
+	
+			const response = await axiosInstance.post("/subjects", formData);
+			const { data } = response;
+			const { status } = data;
+	
+			if (status) {
+				dispatch(getSubjects());
+				setSubject("");
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+			}
+		} catch(error) {
+			console.log(error);
 		}
-	};
-
-	// fetch subject
-	const fetchSubject = () => {
-		db.collection("subjects")
-			.get()
-			.then((subject) => {
-				const newData = subject;
-				setSubjectData(newData);
-			});
 	};
 
 	// fetching subject
 	useEffect(() => {
-		fetchSubject();
-	}, []);
+		dispatch(getSubjects());
+	}, [dispatch]);
 
 	//deleting subject
 	const deleteSubject = (subject) => {
@@ -86,39 +68,40 @@ function Subject() {
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("subjects")
-					.doc({ id: subject.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchSubject();
-
+				try {
+					const response = await axiosInstance.delete(`/subjects/${subject.id}`);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
+						dispatch(getSubjects());
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
+					}
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 	};
 
 	// updating subject
-	const updateSubject = () => {
-		db.collection("subjects")
-			.doc({ id: subjectId })
-			.update({
+	const updateSubject = async () => {
+		try {
+			let formData = {
+				subjectId: subjectId,
 				subject: editSubject,
-			})
-			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchSubject();
+			};
+			const subject = await axiosInstance.put("/subjects", formData);
+			const { data } = subject;
+			const { status } = data;
+			if (status) {
+				dispatch(getSubjects());
+				setEditSubject("");
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -126,8 +109,13 @@ function Subject() {
 					timer: 500,
 				});
 				closeEditData();
-			});
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
+
+	const { subjects } = useSelector((state) => state.schoolStore);
 
 	return (
 		<>
@@ -190,7 +178,7 @@ function Subject() {
 						) : null}
 						{/* edit popup end */}
 
-						{subjectData.map((subject) => {
+						{subjects.map((subject) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
