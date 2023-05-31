@@ -1,5 +1,7 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
+import { BsCameraFill } from "react-icons/bs";
+import Button2 from "../Button2";
 
 function ShowStudentsForm() {
 	const { student } = useParams();
@@ -16,14 +18,18 @@ function ShowStudentsForm() {
 			</div>
 			<div className="flex">
 				<div className="w-1/2 p-5">
-					<div className="flex">
-						<div className="w-[250px]">
+					<div className="flex justify-between">
+						<div className="w-[250px] relative ">
+						<span className="text-white bg-secondary p-2 ml-[80%] mt-10 cursor-pointer  absolute rounded-full">
+								<BsCameraFill className="text-2xl" />
+							</span>
 							<img
 								src="avata.jpeg"
-								className="w-full object-cover rounded-full  border border-gray1 shadow"
+								className="w-full object-cover  rounded-full  border border-gray1 shadow"
 							/>
+							
 						</div>
-						<div className="ml-5">
+						<div className="mr-5">
 							<p className="text-2xl font-semibold">
 								Omeny{student?.firstName} {student?.middleName}{" "}
 								{student?.lastName}
@@ -36,9 +42,8 @@ function ShowStudentsForm() {
 								)}
 								yrs
 							</p>
-							<p className="text-sm font-light">
-								{student?.gender?.value}
-							</p>
+							<p className="font-light mt-5">class - Stream</p>
+							<p className="text-sm font-light">{student?.gender?.value}</p>
 							<p className="text-sm font-light">{student?.residence}</p>
 						</div>
 					</div>
@@ -65,6 +70,16 @@ function ShowStudentsForm() {
 					<p className="text-gray5">Mother</p>
 					<p className="text-gray5">{student?.motherContact}</p>
 					<hr className="text-gray3 mt-2" />
+
+					<br/>
+					<div className="flex justify-between">
+						<div>
+						<p className="text-secondary font-bold text-2xl">Documents</p>
+						</div>
+						<Button2 value={"Doc"}/>
+
+					</div>
+					
 				</div>
 				<div className="w-1/2 p-5 h-[85vh] overflow-y-auto">
 					<div className="flex">
