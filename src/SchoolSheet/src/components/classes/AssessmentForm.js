@@ -109,6 +109,7 @@ function AssessmentForm({
 						{studentData.firstName} {studentData.middleName}
 						{studentData.lastName}
 					</div>
+					<div>Term here</div>
 					<div className="cursor-pointer" onClick={closeAdd}>
 						X
 					</div>
@@ -200,6 +201,30 @@ function AssessmentForm({
 					}
 					return null;
 				})}
+				<div className="flex mt-4">
+					<div className="p-2 w-1/3 mt-5">
+					<Select
+							placeholder="Select Action"
+							label="Exam Type"
+							defaultValue={selectedExam}
+							onChange={setSelectedExam}
+							options={examTypesData}
+						/>
+					</div>
+					<div className="p-2 w-1/3">
+					<InputField placeholder="General Comment" />
+					</div>
+					<div className="p-2 w-1/3 mt-5">
+					<Select
+							placeholder="Select Class"
+							label="Exam Type"
+							defaultValue={selectedExam}
+							onChange={setSelectedExam}
+							options={examTypesData}
+						/>
+					</div>
+
+				</div>
 			</div>
 		</>
 	);

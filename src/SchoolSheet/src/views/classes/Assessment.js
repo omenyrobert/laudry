@@ -4,6 +4,8 @@ import ExamsTypes from "../../components/classes/ExamsTypes";
 import AssessmentForm from "../../components/classes/AssessmentForm";
 import Localbase from "localbase";
 import EditAssessmentForm from "../../components/classes/EditAssessmentForm";
+import InputField from "../../components/InputField";
+import { BsSearch } from "react-icons/bs";
 
 let db = new Localbase("db");
 
@@ -98,12 +100,11 @@ function Assessment() {
 			</div>
 
 			<div className="w-full flex">
-				<div className="w-5/12">
+				<div className="w-4/12 bg-white p-3">
+					<InputField placeholder="Search student..." icon={<BsSearch className="mt-3 mr-4"/>} />
 					<table className="mt-4 w-full table-auto">
 						<thead style={{ backgroundColor: "#0d6dfd10" }}>
 							<th className="p-2 text-primary text-sm text-left">Full Name</th>
-
-							<th className="p-2 text-primary text-sm text-left">Gender</th>
 
 							<th className="p-2 text-primary text-sm text-left">Class</th>
 
@@ -132,9 +133,6 @@ function Assessment() {
 										</td>
 
 										<td className="text-xs p-3 text-gray5">
-											{student.gender.value}
-										</td>
-										<td className="text-xs p-3 text-gray5">
 											{student.studentType.value}
 										</td>
 
@@ -152,7 +150,7 @@ function Assessment() {
 						</tbody>
 					</table>
 				</div>
-				<div className="w-7/12 ml-5">
+				<div className="w-8/12 ml-5">
 					<p className="text-secondary font-bold text-xl">
 						Assess Student Name
 					</p>

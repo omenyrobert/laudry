@@ -163,7 +163,7 @@ function ExamsTypes() {
 				style={customStyles}
 				contentLabel="Example Modal"
 			>
-				<div className="flex p-3 justify-between text-xl font-semibold bg-gray1 text-primary">
+				<div className="flex px-5 py-3 justify-between text-xl font-semibold bg-gray1 text-primary">
 					<div>
 						<h5 className="">exam Types</h5>
 					</div>
@@ -174,7 +174,7 @@ function ExamsTypes() {
 					</div>
 				</div>
 
-				<div className="w-full h-full p-3">
+				<div className="w-full h-full py-3 px-10">
 					<div className=" ">
 						<InputField
 							type="text"
