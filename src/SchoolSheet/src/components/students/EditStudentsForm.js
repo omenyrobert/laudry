@@ -9,6 +9,7 @@ import { FaRegUserCircle, FaPhone } from "react-icons/fa";
 import Localbase from "localbase";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import axiosInstance from "../../axios-instance"
 
 let db = new Localbase("db");
 
@@ -117,6 +118,7 @@ function EditStudentsForm(props) {
 
 	const updateStudentInfo = () => {
 		let data = {
+			id: studentId,
 			firstName: firstName,
 			middleName: middleName,
 			lastName: lastName,
@@ -139,9 +141,8 @@ function EditStudentsForm(props) {
 			studentClass: studentClass,
 			feesCategory: feesCategory,
 		};
-		db.collection("studentInfo")
-			.doc({ id: studentId })
-			.update(data)
+
+		axiosInstance.put(`students/edit`, data)
 			.then((response) => {
 				// fetch after
 				fetchStudentInfo();
@@ -153,7 +154,11 @@ function EditStudentsForm(props) {
 				});
 				closeEditData();
 				handleClickAllStudents();
-			});
+			})
+			.catch((error) => {
+				console.log(error);
+			})
+
 	};
 
 	return (

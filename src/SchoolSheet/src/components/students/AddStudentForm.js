@@ -4,17 +4,18 @@ import InputField from "../InputField";
 import InputSelect from "../InputSelect";
 import Select from "react-select";
 import { FaRegUserCircle, FaPhone } from "react-icons/fa";
-import Localbase from "localbase";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import { v4 as uuid } from "uuid";
 import ButtonSecondary from "../ButtonSecondary";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../axios-instance"
+import { useDispatch } from 'react-redux'
+import { getStudents } from "../../store/schoolSheetSlices/schoolStore";
 
-let db = new Localbase("db");
+
 
 function AddStudentForm(props) {
-	const { handleClickAllStudents, fetchStudentInfo } = props;
+	const dispatch = useDispatch()
 
 	const [gender, setGender] = useState("");
 	const [studentType, setStudentType] = useState("");
@@ -22,6 +23,10 @@ function AddStudentForm(props) {
 	const [studentHouse, setStudentHouse] = useState("");
 	const [studentSection, setStudentSection] = useState("");
 	const [feesCategory, setFeesCategory] = useState("");
+
+	const fetchStudentInfo = () => {
+		dispatch(getStudents())
+	}
 
 	const studentTypes = [
 		{
@@ -37,6 +42,8 @@ function AddStudentForm(props) {
 			value: "International",
 		},
 	];
+
+
 
 	const houses = [
 		{
@@ -115,9 +122,7 @@ function AddStudentForm(props) {
 	// post student info
 	const postStudentInfo = (e) => {
 		e.preventDefault();
-		let stId = uuid();
 		let data = {
-			id: stId,
 			firstName: studentInfo.firstName,
 			middleName: studentInfo.middleName,
 			lastName: studentInfo.lastName,
@@ -141,8 +146,9 @@ function AddStudentForm(props) {
 			feesCategory: feesCategory,
 		};
 		if (studentInfo) {
-			db.collection("studentInfo")
-				.add(data)
+
+
+			axiosInstance.post("/students", data)
 				.then((response) => {
 					setStudentInfo("");
 					fetchStudentInfo();
@@ -153,9 +159,17 @@ function AddStudentForm(props) {
 						showConfirmButton: false,
 						timer: 500,
 					});
-					handleClickAllStudents();
+					//handleClickAllStudents();
 				})
-				.catch(console.error());
+				.catch((error) => console.error(error));
+		} else {
+			// show alert
+			const MySwal = withReactContent(Swal);
+			MySwal.fire({
+				icon: "error",
+				showConfirmButton: false,
+				timer: 500,
+			});
 		}
 	};
 
@@ -376,7 +390,7 @@ function AddStudentForm(props) {
 					</div>
 				</div>
 			</div>
-            <br/>
+			<br />
 		</div>
 	);
 }

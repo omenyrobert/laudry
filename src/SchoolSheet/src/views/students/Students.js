@@ -216,10 +216,10 @@ function Students() {
 			<div className="rounded-md shadow-md h-screen overflow-y-auto p-2">
 				<div className="flex justify-between w-full bg-white p-5 rounded-md shadow-lg">
 					<div className="flex w-42">
-						
+
 						<Link to="/addStudentForm">
-                            <Button2 value={"Student"}/>
-                        </Link>
+							<Button2 value={"Student"} />
+						</Link>
 					</div>
 					<div className="w-2/12 -mt-5">
 						<form
@@ -291,14 +291,14 @@ function Students() {
 						handleClickAllStudents={handleClickAllStudents}
 					/>
 				) : null}
-				
-					<StudentsTable
-						openEditData={openEditData}
-						openShowData={openShowData}
-						deleteStudentInfo={deleteStudentInfo}
-						studentData={studentData}
-					/>
-				
+
+				<StudentsTable
+					openEditData={openEditData}
+					openShowData={openShowData}
+					deleteStudentInfo={deleteStudentInfo}
+					studentData={studentData}
+				/>
+
 				{SearchAllStudents ? (
 					<StudentsTable
 						openEditData={openEditData}
@@ -315,7 +315,7 @@ function Students() {
 						studentData={searchClassResults}
 					/>
 				) : null}
-			
+
 
 				{showData ? (
 					<ShowStudentsForm
