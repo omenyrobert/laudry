@@ -6,10 +6,10 @@ export class Term extends BaseEntity {
   id!: number;
 
   @Column()
-  from!: Number;
+  from!: string;
 
   @Column()
-  to!: Number;
+  to!: string;
 
   @Column()
   term!: string;
@@ -24,9 +24,9 @@ export const getTerms = async () => {
   return terms;
 };
 
-export const createTerm = async (from: number, to: number, term: string) => {
-  const TermToInsert = await Term.insert({ from: from, to: to, term: term });
-  return TermToInsert;
+export const createTerm = async (from: string, to: string, term: string) => {
+  const termToInsert = await Term.insert({ from: from, to: to, term: term });
+  return termToInsert;
 };
 
 export const deleteTerm = async (id: number) => {
@@ -36,9 +36,18 @@ export const deleteTerm = async (id: number) => {
   }
 };
 
-export const updateTerm = async (id: number, from: number, to: number, term: string) => {
-  const TermToUpdate = await Term.update(id, { from: from, to: to, term: term });
-  return TermToUpdate;
+export const updateTerm = async (
+  id: number,
+  from: string,
+  to: string,
+  term: string
+) => {
+  const termToUpdate = await Term.update(id, {
+    from: from,
+    to: to,
+    term: term,
+  });
+  return termToUpdate;
 };
 
 export const getSingleTerm = async (id: number) => {
