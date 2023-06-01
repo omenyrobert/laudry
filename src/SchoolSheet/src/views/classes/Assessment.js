@@ -6,10 +6,13 @@ import Localbase from "localbase";
 import EditAssessmentForm from "../../components/classes/EditAssessmentForm";
 import InputField from "../../components/InputField";
 import { BsSearch } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import { getAssessments, getSubjects } from "../../store/schoolSheetSlices/schoolStore";
 
 let db = new Localbase("db");
 
 function Assessment() {
+	const dispatch = useDispatch();
 	const [studentId, setStudentId] = useState("");
 	const [studentInfoEdit, setStudentInfoEdit] = useState();
 	const [studentInfo, setStudentInfo] = useState();
@@ -40,42 +43,44 @@ function Assessment() {
 	// fetch exams and subjects
 	const [examTypesData, setExamTypesData] = useState([]);
 	const [subjectsData, setSubjectsData] = useState([]);
-	useEffect(() => {
-		db.collection("examTypesTbl")
-			.get()
-			.then((staff) => {
-				const newData = staff.map((res) => ({
-					value: res.examType,
-					label: res.examType,
-					percent: res.mark,
-				}));
-				setExamTypesData(newData);
-			});
 
-		db.collection("subjects")
-			.get()
-			.then((staff) => {
-				const newData = staff.map((res) => ({
-					value: res.subject,
-					label: res.subject,
-				}));
-				setSubjectsData(newData);
-			});
-	}, []);
+	const { examTypes, subjects } = useSelector((state) => state.schoolStore);
+
+	useEffect(() => {
+		dispatch(getSubjects());
+	}, [dispatch]);
+
+;
+	useEffect(() => {
+		const _examTypes = examTypes.map((res) => ({
+			value: res.examType,
+			label: res.examType,
+			percent: res.mark,
+		}));
+		setExamTypesData(_examTypes);
+
+		const _subjects = subjects.map((res) => ({
+			value: res.subject,
+			label: res.subject,
+		}));
+		setSubjectsData(_subjects);
+	}, [examTypes, subjects]);
 
 	const [assessData, setAssessData] = useState([]);
-	const fetchAssessment = () => {
-		db.collection("assessTbl")
-			.get()
-			.then((student) => {
-				const newData = student;
-				setAssessData(newData);
-			});
-	};
+	const { assessments } = useSelector((state) => state.schoolStore);
+
 
 	useEffect(() => {
-		fetchAssessment();
-	}, []);
+		dispatch(getAssessments());
+	}, [dispatch]);
+
+	useEffect(() => {
+		if (assessments) {
+			const studentAssessment =
+			assessments.filter(assessment => assessment.studentId === studentId);
+			setAssessData(studentAssessment);
+		}
+	}, [assessments, studentId]);
 
 	const [editData, setEditData] = useState(false);
 	const [editDataId, setEditDataId] = useState(false);
@@ -161,7 +166,7 @@ function Assessment() {
 							studentData={studentInfo}
 							openEditData={openEditData}
 							assessData={assessData}
-							fetchAssessment={fetchAssessment}
+							// fetchAssessment={fetchAssessment}
 							examTypesData={examTypesData}
 							subjectsData={subjectsData}
 						/>
@@ -171,9 +176,10 @@ function Assessment() {
 
 			{editData ? (
 				<EditAssessmentForm
+					studentId={studentId}
 					studentData={studentInfoEdit}
 					closeEditData={closeEditData}
-					fetchAssessment={fetchAssessment}
+					// fetchAssessment={fetchAssessment}
 					examTypesData={examTypesData}
 					subjectsData={subjectsData}
 					editDataId={editDataId}

@@ -3,11 +3,11 @@ import Button2 from '../Button2';
 import InputField from '../InputField';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import Localbase from 'localbase';
 import '../../assets/styles/main.css';
 import Select from 'react-select';
-
-let db = new Localbase('db');
+import { useDispatch } from "react-redux";
+import { getAssessments } from "../../store/schoolSheetSlices/schoolStore";
+import axiosInstance from "../../axios-instance";
 
 function EditAssessmentForm({
     studentData,
@@ -16,41 +16,55 @@ function EditAssessmentForm({
     examTypesData,
     subjectsData,
     editDataId,
+    studentId
 }) {
     // update
-    const [examEdit, setExamEdit] = useState(studentData.examType);
-    const [subjectEdit, setSubjectEdit] = useState(studentData.subject);
+    const dispatch = useDispatch();
+    const [examEdit, setExamEdit] = useState({value: studentData.examType, label: studentData.examType});
+    const [subjectEdit, setSubjectEdit] = useState({value: studentData.subject, label: studentData.subject});
     const [markEdit, setMarkEdit] = useState(studentData.mark);
     const [finalMarkEdit, setFinalMarkEdit] = useState(studentData.finalMark);
     const [commentEdit, setCommentEdit] = useState(studentData.comment);
 
     useEffect(() => {
-        setFinalMarkEdit((markEdit / 100) * examEdit.percent);
-    }, [markEdit, examEdit.percent]);
+        const examType = 
+        examTypesData.filter((examType) => examType.value === examEdit.value)[0];
 
-    const updateAssement = (e) => {
+        setFinalMarkEdit((markEdit / 100) *  examType.percent);
+    }, [markEdit, examTypesData, examEdit.value]);
+
+    const updateAssement = async (e) => {
         e.preventDefault();
-        db.collection('assessTbl')
-            .doc({ id: editDataId })
-            .update({
-                examType: examEdit,
-                subject: subjectEdit,
+
+        try {
+			let formData = {
+                id: editDataId,
+                examType: examEdit.value,
+                subject: subjectEdit.value,
                 mark: markEdit,
                 finalMark: finalMarkEdit,
                 comment: commentEdit,
-            })
-            .then((response) => {
-                console.log(response);
-                // fetch after
-                fetchAssessment();
-                const MySwal = withReactContent(Swal);
-                MySwal.fire({
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 500,
-                });
-                closeEditData();
-            });
+                studentId: studentId,
+                term: 1,
+			};
+			const assessment = await axiosInstance.put("/assessments", formData);
+			const { data } = assessment;
+			const { status } = data;
+			if (status) {
+				dispatch(getAssessments());
+				setCommentEdit("");
+				setMarkEdit("");
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+				closeEditData();
+			}
+		} catch (error) {
+			console.log(error);
+		}
     };
 
     return (
