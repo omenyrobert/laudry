@@ -8,9 +8,9 @@ import {
   JoinColumn,
   ManyToOne,
 } from "typeorm";
-import { House } from "./House";
-import { StudentType } from "./StudentType";
-import { SchoolClass } from "./SchoolClass";
+import { House, getHouseById } from "./House";
+import { StudentType, getStudentTypeById } from "./StudentType";
+import { SchoolClass, getClassById } from "./SchoolClass";
 
 
 @Entity()
@@ -46,14 +46,8 @@ export class Student extends BaseEntity {
   @Column()
   residence!: string;
 
-  @Column()
+  @Column({nullable: true,})
   photo!: string;
-
-  @Column()
-  nin!: string;
-
-  @Column()
-  nationalId!: string;
 
   @Column()
   fatherName!: string;
@@ -67,20 +61,26 @@ export class Student extends BaseEntity {
   @Column()
   motherContact!: string;
 
-  @ManyToOne(() => StudentType, (studentType) => studentType.id)
-  @JoinColumn()
-  studentType!: string;
+  @ManyToOne(() => StudentType, (studentType) => studentType.id, {
+    cascade: true,
+    eager: true,
+  })
+  studentType!: StudentType;
 
   @Column()
   studentSection!: string;
 
-  @ManyToOne(() => House, (house) => house.id)
-  @JoinColumn()
-  studentHouse!: string;
+  @ManyToOne(() => House, (house) => house.id, {
+    cascade: true,
+    eager: true,
+  })
+  studentHouse!: House;
 
-  @ManyToOne(() => SchoolClass, (schoolClass) => schoolClass.id)
-  @JoinColumn()
-  studentClass!: string;
+  @ManyToOne(() => SchoolClass, (schoolClass) => schoolClass.id, {
+    cascade: true,
+    eager: true,
+  })
+  studentClass!: SchoolClass;
 
   @Column()
   feesCategory!: string;
@@ -106,9 +106,6 @@ export const createStudent = async (
   gender: string,
   nationality: string,
   residence: string,
-  photo: string,
-  nin: string,
-  nationalId: string,
   fatherName: string,
   fatherContact: string,
   motherName: string,
@@ -120,30 +117,32 @@ export const createStudent = async (
   feesCategory: string,
 ) => {
 
-  const studentToInsert = await Student.insert({
-    firstName: firstName,
-    middleName: middleName,
-    lastName: lastName,
-    email: email,
-    phoneNumber: phoneNumber,
-    dateOfBirth: dateOfBirth,
-    gender,
-    nationality,
-    residence,
-    photo,
-    nin,
-    nationalId,
-    fatherName,
-    fatherContact,
-    motherName,
-    motherContact,
-    studentType,
-    studentSection,
-    studentHouse,
-    studentClass,
-    feesCategory,
-  });
-  return studentToInsert;
+  const house = await getHouseById(parseInt(studentHouse));
+  const studentTypeToInsert = await getStudentTypeById(parseInt(studentType));
+  const studentClassToInsert = await getClassById(parseInt(studentClass));
+
+  const studentToInsert = new Student();
+  studentToInsert.firstName = firstName;
+  studentToInsert.middleName = middleName;
+  studentToInsert.lastName = lastName;
+  studentToInsert.email = email;
+  studentToInsert.phoneNumber = phoneNumber;
+  studentToInsert.dateOfBirth = dateOfBirth;
+  studentToInsert.gender = gender;
+  studentToInsert.nationality = nationality;
+  studentToInsert.residence = residence;
+  studentToInsert.fatherName = fatherName;
+  studentToInsert.fatherContact = fatherContact;
+  studentToInsert.motherName = motherName;
+  studentToInsert.motherContact = motherContact;
+  studentToInsert.studentType = studentTypeToInsert;
+  studentToInsert.studentSection = studentSection;
+  studentToInsert.studentHouse = house;
+  studentToInsert.studentClass = studentClassToInsert;
+  studentToInsert.feesCategory = feesCategory;
+
+  const student = await Student.save(studentToInsert);
+  return student;
 }
 
 export const deleteStudent = async (id: number) => {
@@ -167,8 +166,6 @@ export const updateStudent = async (
   nationality: string,
   residence: string,
   photo: string,
-  nin: string,
-  nationalId: string,
   fatherName: string,
   fatherContact: string,
   motherName: string,
@@ -180,6 +177,10 @@ export const updateStudent = async (
   feesCategory: string,
 ) => {
   
+  const house = await getHouseById(parseInt(studentHouse));
+  const studentTypeToInsert = await getStudentTypeById(parseInt(studentType));
+  const studentClassToInsert = await getClassById(parseInt(studentClass));
+
   const studentToUpdate = await Student.update(id, {
     firstName: firstName,
     middleName: middleName,
@@ -187,23 +188,23 @@ export const updateStudent = async (
     email: email,
     phoneNumber: phoneNumber,
     dateOfBirth: dateOfBirth,
-    gender,
+    gender:gender,
     nationality,
-    residence,
-    photo,
-    nin,
-    nationalId,
-    fatherName,
-    fatherContact,
-    motherName,
-    motherContact,
-    studentType,
-    studentSection,
-    studentHouse,
-    studentClass,
-    feesCategory,
+    residence: residence,
+    photo: photo,
+    fatherName: fatherName,
+    fatherContact: fatherContact,
+    motherName: motherName,
+    motherContact: motherContact,
+    studentType: studentTypeToInsert,
+    studentSection: studentSection,
+    studentHouse: house,
+    studentClass: studentClassToInsert,
+    feesCategory: feesCategory,
   });
+
   return studentToUpdate;
+  
 }
 
 export const getSingleStudent = async (id: number) => {

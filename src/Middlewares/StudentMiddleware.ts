@@ -13,8 +13,6 @@ export const validateStudentRequest = (req: Request, res: Response, next: NextFu
     nationality,
     residence,
     photo,
-    nin,
-    nationalId,
     fatherName,
     fatherContact,
     motherName,
@@ -25,6 +23,8 @@ export const validateStudentRequest = (req: Request, res: Response, next: NextFu
     studentClass,
     feesCategory,
   } = req.body;
+
+  console.log(req.body)
 
   if (!firstName) {
     return res
@@ -69,21 +69,6 @@ export const validateStudentRequest = (req: Request, res: Response, next: NextFu
   } else if (!residence) {
     return res
       .json(customPayloadResponse(false, "Residence is required"))
-      .status(400)
-      .end();
-  } else if (!photo) {
-    return res
-      .json(customPayloadResponse(false, "Photo is required"))
-      .status(400)
-      .end();
-  } else if (!nin) {
-    return res
-      .json(customPayloadResponse(false, "NIN is required"))
-      .status(400)
-      .end();
-  } else if (!nationalId) {
-    return res
-      .json(customPayloadResponse(false, "National ID is required"))
       .status(400)
       .end();
   } else if (!fatherName) {

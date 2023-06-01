@@ -33,9 +33,6 @@ export const addStudent = async (req: Request, res: Response) => {
       gender,
       nationality,
       residence,
-      photo,
-      nin,
-      nationalId,
       fatherName,
       fatherContact,
       motherName,
@@ -47,6 +44,8 @@ export const addStudent = async (req: Request, res: Response) => {
       feesCategory,
     } = req.body;
 
+    console.log(req.body)
+
     const student = await createStudent(
       firstName,
       middleName,
@@ -57,9 +56,6 @@ export const addStudent = async (req: Request, res: Response) => {
       gender,
       nationality,
       residence,
-      photo,
-      nin,
-      nationalId,
       fatherName,
       fatherContact,
       motherName,
@@ -76,6 +72,7 @@ export const addStudent = async (req: Request, res: Response) => {
 
 
   } catch (error) {
+    console.log(error)
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
@@ -120,8 +117,6 @@ export const editStudent = async (req: Request, res: Response) => {
       nationality,
       residence,
       photo,
-      nin,
-      nationalId,
       fatherName,
       fatherContact,
       motherName,
@@ -145,8 +140,6 @@ export const editStudent = async (req: Request, res: Response) => {
       nationality,
       residence,
       photo,
-      nin,
-      nationalId,
       fatherName,
       fatherContact,
       motherName,

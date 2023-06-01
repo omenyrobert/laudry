@@ -129,21 +129,19 @@ function AddStudentForm(props) {
 			email: studentInfo.email,
 			phoneNumber: studentInfo.phoneNumber,
 			dateOfBirth: studentInfo.dateOfBirth,
-			gender: gender,
+			gender: gender.value,
 			nationality: studentInfo.nationality,
 			residence: studentInfo.residence,
 			photo: studentInfo.photo,
-			nin: studentInfo.nin,
-			nationalId: studentInfo.nationalId,
 			fatherName: studentInfo.fatherName,
 			fatherContact: studentInfo.fatherContact,
 			motherName: studentInfo.motherName,
 			motherContact: studentInfo.motherContact,
-			studentType: studentType,
-			studentSection: studentSection,
-			studentHouse: studentHouse,
-			studentClass: studentClass,
-			feesCategory: feesCategory,
+			studentType: studentType.value,
+			studentSection: studentSection.value,
+			studentHouse: studentHouse.value,
+			studentClass: studentClass.value,
+			feesCategory: feesCategory.value,
 		};
 		if (studentInfo) {
 
@@ -151,8 +149,19 @@ function AddStudentForm(props) {
 			axiosInstance.post("/students", data)
 				.then((response) => {
 					setStudentInfo("");
-					fetchStudentInfo();
+					console.log("response", response)
+					//fetchStudentInfo();
 					// show alert
+					const { status, payload } = response.data;
+					if (status === false) {
+						const MySwal = withReactContent(Swal);
+						MySwal.fire({
+							icon: "error",
+							title: "Oops...",
+							text: payload,
+						});
+						return;
+					}
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",

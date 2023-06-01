@@ -9,6 +9,7 @@ import { v4 as uuid } from "uuid";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
+import axiosInstance from "../../axios-instance";
 
 let db = new Localbase("db");
 
@@ -20,15 +21,25 @@ function Groups() {
 	const [group, setGroup] = useState("");
 
 	const postgroups = () => {
-		let stId = uuid();
 		let formData = {
-			id: stId,
-			group: group,
+			house: group,
 		};
+
 		if (group) {
-			db.collection("groupsTbl")
-				.add(formData)
+
+			axiosInstance.post('/houses', formData)
 				.then((response) => {
+					const { status, payload } = response.data;
+					if (status === false) {
+						const MySwal = withReactContent(Swal);
+						MySwal.fire({
+							icon: "error",
+							title: "Oops...",
+							text: payload,
+						});
+						return;
+					}
+
 					setGroup("");
 
 					// fetch after
@@ -42,18 +53,30 @@ function Groups() {
 						timer: 500,
 					});
 				})
-				.catch(console.error());
+				.catch((error) => { });
+
+
 		}
 	};
 
 	// fetch groups
 	const fetchgroups = () => {
-		db.collection("groupsTbl")
-			.get()
-			.then((groups) => {
-				const newData = groups;
-				setGroupsData(newData);
-			});
+
+		axiosInstance.get('/houses')
+			.then((response) => {
+				const { status, payload } = response.data;
+				if (status === false) {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
+				setGroupsData(payload);
+			})
+			.catch((error) => { });
 	};
 
 	// fetching groups
@@ -73,7 +96,7 @@ function Groups() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("groupsTbl")
+				/*db.collection("groupsTbl")
 					.doc({ id: groups.id })
 					.delete()
 					.then((response) => {
@@ -88,7 +111,30 @@ function Groups() {
 					})
 					.catch((error) => {
 						console.log(error);
-					});
+					});*/
+
+				axiosInstance.delete('/houses/' + groups.id)
+					.then((response) => {
+						const { status, payload } = response.data;
+						if (status === false) {
+							const MySwal = withReactContent(Swal);
+							MySwal.fire({
+								icon: "error",
+								title: "Oops...",
+								text: payload,
+							});
+							return;
+						}
+						// fetch after
+						fetchgroups();
+						const MySwal = withReactContent(Swal);
+						MySwal.fire({
+							icon: "success",
+							showConfirmButton: false,
+							timer: 500,
+						});
+					})
+					.catch((error) => { });
 			}
 		});
 	};
@@ -99,7 +145,7 @@ function Groups() {
 	};
 	const openEditData = (group) => {
 		setEditData(true);
-		setGroupEdit(group?.group);
+		setGroupEdit(group?.house);
 		setGroupsId(group.id);
 	};
 
@@ -109,13 +155,24 @@ function Groups() {
 
 
 	const updategroups = () => {
-		db.collection("groupsTbl")
-			.doc({ id: groupsId })
-			.update({
-				group: groupEdit,
-			})
+
+		let formData = {
+			house: groupEdit,
+			id: groupsId
+		}
+
+		axiosInstance.put('/houses/' + groupsId, formData)
 			.then((response) => {
-				console.log(response);
+				const { status, payload } = response.data;
+				if (status === false) {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
 				// fetch after
 				fetchgroups();
 				const MySwal = withReactContent(Swal);
@@ -125,7 +182,8 @@ function Groups() {
 					timer: 500,
 				});
 				closeEditData();
-			});
+			})
+			.catch((error) => { });
 	};
 
 
@@ -144,19 +202,19 @@ function Groups() {
 							placeholder="Enter House name"
 							label="House Name"
 							value={group}
-							onChange={(e)=>setGroup(e.target.value)}
+							onChange={(e) => setGroup(e.target.value)}
 							icon={<FaPen className="w-3 -ml-7 mt-3" />}
 						/>
 					</div>
 					<div className="mt-8 mr-5">
 						<br />
 						<div onClick={postgroups}>
-						<Button2 value={"Add House"} />
+							<Button2 value={"Add House"} />
 						</div>
-						
+
 					</div>
 				</div>
-				
+
 				<table className="mt-10 w-[95%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">House</th>
@@ -166,33 +224,33 @@ function Groups() {
 
 
 						{/* edit popup start */}
-						{ editData ? 
-						<div className="absolute shadow-lg rounded flex w-[500px] p-5 bg-white">
-							<div className="w-2/3 pr-5">
-								<InputField
-									type="text"
-									placeholder="Enter House Name"
-									label="House Name"
-									onChange={(e)=>setGroupEdit(e.target.value)}
-									value={groupEdit}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-							<div className="flex justify-between w-1/3 mt-[55px]">
-								<div onClick={updategroups}>
-									<ButtonSecondary value={"Update"} />
+						{editData ?
+							<div className="absolute shadow-lg rounded flex w-[500px] p-5 bg-white">
+								<div className="w-2/3 pr-5">
+									<InputField
+										type="text"
+										placeholder="Enter House Name"
+										label="House Name"
+										onChange={(e) => setGroupEdit(e.target.value)}
+										value={groupEdit}
+										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									/>
 								</div>
-								<div>
-									<p
-										className="text-black text-lg cursor-pointer"
-										onClick={closeEditData}
-									>
-										X
-									</p>
+								<div className="flex justify-between w-1/3 mt-[55px]">
+									<div onClick={updategroups}>
+										<ButtonSecondary value={"Update"} />
+									</div>
+									<div>
+										<p
+											className="text-black text-lg cursor-pointer"
+											onClick={closeEditData}
+										>
+											X
+										</p>
+									</div>
 								</div>
 							</div>
-						</div>
-						: null }
+							: null}
 						{/* edit popup end */}
 
 
@@ -205,13 +263,13 @@ function Groups() {
 									key={group.id}
 								>
 									<td className="text-xs p-3 text-gray5">
-										{group.group}
+										{group.house}
 									</td>
 									<td className="text-xs p-3 text-gray5">
 										<div className="flex">
-											<MdDeleteOutline onClick={()=>deletegroups(group)} className="text-red w-4 h-4" />
+											<MdDeleteOutline onClick={() => deletegroups(group)} className="text-red w-4 h-4" />
 											<BsPencilSquare
-												onClick={()=> openEditData(group)}
+												onClick={() => openEditData(group)}
 												className="text-warning h-4 w-4 ml-5"
 											/>
 										</div>
