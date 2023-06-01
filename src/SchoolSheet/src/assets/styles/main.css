@@ -66,3 +66,12 @@
 .hoverbtn:hover + .hoverContent{
     display: block;
 }
+.subjects{
+    display: none;
+}
+.assess:hover + .subjects{
+    display: block;
+}
+.subjects:hover{
+    display: block;
+}

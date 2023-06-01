@@ -23,9 +23,7 @@ export default (): Router => {
   FeeRoutes(router);
   SubjectRoutes(router);
   TermRoutes(router);
-  StudentRoutes(router);
-  StudentTypeRoutes(router);
-  HouseRoutes(router);
+
   ExamTypeRoutes(router);
   AssessmentRoutes(router);
   return router;

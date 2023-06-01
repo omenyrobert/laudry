@@ -7,7 +7,10 @@ import EditAssessmentForm from "../../components/classes/EditAssessmentForm";
 import InputField from "../../components/InputField";
 import { BsSearch } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { getAssessments, getSubjects } from "../../store/schoolSheetSlices/schoolStore";
+import {
+	getAssessments,
+	getSubjects,
+} from "../../store/schoolSheetSlices/schoolStore";
 
 let db = new Localbase("db");
 
@@ -50,7 +53,6 @@ function Assessment() {
 		dispatch(getSubjects());
 	}, [dispatch]);
 
-;
 	useEffect(() => {
 		const _examTypes = examTypes.map((res) => ({
 			value: res.examType,
@@ -69,15 +71,15 @@ function Assessment() {
 	const [assessData, setAssessData] = useState([]);
 	const { assessments } = useSelector((state) => state.schoolStore);
 
-
 	useEffect(() => {
 		dispatch(getAssessments());
 	}, [dispatch]);
 
 	useEffect(() => {
 		if (assessments) {
-			const studentAssessment =
-			assessments.filter(assessment => assessment.studentId === studentId);
+			const studentAssessment = assessments.filter(
+				(assessment) => assessment.studentId === studentId
+			);
 			setAssessData(studentAssessment);
 		}
 	}, [assessments, studentId]);
@@ -106,7 +108,10 @@ function Assessment() {
 
 			<div className="w-full flex">
 				<div className="w-4/12 bg-white p-3">
-					<InputField placeholder="Search student..." icon={<BsSearch className="mt-3 mr-4"/>} />
+					<InputField
+						placeholder="Search student..."
+						icon={<BsSearch className="mt-3 mr-4" />}
+					/>
 					<table className="mt-4 w-full table-auto">
 						<thead style={{ backgroundColor: "#0d6dfd10" }}>
 							<th className="p-2 text-primary text-sm text-left">Full Name</th>
@@ -141,13 +146,19 @@ function Assessment() {
 											{student.studentType.value}
 										</td>
 
-										<td className="text-xs p-3 text-gray5 flex justify-between">
+										<td className="text-sm p-3">
 											<p
 												onClick={() => openAdd(student)}
-												className="p-2 rounded bg-primary3 text-primary"
+												className="p-2 relative rounded assess bg-primary3 text-primary"
 											>
 												Assess
 											</p>
+											<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 z-50">
+												
+												{subjectsData.map((subject) => {
+													return <div className="p-2 hover:bg-gray1">here {subject.subject} </div>;
+												})}
+											</div>
 										</td>
 									</tr>
 								);
