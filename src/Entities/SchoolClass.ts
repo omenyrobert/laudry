@@ -5,9 +5,11 @@ import {
   BaseEntity,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from "typeorm";
 
 import { Stream, getSelectedStream } from "./Stream";
+import { Student } from "./Student";
 
 @Entity()
 export class SchoolClass extends BaseEntity {
@@ -25,6 +27,13 @@ export class SchoolClass extends BaseEntity {
   })
   @JoinTable({ name: "school_class_streams" })
   streams: Stream[];
+
+  @OneToMany(() => Student, (student) => student.studentClass, {
+    //cascade: true,
+    //eager: true,
+    nullable: true,
+  })
+  students!: Student[];
 }
 
 export const getClasses = async () => {
@@ -47,7 +56,7 @@ export const createClass = async (name: string, stream: any) => {
 };
 
 export const getClassById = async (id: number) => {
-  const classToFind = await SchoolClass.findOne({ where: { id: id } });
+  const classToFind = await SchoolClass.findOne({ where: { id: id } }) as SchoolClass;
   return classToFind;
 };
 

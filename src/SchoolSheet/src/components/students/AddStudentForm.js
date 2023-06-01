@@ -4,17 +4,18 @@ import InputField from "../InputField";
 import InputSelect from "../InputSelect";
 import Select from "react-select";
 import { FaRegUserCircle, FaPhone } from "react-icons/fa";
-import Localbase from "localbase";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import { v4 as uuid } from "uuid";
 import ButtonSecondary from "../ButtonSecondary";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../axios-instance"
+import { useDispatch } from 'react-redux'
+import { getStudents } from "../../store/schoolSheetSlices/schoolStore";
 
-let db = new Localbase("db");
+
 
 function AddStudentForm(props) {
-	const { handleClickAllStudents, fetchStudentInfo } = props;
+	const dispatch = useDispatch()
 
 	const [gender, setGender] = useState("");
 	const [studentType, setStudentType] = useState("");
@@ -22,6 +23,10 @@ function AddStudentForm(props) {
 	const [studentHouse, setStudentHouse] = useState("");
 	const [studentSection, setStudentSection] = useState("");
 	const [feesCategory, setFeesCategory] = useState("");
+
+	const fetchStudentInfo = () => {
+		dispatch(getStudents())
+	}
 
 	const studentTypes = [
 		{
@@ -37,6 +42,8 @@ function AddStudentForm(props) {
 			value: "International",
 		},
 	];
+
+
 
 	const houses = [
 		{
@@ -115,47 +122,63 @@ function AddStudentForm(props) {
 	// post student info
 	const postStudentInfo = (e) => {
 		e.preventDefault();
-		let stId = uuid();
 		let data = {
-			id: stId,
 			firstName: studentInfo.firstName,
 			middleName: studentInfo.middleName,
 			lastName: studentInfo.lastName,
 			email: studentInfo.email,
 			phoneNumber: studentInfo.phoneNumber,
 			dateOfBirth: studentInfo.dateOfBirth,
-			gender: gender,
+			gender: gender.value,
 			nationality: studentInfo.nationality,
 			residence: studentInfo.residence,
 			photo: studentInfo.photo,
-			nin: studentInfo.nin,
-			nationalId: studentInfo.nationalId,
 			fatherName: studentInfo.fatherName,
 			fatherContact: studentInfo.fatherContact,
 			motherName: studentInfo.motherName,
 			motherContact: studentInfo.motherContact,
-			studentType: studentType,
-			studentSection: studentSection,
-			studentHouse: studentHouse,
-			studentClass: studentClass,
-			feesCategory: feesCategory,
+			studentType: studentType.value,
+			studentSection: studentSection.value,
+			studentHouse: studentHouse.value,
+			studentClass: studentClass.value,
+			feesCategory: feesCategory.value,
 		};
 		if (studentInfo) {
-			db.collection("studentInfo")
-				.add(data)
+
+
+			axiosInstance.post("/students", data)
 				.then((response) => {
 					setStudentInfo("");
-					fetchStudentInfo();
+					console.log("response", response)
+					//fetchStudentInfo();
 					// show alert
+					const { status, payload } = response.data;
+					if (status === false) {
+						const MySwal = withReactContent(Swal);
+						MySwal.fire({
+							icon: "error",
+							title: "Oops...",
+							text: payload,
+						});
+						return;
+					}
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
 						showConfirmButton: false,
 						timer: 500,
 					});
-					handleClickAllStudents();
+					//handleClickAllStudents();
 				})
-				.catch(console.error());
+				.catch((error) => console.error(error));
+		} else {
+			// show alert
+			const MySwal = withReactContent(Swal);
+			MySwal.fire({
+				icon: "error",
+				showConfirmButton: false,
+				timer: 500,
+			});
 		}
 	};
 
@@ -376,7 +399,7 @@ function AddStudentForm(props) {
 					</div>
 				</div>
 			</div>
-            <br/>
+			<br />
 		</div>
 	);
 }

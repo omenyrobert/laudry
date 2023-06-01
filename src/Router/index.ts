@@ -8,6 +8,9 @@ import ClassRoutes from "./ClassRoutes";
 import FeeRoutes from "./FeeRoutes";
 import SubjectRoutes from "./SubjectRoutes";
 import TermRoutes from "./TermRoutes";
+import StudentRoutes from "./StudentRoutes";
+import StudentTypeRoutes from "./StudentTypeRoutes";
+import HouseRoutes from "./HouseRoutes";
 
 const router = Router();
 
@@ -21,5 +24,8 @@ export default (): Router => {
   FeeRoutes(router);
   SubjectRoutes(router);
   TermRoutes(router);
+  StudentRoutes(router);
+  StudentTypeRoutes(router);
+  HouseRoutes(router);
   return router;
 };

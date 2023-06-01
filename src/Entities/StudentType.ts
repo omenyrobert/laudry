@@ -3,7 +3,9 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
+  OneToMany,
 } from "typeorm";
+import { Student } from "./Student";
 
 @Entity()
 export class StudentType extends BaseEntity {
@@ -12,6 +14,13 @@ export class StudentType extends BaseEntity {
 
   @Column()
   type!: string;
+
+  @OneToMany(() => Student, (student) => student.studentType, {
+    //cascade: true,
+    //eager: true,
+    nullable: true,
+  })
+  students!: Student[];
 }
 
 export const getStudentTypes = async () => {
@@ -32,7 +41,7 @@ export const addStudentType = async (type: string) => {
 };
 
 export const getStudentTypeById = async (id: number) => {
-  const studentTypeToFindById = await StudentType.findOne({ where: { id: id } });
+  const studentTypeToFindById = await StudentType.findOne({ where: { id: id } }) as StudentType
   return studentTypeToFindById;
 };
 

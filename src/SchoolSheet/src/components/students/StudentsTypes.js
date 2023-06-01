@@ -5,12 +5,11 @@ import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
 import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
-import { v4 as uuid } from "uuid";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
+import axiosInstance from "../../axios-instance";
 
-let db = new Localbase("db");
+
 
 function StudentsTypes() {
 	const [studentTypesData, setStudentTypesData] = useState([]);
@@ -19,19 +18,29 @@ function StudentsTypes() {
 	const [studentType, setStudentType] = useState("");
 
 	const postStudentTypes = () => {
-		let stId = uuid();
+
 		let formData = {
-			id: stId,
-			studentType: studentType,
+			type: studentType,
 		};
+
 		if (studentType) {
-			db.collection("studentTypesTbl")
-				.add(formData)
+			axiosInstance.post('/student-types', formData)
 				.then((response) => {
 					setStudentType("");
 
 					// fetch after
 					fetchStudentTypes();
+
+					const { status, payload } = response.data;
+					if (status === false) {
+						const MySwal = withReactContent(Swal);
+						MySwal.fire({
+							icon: "error",
+							title: "Oops...",
+							text: payload,
+						});
+						return;
+					}
 
 					// show alert
 					const MySwal = withReactContent(Swal);
@@ -41,18 +50,31 @@ function StudentsTypes() {
 						timer: 500,
 					});
 				})
-				.catch(console.error());
+				.catch((error) => { });
 		}
 	};
 
 	// fetch studentTypes
 	const fetchStudentTypes = () => {
-		db.collection("studentTypesTbl")
-			.get()
-			.then((studentTypes) => {
-				const newData = studentTypes;
-				setStudentTypesData(newData);
+
+		axiosInstance.get('/student-types')
+			.then((response) => {
+				const { status, payload } = response.data;
+				if (status === false) {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
+				setStudentTypesData(payload);
+			})
+			.catch((error) => {
+				console.log(error);
 			});
+
 	};
 
 	// fetching studentTypes
@@ -72,10 +94,19 @@ function StudentsTypes() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("studentTypesTbl")
-					.doc({ id: studentTypes.id })
-					.delete()
+
+				axiosInstance.delete(`/student-types/${studentTypes.id}`)
 					.then((response) => {
+						const { status, payload } = response.data;
+						if (status === false) {
+							const MySwal = withReactContent(Swal);
+							MySwal.fire({
+								icon: "error",
+								title: "Oops...",
+								text: payload,
+							});
+							return;
+						}
 						// fetch after
 						fetchStudentTypes();
 
@@ -98,7 +129,7 @@ function StudentsTypes() {
 	};
 	const openEditData = (studentType) => {
 		setEditData(true);
-		setStudentTypeEdit(studentType?.studentType);
+		setStudentTypeEdit(studentType?.type);
 		setStudentTypesId(studentType.id);
 	};
 
@@ -108,23 +139,38 @@ function StudentsTypes() {
 
 
 	const updateStudentTypes = () => {
-		db.collection("studentTypesTbl")
-			.doc({ id: studentTypesId })
-			.update({
-				studentType: studentTypeEdit,
-			})
+
+		const data = {
+			type: studentTypeEdit,
+			id: studentTypesId
+
+		}
+		axiosInstance.put(`/student-types/${studentTypesId}`, data)
 			.then((response) => {
-				console.log(response);
+				const { status, payload } = response.data;
+				if (status === false) {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
 				// fetch after
 				fetchStudentTypes();
-				const MySwal = withReactContent(Swal);
-				MySwal.fire({
+
+				Swal.fire({
 					icon: "success",
 					showConfirmButton: false,
 					timer: 500,
 				});
 				closeEditData();
-			});
+			})
+			.catch((error) => {
+				console.log(error);
+			})
+
 	};
 
 	return (
@@ -151,7 +197,7 @@ function StudentsTypes() {
 					</div>
 					<div className="w-1/4"></div>
 				</div>
-				
+
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Student Type</th>
@@ -195,7 +241,7 @@ function StudentsTypes() {
 									key={studentType.id}
 								>
 									<td className="text-xs p-3 text-gray5">
-										{studentType.studentType}
+										{studentType.type}
 									</td>
 
 									<td className="text-xs p-3 text-gray5 flex">

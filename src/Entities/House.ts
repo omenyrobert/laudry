@@ -3,7 +3,9 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
+  OneToMany,
 } from "typeorm";
+import { Student } from "./Student";
 
 @Entity()
 export class House extends BaseEntity {
@@ -12,6 +14,13 @@ export class House extends BaseEntity {
 
   @Column()
   house!: string;
+
+  @OneToMany(() => Student, (student) => student.studentHouse, {
+    //cascade: true,
+    //eager: true,
+    nullable: true,
+  })
+  students!: Student[];
 }
 
 export const getHouses = async () => {
@@ -32,7 +41,7 @@ export const addHouse = async (house: string) => {
 };
 
 export const getHouseById = async (id: number) => {
-  const HouseToFindById = await House.findOne({ where: { id: id } });
+  const HouseToFindById = await House.findOne({ where: { id: id } }) as House
   return HouseToFindById;
 };
 

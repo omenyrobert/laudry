@@ -8,10 +8,10 @@ export const getStreams = createAsyncThunk("/schoolSheet/streams", async () => {
 	if (status) return payload;
 });
 
-export const getSections = createAsyncThunk("/schoolSheet/sections", async()=>{
+export const getSections = createAsyncThunk("/schoolSheet/sections", async () => {
 	const sections = await axiosInstance.get("/sections");
-	const {data} = sections;
-	const {status, payload} = data;
+	const { data } = sections;
+	const { status, payload } = data;
 	if (status) return payload;
 })
 
@@ -43,6 +43,35 @@ export const getSubjects = createAsyncThunk("/schoolSheet/subjects", async () =>
 	if (status) return payload;
 });
 
+export const getStudents = createAsyncThunk("/schoolSheet/students", async () => {
+	const students = await axiosInstance.get("/students");
+	const { data } = students;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+export const getHouses = createAsyncThunk("/schoolSheet/houses", async () => {
+	const houses = await axiosInstance.get("/houses");
+	const { data } = houses;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+export const getStudentTypes = createAsyncThunk("/schoolSheet/studentTypes", async () => {
+	const studentTypes = await axiosInstance.get("/student-types");
+	const { data } = studentTypes;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+export const getFeesStructure = createAsyncThunk("/schoolSheet/feesStructure", async () => {
+	const feesStructure = await axiosInstance.get("/fees");
+	const { data } = feesStructure;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
 	initialState: {
@@ -52,13 +81,17 @@ export const schoolSheetSlices = createSlice({
 		classes: [],
 		sections: [],
 		subjects: [],
+		students: [],
+		houses: [],
+		studentTypes: [],
+		fees: [],
 	},
 	extraReducers: {
 		[getStreams.fulfilled]: (state, action) => {
 			state.streams = action.payload;
 		},
 		[getSections.fulfilled]: (state, action) => {
-          state.sections = action.payload;
+			state.sections = action.payload;
 		},
 		[getStaffTypes.fulfilled]: (state, action) => {
 			state.staffTypes = action.payload;
@@ -72,6 +105,18 @@ export const schoolSheetSlices = createSlice({
 		[getSubjects.fulfilled]: (state, action) => {
 			state.subjects = action.payload;
 		},
+		[getStudents.fulfilled]: (state, action) => {
+			state.students = action.payload;
+		},
+		[getHouses.fulfilled]: (state, action) => {
+			state.houses = action.payload;
+		},
+		[getStudentTypes.fulfilled]: (state, action) => {
+			state.studentTypes = action.payload;
+		},
+		[getFeesStructure.fulfilled]: (state, action) => {
+			state.fees = action.payload;
+		}
 	},
 });
 
