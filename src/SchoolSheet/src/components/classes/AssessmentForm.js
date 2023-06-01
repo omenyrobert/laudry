@@ -5,23 +5,22 @@ import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
-import { v4 as uuid } from "uuid";
 import Select from "react-select";
-
-let db = new Localbase("db");
+import { useDispatch } from "react-redux";
+import { getAssessments } from "../../store/schoolSheetSlices/schoolStore";
+import axiosInstance from "../../axios-instance";
 
 function AssessmentForm({
 	closeAdd,
 	studentId,
 	studentData,
 	openEditData,
-	fetchAssessment,
 	assessData,
 	examTypesData,
 	subjectsData,
 }) {
+	const dispatch = useDispatch();
 	const [selectedExam, setSelectedExam] = useState(null);
 	const [selectedSubject, setSelectedSubject] = useState(null);
 	const [finalMark, setFinalMark] = useState(null);
@@ -35,38 +34,42 @@ function AssessmentForm({
 		const finalMk = (formData.mark / 100) * selectedExam.percent;
 		setFinalMark(finalMk);
 	};
-	const postAssessment = (e) => {
+	const postAssessment = async (e) => {
 		e.preventDefault();
 
-		let clId = uuid();
-		let data = {
-			id: clId,
-			studentId: studentId,
-			examType: selectedExam,
-			subject: selectedSubject,
-			mark: formData.mark,
-			finalMark: finalMark,
-			comment: formData.comment,
-		};
-		if (formData) {
-			db.collection("assessTbl")
-				.add(data)
-				.then((response) => {
-					fetchAssessment();
+		try {
+			let body = {
+				studentId: studentId,
+				examType: selectedExam.value,
+				subject: selectedSubject.value,
+				mark: formData.mark,
+				finalMark: finalMark,
+				comment: formData.comment,
+				term: 1,
+			};
+
+			if (formData) {
+				const response = await axiosInstance.post("/assessments", body);
+				const { data } = response;
+				const { status } = data;
+		
+				if (status) {
+					dispatch(getAssessments());
+					setFormData({
+						mark: "",
+						comment: "",
+					});
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
 						showConfirmButton: false,
 						timer: 500,
 					});
-					// console.log('assess: ', response);
-					// setFormData(
-					//     Object.fromEntries(
-					//         Object.keys(formData).map((key) => [key, ''])
-					//     )
-					// );
-				})
-				.catch(console.error());
+				}
+
+			}
+		} catch(error) {
+			console.log(error);
 		}
 	};
 
@@ -79,24 +82,23 @@ function AssessmentForm({
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("assessTbl")
-					.doc({ id: item.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchAssessment();
-
+				try {
+					const response = await axiosInstance.delete(`/assessments/${item.id}`);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
+						dispatch(getAssessments());
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
+					}
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 	};
@@ -143,6 +145,7 @@ function AssessmentForm({
 							label="Marks"
 							placeholder="Enter Marks in %"
 							name="mark"
+							value={formData.mark}
 							onChange={onChange}
 						/>
 					</div>
@@ -151,6 +154,7 @@ function AssessmentForm({
 							label="Comment"
 							placeholder="Enter Comment"
 							name="comment"
+							value={formData.comment}
 							onChange={onChange}
 						/>
 					</div>
@@ -178,9 +182,9 @@ function AssessmentForm({
 								className="flex hover:bg-gray1 p-2 text-xs cursor-pointer mx-5"
 								key={student.id}
 							>
-								<div className="w-1/4">{student?.examType?.value}</div>
-								<div className="w-1/4">{student?.examType?.percent}</div>
-								<div className="w-1/4">{student?.subject?.value}</div>
+								<div className="w-1/4">{student?.examType}</div>
+								<div className="w-1/4">{student?.mark}</div>
+								<div className="w-1/4">{student?.subject}</div>
 								<div className="w-1/4"> {student.mark} </div>
 								<div className="w-1/4">{student.finalMark}</div>
 								<div className="w-1/4"> {student.comment} </div>

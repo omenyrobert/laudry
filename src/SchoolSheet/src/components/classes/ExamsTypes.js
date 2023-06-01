@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import InputField from "../InputField";
@@ -9,11 +8,12 @@ import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
+import { useDispatch, useSelector } from "react-redux";
+import { getExamTypes } from "../../store/schoolSheetSlices/schoolStore";
+import axiosInstance from "../../axios-instance";
 
 import Modal from "react-modal";
-let db = new Localbase("db");
 
 const customStyles = {
 	overlay: {
@@ -30,42 +30,34 @@ const customStyles = {
 
 function ExamsTypes() {
 	// post exam Type
+	const dispatch = useDispatch();
 	const [examType, setexamType] = useState("");
 	const [mark, setMark] = useState("");
-	const postexamType = () => {
-		let clId = uuid();
-		let formData = {
-			id: clId,
-			examType: examType,
-			mark: mark,
-		};
-		if (examType || mark) {
-			db.collection("examTypesTbl")
-				.add(formData)
-				.then((response) => {
-					setexamType("");
-					setMark("");
-					fetchexamTypes();
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
-				.catch(console.error());
+	const postexamType = async () => {
+		try {
+			let formData = {
+				examType: examType,
+				mark: mark,
+			};
+	
+			const response = await axiosInstance.post("/exam-types", formData);
+			const { data } = response;
+			const { status } = data;
+	
+			if (status) {
+				dispatch(getExamTypes());
+				setexamType("");
+				setMark("");
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+			}
+		} catch(error) {
+			console.log(error);
 		}
-	};
-
-	// fetch exam typess
-	const [examTypesData, setexamTypesData] = useState([]);
-	const fetchexamTypes = () => {
-		db.collection("examTypesTbl")
-			.get()
-			.then((examTypes) => {
-				const newData = examTypes;
-				setexamTypesData(newData);
-			});
 	};
 
 	// update
@@ -82,17 +74,20 @@ function ExamsTypes() {
 		setexamTypeId(examType.id);
 		setMarkEdit(examType.mark);
 	};
-	const updateexamType = () => {
-		db.collection("examTypesTbl")
-			.doc({ id: examTypeId })
-			.update({
+	const updateexamType = async () => {
+		try {
+			let formData = {
 				examType: examTypeEdit,
+				id: examTypeId,
 				mark: markEdit,
-			})
-			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchexamTypes();
+			};
+			const subject = await axiosInstance.put("/exam-types", formData);
+			const { data } = subject;
+			const { status } = data;
+			if (status) {
+				dispatch(getExamTypes());
+				setexamTypeEdit("");
+				setMarkEdit("");
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -100,7 +95,10 @@ function ExamsTypes() {
 					timer: 500,
 				});
 				closeEditData();
-			});
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	// delete
@@ -115,32 +113,31 @@ function ExamsTypes() {
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("examTypesTbl")
-					.doc({ id: examTypeItem.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchexamTypes();
-
+				try {
+					const response = await axiosInstance.delete(`/exam-types/${examTypeItem.id}`);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
+						dispatch(getExamTypes());
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
+					}
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 	};
 
 	// fetching exam types
 	useEffect(() => {
-		fetchexamTypes();
-	}, []);
+		dispatch(getExamTypes());
+	}, [dispatch]);
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -151,6 +148,8 @@ function ExamsTypes() {
 	const closeModal = () => {
 		setIsOpen(false);
 	};
+
+	const { examTypes } = useSelector((state) => state.schoolStore);
 
 	return (
 		<>
@@ -246,7 +245,7 @@ function ExamsTypes() {
 							) : null}
 							{/* edit popup end */}
 
-							{examTypesData.map((examTypeItem) => {
+							{examTypes.map((examTypeItem) => {
 								return (
 									<tr
 										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
