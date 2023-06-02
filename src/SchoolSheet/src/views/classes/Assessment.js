@@ -11,6 +11,7 @@ import {
 	getAssessments,
 	getSubjects,
 } from "../../store/schoolSheetSlices/schoolStore";
+import { assessSubjects } from "../../utils/assessment";
 
 let db = new Localbase("db");
 
@@ -20,10 +21,13 @@ function Assessment() {
 	const [studentInfoEdit, setStudentInfoEdit] = useState();
 	const [studentInfo, setStudentInfo] = useState();
 	const [add, setAdd] = useState(false);
+	const [selectedSubject, setSelectedSubject] = useState("");
+
 	const openAdd = (student) => {
 		setAdd(true);
 		setStudentId(student.id);
 		setStudentInfo(student);
+		setSelectedSubject(student.selectedSubject);
 	};
 	const closeAdd = () => {
 		setAdd(false);
@@ -69,6 +73,7 @@ function Assessment() {
 	}, [examTypes, subjects]);
 
 	const [assessData, setAssessData] = useState([]);
+	const [assessAll, setAssessAll] = useState([]);
 	const { assessments } = useSelector((state) => state.schoolStore);
 
 	useEffect(() => {
@@ -77,12 +82,15 @@ function Assessment() {
 
 	useEffect(() => {
 		if (assessments) {
+			const data = assessments.filter(assessment => assessment.studentId === studentId);
+			setAssessAll(assessSubjects(data));
 			const studentAssessment = assessments.filter(
-				(assessment) => assessment.studentId === studentId
+				(assessment) => assessment.studentId === studentId &&
+				assessment.subject === selectedSubject
 			);
 			setAssessData(studentAssessment);
 		}
-	}, [assessments, studentId]);
+	}, [assessments, selectedSubject, studentId]);
 
 	const [editData, setEditData] = useState(false);
 	const [editDataId, setEditDataId] = useState(false);
@@ -155,8 +163,13 @@ function Assessment() {
 											</p>
 											<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 z-50">
 												
-												{subjectsData.map((subject) => {
-													return <div className="p-2 hover:bg-gray1">here {subject.subject} </div>;
+												{subjects.map((subject) => {
+													return (
+													<div className="p-2 hover:bg-gray1"
+														onClick={() => openAdd({...student, selectedSubject: subject.subject})} 
+													>
+														{subject.subject} 
+													</div>);
 												})}
 											</div>
 										</td>
@@ -180,6 +193,8 @@ function Assessment() {
 							// fetchAssessment={fetchAssessment}
 							examTypesData={examTypesData}
 							subjectsData={subjectsData}
+							assessSubject={selectedSubject}
+							assessAll={assessAll}
 						/>
 					) : null}
 				</div>
