@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../Button";
 import InputField from "../InputField";
 import InputSelect from "../InputSelect";
@@ -15,7 +15,7 @@ import { getStudents } from "../../store/schoolSheetSlices/schoolStore";
 
 
 function AddStudentForm(props) {
-	const dispatch = useDispatch()
+	const [init] = useState(true)
 
 	const [gender, setGender] = useState("");
 	const [studentType, setStudentType] = useState("");
@@ -23,42 +23,70 @@ function AddStudentForm(props) {
 	const [studentHouse, setStudentHouse] = useState("");
 	const [studentSection, setStudentSection] = useState("");
 	const [feesCategory, setFeesCategory] = useState("");
+	const [studentTypes, setStudentTypes] = useState([])
+	const [studentClasses, setStudentClasses] = useState([])
+	const [studentHouses, setStudentHouses] = useState([])
 
-	const fetchStudentInfo = () => {
-		dispatch(getStudents())
+
+	useEffect(() => {
+		try {
+			fetchStudentType()
+			fetchSchoolClasses()
+			fetchSchoolHouses()
+		} catch (error) {
+			const MySwal = withReactContent(Swal);
+			MySwal.fire({
+				icon: "error",
+				title: "Oops...",
+				text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
+			});
+		}
+	}, [init])
+
+
+
+
+	const fetchStudentType = () => {
+		axiosInstance.get("/student-types")
+			.then((response) => {
+				console.log("response", response)
+				const { payload } = response.data;
+
+				const studenttypesArr = []
+				for (let i = 0; i < payload.length; i++) {
+					studenttypesArr.push({ label: payload[i].type, value: payload[i].type, ...payload[i] })
+				}
+				setStudentTypes(studenttypesArr)
+			})
 	}
 
-	const studentTypes = [
-		{
-			label: "Normal",
-			value: "Normal",
-		},
-		{
-			label: "Ugandan",
-			value: "Ugandan",
-		},
-		{
-			label: "International",
-			value: "International",
-		},
-	];
 
+	const fetchSchoolClasses = () => {
+		axiosInstance.get("/class")
+			.then((response) => {
+				console.log("response", response)
+				const { payload } = response.data;
+				const studentClassesArr = []
+				for (let i = 0; i < payload.length; i++) {
+					studentClassesArr.push({ label: payload[i].class, value: payload[i].class, ...payload[i] })
+				}
+				setStudentClasses(studentClassesArr)
+			})
+	}
 
+	const fetchSchoolHouses = () => {
+		axiosInstance.get("/houses")
+			.then((response) => {
+				const { payload } = response.data;
+				const studentHousesArr = []
+				console.log("payload", payload)
+				for (let i = 0; i < payload.length; i++) {
+					studentHousesArr.push({ label: payload[i].house, value: payload[i].house, ...payload[i] })
+				}
+				setStudentHouses(studentHousesArr)
+			})
+	}
 
-	const houses = [
-		{
-			label: "Lion",
-			value: "Lion",
-		},
-		{
-			label: "Rabbit",
-			value: "Rabit",
-		},
-		{
-			label: "Elephant",
-			value: "Elephant",
-		},
-	];
 
 	const sections = [
 		{
@@ -75,20 +103,6 @@ function AddStudentForm(props) {
 		},
 	];
 
-	const classes = [
-		{
-			label: "s1 green",
-			value: "s1 green",
-		},
-		{
-			label: "s2 blue",
-			value: "s2 blue",
-		},
-		{
-			label: "s3 yellow",
-			value: "s3 yellow",
-		},
-	];
 
 	// student info form data
 	const [studentInfo, setStudentInfo] = useState({
@@ -137,11 +151,11 @@ function AddStudentForm(props) {
 			fatherContact: studentInfo.fatherContact,
 			motherName: studentInfo.motherName,
 			motherContact: studentInfo.motherContact,
-			studentType: studentType.value,
+			studentType: studentType.id,
 			studentSection: studentSection.value,
-			studentHouse: studentHouse.value,
-			studentClass: studentClass.value,
-			feesCategory: feesCategory.value,
+			studentHouse: studentHouse.id,
+			studentClass: studentClass.id,
+			feesCategory: feesCategory.id,
 		};
 		if (studentInfo) {
 
@@ -373,7 +387,7 @@ function AddStudentForm(props) {
 							defaultValue={studentHouse}
 							name="studentHouse"
 							onChange={setStudentHouse}
-							options={houses}
+							options={studentHouses}
 						/>
 					</div>
 					<div className="w-1/4 p-2">
@@ -384,7 +398,7 @@ function AddStudentForm(props) {
 							defaultValue={studentClass}
 							name="studentClass"
 							onChange={setStudentClass}
-							options={classes}
+							options={studentClasses}
 						/>
 						<br />
 						<br />

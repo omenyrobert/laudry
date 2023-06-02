@@ -45,13 +45,13 @@ function StudentsTable(props) {
 								{student.dateOfBirth} -{" "}
 								{Math.abs(
 									new Date().getFullYear() -
-										new Date(student.dateOfBirth).getFullYear()
+									new Date(student.dateOfBirth).getFullYear()
 								)}
 								yrs
 							</td>
-							<td className="text-xs p-3 text-gray5">{student.gender.value}</td>
+							<td className="text-xs p-3 text-gray5">{student.gender}</td>
 							<td className="text-xs p-3 text-gray5">
-								{student.studentType.value}
+								{student.studentType.type}
 							</td>
 							<td className="text-xs p-3 text-gray5">
 								{student.fatherContact}
@@ -61,7 +61,7 @@ function StudentsTable(props) {
 							</td>
 							<td className="text-xs p-3 text-gray5">{student.email}</td>
 							<td className="text-xs p-3 text-gray5">
-								{student.studentClass.value}
+								{student.studentClass.class}
 							</td>
 							<td className="text-xs p-3 text-gray5">{student.residence}</td>
 							<td className="text-xs p-3 text-gray5 flex justify-between">

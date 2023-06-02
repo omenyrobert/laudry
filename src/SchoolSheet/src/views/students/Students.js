@@ -11,6 +11,7 @@ import Localbase from "localbase";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import Button2 from "../../components/Button2";
+import axiosInstance from "../../axios-instance";
 
 let db = new Localbase("db");
 const studentTypes = [
@@ -91,12 +92,11 @@ function Students() {
 
 	// fetch student info
 	const fetchStudentInfo = () => {
-		db.collection("studentInfo")
-			.get()
-			.then((student) => {
-				const newData = student;
-				setStudentData(newData);
-			});
+		axiosInstance.get("/students")
+			.then((response) => {
+				const { payload } = response.data;
+				setStudentData(payload);
+			})
 	};
 
 	useEffect(() => {
