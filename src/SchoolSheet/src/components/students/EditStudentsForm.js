@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ButtonSecondary from "../ButtonSecondary";
 import InputField from "../InputField";
@@ -16,75 +16,134 @@ let db = new Localbase("db");
 function EditStudentsForm(props) {
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
-	const studentInfoEdit = searchParams.get("student");
+	const studentId = searchParams.get("student");
+	const [studentInfoEdit, setStudentInfoEdit] = useState({});
 
-	const { closeEditData, studentId, fetchStudentInfo, handleClickAllStudents } =
+	const { closeEditData, handleClickAllStudents } =
 		props;
 
-	const [firstName, setFirstName] = useState(studentInfoEdit.firstName);
-	const [middleName, setMiddleName] = useState(studentInfoEdit.middleName);
-	const [lastName, setLastName] = useState(studentInfoEdit.lastName);
-	const [email, setEmail] = useState(studentInfoEdit.email);
-	const [phoneNumber, setPhoneNumber] = useState(studentInfoEdit.phoneNumber);
-	const [dateOfBirth, setDateOfBirth] = useState(studentInfoEdit.dateOfBirth);
-	const [fatherName, setFatherName] = useState(studentInfoEdit.fatherName);
-	const [fatherContact, setFatherContact] = useState(
-		studentInfoEdit.fatherContact
-	);
-	const [motherName, setMotherName] = useState(studentInfoEdit.motherName);
-	const [motherContact, setMotherContact] = useState(
-		studentInfoEdit.motherContact
-	);
-	const [nationality, setNationality] = useState(studentInfoEdit.nationality);
-	const [residence, setResidence] = useState(studentInfoEdit.residence);
-	const [nin, setNin] = useState(studentInfoEdit.nin);
+	const [firstName, setFirstName] = useState("");
+	const [middleName, setMiddleName] = useState("");
+	const [lastName, setLastName] = useState("");
+	const [email, setEmail] = useState("");
+	const [phoneNumber, setPhoneNumber] = useState("");
+	const [dateOfBirth, setDateOfBirth] = useState("");
+	const [fatherName, setFatherName] = useState("");
+	const [fatherContact, setFatherContact] = useState("");
+	const [motherName, setMotherName] = useState("");
+	const [motherContact, setMotherContact] = useState("");
+	const [nationality, setNationality] = useState("");
+	const [residence, setResidence] = useState("");
 	const [photo, setPhoto] = useState(null);
-	const [nationalId, setNationalId] = useState(studentInfoEdit.nationalId);
 
-	const [gender, setGender] = useState(studentInfoEdit.gender);
-	const [studentType, setStudentType] = useState(studentInfoEdit.studentType);
-	const [studentClass, setStudentClass] = useState(
-		studentInfoEdit.studentClass
-	);
-	const [studentHouse, setStudentHouse] = useState(
-		studentInfoEdit.studentHouse
-	);
-	const [studentSection, setStudentSection] = useState(
-		studentInfoEdit.studentSection
-	);
-	const [feesCategory, setFeesCategory] = useState(
-		studentInfoEdit.feesCategory
-	);
+	const [gender, setGender] = useState({});
+	const [studentType, setStudentType] = useState("");
+	const [studentClass, setStudentClass] = useState("");
+	const [studentHouse, setStudentHouse] = useState("");
+	const [studentSection, setStudentSection] = useState("");
+	const [feesCategory, setFeesCategory] = useState("");
+	const [studentTypes, setStudentTypes] = useState([])
+	const [classes, setStudentClasses] = useState([])
+	const [houses, setStudentHouses] = useState([])
+	const [init] = useState(true)
 
-	const studentTypes = [
-		{
-			label: "Normal",
-			value: "Normal",
-		},
-		{
-			label: "Ugandan",
-			value: "Ugandan",
-		},
-		{
-			label: "International",
-			value: "International",
-		},
-	];
+	useEffect(() => {
+		try {
+			fetchSingleStudent()
+			fetchStudentType()
+			fetchSchoolClasses()
+			fetchSchoolHouses()
+		} catch (error) {
+			const MySwal = withReactContent(Swal);
+			MySwal.fire({
+				icon: "error",
+				title: "Oops...",
+				text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
+			});
+		}
+	}, [init])
 
-	const houses = [
-		{
-			label: "Lion",
-			value: "Lion",
-		},
-		{
-			label: "Rabbit",
-			value: "Rabit",
-		},
-		{
-			label: "Elephant",
-			value: "Elephant",
-		},
-	];
+
+
+
+	const fetchStudentType = () => {
+		axiosInstance.get("/student-types")
+			.then((response) => {
+				const { payload } = response.data;
+
+				const studenttypesArr = []
+				for (let i = 0; i < payload.length; i++) {
+					studenttypesArr.push({ label: payload[i].type, value: payload[i].type, ...payload[i] })
+				}
+				setStudentTypes(studenttypesArr)
+			})
+	}
+
+
+	const fetchSchoolClasses = () => {
+		axiosInstance.get("/class")
+			.then((response) => {
+				const { payload } = response.data;
+				const studentClassesArr = []
+				for (let i = 0; i < payload.length; i++) {
+					studentClassesArr.push({ label: payload[i].class, value: payload[i].class, ...payload[i] })
+				}
+				setStudentClasses(studentClassesArr)
+			})
+	}
+
+	const fetchSchoolHouses = () => {
+		axiosInstance.get("/houses")
+			.then((response) => {
+				const { payload } = response.data;
+				const studentHousesArr = []
+				for (let i = 0; i < payload.length; i++) {
+					studentHousesArr.push({ label: payload[i].house, value: payload[i].house, ...payload[i] })
+				}
+				setStudentHouses(studentHousesArr)
+			})
+	}
+
+	// fetch student info
+	const fetchSingleStudent = () => {
+		axiosInstance.get(`/students/${studentId}`)
+			.then((response) => {
+				const { status, payload } = response.data;
+				console.log(payload)
+
+				if (status === false) {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
+
+				setFirstName(payload.firstName);
+				setMiddleName(payload.middleName);
+				setLastName(payload.lastName);
+				setEmail(payload.email);
+				setPhoneNumber(payload.phoneNumber);
+				setDateOfBirth(payload.dateOfBirth);
+				setFatherName(payload.fatherName);
+				setFatherContact(payload.fatherContact);
+				setMotherName(payload.motherName);
+				setMotherContact(payload.motherContact);
+				setGender({ label: payload.gender, value: payload.gender })
+				setNationality(payload.nationality);
+				setResidence(payload.residence);
+				setStudentType({ label: payload.studentType.type, value: payload.studentType.type, ...payload.studentType })
+				setStudentClass({ label: payload.studentClass.class, value: payload.studentClass.class, ...payload.studentClass })
+				setStudentHouse({ label: payload.studentHouse.house, value: payload.studentHouse.house, ...payload.studentHouse })
+				setStudentSection({ label: payload.studentSection, value: payload.studentSection })
+				setFeesCategory({ label: payload.studentType.type, value: payload.studentType.type, ...payload.studentType })
+
+
+			})
+	}
+
 
 	const sections = [
 		{
@@ -101,27 +160,9 @@ function EditStudentsForm(props) {
 		},
 	];
 
-	const classes = [
-		{
-			label: "s1 green",
-			value: "s1 green",
-		},
-		{
-			label: "s2 blue",
-			value: "s2 blue",
-		},
-		{
-			label: "s3 yellow",
-			value: "s3 yellow",
-		},
-	];
-	/** 
-	* Brief description of the function here.
-	* @summary If the description is long, write your summary here. Otherwise, feel free to remove this.
-	* @param {Event} e - 
-	*/
+
 	function selectPhoto(e) {
-		/** @type  */
+
 		const { files } = e.target;
 		if (files && files[0]) {
 			setPhoto(files[0]);
@@ -137,18 +178,18 @@ function EditStudentsForm(props) {
 			email: email,
 			phoneNumber: phoneNumber,
 			dateOfBirth: dateOfBirth,
-			gender: gender,
+			gender: gender.value,
 			nationality: nationality,
 			residence: residence,
 			fatherName: fatherName,
 			fatherContact: fatherContact,
 			motherName: motherName,
 			motherContact: motherContact,
-			studentType: studentType,
-			studentSection: studentSection,
-			studentHouse: studentHouse,
-			studentClass: studentClass,
-			feesCategory: feesCategory,
+			studentType: studentType.id,
+			studentSection: studentSection.value,
+			studentHouse: studentHouse.id,
+			studentClass: studentClass.id,
+			feesCategory: feesCategory.id,
 		};
 
 		const formdata = new FormData();
@@ -161,14 +202,23 @@ function EditStudentsForm(props) {
 			formdata.append("photo", photo);
 		}
 
+
 		axiosInstance.put(`students/edit`, formdata, {
 			headers: {
 				"Content-Type": "multipart/form-data",
 			}
 		})
 			.then((response) => {
-				// fetch after
-				fetchStudentInfo();
+				const { status, payload } = response.data;
+				if (status === false) {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -272,15 +322,6 @@ function EditStudentsForm(props) {
 							value={email}
 							icon={<FaRegUserCircle className="w-3 -ml-7 mt-3" />}
 						/>
-						<InputField
-							type="text"
-							placeholder="Enter National Id"
-							label="NIN number"
-							name="nin"
-							onChange={(e) => setNin(e.target.value)}
-							value={nin}
-							icon={<FaRegUserCircle className="w-3 -ml-7 mt-3" />}
-						/>
 					</div>
 					<div className="w-1/4 p-2">
 						<InputField
@@ -298,14 +339,6 @@ function EditStudentsForm(props) {
 							onChange={(e) => setPhoneNumber(e.target.value)}
 							value={phoneNumber}
 							icon={<FaPhone className="w-3 -ml-7 mt-3" />}
-						/>
-						<InputField
-							type="file"
-							placeholder="Enter Email Address"
-							label="National Id Copy"
-							name="nationalId"
-							onChange={(e) => setNationalId(e.target.value)}
-							icon={<FaRegUserCircle className="w-3 -ml-7 mt-3" />}
 						/>
 					</div>
 				</div>

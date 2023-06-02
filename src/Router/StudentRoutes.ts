@@ -10,6 +10,7 @@ import {validateStudentRequest} from "../Middlewares/StudentMiddleware";
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
 
 
+
 export default (router: Router) => {
   const studentRoutePrefix = "/students";
   router.get(`${studentRoutePrefix}`, JWTAuthMiddleWare, fetchStudents);

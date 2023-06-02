@@ -175,6 +175,7 @@ export const editStudent = async (req: Request, res: Response) => {
 export const fetchSingleStudent = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    console.log(id)
     const student = await getSingleStudent(parseInt(id));
     if (student) {
       return res.json(customPayloadResponse(true, student)).status(200).end();
@@ -185,6 +186,7 @@ export const fetchSingleStudent = async (req: Request, res: Response) => {
         .end();
     }
   } catch (error) {
+    console.log(error)
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
