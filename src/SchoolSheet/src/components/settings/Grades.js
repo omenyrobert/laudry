@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Button from "../Button";
-import { v4 as uuid } from "uuid";
 import ButtonSecondary from "../ButtonSecondary";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
@@ -9,11 +8,12 @@ import { BsPencilSquare } from "react-icons/bs";
 
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
-
-let db = new Localbase("db");
+import { useDispatch, useSelector } from "react-redux";
+import axiosInstance from "../../axios-instance";
+import { getGrades } from "../../store/schoolSheetSlices/schoolStore";
 
 function Grades() {
+	const dispatch = useDispatch();
 	const [editData, setEditData] = useState(false);
 
 	const closeEditData = () => {
@@ -25,55 +25,40 @@ function Grades() {
 	const [to, setTo] = useState("");
 	const [from, setFrom] = useState("");
 
-	const postGrade = () => {
-		let stId = uuid();
-		let formData = {
-			id: stId,
-			grade: grade,
-			to: to,
-			from: from,
-		};
-		if (grade) {
-			db.collection("grading")
-				.add(formData)
-				.then((response) => {
-					setGrade("");
-					setTo("");
-					setFrom("");
-
-					// fetch after
-					fetchgrade();
-
-					// show alert
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
-				.catch(console.error());
+	const postGrade = async () => {
+		try {
+			let formData = {
+				from: from,
+				to: to,
+				grade: grade,
+			};
+			const response = await axiosInstance.post("/grades", formData);
+			const { data } = response;
+			const { status } = data;
+			if (status) {
+				dispatch(getGrades());
+				setFrom("");
+				setTo("");
+				setGrade("");
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
-	// fetch grade
-	const [gradeData, setGradeData] = useState([]);
-	const fetchgrade = () => {
-		db.collection("grading")
-			.get()
-			.then((grade) => {
-				const newData = grade;
-				setGradeData(newData);
-			});
-	};
-
-	// fetching stream
+	// fetching grade
 	useEffect(() => {
-		fetchgrade();
-	}, []);
+		dispatch(getGrades());
+	}, [dispatch]);
 
-	//deleting stream
-	const deleteGrade = (stream) => {
+	//deleting grade
+	const deleteGrade = (grade) => {
 		Swal.fire({
 			title: "Are you sure?",
 			text: "You won't be able to revert this!",
@@ -82,24 +67,23 @@ function Grades() {
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("grading")
-					.doc({ id: stream.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchgrade();
-
+				try {
+					const response = await axiosInstance.delete(`/grades/${grade.id}`);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
+						dispatch(getGrades());
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
+					}
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 	};
@@ -117,18 +101,21 @@ function Grades() {
 		setFromEdit(grade.from);
 		setGradeId(grade.id);
 	};
-	const updateGrade = () => {
-		db.collection("grading")
-			.doc({ id: gradeId })
-			.update({
-				grade: gradeEdit,
+	const updateGrade = async () => {
+		try {
+			let formData = {
+				from: fromEdit,
 				to: toEdit,
-				from: fromEdit
-			})
-			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchgrade();
+				grade: gradeEdit,
+			};
+			const grade = await axiosInstance.put(`/grades/${gradeId}`, formData);
+			const { data } = grade;
+			const { status } = data;
+			if (status) {
+				dispatch(getGrades());
+				setGradeEdit("");
+				setToEdit("");
+				setFromEdit("");
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -136,8 +123,13 @@ function Grades() {
 					timer: 500,
 				});
 				closeEditData();
-			});
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
+
+	const { grades } = useSelector((state) => state.schoolStore);
 
 	return (
 		<>
@@ -240,7 +232,7 @@ function Grades() {
 						) : null}
 						{/* edit popup end */}
 
-						{gradeData.map((grade) => {
+						{grades.map((grade) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"

@@ -5,23 +5,23 @@ import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
-import { v4 as uuid } from "uuid";
 import Select from "react-select";
-
-let db = new Localbase("db");
+import { useDispatch } from "react-redux";
+import { getAssessments } from "../../store/schoolSheetSlices/schoolStore";
+import axiosInstance from "../../axios-instance";
+import Button from "../Button";
 
 function AssessmentForm({
 	closeAdd,
 	studentId,
 	studentData,
 	openEditData,
-	fetchAssessment,
 	assessData,
 	examTypesData,
 	subjectsData,
 }) {
+	const dispatch = useDispatch();
 	const [selectedExam, setSelectedExam] = useState(null);
 	const [selectedSubject, setSelectedSubject] = useState(null);
 	const [finalMark, setFinalMark] = useState(null);
@@ -35,38 +35,41 @@ function AssessmentForm({
 		const finalMk = (formData.mark / 100) * selectedExam.percent;
 		setFinalMark(finalMk);
 	};
-	const postAssessment = (e) => {
+	const postAssessment = async (e) => {
 		e.preventDefault();
 
-		let clId = uuid();
-		let data = {
-			id: clId,
-			studentId: studentId,
-			examType: selectedExam,
-			subject: selectedSubject,
-			mark: formData.mark,
-			finalMark: finalMark,
-			comment: formData.comment,
-		};
-		if (formData) {
-			db.collection("assessTbl")
-				.add(data)
-				.then((response) => {
-					fetchAssessment();
+		try {
+			let body = {
+				studentId: studentId,
+				examType: selectedExam.value,
+				subject: selectedSubject.value,
+				mark: formData.mark,
+				finalMark: finalMark,
+				comment: formData.comment,
+				term: 1,
+			};
+
+			if (formData) {
+				const response = await axiosInstance.post("/assessments", body);
+				const { data } = response;
+				const { status } = data;
+
+				if (status) {
+					dispatch(getAssessments());
+					setFormData({
+						mark: "",
+						comment: "",
+					});
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
 						showConfirmButton: false,
 						timer: 500,
 					});
-					// console.log('assess: ', response);
-					// setFormData(
-					//     Object.fromEntries(
-					//         Object.keys(formData).map((key) => [key, ''])
-					//     )
-					// );
-				})
-				.catch(console.error());
+				}
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
@@ -79,24 +82,25 @@ function AssessmentForm({
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("assessTbl")
-					.doc({ id: item.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchAssessment();
-
+				try {
+					const response = await axiosInstance.delete(
+						`/assessments/${item.id}`
+					);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
+						dispatch(getAssessments());
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
+					}
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 	};
@@ -115,7 +119,12 @@ function AssessmentForm({
 					</div>
 				</div>
 				<div className="p-2 flex">
-					<div className="w-1/4 p-1">
+					<div className="w-1/5 p-1">
+						<br />
+						<br />
+						subject here
+					</div>
+					<div className="w-1/5 p-1">
 						<br />
 						<br />
 						<Select
@@ -126,31 +135,22 @@ function AssessmentForm({
 							options={examTypesData}
 						/>
 					</div>
-					<div className="w-1/4 p-1">
-						<br />
-						<br />
-						<Select
-							placeholder="Select Subject"
-							label="Subject"
-							defaultValue={selectedSubject}
-							onChange={setSelectedSubject}
-							options={subjectsData}
-						/>
-					</div>
 
-					<div className="w-1/4 p-1">
+					<div className="w-1/5 p-1">
 						<InputField
 							label="Marks"
 							placeholder="Enter Marks in %"
 							name="mark"
+							value={formData.mark}
 							onChange={onChange}
 						/>
 					</div>
-					<div className="w-1/4 p-1">
+					<div className="w-2/5 p-1">
 						<InputField
 							label="Comment"
 							placeholder="Enter Comment"
 							name="comment"
+							value={formData.comment}
 							onChange={onChange}
 						/>
 					</div>
@@ -163,10 +163,10 @@ function AssessmentForm({
 				</div>
 				<div className="mt-5 flex bg-gray1 p-2 text-sm mx-5">
 					<div className="w-1/4">Exam Type</div>
-					<div className="w-1/4">Exam %</div>
-					<div className="w-1/4">Subject</div>
-					<div className="w-1/4">Marks</div>
-					<div className="w-1/4">Final Mark %</div>
+					<div className="w-1/4">Marks %</div>
+					<div className="w-1/4">Grade</div>
+					<div className="w-1/4">Final Mark </div>
+					<div className="w-1/4">Grade</div>
 					<div className="w-1/4">Comment</div>
 					<div className="w-1/4">Action</div>
 				</div>
@@ -178,11 +178,11 @@ function AssessmentForm({
 								className="flex hover:bg-gray1 p-2 text-xs cursor-pointer mx-5"
 								key={student.id}
 							>
-								<div className="w-1/4">{student?.examType?.value}</div>
-								<div className="w-1/4">{student?.examType?.percent}</div>
-								<div className="w-1/4">{student?.subject?.value}</div>
+								<div className="w-1/4">{student?.examType}</div>
+								<div className="w-1/4">{student?.mark}</div>
 								<div className="w-1/4"> {student.mark} </div>
 								<div className="w-1/4">{student.finalMark}</div>
+								<div className="w-1/4">grade</div>
 								<div className="w-1/4"> {student.comment} </div>
 								<div className="w-1/4">
 									<div className="flex">
@@ -201,9 +201,60 @@ function AssessmentForm({
 					}
 					return null;
 				})}
+				<div className="w-20 float-right">
+					<Button value={"Assess"} />
+				</div>
+				<br />
+				<br />
+
+				<div className=" flex text-sm bg-gray1 cursor-pointer">
+					<div className="w-1/4  border-gray2 border p-2">Math</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">BOT</div> <div className="p-1">9/15</div>
+					</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">MOT</div> <div className="p-1">9/15</div>
+					</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">EOT</div> <div className="p-1">9/15</div>
+					</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">76%</div> <div className="p-1">d2 </div>
+					</div>
+				</div>
+				<div className=" flex text-sm bg-gray1 cursor-pointer">
+					<div className="w-1/4  border-gray2 border p-2">Math</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">BOT</div> <div className="p-1">9/15</div>
+					</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">MOT</div> <div className="p-1">9/15</div>
+					</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">EOT</div> <div className="p-1">9/15</div>
+					</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">76%</div> <div className="p-1">d2 </div>
+					</div>
+				</div><div className=" flex text-sm bg-gray1 cursor-pointer">
+					<div className="w-1/4  border-gray2 border p-2">Math</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">BOT</div> <div className="p-1">9/15</div>
+					</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">MOT</div> <div className="p-1">9/15</div>
+					</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">EOT</div> <div className="p-1">9/15</div>
+					</div>
+					<div className="w-1/4 flex  border-gray2 p-2 border">
+						<div className="p-1">76%</div> <div className="p-1">d2 </div>
+					</div>
+				</div>
+
 				<div className="flex mt-4">
 					<div className="p-2 w-1/3 mt-5">
-					<Select
+						<Select
 							placeholder="Select Action"
 							label="Exam Type"
 							defaultValue={selectedExam}
@@ -212,10 +263,10 @@ function AssessmentForm({
 						/>
 					</div>
 					<div className="p-2 w-1/3">
-					<InputField placeholder="General Comment" />
+						<InputField placeholder="General Comment" />
 					</div>
 					<div className="p-2 w-1/3 mt-5">
-					<Select
+						<Select
 							placeholder="Select Class"
 							label="Exam Type"
 							defaultValue={selectedExam}
@@ -223,7 +274,6 @@ function AssessmentForm({
 							options={examTypesData}
 						/>
 					</div>
-
 				</div>
 			</div>
 		</>

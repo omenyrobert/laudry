@@ -49,10 +49,24 @@ export const getStudents = createAsyncThunk("/schoolSheet/students", async () =>
 	const { status, payload } = data;
 	if (status) return payload;
 });
+export const getExamTypes = createAsyncThunk('schoolSheet/examTypes', async () => {
+	const examTypes = await axiosInstance.get('/exam-types');
+	const { data } = examTypes;
+	const { status, payload } = data;
+	if (status) return payload;
+});
 
 export const getHouses = createAsyncThunk("/schoolSheet/houses", async () => {
 	const houses = await axiosInstance.get("/houses");
 	const { data } = houses;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+export const getAssessments = createAsyncThunk("/schoolSheet/assessments",
+async () => {
+	const assessments = await axiosInstance.get("/assessments");
+	const { data } = assessments;
 	const { status, payload } = data;
 	if (status) return payload;
 });
@@ -71,6 +85,12 @@ export const getFeesStructure = createAsyncThunk("/schoolSheet/feesStructure", a
 	if (status) return payload;
 });
 
+export const getGrades = createAsyncThunk("/schoolSheet/grades", async () => {
+	const grades = await axiosInstance.get("/grades");
+	const { data } = grades;
+	const { status, payload } = data;
+	if (status) return payload;
+});
 
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
@@ -85,6 +105,9 @@ export const schoolSheetSlices = createSlice({
 		houses: [],
 		studentTypes: [],
 		fees: [],
+		examTypes: [],
+		assessments: [],
+		grades: [],
 	},
 	extraReducers: {
 		[getStreams.fulfilled]: (state, action) => {
@@ -116,7 +139,16 @@ export const schoolSheetSlices = createSlice({
 		},
 		[getFeesStructure.fulfilled]: (state, action) => {
 			state.fees = action.payload;
-		}
+		},
+		[getExamTypes.fulfilled]: (state, action) => {
+			state.examTypes = action.payload;
+		},
+		[getAssessments.fulfilled]: (state, action) => {
+			state.assessments = action.payload;
+		},
+		[getGrades.fulfilled]: (state, action) => {
+			state.grades = action.payload;
+		},
 	},
 });
 
