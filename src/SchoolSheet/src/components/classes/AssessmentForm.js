@@ -167,7 +167,6 @@ function AssessmentForm({
 				<div className="mt-5 flex bg-gray1 p-2 text-sm mx-5">
 					<div className="w-1/4">Exam Type</div>
 					<div className="w-1/4">Marks %</div>
-					<div className="w-1/4">Grade</div>
 					<div className="w-1/4">Final Mark </div>
 					<div className="w-1/4">Grade</div>
 					<div className="w-1/4">Comment</div>
@@ -182,7 +181,6 @@ function AssessmentForm({
 								key={student.id}
 							>
 								<div className="w-1/4">{student?.examType}</div>
-								<div className="w-1/4">{student?.mark}</div>
 								<div className="w-1/4"> {student.mark} </div>
 								<div className="w-1/4">{student.finalMark}</div>
 								<div className="w-1/4">{student.grade ?? "No Grade"}</div>
