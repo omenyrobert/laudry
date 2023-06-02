@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputField from "../InputField";
 import Button2 from "../Button2";
 import { MdDeleteOutline } from "react-icons/md";
@@ -7,10 +7,11 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import "../../assets/styles/main.css";
 import Select from "react-select";
-import { useDispatch } from "react-redux";
-import { getAssessments } from "../../store/schoolSheetSlices/schoolStore";
+import { useDispatch, useSelector } from "react-redux";
+import { getAssessments, getGrades } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import Button from "../Button";
+import { assignGrade } from "../../utils/assessment";
 
 function AssessmentForm({
 	closeAdd,
@@ -19,12 +20,14 @@ function AssessmentForm({
 	openEditData,
 	assessData,
 	examTypesData,
+	assessSubject,
 	subjectsData,
+	assessAll
 }) {
 	const dispatch = useDispatch();
 	const [selectedExam, setSelectedExam] = useState(null);
-	const [selectedSubject, setSelectedSubject] = useState(null);
 	const [finalMark, setFinalMark] = useState(null);
+	const { grades } = useSelector((state) => state.schoolStore);
 
 	const [formData, setFormData] = useState({
 		mark: "",
@@ -42,11 +45,12 @@ function AssessmentForm({
 			let body = {
 				studentId: studentId,
 				examType: selectedExam.value,
-				subject: selectedSubject.value,
+				subject: assessSubject,
 				mark: formData.mark,
 				finalMark: finalMark,
 				comment: formData.comment,
 				term: 1,
+				grade: assignGrade(finalMark, grades),
 			};
 
 			if (formData) {
@@ -104,10 +108,14 @@ function AssessmentForm({
 			}
 		});
 	};
+	
+	useEffect(() => {
+		dispatch(getGrades());
+	}, [dispatch]);
 
 	return (
 		<>
-			<div className="bg-white p-3 h-[90vh]">
+			<div className="bg-white p-3 h-[100vh]">
 				<div className="bg-gray1 p-2 font-semibold flex justify-between text-primary">
 					<div>
 						{studentData.firstName} {studentData.middleName}
@@ -122,7 +130,7 @@ function AssessmentForm({
 					<div className="w-1/5 p-1">
 						<br />
 						<br />
-						subject here
+						{assessSubject}
 					</div>
 					<div className="w-1/5 p-1">
 						<br />
@@ -182,7 +190,7 @@ function AssessmentForm({
 								<div className="w-1/4">{student?.mark}</div>
 								<div className="w-1/4"> {student.mark} </div>
 								<div className="w-1/4">{student.finalMark}</div>
-								<div className="w-1/4">grade</div>
+								<div className="w-1/4">{student.grade ?? "No Grade"}</div>
 								<div className="w-1/4"> {student.comment} </div>
 								<div className="w-1/4">
 									<div className="flex">
@@ -207,51 +215,26 @@ function AssessmentForm({
 				<br />
 				<br />
 
-				<div className=" flex text-sm bg-gray1 cursor-pointer">
-					<div className="w-1/4  border-gray2 border p-2">Math</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">BOT</div> <div className="p-1">9/15</div>
-					</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">MOT</div> <div className="p-1">9/15</div>
-					</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">EOT</div> <div className="p-1">9/15</div>
-					</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">76%</div> <div className="p-1">d2 </div>
-					</div>
-				</div>
-				<div className=" flex text-sm bg-gray1 cursor-pointer">
-					<div className="w-1/4  border-gray2 border p-2">Math</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">BOT</div> <div className="p-1">9/15</div>
-					</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">MOT</div> <div className="p-1">9/15</div>
-					</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">EOT</div> <div className="p-1">9/15</div>
-					</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">76%</div> <div className="p-1">d2 </div>
-					</div>
-				</div><div className=" flex text-sm bg-gray1 cursor-pointer">
-					<div className="w-1/4  border-gray2 border p-2">Math</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">BOT</div> <div className="p-1">9/15</div>
-					</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">MOT</div> <div className="p-1">9/15</div>
-					</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">EOT</div> <div className="p-1">9/15</div>
-					</div>
-					<div className="w-1/4 flex  border-gray2 p-2 border">
-						<div className="p-1">76%</div> <div className="p-1">d2 </div>
-					</div>
-				</div>
-
+				
+					{assessAll.map((data) => {
+						return (
+							<div className=" flex text-sm bg-gray1 cursor-pointer">
+								<div className="w-1/4  border-gray2 border p-2">{data.subject}</div>
+								<div className="w-1/4 flex  border-gray2 p-2 border">
+									<div className="p-1">BOT</div> <div className="p-1">{data.BOT}</div>
+								</div>
+								<div className="w-1/4 flex  border-gray2 p-2 border">
+									<div className="p-1">MOT</div> <div className="p-1">{data.MOT}</div>
+								</div>
+								<div className="w-1/4 flex  border-gray2 p-2 border">
+									<div className="p-1">EOT</div> <div className="p-1">{data.EOT}</div>
+								</div>
+								<div className="w-1/4 flex  border-gray2 p-2 border">
+									<div className="p-1">{`${data.totalMark}%`}</div> <div className="p-1">{assignGrade(data.totalMark, grades)}</div>
+								</div>
+							</div>
+						);
+					})}
 				<div className="flex mt-4">
 					<div className="p-2 w-1/3 mt-5">
 						<Select

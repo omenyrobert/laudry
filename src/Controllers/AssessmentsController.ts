@@ -34,6 +34,7 @@ export const addAssessment = async (req: Request, res: Response) => {
       finalMark,
       comment,
       term,
+      grade,
     } = req.body;
 
     if (!studentId) {
@@ -85,6 +86,13 @@ export const addAssessment = async (req: Request, res: Response) => {
           .end();
     }
 
+    if (!grade) {
+      return res
+        .json(customPayloadResponse(false, "Grade Required"))
+        .status(200)
+        .end();
+  }
+
     await createAssessment(
       studentId,
       examType,
@@ -92,7 +100,8 @@ export const addAssessment = async (req: Request, res: Response) => {
       mark,
       finalMark,
       comment,
-      term
+      term,
+      grade,
     );
         
     return res
@@ -118,6 +127,7 @@ export const modifyAssessment = async (req: Request, res: Response) => {
       finalMark,
       comment,
       term,
+      grade,
     } = req.body;
 
     const assessmentId = id;
@@ -189,7 +199,8 @@ export const modifyAssessment = async (req: Request, res: Response) => {
         mark,
         finalMark,
         comment,
-        term
+        term,
+        grade
       );
 
       return res
