@@ -1,26 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import ButtonSecondary from "../ButtonSecondary";
 import InputField from "../InputField";
 import InputSelect from "../InputSelect";
 import Button from "../Button";
 import Select from "react-select";
 import { FaRegUserCircle, FaPhone } from "react-icons/fa";
-import Localbase from "localbase";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import axiosInstance from "../../axios-instance"
+import { useNavigate } from 'react-router-dom';
 
-let db = new Localbase("db");
 
 function EditStudentsForm(props) {
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const studentId = searchParams.get("student");
-	const [studentInfoEdit, setStudentInfoEdit] = useState({});
+	const navigate = useNavigate();
 
-	const { closeEditData, handleClickAllStudents } =
-		props;
 
 	const [firstName, setFirstName] = useState("");
 	const [middleName, setMiddleName] = useState("");
@@ -225,11 +221,15 @@ function EditStudentsForm(props) {
 					showConfirmButton: false,
 					timer: 500,
 				});
-				closeEditData();
-				handleClickAllStudents();
+				navigate("/students")
 			})
 			.catch((error) => {
-				console.log(error);
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: "An Error Occured while trying to update student. Please try again",
+				});
 			})
 
 	};
