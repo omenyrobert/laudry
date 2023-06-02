@@ -24,7 +24,6 @@ export const validateStudentRequest = (req: Request, res: Response, next: NextFu
     feesCategory,
   } = req.body;
 
-  console.log(req.body)
 
   if (!firstName) {
     return res
