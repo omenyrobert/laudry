@@ -180,9 +180,7 @@ function Assessment() {
 					</table>
 				</div>
 				<div className="w-8/12 ml-5">
-					<p className="text-secondary font-bold text-xl">
-						Assess Student Name
-					</p>
+					
 					{add ? (
 						<AssessmentForm
 							closeAdd={closeAdd}

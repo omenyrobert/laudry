@@ -115,26 +115,22 @@ function AssessmentForm({
 
 	return (
 		<>
-			<div className="bg-white p-3 h-[100vh]">
+			<div className="bg-white p-3 h-[75vh] overflow-y-auto">
 				<div className="bg-gray1 p-2 font-semibold flex justify-between text-primary">
 					<div>
 						{studentData.firstName} {studentData.middleName}
 						{studentData.lastName}
 					</div>
+					<div>{assessSubject}</div>
 					<div>Term here</div>
+					
 					<div className="cursor-pointer" onClick={closeAdd}>
 						X
 					</div>
 				</div>
 				<div className="p-2 flex">
-					<div className="w-1/5 p-1">
-						<br />
-						<br />
-						{assessSubject}
-					</div>
-					<div className="w-1/5 p-1">
-						<br />
-						<br />
+					<div className="w-1/3 p-1">
+						<br/><br/>
 						<Select
 							placeholder="Select Exam Type"
 							label="Exam Type"
@@ -143,8 +139,7 @@ function AssessmentForm({
 							options={examTypesData}
 						/>
 					</div>
-
-					<div className="w-1/5 p-1">
+					<div className="w-1/3 p-1">
 						<InputField
 							label="Marks"
 							placeholder="Enter Marks in %"
@@ -153,7 +148,7 @@ function AssessmentForm({
 							onChange={onChange}
 						/>
 					</div>
-					<div className="w-2/5 p-1">
+					<div className="w-1/3 p-1">
 						<InputField
 							label="Comment"
 							placeholder="Enter Comment"
