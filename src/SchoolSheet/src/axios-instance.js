@@ -1,7 +1,11 @@
 import axios from "axios";
 
+const PRODUCTION_URL = "https://school-app-gvvr.onrender.com/api";
+const DEVELOPMENT_URL = "http://localhost:3001/api";
+
+
 const axiosInstance = axios.create({
-	baseURL: "https://school-app-gvvr.onrender.com/api",
+	baseURL: PRODUCTION_URL,
 });
 
 const requestHandler = (request) => {
