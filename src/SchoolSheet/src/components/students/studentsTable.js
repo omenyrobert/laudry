@@ -73,11 +73,11 @@ function StudentsTable(props) {
 								/>
 								<Link
 									className="mx-3"
-									to={`/editStudentsForm?student=${student}`}
+									to={`/editStudentsForm?student=${student.id}`}
 								>
 									<BsPencilSquare className="text-warning h-4 w-4" />
 								</Link>
-								<Link className="mx-3" to={`/showStudentsForm?student=${student}`} >
+								<Link className="mx-3" to={`/showStudentsForm?student=${student.id}`} >
 									<BsEye className="text-primary h-4 w-4" />
 								</Link>
 							</td>

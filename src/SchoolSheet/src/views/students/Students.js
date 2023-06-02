@@ -7,7 +7,6 @@ import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import { BsSearch } from "react-icons/bs";
 import Select from "react-select";
-import Localbase from "localbase";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import Button2 from "../../components/Button2";
@@ -88,7 +87,6 @@ function Students() {
 	const fetchSchoolClasses = () => {
 		axiosInstance.get("/class")
 			.then((response) => {
-				console.log("response", response)
 				const { payload } = response.data;
 				const studentClassesArr = []
 				for (let i = 0; i < payload.length; i++) {

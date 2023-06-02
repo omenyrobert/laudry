@@ -38,7 +38,7 @@ function EditStudentsForm(props) {
 	const [nationality, setNationality] = useState(studentInfoEdit.nationality);
 	const [residence, setResidence] = useState(studentInfoEdit.residence);
 	const [nin, setNin] = useState(studentInfoEdit.nin);
-	const [photo, setPhoto] = useState(studentInfoEdit.photo);
+	const [photo, setPhoto] = useState(null);
 	const [nationalId, setNationalId] = useState(studentInfoEdit.nationalId);
 
 	const [gender, setGender] = useState(studentInfoEdit.gender);
@@ -115,6 +115,18 @@ function EditStudentsForm(props) {
 			value: "s3 yellow",
 		},
 	];
+	/** 
+	* Brief description of the function here.
+	* @summary If the description is long, write your summary here. Otherwise, feel free to remove this.
+	* @param {Event} e - 
+	*/
+	function selectPhoto(e) {
+		/** @type  */
+		const { files } = e.target;
+		if (files && files[0]) {
+			setPhoto(files[0]);
+		}
+	}
 
 	const updateStudentInfo = () => {
 		let data = {
@@ -128,9 +140,6 @@ function EditStudentsForm(props) {
 			gender: gender,
 			nationality: nationality,
 			residence: residence,
-			photo: photo,
-			nin: nin,
-			nationalId: nationalId,
 			fatherName: fatherName,
 			fatherContact: fatherContact,
 			motherName: motherName,
@@ -142,7 +151,21 @@ function EditStudentsForm(props) {
 			feesCategory: feesCategory,
 		};
 
-		axiosInstance.put(`students/edit`, data)
+		const formdata = new FormData();
+		// loop through the data object and get key and value
+		for (const key in data) {
+			formdata.append(key, data[key]);
+		}
+
+		if (photo) {
+			formdata.append("photo", photo);
+		}
+
+		axiosInstance.put(`students/edit`, formdata, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			}
+		})
 			.then((response) => {
 				// fetch after
 				fetchStudentInfo();
@@ -218,7 +241,7 @@ function EditStudentsForm(props) {
 						<InputField
 							type="file"
 							label="Photo"
-							onChange={(e) => setPhoto(e.target.value)}
+							onChange={selectPhoto}
 						/>
 						<InputField
 							type="text"
