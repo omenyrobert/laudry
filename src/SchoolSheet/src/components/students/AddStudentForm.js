@@ -11,11 +11,13 @@ import { Link } from "react-router-dom";
 import axiosInstance from "../../axios-instance"
 import { useDispatch } from 'react-redux'
 import { getStudents } from "../../store/schoolSheetSlices/schoolStore";
+import { useNavigate } from 'react-router-dom';
 
 
 
 function AddStudentForm(props) {
 	const [init] = useState(true)
+	const navigate = useNavigate();
 
 	const [gender, setGender] = useState("");
 	const [studentType, setStudentType] = useState("");
@@ -182,7 +184,7 @@ function AddStudentForm(props) {
 						showConfirmButton: false,
 						timer: 500,
 					});
-					//handleClickAllStudents();
+					navigate("/students")
 				})
 				.catch((error) => console.error(error));
 		} else {

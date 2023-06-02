@@ -96,6 +96,7 @@ export const removeStudent = async (req: Request, res: Response) => {
         .end();
     }
   } catch (error) {
+    console.log(error)
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
