@@ -6,7 +6,10 @@
   "scripts": {
     "server": "nodemon ./src/index.ts",
     "client": "npm start --prefix ./src/SchoolSheet",
+    "client:install": "npm install --prefix ./src/SchoolSheet",
     "build": "tsc --build",
+    "start": "ts-node ./src/index.ts",
+    "build:client": "npm run build --prefix ./src/SchoolSheet",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Robert",
