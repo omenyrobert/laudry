@@ -5,7 +5,7 @@ const DEVELOPMENT_URL = "http://localhost:3001/api";
 
 
 const axiosInstance = axios.create({
-	baseURL: PRODUCTION_URL,
+	baseURL: DEVELOPMENT_URL,
 });
 
 const requestHandler = (request) => {
