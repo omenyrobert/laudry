@@ -35,20 +35,20 @@ const sections = [
 
 
 function Students() {
-	const [editData, setEditData] = useState(false);
-	const [showData, setShowData] = useState(false);
 
 	const [studentData, setStudentData] = useState([]);
-	const [studentInfoEdit, setStudentInfoEdit] = useState();
-	const [studentId, setStudentId] = useState("");
-	const [studentInfoShow, setStudentInfoShow] = useState([]);
-
-	const [SearchAllStudents, setSearchAllStudents] = useState(false);
 	const [search, setSearch] = useState(false);
 	const [studentTypes, setStudentTypes] = useState([])
 	const [studentClasses, setStudentClasses] = useState([])
 	const [studentHouses, setStudentHouses] = useState([])
-
+	const [filters, setFilters] = useState({
+		query: "",
+		type: "",
+		house: "",
+		studentClass: "",
+		section: ""
+	});
+	const [searchedStudents, setSearchedStudents] = useState([])
 
 	useEffect(() => {
 		try {
@@ -66,13 +66,10 @@ function Students() {
 		}
 	}, [])
 
-
-
-
 	const fetchStudentType = () => {
 		axiosInstance.get("/student-types")
 			.then((response) => {
-				console.log("response", response)
+				//console.log("response", response)
 				const { payload } = response.data;
 
 				const studenttypesArr = []
@@ -82,7 +79,6 @@ function Students() {
 				setStudentTypes(studenttypesArr)
 			})
 	}
-
 
 	const fetchSchoolClasses = () => {
 		axiosInstance.get("/class")
@@ -101,14 +97,13 @@ function Students() {
 			.then((response) => {
 				const { payload } = response.data;
 				const studentHousesArr = []
-				console.log("payload", payload)
+
 				for (let i = 0; i < payload.length; i++) {
 					studentHousesArr.push({ label: payload[i].house, value: payload[i].house, ...payload[i] })
 				}
 				setStudentHouses(studentHousesArr)
 			})
 	}
-
 
 	// fetch student info
 	const fetchStudentInfo = () => {
@@ -118,7 +113,6 @@ function Students() {
 				setStudentData(payload);
 			})
 	};
-
 
 	//deleting student
 	const deleteStudentInfo = (student) => {
@@ -132,8 +126,6 @@ function Students() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				console.log(student)
-
 
 				axiosInstance.delete("/students/" + student.id)
 					.then((response) => {
@@ -142,87 +134,51 @@ function Students() {
 						Swal.fire("Deleted!", "Student file has been deleted.", "success");
 					})
 					.catch((error) => {
-						console.log(error);
+						//console.log(error);
 					})
 			}
 		});
 	};
 
-	const handleSearch = () => {
-		setSearch(true);
-	};
+	const searchStudents = () => {
+		if (search === false) {
+			setSearch(true)
+		}
+		console.log("filters", filters)
+		const searchResults = studentData.filter((student) => {
+			const studentName = student.firstName + " " + student.middleName + " " + student.lastName
 
-	const handleClickSearchAllStudents = () => {
-		setSearchAllStudents(true);
-	};
+			const searchName = studentName.toLowerCase().includes(filters.query.toLowerCase())
+			const searchType = student.studentType.type.toLowerCase().includes(filters.type.toLowerCase())
+			const searchHouse = student.studentHouse.house.toLowerCase().includes(filters.house.toLowerCase())
+			const searchClass = student.studentClass.class.toLowerCase().includes(filters.studentClass.toLowerCase())
+			//const searchSection = student.section.toLowerCase().includes(filters.section.toLowerCase())
 
-	const handleClickAllStudents = () => {
-		setSearch(false);
-		setSearchAllStudents(false);
-	};
+			return searchName && searchType && searchHouse && searchClass
 
+		})
+		setSearchedStudents(searchResults)
+	}
 
+	function clearFilters() {
+		setFilters({
+			query: "",
+			type: "",
+			house: "",
+			studentClass: "",
+			section: ""
+		})
+		setSearch(false)
+	}
 
-	const closeEditData = () => {
-		setEditData(false);
-	};
+	useEffect(() => {
+		if (filters.query === "" && filters.type === "" && filters.house === "" && filters.studentClass === "" && filters.section === "") {
+			setSearch(false)
+		} else {
+			searchStudents()
+		}
+	}, [filters])
 
-	const openEditData = (student) => {
-		setEditData(true);
-		setStudentInfoEdit(student);
-		setStudentId(student.id);
-	};
-
-	const closeShowData = () => {
-		setShowData(false);
-	};
-
-	const openShowData = (student) => {
-		setShowData(true);
-		setStudentInfoShow(student);
-	};
-
-	// search by name
-	const [query, setQuery] = useState("");
-	const [searchResults, setSearchResults] = useState([]);
-
-	const SearchStudents = (e) => {
-		e.preventDefault();
-		setSearchResults(
-			studentData?.filter(
-				(student) =>
-					student.lastName.toLowerCase().includes(query.toLowerCase()) ||
-					student.firstName.toLowerCase().includes(query.toLowerCase()) ||
-					student.middleName.toLowerCase().includes(query.toLowerCase())
-			)
-		);
-		setQuery("");
-	};
-
-	// search by class
-	const [queryClass, setQueryClass] = useState({});
-	const [searchClassResults, setClassSearchResults] = useState([]);
-	const searchStudentsByClass = () => {
-		console.log("queryClass", queryClass)
-		setClassSearchResults(
-			studentData?.filter(
-				(student) =>
-					student?.studentClass.class
-						.toLowerCase()
-						.includes(queryClass?.value.toLowerCase()) ||
-					student?.studentType.type
-						.toLowerCase()
-						.includes(queryClass?.value.toLowerCase()) ||
-					student?.studentSection.value
-						.toLowerCase()
-						.includes(queryClass?.value.toLowerCase()) ||
-					student?.studentHouse.house
-						.toLowerCase()
-						.includes(queryClass?.value.toLowerCase())
-			)
-		);
-		setQueryClass({});
-	};
 
 	return (
 		<div className="h-screen overflow-y-auto mt-2 w-full">
@@ -238,16 +194,15 @@ function Students() {
 					<div className="w-2/12 -mt-5">
 						<form
 							onSubmit={(e) => {
-								handleClickSearchAllStudents();
-								SearchStudents(e);
+								//
 							}}
 						>
 							<InputField
 								type="text"
 								placeholder="Search For Student ..."
 								name="lastName"
-								value={query}
-								onChange={(e) => setQuery(e.target.value)}
+								value={filters.query}
+								onChange={(e) => setFilters({ ...filters, query: e.target.value })}
 								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
 							/>
 						</form>
@@ -257,7 +212,9 @@ function Students() {
 							<Select
 								placeholder={"Select class"}
 								className="text-sm"
-								onChange={setQueryClass}
+								onChange={(opt) => {
+									setFilters({ ...filters, studentClass: opt.value })
+								}}
 								options={studentClasses}
 							/>
 						</div>
@@ -265,7 +222,9 @@ function Students() {
 							<Select
 								placeholder={"Student Type"}
 								className="text-sm"
-								onChange={setQueryClass}
+								onChange={(opt) => {
+									setFilters({ ...filters, type: opt.value })
+								}}
 								options={studentTypes}
 							/>
 						</div>
@@ -273,7 +232,9 @@ function Students() {
 							<Select
 								placeholder={"Sections"}
 								className="text-sm"
-								onChange={setQueryClass}
+								onChange={(opt) => {
+									setFilters({ ...filters, section: opt.value })
+								}}
 								options={sections}
 							/>
 						</div>
@@ -281,62 +242,36 @@ function Students() {
 							<Select
 								placeholder={"Student House"}
 								className="text-sm"
-								onChange={setQueryClass}
+								onChange={(e) => {
+									setFilters({ ...filters, house: e.value })
+								}}
 								options={studentHouses}
 							/>
 						</div>
 						<div
 							className="ml-2 w-1/5"
 							onClick={() => {
-								handleSearch();
-								searchStudentsByClass();
+								clearFilters()
 							}}
 						>
-							<Button value={"Filter"} />
+							<Button value={"Clear Filters"} />
 						</div>
 					</div>
 				</div>
-				{editData ? (
-					<EditStudentsForm
-						closeEditData={closeEditData}
-						studentId={studentId}
-						studentInfoEdit={studentInfoEdit}
-						fetchStudentInfo={fetchStudentInfo}
-						handleClickAllStudents={handleClickAllStudents}
-					/>
-				) : null}
 
-				<StudentsTable
-					openEditData={openEditData}
-					openShowData={openShowData}
-					deleteStudentInfo={deleteStudentInfo}
-					studentData={studentData}
-				/>
 
-				{SearchAllStudents ? (
-					<StudentsTable
-						openEditData={openEditData}
-						openShowData={openShowData}
-						deleteStudentInfo={deleteStudentInfo}
-						studentData={searchResults}
-					/>
-				) : null}
+
 				{search ? (
 					<StudentsTable
-						openEditData={openEditData}
-						openShowData={openShowData}
 						deleteStudentInfo={deleteStudentInfo}
-						studentData={searchClassResults}
+						studentData={searchedStudents}
 					/>
-				) : null}
+				) : <StudentsTable
+					deleteStudentInfo={deleteStudentInfo}
+					studentData={studentData}
+				/>}
 
 
-				{showData ? (
-					<ShowStudentsForm
-						closeShowData={closeShowData}
-						studentInfoShow={studentInfoShow}
-					/>
-				) : null}
 			</div>
 		</div>
 	);
