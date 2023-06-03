@@ -108,7 +108,7 @@ function AssessmentForm({
 			}
 		});
 	};
-	
+
 	useEffect(() => {
 		dispatch(getGrades());
 	}, [dispatch]);
@@ -123,14 +123,14 @@ function AssessmentForm({
 					</div>
 					<div>{assessSubject}</div>
 					<div>Term here</div>
-					
+
 					<div className="cursor-pointer" onClick={closeAdd}>
 						X
 					</div>
 				</div>
 				<div className="p-2 flex">
 					<div className="w-1/3 p-1">
-						<br/><br/>
+						<br />
 						<Select
 							placeholder="Select Exam Type"
 							label="Exam Type"
@@ -141,7 +141,7 @@ function AssessmentForm({
 					</div>
 					<div className="w-1/3 p-1">
 						<InputField
-							label="Marks"
+
 							placeholder="Enter Marks in %"
 							name="mark"
 							value={formData.mark}
@@ -150,7 +150,7 @@ function AssessmentForm({
 					</div>
 					<div className="w-1/3 p-1">
 						<InputField
-							label="Comment"
+
 							placeholder="Enter Comment"
 							name="comment"
 							value={formData.comment}
@@ -208,26 +208,26 @@ function AssessmentForm({
 				<br />
 				<br />
 
-				
-					{assessAll.map((data) => {
-						return (
-							<div className=" flex text-sm bg-gray1 cursor-pointer">
-								<div className="w-1/4  border-gray2 border p-2">{data.subject}</div>
-								<div className="w-1/4 flex  border-gray2 p-2 border">
-									<div className="p-1">BOT</div> <div className="p-1">{data.BOT}</div>
-								</div>
-								<div className="w-1/4 flex  border-gray2 p-2 border">
-									<div className="p-1">MOT</div> <div className="p-1">{data.MOT}</div>
-								</div>
-								<div className="w-1/4 flex  border-gray2 p-2 border">
-									<div className="p-1">EOT</div> <div className="p-1">{data.EOT}</div>
-								</div>
-								<div className="w-1/4 flex  border-gray2 p-2 border">
-									<div className="p-1">{`${data.totalMark}%`}</div> <div className="p-1">{assignGrade(data.totalMark, grades)}</div>
-								</div>
+
+				{assessAll.map((data) => {
+					return (
+						<div className=" flex text-sm bg-gray1 cursor-pointer">
+							<div className="w-1/4  border-gray2 border p-2">{data.subject}</div>
+							<div className="w-1/4 flex  border-gray2 p-2 border">
+								<div className="p-1">BOT</div> <div className="p-1">{data.BOT}</div>
 							</div>
-						);
-					})}
+							<div className="w-1/4 flex  border-gray2 p-2 border">
+								<div className="p-1">MOT</div> <div className="p-1">{data.MOT}</div>
+							</div>
+							<div className="w-1/4 flex  border-gray2 p-2 border">
+								<div className="p-1">EOT</div> <div className="p-1">{data.EOT}</div>
+							</div>
+							<div className="w-1/4 flex  border-gray2 p-2 border">
+								<div className="p-1">{`${data.totalMark}%`}</div> <div className="p-1">{assignGrade(data.totalMark, grades)}</div>
+							</div>
+						</div>
+					);
+				})}
 				<div className="flex mt-4">
 					<div className="p-2 w-1/3 mt-5">
 						<Select

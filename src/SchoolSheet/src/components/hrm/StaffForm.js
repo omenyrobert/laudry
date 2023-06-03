@@ -22,7 +22,7 @@ const customStyles = {
 		backgroundColor: "rgba(0, 0, 0, 0.5)", // Customize the overlay color here
 	},
 	content: {
-		width: "1000px",
+		width: "65vw",
 		height: "390px",
 		padding: "0px",
 		marginLeft: "25vw",
