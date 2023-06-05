@@ -181,54 +181,22 @@ function Students() {
 
 
 	return (
-		<div className="h-screen overflow-y-auto mt-2 w-full">
+		<div className=" mt-2 w-full">
 			<h1 className="text-secondary font-semibold text-2xl ml-3">Students</h1>
-			<div className="rounded-md shadow-md h-screen overflow-y-auto p-2">
-				<div className="flex justify-between w-full bg-white p-5 rounded-md shadow-lg">
-					<div className="flex w-42">
+			<div className="">
+				<div className="p-3 bg-white shadow-md border border-gray2">
+					<div className="flex">
+						<div className="flex w-4/12">
 
-						<Link to="/addStudentForm">
-							<Button2 value={"Student"} />
-						</Link>
-					</div>
-					<div className="w-2/12 -mt-5">
-						<form
-							onSubmit={(e) => {
-								//
-							}}
-						>
-							<InputField
-								type="text"
-								placeholder="Search For Student ..."
-								name="lastName"
-								value={filters.query}
-								onChange={(e) => setFilters({ ...filters, query: e.target.value })}
-								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
-							/>
-						</form>
-					</div>
-					<div className="w-8/12 flex ml-2">
-						<div className="ml-2 w-1/5">
-							<Select
-								placeholder={"Select class"}
-								className="text-sm"
-								onChange={(opt) => {
-									setFilters({ ...filters, studentClass: opt.value })
-								}}
-								options={studentClasses}
-							/>
+							<Link to="/addStudentForm">
+								<Button2 value={"Student"} />
+							</Link>
+							<div className="ml-10">
+							<Button value={"Print"}/>
+							</div>
+							
 						</div>
-						<div className="ml-2 w-1/5">
-							<Select
-								placeholder={"Student Type"}
-								className="text-sm"
-								onChange={(opt) => {
-									setFilters({ ...filters, type: opt.value })
-								}}
-								options={studentTypes}
-							/>
-						</div>
-						<div className="ml-2 w-1/5">
+						<div className="w-3/12">
 							<Select
 								placeholder={"Sections"}
 								className="text-sm"
@@ -238,7 +206,7 @@ function Students() {
 								options={sections}
 							/>
 						</div>
-						<div className="ml-2 w-1/5">
+						<div className="w-3/12 ml-5">
 							<Select
 								placeholder={"Student House"}
 								className="text-sm"
@@ -249,7 +217,7 @@ function Students() {
 							/>
 						</div>
 						<div
-							className="ml-2 w-1/5"
+							className="w-32 ml-5"
 							onClick={() => {
 								clearFilters()
 							}}
@@ -257,7 +225,58 @@ function Students() {
 							<Button value={"Clear Filters"} />
 						</div>
 					</div>
+					<div className="flex ">
+						<div className="flex w-[400px]">
+
+							<form className="w-full"
+								onSubmit={(e) => {
+									//
+								}}
+							>
+								<InputField
+									type="text"
+									placeholder="Search For Student ..."
+									name="lastName"
+									value={filters.query}
+									onChange={(e) => setFilters({ ...filters, query: e.target.value })}
+									icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+								/>
+							</form>
+						</div>
+
+						<div className="ml-5 mt-5 w-1/4">
+							<Select
+								placeholder={"Select class"}
+								className="text-sm"
+								onChange={(opt) => {
+									setFilters({ ...filters, studentClass: opt.value })
+								}}
+								options={studentClasses}
+							/>
+						</div>
+						<div className="ml-5 mt-5 w-1/4">
+							<Select
+								placeholder={"Student Type"}
+								className="text-sm"
+								onChange={(opt) => {
+									setFilters({ ...filters, type: opt.value })
+								}}
+								options={studentTypes}
+							/>
+						</div>
+						<div className="ml-5 mt-5 w-1/4">
+							<Select
+								placeholder={"Select Stream "}
+								className="text-sm"
+								onChange={(opt) => {
+									setFilters({ ...filters, type: opt.value })
+								}}
+								options={studentTypes}
+							/>
+						</div>
+					</div>
 				</div>
+
 
 
 
