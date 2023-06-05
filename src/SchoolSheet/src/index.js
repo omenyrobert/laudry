@@ -53,6 +53,7 @@ import EditStudentsForm from "./components/students/EditStudentsForm";
 import ShowStudentsForm from "./components/students/ShowStudentsForm";
 import Sample from "./views/Sample";
 import StudentAttendanceComp from "./components/classes/StudentAttendanceComp";
+
 const router = createBrowserRouter([
 	{
 		path: "/email",
@@ -82,7 +83,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/sample",
-				element: <Sample/>
+				element: <Sample />
 			},
 			{
 				path: "/settings",
@@ -106,7 +107,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/scholarShip",
-				element: <ScholarShip/>
+				element: <ScholarShip />
 			},
 			{
 				path: "/students",
@@ -117,18 +118,18 @@ const router = createBrowserRouter([
 				element: <GroupsAndTypes />,
 			},
 
-            // students
+			// students
 			{
 				path: "/addStudentForm",
-				element: <AddStudentForm/>
+				element: <AddStudentForm />
 			},
 			{
 				path: "/editStudentsForm",
-				element: <EditStudentsForm/>
+				element: <EditStudentsForm />
 			},
 			{
-             path: "/showStudentsForm",
-			 element: <ShowStudentsForm/>
+				path: "/showStudentsForm",
+				element: <ShowStudentsForm />
 			},
 
 
@@ -213,9 +214,6 @@ const router = createBrowserRouter([
 				path: "/equity",
 				element: <Equity />,
 			},
-
-
-
 
 			//  hrm routes
 
