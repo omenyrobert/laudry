@@ -4,8 +4,9 @@ import axiosInstance from "../axios-instance";
 
 const Navbar = () => {
 	const navigate = useNavigate();
-	const loggedInUser = JSON.parse(localStorage.getItem("schoolSoftUser"));
-	const { first_name, last_name, email } = loggedInUser;
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
+	const [email, setEmail] = useState("");
 	const [log, setLog] = useState(false);
 	const toggleLog = () => {
 		setLog(!log);
@@ -25,8 +26,16 @@ const Navbar = () => {
 	};
 	useEffect(() => {
 		const token = localStorage.getItem('schoolSoftToken');
+		const loggedInUser = JSON.parse(localStorage.getItem("schoolSoftUser"));
 		if (token === null || token === undefined) {
-			navigate('/');
+			return navigate('/');
+		} else if (loggedInUser === null || loggedInUser === undefined) {
+			return navigate('/');
+		} else {
+			const { first_name, last_name, email } = loggedInUser;
+			setFirstName(first_name);
+			setLastName(last_name);
+			setEmail(email);
 		}
 	}, [navigate]);
 	return (
@@ -34,7 +43,7 @@ const Navbar = () => {
 			<div className=" flex float-right" onClick={toggleLog}>
 
 				<div className="ml-2 relative cursor-pointer">
-					<p className="font-bold float-right">{first_name + " " + last_name}</p>
+					<p className="font-bold float-right">{firstName + " " + lastName}</p>
 					<p className="text-xs -mt-1">{email}</p>
 				</div>
 				{log ? (
@@ -48,10 +57,9 @@ const Navbar = () => {
 					</div>
 				) : null}
 				<div className="pt-3 h-10 w-10 rounded-full bg-primary cursor-pointer text-center text-white text-xs ml-2">
-					{first_name[0]?.toUpperCase() + " " + last_name[0]?.toUpperCase()}
+					{firstName[0]?.toUpperCase() + " " + lastName[0]?.toUpperCase()}
 				</div>
 			</div>
-
 		</div>
 	);
 };
