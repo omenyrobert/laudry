@@ -41,6 +41,13 @@
     background-color: #193296;
     border: 1px #193296 solid;
   }
+  .Btn {
+    text-decoration: none;
+    color: #193296;
+    /* background-color: #193296; */
+    border: 1px #193296 solid;
+    width: auto;
+  }
   .loginBtn:hover {
     color: #193296;
     background-color: #fff;

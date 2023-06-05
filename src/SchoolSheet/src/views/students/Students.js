@@ -13,6 +13,7 @@ import Button2 from "../../components/Button2";
 import axiosInstance from "../../axios-instance";
 import withReactContent from "sweetalert2-react-content";
 import { FaFilter } from "react-icons/fa";
+import ButtonAlt from "../../components/ButtonAlt";
 
 const sections = [
 	{
@@ -42,18 +43,18 @@ function Students() {
 		house: "",
 		studentClass: "",
 		section: "",
-		stream: ""
+		stream: "",
 	});
-	const [searchedStudents, setSearchedStudents] = useState([])
-	const [streams, setStreams] = useState([])
+	const [searchedStudents, setSearchedStudents] = useState([]);
+	const [streams, setStreams] = useState([]);
 
 	useEffect(() => {
 		try {
 			fetchStudentInfo();
-			fetchStudentType()
-			fetchSchoolClasses()
-			fetchSchoolHouses()
-			fetchStreams()
+			fetchStudentType();
+			fetchSchoolClasses();
+			fetchSchoolHouses();
+			fetchStreams();
 		} catch (error) {
 			const MySwal = withReactContent(Swal);
 			MySwal.fire({
@@ -97,16 +98,19 @@ function Students() {
 	};
 
 	const fetchStreams = () => {
-		axiosInstance.get("/streams")
-			.then((response) => {
-				const { payload } = response.data;
-				const studentStreamsArr = []
-				for (let i = 0; i < payload.length; i++) {
-					studentStreamsArr.push({ label: payload[i].stream, value: payload[i].stream, ...payload[i] })
-				}
-				setStreams(studentStreamsArr)
-			})
-	}
+		axiosInstance.get("/streams").then((response) => {
+			const { payload } = response.data;
+			const studentStreamsArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studentStreamsArr.push({
+					label: payload[i].stream,
+					value: payload[i].stream,
+					...payload[i],
+				});
+			}
+			setStreams(studentStreamsArr);
+		});
+	};
 
 	const fetchSchoolHouses = () => {
 		axiosInstance.get("/houses").then((response) => {
@@ -126,12 +130,11 @@ function Students() {
 
 	// fetch student info
 	const fetchStudentInfo = () => {
-		axiosInstance.get("/students")
-			.then((response) => {
-				const { payload } = response.data;
-				console.log("payload", payload)
-				setStudentData(payload);
-			})
+		axiosInstance.get("/students").then((response) => {
+			const { payload } = response.data;
+			console.log("payload", payload);
+			setStudentData(payload);
+		});
 	};
 
 	//deleting student
@@ -168,18 +171,36 @@ function Students() {
 			const studentName =
 				student.firstName + " " + student.middleName + " " + student.lastName;
 
-			const searchName = studentName.toLowerCase().includes(filters.query.toLowerCase())
-			const searchType = student.studentType.type.toLowerCase().includes(filters.type.toLowerCase())
-			const searchHouse = student.studentHouse.house.toLowerCase().includes(filters.house.toLowerCase())
-			const searchClass = student.studentClass.class.toLowerCase().includes(filters.studentClass.toLowerCase())
-			const searchSection = student.studentSection.toLowerCase().includes(filters.section.toLowerCase())
-			const searchStream = student.studentStream.stream.toLowerCase().includes(filters.stream.toLowerCase())
+			const searchName = studentName
+				.toLowerCase()
+				.includes(filters.query.toLowerCase());
+			const searchType = student.studentType.type
+				.toLowerCase()
+				.includes(filters.type.toLowerCase());
+			const searchHouse = student.studentHouse.house
+				.toLowerCase()
+				.includes(filters.house.toLowerCase());
+			const searchClass = student.studentClass.class
+				.toLowerCase()
+				.includes(filters.studentClass.toLowerCase());
+			const searchSection = student.studentSection
+				.toLowerCase()
+				.includes(filters.section.toLowerCase());
+			const searchStream = student.studentStream.stream
+				.toLowerCase()
+				.includes(filters.stream.toLowerCase());
 
-			return searchName && searchType && searchHouse && searchClass && searchSection && searchStream
-
-		})
-		setSearchedStudents(searchResults)
-	}
+			return (
+				searchName &&
+				searchType &&
+				searchHouse &&
+				searchClass &&
+				searchSection &&
+				searchStream
+			);
+		});
+		setSearchedStudents(searchResults);
+	};
 
 	function clearFilters() {
 		setFilters({
@@ -193,75 +214,47 @@ function Students() {
 	}
 
 	useEffect(() => {
-		if (filters.query === "" && filters.type === "" && filters.house === "" && filters.studentClass === "" && filters.section === "" && filters.stream === "") {
-			setSearch(false)
+		if (
+			filters.query === "" &&
+			filters.type === "" &&
+			filters.house === "" &&
+			filters.studentClass === "" &&
+			filters.section === "" &&
+			filters.stream === ""
+		) {
+			setSearch(false);
 		} else {
 			searchStudents();
 		}
 	}, [filters]);
 
 	const printStudents = () => {
-		const documentWindow = window.open("")
-		const studentSheet = document.getElementById("studentTable")
-		const styles = document.querySelectorAll("style")
+		const documentWindow = window.open("");
+		const studentSheet = document.getElementById("studentTable");
+		const styles = document.querySelectorAll("style");
 		// Write n styles
 		styles.forEach((element, _) => {
-			documentWindow.document.writeln(element.outerHTML)
-		})
-		documentWindow.document.writeln(studentSheet.innerHTML)
-		documentWindow.print()
-	}
+			documentWindow.document.writeln(element.outerHTML);
+		});
+		documentWindow.document.writeln(studentSheet.innerHTML);
+		documentWindow.print();
+	};
 
+	//toggle filter
+	const [showFilter, setShowFilter] = useState(false);
 
+	const toggleFilter = () => {
+		setShowFilter(!showFilter);
+	};
 	return (
 		<div className=" mt-2 w-full">
 			<h1 className="text-secondary font-semibold text-2xl ml-3">Students</h1>
 			<div className="">
 				<div className="p-3 bg-white shadow-md border border-gray2">
-					<div className="flex">
-						<div className="flex w-4/12">
-
-							<Link to="/addStudentForm">
-								<Button2 value={"Student"} />
-							</Link>
-							<div onClick={printStudents} className="ml-10">
-								<Button value={"Print"} />
-							</div>
-
-						</div>
-						<div className="w-3/12">
-							<Select
-								placeholder={"Sections"}
-								className="text-sm"
-								onChange={(opt) => {
-									setFilters({ ...filters, section: opt.value })
-								}}
-								options={sections}
-							/>
-						</div>
-						<div className="w-3/12 ml-5">
-							<Select
-								placeholder={"Student House"}
-								className="text-sm"
-								onChange={(e) => {
-									setFilters({ ...filters, house: e.value })
-								}}
-								options={studentHouses}
-							/>
-						</div>
-						<div
-							className="w-32 ml-5"
-							onClick={() => {
-								clearFilters()
-							}}
-						>
-							<Button value={"Clear Filters"} />
-						</div>
-					</div>
-					<div className="flex ">
-						<div className="flex w-[400px]">
-
-							<form className="w-full"
+					<div className="flex justify-between">
+						<div className="w-4/12 ">
+							<form
+								className="w-full"
 								onSubmit={(e) => {
 									//
 								}}
@@ -278,36 +271,83 @@ function Students() {
 								/>
 							</form>
 						</div>
+						<div className=""></div>
+						<div className="flex mt-5">
+							<div className="w-1/3"></div>
+							<div className="w-1/3 relative mt">
+								<div className="w-20" onClick={toggleFilter}>
+									<ButtonAlt value={"Filter"} />
+								</div>
+								{showFilter ? (
+									<div className="bg-white shadow-lg mt-2 border border-gray2 z-50 rounded-md absolute w-56 p-3 h-auto">
+										<Select
+											placeholder={"Sections"}
+											className="text-sm"
+											onChange={(opt) => {
+												setFilters({ ...filters, section: opt.value });
+											}}
+											options={sections}
+										/>
+										<br />
+										<Select
+											placeholder={"Student House"}
+											className="text-sm"
+											onChange={(e) => {
+												setFilters({ ...filters, house: e.value });
+											}}
+											options={studentHouses}
+										/>
 
-						<div className="ml-5 mt-5 w-1/4">
-							<Select
-								placeholder={"Select class"}
-								className="text-sm"
-								onChange={(opt) => {
-									setFilters({ ...filters, studentClass: opt.value })
-								}}
-								options={studentClasses}
-							/>
-						</div>
-						<div className="ml-5 mt-5 w-1/4">
-							<Select
-								placeholder={"Student Type"}
-								className="text-sm"
-								onChange={(opt) => {
-									setFilters({ ...filters, type: opt.value })
-								}}
-								options={studentTypes}
-							/>
-						</div>
-						<div className="ml-5 mt-5 w-1/4">
-							<Select
-								placeholder={"Select Stream "}
-								className="text-sm"
-								onChange={(opt) => {
-									setFilters({ ...filters, stream: opt.value })
-								}}
-								options={streams}
-							/>
+										<br />
+										<Select
+											placeholder={"Select class"}
+											className="text-sm"
+											onChange={(opt) => {
+												setFilters({ ...filters, studentClass: opt.value });
+											}}
+											options={studentClasses}
+										/>
+
+										<br />
+										<Select
+											placeholder={"Student Type"}
+											className="text-sm"
+											onChange={(opt) => {
+												setFilters({ ...filters, type: opt.value });
+											}}
+											options={studentTypes}
+										/>
+										<br />
+										<Select
+											placeholder={"Select Stream "}
+											className="text-sm"
+											onChange={(opt) => {
+												setFilters({ ...filters, stream: opt.value });
+											}}
+											options={streams}
+										/>
+										<br />
+										<div
+											className=""
+											onClick={() => {
+												clearFilters();
+											}}
+										>
+											<Button value={"Clear Filters"} />
+										</div>
+									</div>
+								) : null}
+							</div>
+							<div className="w-1/3 mx-5">
+								<div onClick={printStudents} className="w-20">
+									<Button value={"Print"} />
+								</div>
+							</div>
+							<div className="w-2/5">
+								<Link to="/addStudentForm">
+									<Button2 value={"Student"} />
+								</Link>
+							</div>
 						</div>
 					</div>
 				</div>

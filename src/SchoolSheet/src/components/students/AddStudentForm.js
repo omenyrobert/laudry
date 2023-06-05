@@ -213,7 +213,7 @@ function AddStudentForm(props) {
 	};
 
 	return (
-		<div className="bg-white h-[85vh] overflow-y-auto">
+		<div className="bg-white h-[90vh] overflow-y-auto">
 			<div className="flex bg-gray1 p-3 justify-between">
 				<div>
 					<p className="text-primary font-semibold text-md">Add Student</p>
