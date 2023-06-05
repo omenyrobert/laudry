@@ -8,10 +8,17 @@ import withReactContent from "sweetalert2-react-content";
 import "../../assets/styles/main.css";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
-import { getAssessments, getGrades } from "../../store/schoolSheetSlices/schoolStore";
+import { getAssessments, getGrades, getClasses } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import Button from "../Button";
 import { assignGrade } from "../../utils/assessment";
+
+const actions = [
+	{label: "Promote", value: "promoted"},
+	{label: "Repeat", value: 'repeated'},
+	{label: "Promoted on probation", value: "promoted_on_probation"}
+]
+
 
 function AssessmentForm({
 	closeAdd,
@@ -27,16 +34,22 @@ function AssessmentForm({
 	const dispatch = useDispatch();
 	const [selectedExam, setSelectedExam] = useState(null);
 	const [finalMark, setFinalMark] = useState(null);
-	const { grades } = useSelector((state) => state.schoolStore);
+	const [action, setAction] = useState(null);
+	const [_class, setClass] = useState(null);
+	const [classOptions, setClassOptions] = useState([]);
+	const { grades, classes } = useSelector((state) => state.schoolStore);
 
 	const [formData, setFormData] = useState({
 		mark: "",
 		comment: "",
+		generalComment: "",
 	});
 	const onChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
-		const finalMk = (formData.mark / 100) * selectedExam.percent;
-		setFinalMark(finalMk);
+		if (e.target.name === "mark") {
+			const finalMk = (formData.mark / 100) * selectedExam.percent;
+			setFinalMark(finalMk);
+		}
 	};
 	const postAssessment = async (e) => {
 		e.preventDefault();
@@ -109,10 +122,18 @@ function AssessmentForm({
 		});
 	};
 
+	// get grades
 	useEffect(() => {
 		dispatch(getGrades());
+		dispatch(getClasses());
 	}, [dispatch]);
 
+	// get classes
+	useEffect(() => {
+		const data = classes.map(_class => ({label: _class.class, value: _class.class}));
+		setClassOptions(data);
+	}, [classes])
+	
 	return (
 		<>
 			<div className="bg-white p-3 h-[75vh] overflow-y-auto">
@@ -174,7 +195,7 @@ function AssessmentForm({
 				</div>
 
 				{assessData.map((student) => {
-					if (student.studentId === studentId) {
+					if (student.studentId === studentId.toString()) {
 						return (
 							<div
 								className="flex hover:bg-gray1 p-2 text-xs cursor-pointer mx-5"
@@ -232,22 +253,27 @@ function AssessmentForm({
 					<div className="p-2 w-1/3 mt-5">
 						<Select
 							placeholder="Select Action"
-							label="Exam Type"
-							defaultValue={selectedExam}
-							onChange={setSelectedExam}
-							options={examTypesData}
+							label="actions"
+							defaultValue={action}
+							onChange={setAction}
+							options={actions}
 						/>
 					</div>
 					<div className="p-2 w-1/3">
-						<InputField placeholder="General Comment" />
+						<InputField
+							placeholder="General Comment"
+							name="comment"
+							value={formData.generalComment}
+							onChange={onChange} 
+						/>
 					</div>
 					<div className="p-2 w-1/3 mt-5">
 						<Select
 							placeholder="Select Class"
-							label="Exam Type"
-							defaultValue={selectedExam}
-							onChange={setSelectedExam}
-							options={examTypesData}
+							label="Class"
+							defaultValue={_class}
+							onChange={setClass}
+							options={classOptions}
 						/>
 					</div>
 				</div>
