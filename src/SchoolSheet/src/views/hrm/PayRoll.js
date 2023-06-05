@@ -488,6 +488,7 @@ function PayRoll() {
 					<div className="absolute w-1/2  bg-white shadow-lg rounded-md">
 						<div className="text-primary p-3 font-semibold flex justify-between rounded-md bg-gray1">
 							<div>Create Payslip</div>
+							<div>Jan Salary</div>
 							<div>
 								<p onClick={closePay} className="cursor-pointer">
 									X
