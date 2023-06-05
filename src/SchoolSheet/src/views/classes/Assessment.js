@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "../../assets/styles/main.css";
 import ExamsTypes from "../../components/classes/ExamsTypes";
 import AssessmentForm from "../../components/classes/AssessmentForm";
-import Localbase from "localbase";
 import EditAssessmentForm from "../../components/classes/EditAssessmentForm";
 import InputField from "../../components/InputField";
 import { BsSearch } from "react-icons/bs";
@@ -10,11 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	getAssessments,
 	getSubjects,
+	getStudents,
 } from "../../store/schoolSheetSlices/schoolStore";
 import { assessSubjects } from "../../utils/assessment";
-
-let db = new Localbase("db");
-
 function Assessment() {
 	const dispatch = useDispatch();
 	const [studentId, setStudentId] = useState("");
@@ -22,6 +19,8 @@ function Assessment() {
 	const [studentInfo, setStudentInfo] = useState();
 	const [add, setAdd] = useState(false);
 	const [selectedSubject, setSelectedSubject] = useState("");
+
+	const { examTypes, subjects, students } = useSelector((state) => state.schoolStore);
 
 	const openAdd = (student) => {
 		setAdd(true);
@@ -34,27 +33,26 @@ function Assessment() {
 	};
 
 	const [studentData, setStudentData] = useState([]);
-	const fetchStudentInfo = () => {
-		db.collection("studentInfo")
-			.get()
-			.then((student) => {
-				const newData = student;
-				setStudentData(newData);
-			});
-	};
+	// const fetchStudentInfo = () => {
+	// 	db.collection("studentInfo")
+	// 		.get()
+	// 		.then((student) => {
+	// 			const newData = student;
+	// 			setStudentData(newData);
+	// 		});
+	// };
 
 	useEffect(() => {
-		fetchStudentInfo();
-	}, []);
+		setStudentData(students);
+	}, [students]);
 
 	// fetch exams and subjects
 	const [examTypesData, setExamTypesData] = useState([]);
 	const [subjectsData, setSubjectsData] = useState([]);
 
-	const { examTypes, subjects } = useSelector((state) => state.schoolStore);
-
 	useEffect(() => {
 		dispatch(getSubjects());
+		dispatch(getStudents());
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -82,12 +80,14 @@ function Assessment() {
 
 	useEffect(() => {
 		if (assessments) {
-			const data = assessments.filter(assessment => assessment.studentId === studentId);
+			const data = assessments.filter((assessment) => {
+				return assessment.studentId === studentId.toString()
+			});
 			setAssessAll(assessSubjects(data));
-			const studentAssessment = assessments.filter(
-				(assessment) => assessment.studentId === studentId &&
-				assessment.subject === selectedSubject
-			);
+			const studentAssessment = data.filter(
+				(assessment) => { 
+					return assessment.subject === selectedSubject
+				});
 			setAssessData(studentAssessment);
 		}
 	}, [assessments, selectedSubject, studentId]);
@@ -151,12 +151,11 @@ function Assessment() {
 										</td>
 
 										<td className="text-xs p-3 text-gray5">
-											{student.studentType.value}
+											{student.studentClass.class}
 										</td>
 
 										<td className="text-sm p-3">
 											<p
-												onClick={() => openAdd(student)}
 												className="p-2 relative rounded assess bg-primary3 text-primary"
 											>
 												Assess

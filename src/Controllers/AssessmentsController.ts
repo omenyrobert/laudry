@@ -65,7 +65,7 @@ export const addAssessment = async (req: Request, res: Response) => {
           .end();
     }
 
-    if (!finalMark) {
+    if (finalMark != 0 && !finalMark) {
         return res
           .json(customPayloadResponse(false, "Final Mark Required"))
           .status(200)
@@ -167,7 +167,7 @@ export const modifyAssessment = async (req: Request, res: Response) => {
           .end();
     }
 
-    if (!finalMark) {
+    if (finalMark != 0 && !finalMark) {
         return res
           .json(customPayloadResponse(false, "Final Mark Required"))
           .status(200)
