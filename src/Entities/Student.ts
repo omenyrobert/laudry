@@ -96,14 +96,7 @@ export class Student extends BaseEntity {
 
 }
 
-export const getStudents = async () => {
-  const students = await Student.find({
-    order: {
-      id: "DESC",
-    },
-  });
-  return students;
-}
+
 
 export const createStudent = async (
   firstName: string,
@@ -228,4 +221,14 @@ export const getSingleStudent = async (id: number) => {
 }
 
 
+export const getStudents = async (page: number = 0, limit: number = 50) => {
+  const students = await Student.find({
+    order: {
+      id: "DESC",
+    },
+    take: limit,
+    skip: page * limit,
+  });
+  return students;
+}
 

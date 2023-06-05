@@ -198,4 +198,21 @@ export const fetchSingleStudent = async (req: Request, res: Response) => {
   }
 }
 
-
+export const fetchStudentsPanginated = async (req: Request, res: Response) => {
+  try {
+    const { page, limit } = req.query;
+    if (!page || !limit) {
+      return res
+        .json(customPayloadResponse(false, "Invalid Query Parameters"))
+        .status(400)
+        .end();
+    }
+    const students = await getStudents(parseInt(page as string), parseInt(limit as string));
+    return res.json(customPayloadResponse(true, students)).status(200).end();
+  } catch (error) {
+    return res
+      .json(customPayloadResponse(false, "An Error Occured"))
+      .status(500)
+      .end();
+  }
+}
