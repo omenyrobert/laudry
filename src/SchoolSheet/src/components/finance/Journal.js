@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button2 from "../Button2";
 import InputField from "../InputField";
 import { BsSearch } from "react-icons/bs";
@@ -16,21 +16,33 @@ function Journal() {
 		setJoun(false);
 	};
 
+	useEffect(() => {
+		const now = new Date().getUTCFullYear();
+		const years = Array(now - (now - 20))
+			.fill("")
+			.map((v, idx) => now - idx);
+	});
+
 	return (
 		<>
 			<div className="flex relative">
 				<div className="p-2 w-2/12">
 					<p className="text-secondary text-xl font-bold">General Journal</p>
 				</div>
-				<div className="p-2 w-8/12 -mt-5">
+				<div className="p-2 w-7/12 flex gap-4 -mt-5">
+					<InputField placeholder="Search for Income" type="date" />
+					<InputField placeholder="Search for Income" type="date" />
+
 					<InputField
 						placeholder="Search for Income"
-						type="search"
-						icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+						type="month"
+						format="YYYY"
 					/>
+					<InputField placeholder="Search for Income" type="date" />
 				</div>
+				<div className="p-2 w-2/12"></div>
 				<div className="p-2 w-2/12">
-					<div className="w-52" onClick={showJoun}>
+					<div className="w-auto" onClick={showJoun}>
 						<Button2 value={"Enter Journal"} />
 					</div>
 				</div>
