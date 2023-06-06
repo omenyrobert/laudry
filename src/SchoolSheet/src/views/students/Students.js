@@ -212,6 +212,77 @@ function Students() {
 		documentWindow.print()
 	}
 
+	// Implement infinite scrolling pagination
+	const [page, setPage] = useState(0)
+	const [hasMore, setHasMore] = useState(true)
+
+	const fetchMoreStudents = () => {
+		const offset = 50
+		axiosInstance.get(`/students/paginated?limit=${offset}&page=${page}`)
+			.then((response) => {
+				const { payload } = response.data
+				if (payload.length === 0) {
+					setHasMore(false)
+				} else {
+					setStudentData([...studentData, ...payload])
+					setPage(page + 1)
+				}
+			})
+	}
+
+
+	const handleScroll = (e) => {
+		const { scrollTop, clientHeight, scrollHeight } = e.currentTarget
+		if (scrollHeight - scrollTop === clientHeight) {
+			fetchMoreStudents()
+		}
+	}
+
+	useEffect(() => {
+		window.addEventListener("scroll", handleScroll)
+
+		return () => window.removeEventListener("scroll", handleScroll)
+	}, [])
+
+
+	// Export `studentData` to csv
+	const exportToCSV = () => {
+		const csvRows = []
+		const headers = Object.keys(studentData[0])
+		csvRows.push(headers.join(","))
+		for (const row of studentData) {
+			const values = headers.map(header => {
+				const value = row[header]
+				if (header === "studentType") {
+					const escaped = ("" + value.type).replace(/"/g, '\\"')
+					return `"${escaped}"`
+				} else if (header === "studentHouse") {
+					const escaped = ("" + value.house).replace(/"/g, '\\"')
+					return `"${escaped}"`
+				} else if (header === "studentClass") {
+					const escaped = ("" + value.class).replace(/"/g, '\\"')
+					return `"${escaped}"`
+				} else if (header === "studentStream") {
+					const escaped = ("" + value.stream).replace(/"/g, '\\"')
+					return `"${escaped}"`
+				}
+				const escaped = ("" + row[header]).replace(/"/g, '\\"')
+				return `"${escaped}"`
+			})
+			csvRows.push(values.join(","))
+		}
+		const csvData = csvRows.join("\n")
+		const blob = new Blob([csvData], { type: "text/csv" })
+		const url = window.URL.createObjectURL(blob)
+		const link = document.createElement("a")
+		link.setAttribute("href", url)
+		link.setAttribute("download", "students.csv")
+		link.click()
+	}
+
+
+
+
 
 	return (
 		<div className=" mt-2 w-full">
@@ -226,6 +297,9 @@ function Students() {
 							</Link>
 							<div onClick={printStudents} className="ml-10">
 								<Button value={"Print"} />
+							</div>
+							<div onClick={exportToCSV} className="ml-10">
+								<Button value={"Export CSV"} />
 							</div>
 
 						</div>
