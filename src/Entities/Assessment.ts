@@ -34,6 +34,9 @@ export class Assessment extends BaseEntity {
 
   @Column()
   grade!: string;
+
+  @Column()
+  examPercent!: number;
 }
 
 export const getAssessments = async () => {
@@ -54,6 +57,7 @@ export const createAssessment = async (
   comment: string,
   term: number,
   grade: string,
+  examPercent: number,
 ) => {
   const assessment = await Assessment.insert({
     studentId,
@@ -64,6 +68,7 @@ export const createAssessment = async (
     comment,
     term,
     grade,
+    examPercent
   });
 
   return assessment;
@@ -79,6 +84,7 @@ export const updateAssessment = async (
   comment: string,
   term: number,
   grade: string,
+  examPercent: number,
 ) => {
   const assessment = await Assessment.update(id, {
     studentId: studentId,
@@ -89,6 +95,7 @@ export const updateAssessment = async (
     comment: comment,
     term: term,
     grade: grade,
+    examPercent
   });
 
   return assessment;
