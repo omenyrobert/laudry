@@ -13,11 +13,11 @@ function ReportCardTemplate({ closeCard, studentData }) {
     const fetchAboutInfo = async () => {
         console.log('fetched');
         const aboutInfo = await db.collection('aboutInfoTbl').get();
-        setName(aboutInfo[0].name);
-        setMotto(aboutInfo[0].motto);
-        setLocation(aboutInfo[0].location);
-        setPhones(aboutInfo[0].phones);
-        setEmails(aboutInfo[0].emails);
+        // setName(aboutInfo[0].name);
+        // setMotto(aboutInfo[0].motto);
+        // setLocation(aboutInfo[0].location);
+        // setPhones(aboutInfo[0].phones);
+        // setEmails(aboutInfo[0].emails);
     };
 
     // fetching section

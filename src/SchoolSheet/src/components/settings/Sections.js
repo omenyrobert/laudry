@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
+// import { v4 as uuid } from "uuid";
 import Button from "../Button";
 import { BsPencilSquare } from "react-icons/bs";
 import { MdDeleteOutline } from "react-icons/md";
@@ -8,12 +8,10 @@ import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useDispatch, useSelector } from 'react-redux';
-import Localbase from "localbase";
 import { getSections } from "../../store/schoolSheetSlices/schoolStore";
+import axiosInstance from '../../axios-instance';
 
-let db = new Localbase("db");
-
-function Sections() {
+const Sections = () => {
 	const [showUpdate, setShowUpdate] = useState(false);
 
 	const closeShowUpdate = () => {
@@ -31,18 +29,20 @@ function Sections() {
 		setShowUpdate(true);
 		setEditSection(section.section);
 		setSectionId(section.id);
-		console.log("id here", section);
+		// console.log("id here", section);
 	};
 
 	// update section
-	const updateSection = () => {
-		db.collection("sections")
-			.doc({ id: sectionId })
-			.update({
-				section: editSection,
-			})
-			.then((response) => {
-				console.log(response);
+	const updateSection = async () => {
+		try {
+			let formData = {
+				sectionId: sectionId,
+				section: editSection
+			};
+			const response = await axiosInstance.put("/sections", formData);
+			const { data } = response;
+			const { status } = data;
+			if (status) {
 				dispatch(getSections());
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
@@ -51,13 +51,10 @@ function Sections() {
 					timer: 500,
 				});
 				closeShowUpdate();
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-
-		// fetch after
-		// dispatch(getSections());
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	// delete section
@@ -71,57 +68,50 @@ function Sections() {
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("sections")
-					.doc({ id: section.id })
-					.delete()
-					.then((response) => {
+				try {
+					const response = await axiosInstance.delete(`/sections/${section.id}`);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
 						dispatch(getSections());
-
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
-
-				// fetch after
+					}
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 	};
 
 	// posting Sections
-	const postSections = () => {
-		let secId = uuid();
-		let formData = {
-			id: secId,
-			section: section,
-		};
-		if (section) {
-			db.collection("sections")
-				.add(formData)
-				.then((response) => {
-					console.log(response);
+	const postSections = async () => {
+		try {
+			let formData = {
+				section: section,
+			};
+			if (section) {
+				const response = await axiosInstance.post("/sections", formData);
+				const { data } = response;
+				const { status } = data;
+				if (status) {
 					setSection("");
-
-					// fetch after
 					dispatch(getSections());
-
-					// show alert
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
 						showConfirmButton: false,
 						timer: 500,
 					});
-				})
-				.catch((error) => {
-					console.log(error);
-				});
+				}
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
@@ -130,7 +120,7 @@ function Sections() {
 	// fetching section
 	useEffect(() => {
 		dispatch(getSections());
-	}, []);
+	}, [dispatch]);
 
 	return (
 		<div>

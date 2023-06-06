@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import Button from "../Button";
 import { BsPencilSquare } from "react-icons/bs";
 import { MdDeleteOutline } from "react-icons/md";
@@ -8,18 +7,17 @@ import InputField from "../InputField";
 import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
+import { useDispatch, useSelector } from "react-redux";
+import { getTerms } from '../../store/schoolSheetSlices/schoolStore';
+import axiosInstance from "../../axios-instance";
 
-let db = new Localbase("db");
-
-function Terms() {
+const Terms = () => {
+	const dispatch = useDispatch();
 	const [showUpdate, setShowUpdate] = useState(false);
 
 	const closeShowUpdate = () => {
 		setShowUpdate(false);
 	};
-
-	const [termsData, setTermsData] = useState([]);
 
 	// edit terms
 	const [editTerm, setEditTerm] = useState("");
@@ -33,20 +31,23 @@ function Terms() {
 		setToEdit(termItem.to);
 		setTermId(termItem.id);
 	};
+	const { terms } = useSelector((state) => state.schoolStore);
 
 	// update terms
-	const updateTerm = () => {
-		db.collection("termsTbl")
-			.doc({ id: termId })
-			.update({
+	const updateTerm = async () => {
+		try {
+			let formData = {
 				term: editTerm,
 				from: fromEdit,
 				to: toEdit,
-				isSelected: 0,
-			})
-			.then((response) => {
-				console.log(response);
-				fetchTerms();
+				selected: 0,
+				termId: termId
+			};
+			const response = await axiosInstance.patch("/terms", formData);
+			const { data } = response;
+			const { status } = data;
+			if (status) {
+				dispatch(getTerms());
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -54,13 +55,10 @@ function Terms() {
 					timer: 500,
 				});
 				closeShowUpdate();
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-
-		// fetch after
-		// fetchTerms();
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	// delete terms
@@ -74,25 +72,23 @@ function Terms() {
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("termsTbl")
-					.doc({ id: termItem.id })
-					.delete()
-					.then((response) => {
-						fetchTerms();
-
+				try {
+					const response = await axiosInstance.delete(`/terms/${termItem.id}`);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
-
-				// fetch after
+						dispatch(getTerms());
+					}
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 	};
@@ -102,50 +98,40 @@ function Terms() {
 	const [to, setTo] = useState("");
 	const [from, setFrom] = useState("");
 
-	const postTerms = () => {
-		let secId = uuid();
-		let formData = {
-			id: secId,
-			term: term,
-			from: from,
-			to: to,
-			isSelected: 0,
-		};
-		if (term || from || to) {
-			db.collection("termsTbl")
-				.add(formData)
-				.then((response) => {
-					console.log(response);
+	const postTerms = async () => {
+		try {
+			let formData = {
+				term: term,
+				from: from,
+				to: to,
+				selected: 0,
+			};
+			if (term) {
+				const response = await axiosInstance.post("/terms", formData);
+				const { data } = response;
+				const { status } = data;
+				if (status) {
 					setTerm("");
 					setTo("");
 					setFrom("");
-
-					// fetch after
-					fetchTerms();
-
-					// show alert
+					dispatch(getTerms());
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
 						showConfirmButton: false,
 						timer: 500,
 					});
-				})
-				.catch((error) => {
-					console.log(error);
-				});
+				}
+			}
+		} catch (error) {
+			console.error(error);
 		}
-	};
-
-	const fetchTerms = async () => {
-		const terms = await db.collection("termsTbl").get();
-		setTermsData(terms);
 	};
 
 	// fetching terms
 	useEffect(() => {
-		fetchTerms();
-	}, []);
+		dispatch(getTerms());
+	}, [dispatch]);
 
 	return (
 		<div>
@@ -235,8 +221,8 @@ function Terms() {
 				)}
 				{/* edit div end */}
 				<div className="h-52 overflow-y-auto">
-					{termsData &&
-						termsData.map((termItem) => (
+					{terms &&
+						terms.map((termItem) => (
 							<div
 								key={termItem.id}
 								className="flex border-b border-gray2 text-xs  hover:bg-gray1 cursor-pointer"
