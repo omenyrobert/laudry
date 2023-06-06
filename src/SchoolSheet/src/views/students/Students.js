@@ -5,16 +5,14 @@ import EditStudentsForm from "../../components/students/EditStudentsForm";
 import ShowStudentsForm from "../../components/students/ShowStudentsForm";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
-import { BsSearch } from "react-icons/bs";
+import { BsSearch, BsPrinterFill, BsFillCaretDownFill } from "react-icons/bs";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import Button2 from "../../components/Button2";
 import axiosInstance from "../../axios-instance";
 import withReactContent from "sweetalert2-react-content";
-
-
-
+import { FaFilter } from "react-icons/fa";
 
 const sections = [
 	{
@@ -32,15 +30,12 @@ const sections = [
 	{},
 ];
 
-
-
 function Students() {
-
 	const [studentData, setStudentData] = useState([]);
 	const [search, setSearch] = useState(false);
-	const [studentTypes, setStudentTypes] = useState([])
-	const [studentClasses, setStudentClasses] = useState([])
-	const [studentHouses, setStudentHouses] = useState([])
+	const [studentTypes, setStudentTypes] = useState([]);
+	const [studentClasses, setStudentClasses] = useState([]);
+	const [studentHouses, setStudentHouses] = useState([]);
 	const [filters, setFilters] = useState({
 		query: "",
 		type: "",
@@ -67,33 +62,39 @@ function Students() {
 				text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
 			});
 		}
-	}, [])
+	}, []);
 
 	const fetchStudentType = () => {
-		axiosInstance.get("/student-types")
-			.then((response) => {
-				//console.log("response", response)
-				const { payload } = response.data;
+		axiosInstance.get("/student-types").then((response) => {
+			//console.log("response", response)
+			const { payload } = response.data;
 
-				const studenttypesArr = []
-				for (let i = 0; i < payload.length; i++) {
-					studenttypesArr.push({ label: payload[i].type, value: payload[i].type, ...payload[i] })
-				}
-				setStudentTypes(studenttypesArr)
-			})
-	}
+			const studenttypesArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studenttypesArr.push({
+					label: payload[i].type,
+					value: payload[i].type,
+					...payload[i],
+				});
+			}
+			setStudentTypes(studenttypesArr);
+		});
+	};
 
 	const fetchSchoolClasses = () => {
-		axiosInstance.get("/class")
-			.then((response) => {
-				const { payload } = response.data;
-				const studentClassesArr = []
-				for (let i = 0; i < payload.length; i++) {
-					studentClassesArr.push({ label: payload[i].class, value: payload[i].class, ...payload[i] })
-				}
-				setStudentClasses(studentClassesArr)
-			})
-	}
+		axiosInstance.get("/class").then((response) => {
+			const { payload } = response.data;
+			const studentClassesArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studentClassesArr.push({
+					label: payload[i].class,
+					value: payload[i].class,
+					...payload[i],
+				});
+			}
+			setStudentClasses(studentClassesArr);
+		});
+	};
 
 	const fetchStreams = () => {
 		axiosInstance.get("/streams")
@@ -108,17 +109,20 @@ function Students() {
 	}
 
 	const fetchSchoolHouses = () => {
-		axiosInstance.get("/houses")
-			.then((response) => {
-				const { payload } = response.data;
-				const studentHousesArr = []
+		axiosInstance.get("/houses").then((response) => {
+			const { payload } = response.data;
+			const studentHousesArr = [];
 
-				for (let i = 0; i < payload.length; i++) {
-					studentHousesArr.push({ label: payload[i].house, value: payload[i].house, ...payload[i] })
-				}
-				setStudentHouses(studentHousesArr)
-			})
-	}
+			for (let i = 0; i < payload.length; i++) {
+				studentHousesArr.push({
+					label: payload[i].house,
+					value: payload[i].house,
+					...payload[i],
+				});
+			}
+			setStudentHouses(studentHousesArr);
+		});
+	};
 
 	// fetch student info
 	const fetchStudentInfo = () => {
@@ -142,8 +146,8 @@ function Students() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-
-				axiosInstance.delete("/students/" + student.id)
+				axiosInstance
+					.delete("/students/" + student.id)
 					.then((response) => {
 						// fetch after
 						fetchStudentInfo();
@@ -151,18 +155,18 @@ function Students() {
 					})
 					.catch((error) => {
 						//console.log(error);
-					})
+					});
 			}
 		});
 	};
 
 	const searchStudents = () => {
 		if (search === false) {
-			setSearch(true)
+			setSearch(true);
 		}
-
 		const searchResults = studentData.filter((student) => {
-			const studentName = student.firstName + " " + student.middleName + " " + student.lastName
+			const studentName =
+				student.firstName + " " + student.middleName + " " + student.lastName;
 
 			const searchName = studentName.toLowerCase().includes(filters.query.toLowerCase())
 			const searchType = student.studentType.type.toLowerCase().includes(filters.type.toLowerCase())
@@ -183,18 +187,18 @@ function Students() {
 			type: "",
 			house: "",
 			studentClass: "",
-			section: ""
-		})
-		setSearch(false)
+			section: "",
+		});
+		setSearch(false);
 	}
 
 	useEffect(() => {
 		if (filters.query === "" && filters.type === "" && filters.house === "" && filters.studentClass === "" && filters.section === "" && filters.stream === "") {
 			setSearch(false)
 		} else {
-			searchStudents()
+			searchStudents();
 		}
-	}, [filters])
+	}, [filters]);
 
 	const printStudents = () => {
 		const documentWindow = window.open("")
@@ -267,7 +271,9 @@ function Students() {
 									placeholder="Search For Student ..."
 									name="lastName"
 									value={filters.query}
-									onChange={(e) => setFilters({ ...filters, query: e.target.value })}
+									onChange={(e) =>
+										setFilters({ ...filters, query: e.target.value })
+									}
 									icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
 								/>
 							</form>
@@ -306,20 +312,17 @@ function Students() {
 					</div>
 				</div>
 
-
-
-
 				{search ? (
 					<StudentsTable
 						deleteStudentInfo={deleteStudentInfo}
 						studentData={searchedStudents}
 					/>
-				) : <StudentsTable
-					deleteStudentInfo={deleteStudentInfo}
-					studentData={studentData}
-				/>}
-
-
+				) : (
+					<StudentsTable
+						deleteStudentInfo={deleteStudentInfo}
+						studentData={studentData}
+					/>
+				)}
 			</div>
 		</div>
 	);
