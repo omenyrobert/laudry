@@ -132,7 +132,6 @@ function Students() {
 	const fetchStudentInfo = () => {
 		axiosInstance.get("/students").then((response) => {
 			const { payload } = response.data;
-			console.log("payload", payload);
 			setStudentData(payload);
 		});
 	};
@@ -170,6 +169,7 @@ function Students() {
 		const searchResults = studentData.filter((student) => {
 			const studentName =
 				student.firstName + " " + student.middleName + " " + student.lastName;
+			console.log(student)
 
 			const searchName = studentName
 				.toLowerCase()
@@ -186,6 +186,9 @@ function Students() {
 			const searchSection = student.studentSection
 				.toLowerCase()
 				.includes(filters.section.toLowerCase());
+			console.log("===================")
+			console.log("Filters:", filters)
+			console.log("Student: ", student)
 			const searchStream = student.studentStream.stream
 				.toLowerCase()
 				.includes(filters.stream.toLowerCase());
@@ -209,6 +212,7 @@ function Students() {
 			house: "",
 			studentClass: "",
 			section: "",
+			stream: ""
 		});
 		setSearch(false);
 	}
@@ -246,6 +250,82 @@ function Students() {
 	const toggleFilter = () => {
 		setShowFilter(!showFilter);
 	};
+
+	// Implement infinite scrolling pagination
+	const [page, setPage] = useState(0)
+	const [hasMore, setHasMore] = useState(true)
+
+	const fetchMoreStudents = () => {
+		const offset = 50
+		axiosInstance.get(`/students/paginated?limit=${offset}&page=${page}`)
+			.then((response) => {
+				const { payload } = response.data
+				if (payload.length === 0) {
+					setHasMore(false)
+				} else {
+					setStudentData([...studentData, ...payload])
+					setPage(page + 1)
+				}
+			})
+	}
+
+
+	const handleScroll = (e) => {
+		const { scrollTop, clientHeight, scrollHeight } = e.currentTarget
+		if (scrollHeight - scrollTop === clientHeight) {
+			fetchMoreStudents()
+		}
+	}
+
+	useEffect(() => {
+		window.addEventListener("scroll", handleScroll)
+
+		return () => window.removeEventListener("scroll", handleScroll)
+	}, [])
+
+
+	// Export `studentData` to csv
+	const exportToCSV = () => {
+		const csvRows = []
+		const headers = Object.keys(studentData[0])
+		csvRows.push(headers.join(","))
+		for (const row of studentData) {
+			const values = headers.map(header => {
+				const value = row[header]
+				console.log(value, header, row)
+				if (header === "studentType") {
+					const escaped = ("" + value.type).replace(/"/g, '\\"')
+					return `"${escaped}"`
+				} else if (header === "studentHouse") {
+					const escaped = ("" + value.house).replace(/"/g, '\\"')
+					return `"${escaped}"`
+				} else if (header === "studentClass") {
+					const escaped = ("" + value.class).replace(/"/g, '\\"')
+					return `"${escaped}"`
+				} else if (header === "studentStream") {
+					if (value) {
+						const escaped = ("" + value.stream).replace(/"/g, '\\"')
+						return `"${escaped}"`
+					}
+					const escaped = ("null").replace(/"/g, '\\"')
+					return `"${escaped}"`
+				}
+				const escaped = ("" + row[header]).replace(/"/g, '\\"')
+				return `"${escaped}"`
+			})
+			csvRows.push(values.join(","))
+		}
+		const csvData = csvRows.join("\n")
+		const blob = new Blob([csvData], { type: "text/csv" })
+		const url = window.URL.createObjectURL(blob)
+		const link = document.createElement("a")
+		link.setAttribute("href", url)
+		link.setAttribute("download", "students.csv")
+		link.click()
+	}
+
+
+
 	return (
 		<div className=" mt-2 w-full">
 			<h1 className="text-secondary font-semibold text-2xl ml-3">Students</h1>
@@ -341,6 +421,11 @@ function Students() {
 							<div className="w-1/3 mx-5">
 								<div onClick={printStudents} className="w-20">
 									<Button value={"Print"} />
+								</div>
+							</div>
+							<div className="w-1/3 mx-5">
+								<div onClick={exportToCSV} className="w-20">
+									<Button value={"Export CSV"} />
 								</div>
 							</div>
 							<div className="w-2/5">
