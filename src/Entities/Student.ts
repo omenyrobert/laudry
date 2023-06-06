@@ -7,10 +7,12 @@ import {
   OneToOne,
   JoinColumn,
   ManyToOne,
+  ManyToMany,
 } from "typeorm";
 import { House, getHouseById } from "./House";
 import { StudentType, getStudentTypeById } from "./StudentType";
 import { SchoolClass, getClassById } from "./SchoolClass";
+import { Stream, getSingleStream } from "./Stream";
 
 
 @Entity()
@@ -82,6 +84,13 @@ export class Student extends BaseEntity {
   })
   studentClass!: SchoolClass;
 
+  @ManyToOne(() => Stream, (stream) => stream.id, {
+    cascade: true,
+    eager: true,
+    nullable: true,
+  })
+  studentStream!: Stream;
+
   @Column()
   feesCategory!: string;
 
@@ -115,11 +124,13 @@ export const createStudent = async (
   studentHouse: string,
   studentClass: string,
   feesCategory: string,
+  studentStream: string,
 ) => {
 
   const house = await getHouseById(parseInt(studentHouse));
   const studentTypeToInsert = await getStudentTypeById(parseInt(studentType));
   const studentClassToInsert = await getClassById(parseInt(studentClass));
+  const studentStreamToInsert = await getSingleStream(parseInt(studentStream));
 
   const studentToInsert = new Student();
   studentToInsert.firstName = firstName;
@@ -140,6 +151,7 @@ export const createStudent = async (
   studentToInsert.studentHouse = house;
   studentToInsert.studentClass = studentClassToInsert;
   studentToInsert.feesCategory = feesCategory;
+  studentToInsert.studentStream = studentStreamToInsert
 
   const student = await Student.save(studentToInsert);
   return student;
@@ -175,11 +187,13 @@ export const updateStudent = async (
   studentHouse: string,
   studentClass: string,
   feesCategory: string,
+  studentStream: string,
 ) => {
   
   const house = await getHouseById(parseInt(studentHouse));
   const studentTypeToInsert = await getStudentTypeById(parseInt(studentType));
   const studentClassToInsert = await getClassById(parseInt(studentClass));
+  const studentStreamToInsert = await getSingleStream(parseInt(studentStream));
 
   const studentToUpdate = await Student.update(id, {
     firstName: firstName,
@@ -201,6 +215,7 @@ export const updateStudent = async (
     studentHouse: house,
     studentClass: studentClassToInsert,
     feesCategory: feesCategory,
+    studentStream: studentStreamToInsert
   });
 
   return studentToUpdate;

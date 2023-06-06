@@ -42,9 +42,10 @@ export const addStudent = async (req: Request, res: Response) => {
       studentHouse,
       studentClass,
       feesCategory,
+      studentStream
     } = req.body;
 
-    console.log(req.body)
+
 
     const student = await createStudent(
       firstName,
@@ -65,6 +66,7 @@ export const addStudent = async (req: Request, res: Response) => {
       studentHouse,
       studentClass,
       feesCategory,
+      studentStream
     );
 
     return res.json(customPayloadResponse(true, student)).status(200).end();
@@ -127,6 +129,7 @@ export const editStudent = async (req: Request, res: Response) => {
       studentHouse,
       studentClass,
       feesCategory,
+      studentStream,
     } = req.body;
 
     const student = await updateStudent(
@@ -150,6 +153,7 @@ export const editStudent = async (req: Request, res: Response) => {
       studentHouse,
       studentClass,
       feesCategory,
+      studentStream
     );
 
     if (student) {

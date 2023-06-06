@@ -6,7 +6,9 @@ import {
   BaseEntity,
   In,
   ManyToMany,
+  OneToMany
 } from "typeorm";
+import { Student } from "./Student";
 
 @Entity()
 export class Stream extends BaseEntity {
@@ -18,6 +20,13 @@ export class Stream extends BaseEntity {
 
   @ManyToMany(() => SchoolClass, (schoolclass) => schoolclass.streams)
   school_classes: SchoolClass[];
+
+  @OneToMany(() => Student, (student) => student.studentHouse, {
+    //cascade: true,
+    //eager: true,
+    nullable: true,
+  })
+  students!: Student[];
 }
 
 export const getStreams = async () => {
@@ -47,7 +56,7 @@ export const updateStream = async (id: number, stream: string) => {
 };
 
 export const getSingleStream = async (id: number) => {
-  const stream = await Stream.findOne({ where: { id: id } });
+  const stream = await Stream.findOne({ where: { id: id } }) as Stream;
   return stream;
 };
 

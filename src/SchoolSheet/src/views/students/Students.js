@@ -46,9 +46,11 @@ function Students() {
 		type: "",
 		house: "",
 		studentClass: "",
-		section: ""
+		section: "",
+		stream: ""
 	});
 	const [searchedStudents, setSearchedStudents] = useState([])
+	const [streams, setStreams] = useState([])
 
 	useEffect(() => {
 		try {
@@ -56,6 +58,7 @@ function Students() {
 			fetchStudentType()
 			fetchSchoolClasses()
 			fetchSchoolHouses()
+			fetchStreams()
 		} catch (error) {
 			const MySwal = withReactContent(Swal);
 			MySwal.fire({
@@ -92,6 +95,18 @@ function Students() {
 			})
 	}
 
+	const fetchStreams = () => {
+		axiosInstance.get("/streams")
+			.then((response) => {
+				const { payload } = response.data;
+				const studentStreamsArr = []
+				for (let i = 0; i < payload.length; i++) {
+					studentStreamsArr.push({ label: payload[i].stream, value: payload[i].stream, ...payload[i] })
+				}
+				setStreams(studentStreamsArr)
+			})
+	}
+
 	const fetchSchoolHouses = () => {
 		axiosInstance.get("/houses")
 			.then((response) => {
@@ -110,6 +125,7 @@ function Students() {
 		axiosInstance.get("/students")
 			.then((response) => {
 				const { payload } = response.data;
+				console.log("payload", payload)
 				setStudentData(payload);
 			})
 	};
@@ -144,7 +160,7 @@ function Students() {
 		if (search === false) {
 			setSearch(true)
 		}
-		console.log("filters", filters)
+
 		const searchResults = studentData.filter((student) => {
 			const studentName = student.firstName + " " + student.middleName + " " + student.lastName
 
@@ -152,9 +168,10 @@ function Students() {
 			const searchType = student.studentType.type.toLowerCase().includes(filters.type.toLowerCase())
 			const searchHouse = student.studentHouse.house.toLowerCase().includes(filters.house.toLowerCase())
 			const searchClass = student.studentClass.class.toLowerCase().includes(filters.studentClass.toLowerCase())
-			//const searchSection = student.section.toLowerCase().includes(filters.section.toLowerCase())
+			const searchSection = student.studentSection.toLowerCase().includes(filters.section.toLowerCase())
+			const searchStream = student.studentStream.stream.toLowerCase().includes(filters.stream.toLowerCase())
 
-			return searchName && searchType && searchHouse && searchClass
+			return searchName && searchType && searchHouse && searchClass && searchSection && searchStream
 
 		})
 		setSearchedStudents(searchResults)
@@ -172,12 +189,24 @@ function Students() {
 	}
 
 	useEffect(() => {
-		if (filters.query === "" && filters.type === "" && filters.house === "" && filters.studentClass === "" && filters.section === "") {
+		if (filters.query === "" && filters.type === "" && filters.house === "" && filters.studentClass === "" && filters.section === "" && filters.stream === "") {
 			setSearch(false)
 		} else {
 			searchStudents()
 		}
 	}, [filters])
+
+	const printStudents = () => {
+		const documentWindow = window.open("")
+		const studentSheet = document.getElementById("studentTable")
+		const styles = document.querySelectorAll("style")
+		// Write n styles
+		styles.forEach((element, _) => {
+			documentWindow.document.writeln(element.outerHTML)
+		})
+		documentWindow.document.writeln(studentSheet.innerHTML)
+		documentWindow.print()
+	}
 
 
 	return (
@@ -191,10 +220,10 @@ function Students() {
 							<Link to="/addStudentForm">
 								<Button2 value={"Student"} />
 							</Link>
-							<div className="ml-10">
-							<Button value={"Print"}/>
+							<div onClick={printStudents} className="ml-10">
+								<Button value={"Print"} />
 							</div>
-							
+
 						</div>
 						<div className="w-3/12">
 							<Select
@@ -269,9 +298,9 @@ function Students() {
 								placeholder={"Select Stream "}
 								className="text-sm"
 								onChange={(opt) => {
-									setFilters({ ...filters, type: opt.value })
+									setFilters({ ...filters, stream: opt.value })
 								}}
-								options={studentTypes}
+								options={streams}
 							/>
 						</div>
 					</div>
