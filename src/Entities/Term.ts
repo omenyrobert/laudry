@@ -13,6 +13,9 @@ export class Term extends BaseEntity {
 
   @Column()
   term!: string;
+
+  @Column()
+  is_selected!: number;
 }
 
 export const getTerms = async () => {
@@ -24,8 +27,18 @@ export const getTerms = async () => {
   return terms;
 };
 
-export const createTerm = async (from: string, to: string, term: string) => {
-  const termToInsert = await Term.insert({ from: from, to: to, term: term });
+export const createTerm = async (
+  from: string,
+  to: string,
+  term: string,
+  selected: number
+) => {
+  const termToInsert = await Term.insert({
+    from: from,
+    to: to,
+    term: term,
+    is_selected: selected,
+  });
   return termToInsert;
 };
 
@@ -40,12 +53,14 @@ export const updateTerm = async (
   id: number,
   from: string,
   to: string,
-  term: string
+  term: string,
+  selected: number
 ) => {
   const termToUpdate = await Term.update(id, {
     from: from,
     to: to,
     term: term,
+    is_selected: selected,
   });
   return termToUpdate;
 };

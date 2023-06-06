@@ -64,12 +64,12 @@ export const getHouses = createAsyncThunk("/schoolSheet/houses", async () => {
 });
 
 export const getAssessments = createAsyncThunk("/schoolSheet/assessments",
-async () => {
-	const assessments = await axiosInstance.get("/assessments");
-	const { data } = assessments;
-	const { status, payload } = data;
-	if (status) return payload;
-});
+	async () => {
+		const assessments = await axiosInstance.get("/assessments");
+		const { data } = assessments;
+		const { status, payload } = data;
+		if (status) return payload;
+	});
 
 export const getStudentTypes = createAsyncThunk("/schoolSheet/studentTypes", async () => {
 	const studentTypes = await axiosInstance.get("/student-types");
@@ -92,6 +92,13 @@ export const getGrades = createAsyncThunk("/schoolSheet/grades", async () => {
 	if (status) return payload;
 });
 
+export const getTerms = createAsyncThunk("/schoolSheet/terms", async () => {
+	const terms = await axiosInstance.get('/terms');
+	const { data } = terms;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
 	initialState: {
@@ -108,6 +115,7 @@ export const schoolSheetSlices = createSlice({
 		examTypes: [],
 		assessments: [],
 		grades: [],
+		terms: []
 	},
 	extraReducers: {
 		[getStreams.fulfilled]: (state, action) => {
@@ -148,6 +156,9 @@ export const schoolSheetSlices = createSlice({
 		},
 		[getGrades.fulfilled]: (state, action) => {
 			state.grades = action.payload;
+		},
+		[getTerms.fulfilled]: (state, action) => {
+			state.terms = action.payload;
 		},
 	},
 });

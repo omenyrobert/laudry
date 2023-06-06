@@ -13,6 +13,6 @@ export default (router: Router) => {
   const termPrefix = "/terms";
   router.get(`${termPrefix}`, JWTAuthMiddleWare, fetchTerms);
   router.post(`${termPrefix}`, JWTAuthMiddleWare, addTerm);
-  router.put(`${termPrefix}/:id`, JWTAuthMiddleWare, modifyTerm);
+  router.patch(`${termPrefix}`, JWTAuthMiddleWare, modifyTerm);
   router.delete(`${termPrefix}/:id`, JWTAuthMiddleWare, removeTerm);
 };
