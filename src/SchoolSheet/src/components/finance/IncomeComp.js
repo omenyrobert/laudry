@@ -36,6 +36,7 @@ function IncomeComp() {
 	const [from, setFrom] = useState("");
 	const [date, setDate] = useState("");
 	const [comment, setComment] = useState("");
+
 	const postIncome = () => {
 		let clId = uuid();
 		let formData = {
@@ -264,107 +265,105 @@ function IncomeComp() {
 					<Button2 value={"Add Income"} />
 				</div>
 			</div>
-		
-					{/* <div className="bg-white shadow-xl border border-gray2 rounded-md mr-2  w-[1000px]">
-						<div className="flex justify-between bg-gray1 text-primary p-3 font-semibold rounded">
-							<div>Add Income</div>
-							<div>
-								<p className="cursor-pointer" onClick={closeAdd}>
-									X
-								</p>
+			{add ? (
+				<div className="bg-white shadow-xl absolute z-50 border border-gray2 rounded-md mr-2  w-[1000px]">
+					<div className="flex justify-between bg-gray1 text-primary p-3 font-semibold rounded">
+						<div>Add Income</div>
+						<div>
+							<p className="cursor-pointer" onClick={closeAdd}>
+								X
+							</p>
+						</div>
+					</div>
+					<div className="flex px-3 justify-between">
+						<div className="w-1/3 p-1">
+							<InputField
+								type="date"
+								label="Date"
+								value={date}
+								onChange={(e) => setDate(e.target.value)}
+							/>
+						</div>
+						<div className="w-1/3 p-1">
+							<InputField
+								type="text"
+								placeholder="Enter Income"
+								label="Income"
+								value={income}
+								onChange={(e) => setIncome(e.target.value)}
+								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							/>
+						</div>
+						<div className="w-1/3 p-1">
+							<InputField
+								type="number"
+								placeholder="Enter Amounnt"
+								label="Amount"
+								value={amount}
+								onChange={(e) => setAmount(e.target.value)}
+								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							/>
+						</div>
+					</div>
+					<div className="flex px-3 justify-between">
+						<div className="w-1/3 p-1">
+							<SelectComp
+								options={incomeTypesData}
+								placeholder="Select Income Type"
+								label="Income Type"
+								setSelectedOptionObj={(value) => {
+									setIncomeTypeId(value.id);
+								}}
+							/>
+						</div>
+						<div className="w-1/3 p-1">
+							<InputField
+								type="text"
+								placeholder="Enter Source"
+								label="Income Source"
+								value={from}
+								onChange={(e) => setFrom(e.target.value)}
+								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							/>
+						</div>
+						<div className="w-1/3">
+							<InputField
+								type="text"
+								placeholder="Enter description"
+								label="Income description"
+								value={comment}
+								onChange={(e) => setComment(e.target.value)}
+								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							/>
+						</div>
+					</div>
+					<div className="flex p-3 -mt-5">
+						<div className="w-1/3 p-1">
+							<SelectComp
+								options={incomeTypesData}
+								placeholder="Select Account"
+								label="Account"
+								setSelectedOptionObj={(value) => {
+									setIncomeTypeId(value.id);
+								}}
+							/>
+						</div>
+						<div className="w-1/3 mt-14"></div>
+					</div>
+					<div className="flex justify-between bg-gray1  p-3 ounded">
+						<div>
+							<ButtonSecondary value={"Close"} />
+						</div>
+						<div>
+							<div onClick={postIncome}>
+								<Button value={"Add Income"} />
 							</div>
 						</div>
-						<div className="flex px-3 justify-between">
-							<div className="w-1/3 p-1">
-								<InputField
-									type="date"
-									label="Date"
-									value={date}
-									onChange={(e) => setDate(e.target.value)}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<InputField
-									type="text"
-									placeholder="Enter Income"
-									label="Income"
-									value={income}
-									onChange={(e) => setIncome(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<InputField
-									type="number"
-									placeholder="Enter Amounnt"
-									label="Amount"
-									value={amount}
-									onChange={(e) => setAmount(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-						</div>
-						<div className="flex px-3 justify-between">
-							<div className="w-1/3 p-1">
-								<SelectComp
-									options={incomeTypesData}
-									placeholder="Select Income Type"
-									label="Income Type"
-									setSelectedOptionObj={(value) => {
-										setIncomeTypeId(value.id);
-									}}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<InputField
-									type="text"
-									placeholder="Enter Source"
-									label="Income Source"
-									value={from}
-									onChange={(e) => setFrom(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-							<div className="w-1/3">
-								<InputField
-									type="text"
-									placeholder="Enter description"
-									label="Income description"
-									value={comment}
-									onChange={(e) => setComment(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
-							</div>
-						</div>
-						<div className="flex p-3 -mt-5">
-							<div className="w-1/3 p-1">
-								<SelectComp
-									options={incomeTypesData}
-									placeholder="Select Account"
-									label="Account"
-									setSelectedOptionObj={(value) => {
-										setIncomeTypeId(value.id);
-									}}
-								/>
-							</div>
-							<div className="w-1/3 mt-14"></div>
-						</div>
-						<div className="flex justify-between bg-gray1  p-3 ounded">
-							<div>
-								<ButtonSecondary value={"Close"} />
-							</div>
-							<div>
-								<div onClick={postIncome}>
-									<Button value={"Add Income"} />
-								</div>
-							</div>
-						</div>
-					</div> */}
-				
-			<div className="w-full h-[80vh] relative">
-				
-				
+					</div>
+				</div>
+			) : null}
 
+			<div className="w-full h-[80vh] relative">
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>

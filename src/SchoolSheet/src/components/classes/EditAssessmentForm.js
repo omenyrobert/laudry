@@ -8,6 +8,8 @@ import Select from 'react-select';
 import { useDispatch } from "react-redux";
 import { getAssessments } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
+import { assignGrade } from "../../utils/assessment";
+import {  useSelector } from "react-redux";
 
 function EditAssessmentForm({
     studentData,
@@ -25,13 +27,18 @@ function EditAssessmentForm({
     const [markEdit, setMarkEdit] = useState(studentData.mark);
     const [finalMarkEdit, setFinalMarkEdit] = useState(studentData.finalMark);
     const [commentEdit, setCommentEdit] = useState(studentData.comment);
+    const [percent, setPercent] = useState(null);
+    const { grades } = useSelector((state) => state.schoolStore);
+
 
     useEffect(() => {
         const examType = 
         examTypesData.filter((examType) => examType.value === examEdit.value)[0];
 
+        setPercent(examType.percent);
+        
         setFinalMarkEdit((markEdit / 100) *  examType.percent);
-    }, [markEdit, examTypesData, examEdit.value]);
+    }, [markEdit, examTypesData, examEdit.value, percent]);
 
     const updateAssement = async (e) => {
         e.preventDefault();
@@ -46,6 +53,8 @@ function EditAssessmentForm({
                 comment: commentEdit,
                 studentId: studentId,
                 term: 1,
+                grade: assignGrade(markEdit, grades),
+                examPercent: percent
 			};
 			const assessment = await axiosInstance.put("/assessments", formData);
 			const { data } = assessment;

@@ -6,11 +6,8 @@ import Select from "react-select";
 import { FaRegUserCircle, FaPhone } from "react-icons/fa";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import ButtonSecondary from "../ButtonSecondary";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../axios-instance"
-import { useDispatch } from 'react-redux'
-import { getStudents } from "../../store/schoolSheetSlices/schoolStore";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -28,6 +25,8 @@ function AddStudentForm(props) {
 	const [studentTypes, setStudentTypes] = useState([])
 	const [studentClasses, setStudentClasses] = useState([])
 	const [studentHouses, setStudentHouses] = useState([])
+	const [streams, setStreams] = useState([])
+	const [studentStream, setStudentStream] = useState("")
 
 
 	useEffect(() => {
@@ -35,6 +34,7 @@ function AddStudentForm(props) {
 			fetchStudentType()
 			fetchSchoolClasses()
 			fetchSchoolHouses()
+			fetchStreams()
 		} catch (error) {
 			const MySwal = withReactContent(Swal);
 			MySwal.fire({
@@ -61,6 +61,19 @@ function AddStudentForm(props) {
 				setStudentTypes(studenttypesArr)
 			})
 	}
+
+	const fetchStreams = () => {
+		axiosInstance.get("/streams")
+			.then((response) => {
+				const { payload } = response.data;
+				const studentStreamsArr = []
+				for (let i = 0; i < payload.length; i++) {
+					studentStreamsArr.push({ label: payload[i].stream, value: payload[i].stream, ...payload[i] })
+				}
+				setStreams(studentStreamsArr)
+			})
+	}
+
 
 
 	const fetchSchoolClasses = () => {
@@ -129,6 +142,7 @@ function AddStudentForm(props) {
 		studentHouse: "",
 		studentClass: "",
 		feesCategory: "",
+		studentStream: "",
 	});
 
 	const onChange = (e) => {
@@ -158,6 +172,7 @@ function AddStudentForm(props) {
 			studentHouse: studentHouse.id,
 			studentClass: studentClass.id,
 			feesCategory: feesCategory.id,
+			studentStream: studentStream.id,
 		};
 		if (studentInfo) {
 
@@ -165,7 +180,6 @@ function AddStudentForm(props) {
 			axiosInstance.post("/students", data)
 				.then((response) => {
 					setStudentInfo("");
-					console.log("response", response)
 					//fetchStudentInfo();
 					// show alert
 					const { status, payload } = response.data;
@@ -199,7 +213,7 @@ function AddStudentForm(props) {
 	};
 
 	return (
-		<div className="bg-white h-[85vh] overflow-y-auto">
+		<div className="bg-white h-[90vh] overflow-y-auto">
 			<div className="flex bg-gray1 p-3 justify-between">
 				<div>
 					<p className="text-primary font-semibold text-md">Add Student</p>
@@ -390,6 +404,16 @@ function AddStudentForm(props) {
 							name="studentHouse"
 							onChange={setStudentHouse}
 							options={studentHouses}
+						/>
+					</div>
+					<div className="w-1/4 p-2">
+						<label className="text-gray4 mt-2">Stream</label>
+						<Select
+							placeholder={"Select Stream"}
+							defaultValue={studentStream}
+							name="studentStream"
+							onChange={setStudentStream}
+							options={streams}
 						/>
 					</div>
 					<div className="w-1/4 p-2">

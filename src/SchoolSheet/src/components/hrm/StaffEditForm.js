@@ -13,6 +13,7 @@ import Experience from "./Experience";
 import Qualifications from "./Qualifications";
 import NOK from "./NOK";
 import OtherInfo from "./OtherInfo";
+import SalaryInfo from "./SalaryInfo";
 
 let db = new Localbase("db");
 
@@ -97,6 +98,8 @@ function StaffEditForm(props) {
 						<Experience />
 						<hr className="text-gray2 my-10" />
 						<Qualifications />
+						<hr className="text-gray2 my-10" />
+						<SalaryInfo/>
 					</div>
 				</div>
 				<hr className="text-gray2" />
