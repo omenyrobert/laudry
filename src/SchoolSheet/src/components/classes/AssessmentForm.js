@@ -53,6 +53,7 @@ function AssessmentForm({
 	};
 	const postAssessment = async (e) => {
 		e.preventDefault();
+		const _finalMark = (formData.mark / 100) * selectedExam.percent;
 
 		try {
 			let body = {
@@ -60,10 +61,11 @@ function AssessmentForm({
 				examType: selectedExam.value,
 				subject: assessSubject,
 				mark: formData.mark,
-				finalMark: finalMark,
+				finalMark: _finalMark,
 				comment: formData.comment,
+				examPercent: selectedExam.percent,
 				term: 1,
-				grade: assignGrade(finalMark, grades),
+				grade: assignGrade(formData.mark, grades),
 			};
 
 			if (formData) {
@@ -133,7 +135,7 @@ function AssessmentForm({
 		const data = classes.map(_class => ({label: _class.class, value: _class.class}));
 		setClassOptions(data);
 	}, [classes])
-	
+
 	return (
 		<>
 			<div className="bg-white p-3 h-[75vh] overflow-y-auto">
@@ -244,7 +246,7 @@ function AssessmentForm({
 								<div className="p-1">EOT</div> <div className="p-1">{data.EOT}</div>
 							</div>
 							<div className="w-1/4 flex  border-gray2 p-2 border">
-								<div className="p-1">{`${data.totalMark}%`}</div> <div className="p-1">{assignGrade(data.totalMark, grades)}</div>
+								<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div> <div className="p-1">{assignGrade(data.markGrade, grades)}</div>
 							</div>
 						</div>
 					);
