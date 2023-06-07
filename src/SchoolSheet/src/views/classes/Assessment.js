@@ -12,6 +12,7 @@ import {
 	getStudents,
 } from "../../store/schoolSheetSlices/schoolStore";
 import { assessSubjects } from "../../utils/assessment";
+
 function Assessment() {
 	const dispatch = useDispatch();
 	const [studentId, setStudentId] = useState("");
@@ -33,14 +34,6 @@ function Assessment() {
 	};
 
 	const [studentData, setStudentData] = useState([]);
-	// const fetchStudentInfo = () => {
-	// 	db.collection("studentInfo")
-	// 		.get()
-	// 		.then((student) => {
-	// 			const newData = student;
-	// 			setStudentData(newData);
-	// 		});
-	// };
 
 	useEffect(() => {
 		setStudentData(students);
@@ -187,7 +180,6 @@ function Assessment() {
 							studentData={studentInfo}
 							openEditData={openEditData}
 							assessData={assessData}
-							// fetchAssessment={fetchAssessment}
 							examTypesData={examTypesData}
 							subjectsData={subjectsData}
 							assessSubject={selectedSubject}
@@ -202,7 +194,6 @@ function Assessment() {
 					studentId={studentId}
 					studentData={studentInfoEdit}
 					closeEditData={closeEditData}
-					// fetchAssessment={fetchAssessment}
 					examTypesData={examTypesData}
 					subjectsData={subjectsData}
 					editDataId={editDataId}

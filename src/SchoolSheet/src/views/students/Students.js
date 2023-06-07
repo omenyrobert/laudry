@@ -420,12 +420,12 @@ function Students() {
 							</div>
 							<div className="w-1/3 mx-5">
 								<div onClick={printStudents} className="w-20">
-									<Button value={"Print"} />
+									<Button value={"Pdf"} />
 								</div>
 							</div>
 							<div className="w-1/3 mx-5">
 								<div onClick={exportToCSV} className="w-20">
-									<Button value={"Export CSV"} />
+									<Button value={"CSV"} />
 								</div>
 							</div>
 							<div className="w-2/5">

@@ -21,7 +21,7 @@ export const fetchTerms = async (req: Request, res: Response) => {
 
 export const addTerm = async (req: Request, res: Response) => {
   try {
-    const { from, to, term } = req.body;
+    const { from, to, term, selected } = req.body;
     if (!from) {
       return res
         .json(customPayloadResponse(false, "From Required"))
@@ -40,7 +40,7 @@ export const addTerm = async (req: Request, res: Response) => {
         .status(200)
         .end();
     }
-    await createTerm(from, to, term);
+    await createTerm(from, to, term, selected);
     return res
       .json(customPayloadResponse(true, "Term Added"))
       .status(200)
@@ -52,7 +52,7 @@ export const addTerm = async (req: Request, res: Response) => {
 
 export const modifyTerm = async (req: Request, res: Response) => {
   try {
-    const { termId, to, from, term } = req.body;
+    const { termId, to, from, term, selected } = req.body;
     if (!from) {
       return res
         .json(customPayloadResponse(false, "From Required"))
@@ -77,7 +77,11 @@ export const modifyTerm = async (req: Request, res: Response) => {
         .status(200)
         .end();
     }
-    await updateTerm(termId, to, from, term);
+    await updateTerm(termId, to, from, term, selected);
+    return res
+      .json(customPayloadResponse(true, "Term Updated"))
+      .status(200)
+      .end();
   } catch (error) {
     console.log(error);
   }

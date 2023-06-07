@@ -66,14 +66,14 @@ function EditSchoolInfo() {
 	const fetchAboutInfo = async () => {
 		console.log("fetched");
 		const aboutInfo = await db.collection("aboutInfoTbl").get();
-		setName(aboutInfo[0].name);
-		setMotto(aboutInfo[0].motto);
-		setLocation(aboutInfo[0].location);
-		setPhones(aboutInfo[0].phones);
-		setEmails(aboutInfo[0].emails);
-		setDescription(aboutInfo[0].description);
-		setSites(aboutInfo[0].sites);
-		setAid(aboutInfo[0].id);
+		// setName(aboutInfo[0].name);
+		// setMotto(aboutInfo[0].motto);
+		// setLocation(aboutInfo[0].location);
+		// setPhones(aboutInfo[0].phones);
+		// setEmails(aboutInfo[0].emails);
+		// setDescription(aboutInfo[0].description);
+		// setSites(aboutInfo[0].sites);
+		// setAid(aboutInfo[0].id);
 	};
 
 	// fetching section
