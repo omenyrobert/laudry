@@ -5,7 +5,8 @@ import {
   BaseEntity,
   JoinColumn,
   ManyToOne,
-  OneToOne
+  OneToOne,
+  OneToMany,
 } from "typeorm";
 import { StaffType } from "./StaffType";
 import { SalaryInfo } from "./SalaryInfo";
@@ -40,10 +41,15 @@ export class Staff extends BaseEntity {
   @Column({ select: false })
   password!: string;
 
-  @OneToOne(() => SalaryInfo, (salaryInfo) => salaryInfo.staff, {
-    nullable: true,
-    eager: true,
-  })
+  @OneToMany(
+    () => SalaryInfo,
+    (salaryInfo) => salaryInfo.staff,
+    {
+      cascade: true,
+      eager: true,
+      nullable: true,
+    }
+  )
   salaryInfo!: SalaryInfo;
 
 

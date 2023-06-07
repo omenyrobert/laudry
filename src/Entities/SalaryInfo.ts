@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
+  ManyToOne,
 } from "typeorm";
 import { Staff } from "./Staff";
 
@@ -16,9 +17,14 @@ export class SalaryInfo extends BaseEntity {
   gross_salary!: number;
 
 
-  @OneToOne(() => Staff, (staff) => staff.salaryInfo, {
-    nullable: true,
-  })
+  @ManyToOne(
+    () => Staff,
+    (staff) => staff.salaryInfo,
+    {
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    }
+  )
   staff!: Staff;
 
   @Column()
