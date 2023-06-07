@@ -236,12 +236,20 @@ function Students() {
 		const documentWindow = window.open("");
 		const studentSheet = document.getElementById("studentTable");
 		const styles = document.querySelectorAll("style");
+		const links = document.querySelectorAll("link");
+		// Write n links
+		links.forEach((element, _) => {
+			documentWindow.document.writeln(element.outerHTML);
+		});
 		// Write n styles
 		styles.forEach((element, _) => {
 			documentWindow.document.writeln(element.outerHTML);
 		});
 		documentWindow.document.writeln(studentSheet.innerHTML);
-		documentWindow.print();
+
+		setTimeout(() => {
+			documentWindow.print();
+		}, 1000);
 	};
 
 	//toggle filter
