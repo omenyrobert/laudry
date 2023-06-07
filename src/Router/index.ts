@@ -14,6 +14,7 @@ import GradeRoutes from "./GradeRoutes";
 import StudentRoutes from "./StudentRoutes";
 import HouseRoutes from "./HouseRoutes";
 import StudentTypeRoutes from "./StudentTypeRoutes";
+import PaySlipCategoryRoutes from "./PaySlipCategoryRoutes";
 
 const router = Router();
 
@@ -33,5 +34,6 @@ export default (): Router => {
   StudentRoutes(router);
   HouseRoutes(router);
   StudentTypeRoutes(router);
+  PaySlipCategoryRoutes(router);
   return router;
 };

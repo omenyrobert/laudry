@@ -12,6 +12,7 @@ import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import { v4 as uuid } from "uuid";
 import ButtonSecondary from "../../components/ButtonSecondary";
+import axiosInstance from "../../axios-instance";
 
 let db = new Localbase("db");
 
@@ -20,39 +21,42 @@ function PayRoll() {
 	const [payslipTypeData, setPayslipTypeData] = useState([]);
 	// post payslip types
 	const postPayslipType = () => {
-		let stId = uuid();
 		let formData = {
-			id: stId,
 			category: payslipType,
 		};
 		if (payslipType) {
-			db.collection("payslipCategoryTbl")
-				.add(formData)
-				.then((response) => {
-					setPayslipType("");
-					// fetch after
-					fetchPayslipType();
 
-					// show alert
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-					closeCreate();
-				})
-				.catch(console.error());
+			axiosInstance.post("/pay-slip-categories", formData).then((res) => {
+				setPayslipType("");
+				// fetch after
+				fetchPayslipType();
+
+				// show alert
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+				closeCreate();
+			}).catch((err) => {
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					showConfirmButton: false,
+					timer: 500,
+				});
+			});
+
 		}
 	};
 	// fetch payslip types
 	const fetchPayslipType = () => {
-		db.collection("payslipCategoryTbl")
-			.get()
-			.then((payslipType) => {
-				const newData = payslipType;
-				setPayslipTypeData(newData);
-			});
+		axiosInstance.get("/pay-slip-categories").then((res) => {
+			const { payload } = res.data;
+			console.log(payload)
+			setPayslipTypeData(payload);
+		});
 	};
 
 	//deleting Payslip Types
@@ -67,22 +71,36 @@ function PayRoll() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("payslipCategoryTbl")
-					.doc({ id: type.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchPayslipType();
 
-						Swal.fire({
-							icon: "success",
+				axiosInstance.delete(`/pay-slip-categories/${type.id}`).then((res) => {
+					// fetch after
+					fetchPayslipType();
+					const { status, payload } = res.data;
+
+					if (status === false) {
+						const MySwal = withReactContent(Swal);
+						MySwal.fire({
+							icon: "error",
 							showConfirmButton: false,
 							timer: 500,
+							title: payload
 						});
-					})
-					.catch((error) => {
-						console.log(error);
+						return;
+					}
+
+					Swal.fire({
+						icon: "success",
+						showConfirmButton: false,
+						timer: 500,
 					});
+				}).catch((err) => {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						showConfirmButton: false,
+						timer: 500,
+					});
+				})
 			}
 		});
 	};
@@ -100,23 +118,41 @@ function PayRoll() {
 		setTypeId(type.id);
 	};
 	const updatePayslipType = () => {
-		db.collection("payslipCategoryTbl")
-			.doc({ id: typeId })
-			.update({
-				category: typeEdit,
-			})
-			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchPayslipType();
+
+
+		let formData = {
+			category: typeEdit,
+		}
+
+		axiosInstance.put(`/pay-slip-categories/${typeId}`, formData).then((res) => {
+			const { status, payload } = res.data;
+			if (status === false) {
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
-					icon: "success",
+					icon: "error",
 					showConfirmButton: false,
 					timer: 500,
+					title: payload
 				});
-				closeEditData();
+				return;
+			}
+			// fetch after
+			fetchPayslipType();
+			const MySwal = withReactContent(Swal);
+			MySwal.fire({
+				icon: "success",
+				showConfirmButton: false,
+				timer: 500,
 			});
+			closeEditData();
+		}).catch((err) => {
+			const MySwal = withReactContent(Swal);
+			MySwal.fire({
+				icon: "error",
+				showConfirmButton: false,
+				timer: 500,
+			});
+		})
 	};
 
 	// fetching stypes
@@ -129,17 +165,17 @@ function PayRoll() {
 	const [selectedOption, setSelectedOption] = useState(null);
 	// fetch staff info
 	useEffect(() => {
-		db.collection("staffInfo")
-			.get()
-			.then((staff) => {
-				const newData = staff.map((res) => ({
-					value: res.firstName + " " + res.lastName,
-					label: res.firstName + " " + res.lastName,
-					grossSalary: res.grossSalary,
-					staffId: res.id,
-				}));
-				setStaffInfo(newData);
-			});
+		axiosInstance.get("/staff").then((res) => {
+			const { payload } = res.data;
+
+			const newData = payload.map((staff) => ({
+				value: staff.first_name + " " + staff.last_name,
+				label: staff.first_name + " " + staff.last_name,
+				grossSalary: staff.grossSalary,
+				staffId: staff.id,
+			}));
+			setStaffInfo(newData);
+		});
 	}, []);
 
 	const [pay, setPay] = useState(false);
