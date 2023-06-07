@@ -227,3 +227,27 @@ export const passwordUpdate = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
+
+
+export const fetchStaffById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res
+        .json(customPayloadResponse(false, "Staff Id Required"))
+        .status(200)
+        .end();
+    }
+    const staffId = parseInt(id);
+    const staff = await getMemberById(staffId);
+    if (staff) {
+      return res.json(customPayloadResponse(true, staff)).status(200).end();
+    }
+    return res
+      .json(customPayloadResponse(false, "Staff Member not Found"))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+}
