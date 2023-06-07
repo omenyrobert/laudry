@@ -3,23 +3,136 @@ import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
 import { Bs3SquareFill, BsFillPencilFill } from "react-icons/bs";
 import Button from "../Button";
+import axiosInstance from "../../axios-instance"
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
-function SalaryInfo() {
-	const [SalaryInfo, setSalaryInfo] = useState(false);
+
+
+
+function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
+	const [editModalOpen, setEditModalOpen] = useState(false);
+	const [gross_salary, setGrossSalary] = useState(salaryInfo?.length === 0 ? "" : salaryInfo[0].gross_salary);
+	const [bank_name, setBankName] = useState(salaryInfo?.length === 0 ? "" : salaryInfo[0].bank_name);
+	const [account_name, setAccountName] = useState(salaryInfo?.length === 0 ? "" : salaryInfo[0].account_name);
+	const [account_number, setAccountNumber] = useState(salaryInfo?.length === 0 ? "" : salaryInfo[0].account_number);
+	const [bank_branch, setBankBranch] = useState(salaryInfo?.length === 0 ? "" : salaryInfo[0].account_branch);
+
+	const enqueFeedBack = (status, message = null) => {
+		const MySwal = withReactContent(Swal);
+		if (message === null) {
+			MySwal.fire({
+				icon: status,
+				showConfirmButton: false,
+				timer: 500,
+			});
+		} else {
+			MySwal.fire({
+				icon: status,
+				title: message.title,
+				text: message.text,
+			});
+		}
+	}
+
+	const addSalaryInfo = () => {
+		if (gross_salary === "" || bank_name === "" || account_name === "" || account_number === "" || bank_branch === "") {
+			enqueFeedBack("error", {
+				title: "Oops...",
+				text: "Please fill all fields"
+			})
+			return
+		}
+		const data = {
+			gross_salary: gross_salary,
+			bank_name: bank_name,
+			account_name: account_name,
+			account_number: account_number,
+			bank_branch: bank_branch,
+			staff: staffId
+		}
+		axiosInstance.post("/salary-info", data)
+			.then((res) => {
+				const { status, payload } = res.data
+				if (status) {
+					fetchStaffInfo()
+					enqueFeedBack("success", {
+						title: "Success",
+						text: "Salary Info Added"
+					})
+				} else {
+					enqueFeedBack("error", {
+						title: "Oops...",
+						text: payload
+					})
+				}
+			})
+			.catch((err) => {
+				enqueFeedBack("error", {
+					title: "Error",
+					text: "Salary Info Not Added"
+				})
+			})
+	}
+
+
+	const updateSalaryInfo = () => {
+		if (gross_salary === "" || bank_name === "" || account_name === "" || account_number === "" || bank_branch === "") {
+			enqueFeedBack("error", {
+				title: "Oops...",
+				text: "Please fill all fields"
+			})
+			return
+		}
+		const data = {
+			gross_salary: gross_salary,
+			bank_name: bank_name,
+			account_name: account_name,
+			account_number: account_number,
+			bank_branch: bank_branch,
+			staff: staffId,
+			id: salaryInfo[0].id
+		}
+		axiosInstance.put(`/salary-info/${salaryInfo[0].id}`, data)
+			.then((res) => {
+				const { status, payload } = res.data
+				if (status) {
+					fetchStaffInfo()
+					enqueFeedBack("success", {
+						title: "Success",
+						text: "Salary Info Updated"
+					})
+				} else {
+					enqueFeedBack("error", {
+						title: "Oops...",
+						text: payload
+					})
+				}
+			})
+			.catch((err) => {
+				enqueFeedBack("error", {
+					title: "Error",
+					text: "Salary Info Not Updated"
+				})
+			})
+	}
+
+
 
 	const openSalaryInfo = () => {
-		setSalaryInfo(true);
+		setEditModalOpen(true);
+		setGrossSalary(salaryInfo?.length === 0 ? "" : salaryInfo[0].gross_salary);
+		setBankName(salaryInfo?.length === 0 ? "" : salaryInfo[0].bank_name);
+		setAccountName(salaryInfo?.length === 0 ? "" : salaryInfo[0].account_name);
+		setAccountNumber(salaryInfo?.length === 0 ? "" : salaryInfo[0].account_number);
+		setBankBranch(salaryInfo?.length === 0 ? "" : salaryInfo[0].bank_branch);
 	};
 
 	const closeSalaryInfo = () => {
-		setSalaryInfo(false);
+		setEditModalOpen(false);
 	};
 
-	const [award, setAward] = useState("");
-	const [from, setFrom] = useState("");
-	const [to, setTo] = useState("");
-	const [school, setSchool] = useState("");
-	const [doc, setDoc] = useState("");
+
 
 	return (
 		<>
@@ -33,9 +146,11 @@ function SalaryInfo() {
 					onClick={openSalaryInfo}
 					className="text-sm  flex text-primary cursor-pointer relative p-2 border border-primary rounded h-10 mt-5"
 				>
-					<BsFillPencilFill className="mr-2 mt-1" /> SalaryInfo
+					<BsFillPencilFill className="mr-2 mt-1" /> {salaryInfo?.length === 0 ? "Add Salary Info" : "Edit Salary Info"}
 				</div>
-				{SalaryInfo ? (
+
+				{/** Edit Modal */}
+				{editModalOpen ? (
 					<div className="border absolute z-50 -mt-[200px] border-gray3 bg-white shadow h-[400px] rounded w-[700px] overflow-y-auto">
 						<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
 							<div>
@@ -53,24 +168,24 @@ function SalaryInfo() {
 									type="text"
 									placeholder="Gross Salary"
 									label="Gross Salary"
-									onChange={(e) => setAward(e.target.value)}
-									value={award}
+									onChange={(e) => setGrossSalary(e.target.value)}
+									value={gross_salary}
 									icon={<FaPen className="w-3 -ml-7 mt-3" />}
 								/>
 								<InputField
 									type="text"
 									placeholder="Bank"
 									label="Bank"
-									onChange={(e) => setFrom(e.target.value)}
-									value={from}
+									onChange={(e) => setBankName(e.target.value)}
+									value={bank_name}
 									icon={<FaPen className="w-3 -ml-7 mt-3" />}
 								/>
 								<InputField
 									type="text"
 									placeholder="Account Name"
 									label="Account Name"
-									onChange={(e) => setTo(e.target.value)}
-									value={to}
+									onChange={(e) => setAccountName(e.target.value)}
+									value={account_name}
 									icon={<FaPen className="w-3 -ml-7 mt-3" />}
 								/>
 							</div>
@@ -79,9 +194,9 @@ function SalaryInfo() {
 									type="text"
 									placeholder="Account Number"
 									label="Account Number"
-								
-									onChange={(e) => setSchool(e.target.value)}
-									value={school}
+
+									onChange={(e) => setAccountNumber(e.target.value)}
+									value={account_number}
 									icon={<FaPen className="w-3 -ml-7 mt-3" />}
 								/>
 
@@ -89,42 +204,63 @@ function SalaryInfo() {
 									type="text"
 									label="Account Branch"
 									placeholder="Account Branch"
-									onChange={(e) => setDoc(e.target.value)}
-									value={doc}
+									onChange={(e) => setBankBranch(e.target.value)}
+									value={bank_branch}
 								/>
 
-								<div className="mt-14">
-									<Button value={"Add SalaryInfo"} />
-								</div>
+								{salaryInfo?.length === 0 ? (
+									<div onClick={addSalaryInfo} className="mt-14">
+										<Button value={"Add SalaryInfo"} />
+									</div>) : (
+									<div onClick={updateSalaryInfo} className="mt-14">
+										<Button value={"Update SalaryInfo"} />
+									</div>
+								)}
 							</div>
 						</div>
 					</div>
 				) : null}
 			</div>
-			<div className="flex border-b border-gray1">
-				<div className="p-2 w-1/3  truncate">
-					Gross Salary
-					<p className="text-sm text-gray5">2,001,000</p>
-				</div>
-				<div className="p-2 w-1/3  truncate">
-					Bank
-					<p className="text-sm text-gray5">Centinary Bank</p>
-				</div>
-				<div className="p-2 w-1/3  truncate">
-					Account Name
-					<p className="text-sm text-gray5">Jim Junior</p>
-				</div>
-			</div>
-			<div className="flex border-b border-gray1">
-				<div className="p-2 w-1/3  truncate">
-					Account Number
-					<p className="text-sm text-gray5">056890454</p>
-				</div>
-				<div className="p-2 w-1/3">
-					Bank Branch
-					<p className="text-sm text-gray5">056890454</p>
-				</div>
-			</div>
+
+			{/** Salary Info Display */}
+			{salaryInfo?.length === 0 ? <>No Salary Info</> : (
+				salaryInfo?.map((salary) => (
+					<>
+						<div className="flex border-b border-gray1">
+							<div className="p-2 w-1/3  truncate">
+								Gross Salary
+								<p className="text-sm text-gray5">
+									{new Intl.NumberFormat(
+										"en-US",
+										{
+											style: "currency",
+											currency: "UGX",
+										}
+									).format(salary.gross_salary)}
+								</p>
+							</div>
+							<div className="p-2 w-1/3  truncate">
+								Bank
+								<p className="text-sm text-gray5">{salary.bank_name}</p>
+							</div>
+							<div className="p-2 w-1/3  truncate">
+								Account Name
+								<p className="text-sm text-gray5">{salary.account_name}</p>
+							</div>
+						</div>
+						<div className="flex border-b border-gray1">
+							<div className="p-2 w-1/3  truncate">
+								Account Number
+								<p className="text-sm text-gray5">{salary.account_number}</p>
+							</div>
+							<div className="p-2 w-1/3">
+								Bank Branch
+								<p className="text-sm text-gray5">{salary.bank_branch}</p>
+							</div>
+						</div>
+					</>
+				)))}
+
 		</>
 	);
 }

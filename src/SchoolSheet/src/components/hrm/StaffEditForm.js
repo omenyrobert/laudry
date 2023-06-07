@@ -14,10 +14,17 @@ import Qualifications from "./Qualifications";
 import NOK from "./NOK";
 import OtherInfo from "./OtherInfo";
 import SalaryInfo from "./SalaryInfo";
+import axiosInstance from "../../axios-instance"
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 let db = new Localbase("db");
 
 function StaffEditForm(props) {
+	const location = useLocation();
+	const [salaryInfo, setSalaryInfo] = useState([])
+	const searchParams = new URLSearchParams(location.search);
+	const staffId = searchParams.get("staffId");
 	const { closeEditData } = props;
 
 	const staffInfoEdit = {
@@ -50,6 +57,32 @@ function StaffEditForm(props) {
 			},
 		],
 	};
+
+	const [staffInfo, setStaffInfo] = useState({})
+
+	const fetchStaffInfo = async () => {
+		try {
+			const response = await axiosInstance.get(`/staff/${staffId}`);
+			const { status, payload } = response.data;
+			if (status === false) {
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: payload,
+				});
+			} else {
+				setStaffInfo(payload);
+				setSalaryInfo(payload.salaryInfo)
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchStaffInfo();
+	}, []);
 
 	// fetch stypes
 
@@ -99,7 +132,7 @@ function StaffEditForm(props) {
 						<hr className="text-gray2 my-10" />
 						<Qualifications />
 						<hr className="text-gray2 my-10" />
-						<SalaryInfo/>
+						<SalaryInfo salaryInfo={salaryInfo} staffId={staffId} fetchStaffInfo={fetchStaffInfo} />
 					</div>
 				</div>
 				<hr className="text-gray2" />
