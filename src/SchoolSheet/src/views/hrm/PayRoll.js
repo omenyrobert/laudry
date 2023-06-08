@@ -171,8 +171,7 @@ function PayRoll() {
 			const newData = payload.map((staff) => ({
 				value: staff.first_name + " " + staff.last_name,
 				label: staff.first_name + " " + staff.last_name,
-				grossSalary: staff.grossSalary,
-				staffId: staff.id,
+				...staff
 			}));
 			setStaffInfo(newData);
 		});
@@ -197,12 +196,7 @@ function PayRoll() {
 		setCreate(false);
 	};
 
-	const [taxes, setTaxes] = useState([
-		{
-			name: "",
-			percent: 0,
-		},
-	]);
+	const [taxes, setTaxes] = useState([]);
 	const grossSalary = parseInt(selectedOption?.grossSalary);
 	const [netSalary, setNetSalary] = useState(0);
 
@@ -230,12 +224,7 @@ function PayRoll() {
 		setTaxes(updatedTaxes);
 	}
 
-	const [deductions, setDeductions] = useState([
-		{
-			name: "",
-			amount: 0,
-		},
-	]);
+	const [deductions, setDeductions] = useState([]);
 
 	function handleDeductionNameChange(e, index) {
 		const updatedDeductions = [...deductions];

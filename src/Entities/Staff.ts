@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { StaffType } from "./StaffType";
 import { SalaryInfo } from "./SalaryInfo";
+import { PaySlip } from "./PaySlip";
 
 @Entity()
 export class Staff extends BaseEntity {
@@ -51,6 +52,17 @@ export class Staff extends BaseEntity {
     }
   )
   salaryInfo!: SalaryInfo;
+
+  @OneToMany(
+    () => PaySlip,
+    (paySlip) => paySlip.staff,
+    {
+      cascade: true,
+      eager: true,
+      nullable: true,
+    }
+  )
+  paySlips!: PaySlip[];
 
 
 }
