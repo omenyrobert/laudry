@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import InputField from "../InputField";
 import Button2 from "../Button2";
 import Button from "../Button";
@@ -7,10 +6,11 @@ import { FaPen, FaPhone, FaRegImage, FaRegTrashAlt } from "react-icons/fa";
 import { MdOutlineAlternateEmail, MdLocationPin } from "react-icons/md";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import ButtonSecondary from "../ButtonSecondary";
 import Modal from "react-modal";
-let db = new Localbase("db");
+import axiosInstance from "../../axios-instance"
+import { useDispatch, useSelector } from "react-redux";
+import { getSchools } from "../../store/schoolSheetSlices/schoolStore";
 
 const customStyles = {
 	overlay: {
@@ -26,6 +26,7 @@ const customStyles = {
 };
 
 function EditSchoolInfo() {
+	const dispatch = useDispatch();
 	const [name, setName] = useState("");
 	const [motto, setMotto] = useState("");
 	const [location, setLocation] = useState("");
@@ -34,52 +35,73 @@ function EditSchoolInfo() {
 	const [description, setDescription] = useState("");
 	const [sites, setSites] = useState("");
 	const [show, setShow] = useState(false);
-	const [aid, setAid] = useState("");
+	const [id, setId] = useState("");
+	const [photo, setPhoto] = useState(null);
+	const [school, setSchool] = useState(null);
+	const { schools } = useSelector((state) => state.schoolStore);
 
 	const updateInfo = () => {
-		db.collection("aboutInfoTbl")
-			.doc({ id: aid })
-			.update({
-				name: name,
-				motto: motto,
-				location: location,
-				phones: phones,
-				emails: emails,
-				sites: sites,
-				description: description,
-			})
+		let data = {
+			name: name,
+			motto: motto,
+			location: location,
+			phoneNumbers: phones,
+			emails: emails,
+			sites: sites,
+			description: description,
+			id,
+		};
+		  
+		const formData = new FormData();
+
+		for (const key in data) {
+			formData.append(key, data[key]);
+		}
+
+		if (photo) {
+			formData.append("logo", photo);
+		}
+
+		axiosInstance.put(`schools`, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			}
+		})
 			.then((response) => {
-				closeModal();
-				// show alert
+				const { status, payload } = response.data;
+				if (status === false) {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
 					showConfirmButton: false,
 					timer: 500,
 				});
+				dispatch(getSchools());
+				setIsOpen(false);
 			})
 			.catch((error) => {
-				console.log(error);
-			});
-	};
-
-	const fetchAboutInfo = async () => {
-		console.log("fetched");
-		const aboutInfo = await db.collection("aboutInfoTbl").get();
-		// setName(aboutInfo[0].name);
-		// setMotto(aboutInfo[0].motto);
-		// setLocation(aboutInfo[0].location);
-		// setPhones(aboutInfo[0].phones);
-		// setEmails(aboutInfo[0].emails);
-		// setDescription(aboutInfo[0].description);
-		// setSites(aboutInfo[0].sites);
-		// setAid(aboutInfo[0].id);
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: "An Error Occurred while trying to update student. Please try again",
+				});
+			})
 	};
 
 	// fetching section
 	useEffect(() => {
-		fetchAboutInfo();
-	}, []);
+		dispatch(getSchools());
+	}, [dispatch]);
+
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -90,6 +112,38 @@ function EditSchoolInfo() {
 	const closeModal = () => {
 		setIsOpen(false);
 	};
+
+	function selectPhoto(e) {
+
+		const { files } = e.target;
+		if (files && files[0]) {
+			setPhoto(files[0]);
+		}
+	}
+
+	useEffect(() => {
+		setSchool(schools[0]);
+		if (schools[0]) {
+		  const {
+			name,
+			motto,
+			location,
+			phoneNumbers,
+			emails,
+			description,
+			sites,
+			id
+		  } = schools[0];
+		  setName(name);
+		  setMotto(motto);
+		  setLocation(location);
+		  setPhones(phoneNumbers);
+		  setEmails(emails);
+		  setDescription(description);
+		  setSites(sites);
+		  setId(id);
+		}
+	  }, [schools]);
 
 	return (
 		<>
@@ -136,6 +190,7 @@ function EditSchoolInfo() {
 									type="file"
 									label=" Logo"
 									name="Logo"
+									onChange={selectPhoto}
 									icon={<FaRegImage className="w-3 -ml-7 mt-3" />}
 								/>
 								<InputField
