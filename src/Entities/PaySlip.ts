@@ -25,7 +25,9 @@ export class PaySlip extends BaseEntity {
     tax => tax.paySlip,
     {
       nullable: true,
-      eager: true
+      eager: true,
+      cascade: true,
+      onDelete: "CASCADE",
     }
   )
   taxes: Tax[];
@@ -35,7 +37,9 @@ export class PaySlip extends BaseEntity {
     deduction => deduction.paySlip,
     {
       nullable: true,
-      eager: true
+      eager: true,
+      cascade: true,
+      onDelete: "CASCADE",
     }
   )
   deductions: Deduction[];
@@ -69,6 +73,10 @@ export class Tax extends BaseEntity {
   @ManyToOne(
     () => PaySlip,
     paySlip => paySlip.taxes,
+    {
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    }
   )
   paySlip: PaySlip;
 
@@ -88,6 +96,10 @@ export class Deduction extends BaseEntity {
   @ManyToOne(
     () => PaySlip,
     paySlip => paySlip.deductions,
+    {
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    }
   )
   paySlip: PaySlip;
 
@@ -117,15 +129,22 @@ type DeductionOBJ = {
   amount: number
 }
 
-export const createPaySlip = async (gross_salary: number, net_salary: number, paySlipCategory: PaySlipCategory, staffId: number, taxes: TaxOBJ[] = [], deductions: DeductionOBJ[] = []) => {
+export const createPaySlip = async (gross_salary: number, net_salary: number, paySlipCategory: number, staffId: number, taxes: TaxOBJ[] = [], deductions: DeductionOBJ[] = []) => {
+
   const staff = await Staff.findOne({ where: { id: staffId } });
   if (!staff) {
     throw new Error('Staff member not found');
   }
+
+  const paySlipCategoryObj = await PaySlipCategory.findOne({ where: { id: paySlipCategory } });
+  if (!paySlipCategoryObj) {
+    throw new Error('PaySlipCategory not found');
+  }
+
   const PaySlipToInsert = await PaySlip.insert({ 
     gross_salary: gross_salary, 
     net_salary: net_salary, 
-    paySlipCategory: paySlipCategory, 
+    paySlipCategory: paySlipCategoryObj, 
     staff: staff
   });
 
@@ -151,4 +170,55 @@ export const deletePaySlip = async (id: number) => {
     return true
   }
   return false
+}
+
+
+export const updatePaySlip = async (id: number, gross_salary: number, net_salary: number, paySlipCategory: number, staffId: number, taxes: TaxOBJ[] = [], deductions: DeductionOBJ[] = []) => {
+
+  const paySlip = await PaySlip.findOne({ where: { id: id } });
+
+  if (!paySlip) {
+    throw new Error('PaySlip not found');
+  }
+
+  const staff = await Staff.findOne({ where: { id: staffId } });
+
+  if (!staff) {
+    throw new Error('Staff member not found');
+  }
+
+  const paySlipCategoryObj = await PaySlipCategory.findOne({ where: { id: paySlipCategory } });
+
+  if (!paySlipCategoryObj) {
+    throw new Error('PaySlipCategory not found');
+  }
+
+  const PaySlipToUpdate = await PaySlip.update(id, {
+    gross_salary: gross_salary,
+    net_salary: net_salary,
+    paySlipCategory: paySlipCategoryObj,
+    staff: staff
+  });
+
+  const insertedPaySlip = await PaySlip.findOne({ where: { id: id }, relations: ['taxes', 'deductions', 'paySlipCategory', 'staff'] }) as PaySlip;
+
+  for (let i = 0; i < taxes.length; i++) {
+    const tax = taxes[i];
+    if (tax.id) {
+      await Tax.update(tax.id, { name: tax.name, percentage: tax.percentage, paySlip: insertedPaySlip });
+    } else {
+      await Tax.insert({ name: tax.name, percentage: tax.percentage, paySlip: insertedPaySlip });
+    }
+  }
+
+  for (let i = 0; i < deductions.length; i++) {
+    const deduction = deductions[i];
+    if (deduction.id) {
+      await Deduction.update(deduction.id, { name: deduction.name, amount: deduction.amount, paySlip: insertedPaySlip });
+    } else {
+      await Deduction.insert({ name: deduction.name, amount: deduction.amount, paySlip: insertedPaySlip });
+    }
+  }
+
+  return PaySlipToUpdate;
 }
