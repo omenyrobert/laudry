@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from "typeorm";
+import { PaySlip } from "./PaySlip";
 
 
 @Entity()
@@ -8,6 +9,13 @@ export class PaySlipCategory extends BaseEntity {
 
   @Column()
   category!: string;
+
+  @OneToMany(
+    () => PaySlip,
+    paySlip => paySlip.paySlipCategory,
+  )
+  paySlips: PaySlip[];
+
 
 }
 

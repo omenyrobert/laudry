@@ -9,16 +9,15 @@ import { BsPencilSquare } from "react-icons/bs";
 import { FaPen } from "react-icons/fa";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
-import { v4 as uuid } from "uuid";
 import ButtonSecondary from "../../components/ButtonSecondary";
 import axiosInstance from "../../axios-instance";
+import { useNavigate } from "react-router-dom";
 
-let db = new Localbase("db");
 
 function PayRoll() {
 	const [payslipType, setPayslipType] = useState();
 	const [payslipTypeData, setPayslipTypeData] = useState([]);
+	const navigate = useNavigate();
 	// post payslip types
 	const postPayslipType = () => {
 		let formData = {
@@ -55,7 +54,12 @@ function PayRoll() {
 		axiosInstance.get("/pay-slip-categories").then((res) => {
 			const { payload } = res.data;
 			console.log(payload)
-			setPayslipTypeData(payload);
+			const newData = payload.map((payslip) => ({
+				value: payslip.category,
+				label: payslip.category,
+				...payslip
+			}));
+			setPayslipTypeData(newData);
 		});
 	};
 
@@ -171,8 +175,7 @@ function PayRoll() {
 			const newData = payload.map((staff) => ({
 				value: staff.first_name + " " + staff.last_name,
 				label: staff.first_name + " " + staff.last_name,
-				grossSalary: staff.grossSalary,
-				staffId: staff.id,
+				...staff
 			}));
 			setStaffInfo(newData);
 		});
@@ -197,13 +200,8 @@ function PayRoll() {
 		setCreate(false);
 	};
 
-	const [taxes, setTaxes] = useState([
-		{
-			name: "",
-			percent: 0,
-		},
-	]);
-	const grossSalary = parseInt(selectedOption?.grossSalary);
+	const [taxes, setTaxes] = useState([]);
+	const [grossSalary, setGrossSalary] = useState(0);
 	const [netSalary, setNetSalary] = useState(0);
 
 	function handleTaxNameChange(e, index) {
@@ -214,13 +212,13 @@ function PayRoll() {
 
 	function handleTaxPercentageChange(e, index) {
 		const updatedTaxes = [...taxes];
-		updatedTaxes[index].percent = parseInt(e.target.value);
+		updatedTaxes[index].percentage = parseInt(e.target.value);
 		setTaxes(updatedTaxes);
 	}
 
 	function handleAddTax() {
 		const updatedTaxes = [...taxes];
-		updatedTaxes.push({ name: "", percent: 0 });
+		updatedTaxes.push({ name: "", percentage: 0 });
 		setTaxes(updatedTaxes);
 	}
 
@@ -230,12 +228,7 @@ function PayRoll() {
 		setTaxes(updatedTaxes);
 	}
 
-	const [deductions, setDeductions] = useState([
-		{
-			name: "",
-			amount: 0,
-		},
-	]);
+	const [deductions, setDeductions] = useState([]);
 
 	function handleDeductionNameChange(e, index) {
 		const updatedDeductions = [...deductions];
@@ -264,12 +257,21 @@ function PayRoll() {
 	useEffect(() => {
 		let totalTaxPercentage = 0;
 		taxes.forEach((tax) => {
-			totalTaxPercentage += tax.percent;
+			if (tax.percentage) {
+				totalTaxPercentage += tax.percentage;
+			} else {
+				totalTaxPercentage += 0;
+			}
 		});
 
 		let totalDeductions = 0;
 		deductions.forEach((deduction) => {
-			totalDeductions += deduction.amount;
+			if (deduction.amount) {
+				totalDeductions += deduction.amount;
+			} else {
+				totalDeductions += 0;
+			}
+
 		});
 
 		const netSalary =
@@ -278,57 +280,61 @@ function PayRoll() {
 	}, [taxes, grossSalary, deductions]);
 
 	const postEmployeePay = () => {
-		let stId = uuid();
 		let data = {
-			id: stId,
-			employeeId: selectedOption.staffId,
-			employeeName: selectedOption.value,
-			grossSalary: selectedOption.grossSalary,
-			tax: [...taxes],
-			deduction: [...deductions],
-			netSalary: netSalary,
+			gross_salary: grossSalary,
+			taxes: [...taxes],
+			deductions: [...deductions],
+			net_salary: netSalary,
+			paySlipCategory: selectedPaySlip.id,
+			staff: selectedOption.id
 		};
 		if (data) {
-			db.collection("employeePaySlipTbl")
-				.add(data)
-				.then((response) => {
-					// fetch after
-					fetchEmployeePay();
-					// show alert
+
+			axiosInstance.post("/pay-slip", data).then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
-						icon: "success",
+						icon: "error",
 						showConfirmButton: false,
 						timer: 500,
+						title: payload
 					});
-					setTaxes([
-						{
-							name: "",
-							percent: 0,
-						},
-					]);
-					setDeductions([
-						{
-							name: "",
-							amount: 0,
-						},
-					]);
-					setNetSalary(0);
-					setSelectedOption(null);
-					closePay();
-				})
-				.catch(console.error());
+					return;
+				}
+				// fetch after
+				fetchEmployeePay();
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+				setTaxes([]);
+				setDeductions([]);
+				setNetSalary(0);
+				setSelectedOption(null);
+				closePay();
+
+			}).catch((err) => {
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					showConfirmButton: false,
+					timer: 500,
+				});
+			})
 		}
 	};
 	// fetch employee payslip
-	const [employeePayData, setEmployeePayData] = useState();
+	const [employeePayData, setEmployeePayData] = useState([]);
 	const fetchEmployeePay = () => {
-		db.collection("employeePaySlipTbl")
-			.get()
-			.then((payslipType) => {
-				const newData = payslipType;
-				setEmployeePayData(newData);
-			});
+
+		axiosInstance.get("/pay-slip").then((res) => {
+			const { payload } = res.data;
+			console.log(payload)
+			setEmployeePayData(payload);
+		});
 	};
 
 	useEffect(() => {
@@ -336,7 +342,7 @@ function PayRoll() {
 	}, []);
 
 	//deleting employee Payslip
-	const deleteEmployeePay = (employee) => {
+	const deleteEmployeePay = (payslip) => {
 		Swal.fire({
 			title: "Are you sure?",
 			text: "You won't be able to revert this!",
@@ -347,22 +353,36 @@ function PayRoll() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("employeePaySlipTbl")
-					.doc({ id: employee.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchEmployeePay();
 
-						Swal.fire({
-							icon: "success",
+
+				axiosInstance.delete(`/pay-slip/${payslip.id}`).then((res) => {
+					const { status, payload } = res.data;
+					if (status === false) {
+						const MySwal = withReactContent(Swal);
+						MySwal.fire({
+							icon: "error",
 							showConfirmButton: false,
 							timer: 500,
+							title: payload
 						});
-					})
-					.catch((error) => {
-						console.log(error);
+						return;
+					}
+					// fetch after
+					fetchEmployeePay();
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "success",
+						showConfirmButton: false,
+						timer: 500,
 					});
+				}).catch((err) => {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						showConfirmButton: false,
+						timer: 500,
+					});
+				})
 			}
 		});
 	};
@@ -379,15 +399,18 @@ function PayRoll() {
 	const [formGrossSalary, setFormGrossSalary] = useState();
 	const [netSalaryEdit, setNetSalaryEdit] = useState();
 	const [employeeNameEdit, setEmployeeNameEdit] = useState();
+	const [activePaySlip, setActivePaySlip] = useState();
 
-	const openEditEmployeePay = (employee) => {
+	const openEditEmployeePay = (payslip) => {
+		const { staff } = payslip;
+		setEmployeeId(staff.id);
+		setActivePaySlip(payslip);
+		setFormTaxes(payslip.taxes);
+		setFormDeductions(payslip.deductions);
+		setFormGrossSalary(payslip.gross_salary);
+		setNetSalaryEdit(payslip.net_salary);
+		setEmployeeNameEdit(`${staff.first_name} ${staff.last_name}`);
 		setEditEmployeePay(true);
-		setEmployeeId(employee.id);
-		setFormTaxes(employee.tax);
-		setFormDeductions(employee.deduction);
-		setFormGrossSalary(employee.grossSalary);
-		setNetSalaryEdit(employee.netSalary);
-		setEmployeeNameEdit(employee.employeeName);
 	};
 
 	function handleTaxNameChangeEdit(e, index) {
@@ -398,13 +421,13 @@ function PayRoll() {
 
 	function handleTaxPercentageChangeEdit(e, index) {
 		const updatedTaxes = [...formTaxes];
-		updatedTaxes[index].percent = parseInt(e.target.value);
+		updatedTaxes[index].percentage = parseInt(e.target.value);
 		setFormTaxes(updatedTaxes);
 	}
 
 	function handleAddTaxEdit() {
 		const updatedTaxes = [...formTaxes];
-		updatedTaxes.push({ name: "", percent: 0 });
+		updatedTaxes.push({ name: "", percentage: 0 });
 		setFormTaxes(updatedTaxes);
 	}
 
@@ -441,12 +464,20 @@ function PayRoll() {
 	useEffect(() => {
 		let totalTaxPercentage = 0;
 		formTaxes?.forEach((tax) => {
-			totalTaxPercentage += tax.percent;
+			if (tax.percentage) {
+				totalTaxPercentage += tax.percentage;
+			} else {
+				totalTaxPercentage += 0;
+			}
 		});
 
 		let totalDeductions = 0;
 		formDeductions?.forEach((deduction) => {
-			totalDeductions += deduction.amount;
+			if (deduction.amount) {
+				totalDeductions += deduction.amount;
+			} else {
+				totalDeductions += 0;
+			}
 		});
 
 		const netSalaryEdit =
@@ -457,7 +488,7 @@ function PayRoll() {
 	}, [formTaxes, formGrossSalary, formDeductions]);
 
 	const updateEmployeePay = () => {
-		db.collection("employeePaySlipTbl")
+		/*db.collection("employeePaySlipTbl")
 			.doc({ id: employeeId })
 			.update({
 				tax: [...formTaxes],
@@ -475,8 +506,72 @@ function PayRoll() {
 					timer: 500,
 				});
 				closeEditPay();
+			});*/
+
+		let data = {
+			gross_salary: formGrossSalary,
+			taxes: [...formTaxes],
+			deductions: [...formDeductions],
+			net_salary: netSalaryEdit,
+			paySlipCategory: activePaySlip.paySlipCategory.id,
+			staff: employeeId
+		}
+
+		axiosInstance.put(`/pay-slip/${activePaySlip.id}`, data).then((res) => {
+			const { status, payload } = res.data;
+			if (status === false) {
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					showConfirmButton: false,
+					timer: 500,
+					title: payload
+				});
+				return;
+			}
+			// fetch after
+			fetchEmployeePay();
+			const MySwal = withReactContent(Swal);
+			MySwal.fire({
+				icon: "success",
+				showConfirmButton: false,
+				timer: 500,
 			});
+			closeEditPay();
+		}).catch((err) => {
+			const MySwal = withReactContent(Swal);
+			MySwal.fire({
+				icon: "error",
+				showConfirmButton: false,
+				timer: 500,
+			});
+		})
 	};
+
+
+	const [selectedPaySlip, setSelectedPaySlip] = useState(null);
+
+	const handleSelectEmployee = (value) => {
+		setSelectedOption(value)
+		if (value.salaryInfo.length === 0) {
+			Swal.fire({
+				title: "Employee Has No Salary Info",
+				text: "Please add salary info for this employee",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Add Salary Info",
+			}).then((result) => {
+				if (result.isConfirmed) {
+					navigate("/app/hrm/salary-info")
+				}
+			});
+		} else {
+			setGrossSalary(value.salaryInfo[0].gross_salary)
+		}
+	}
+
 
 	return (
 		<div className="w-full">
@@ -537,9 +632,21 @@ function PayRoll() {
 								<Select
 									placeholder={"Select Employee"}
 									defaultValue={selectedOption}
-									onChange={setSelectedOption}
+									onChange={handleSelectEmployee}
 									className="mt-1"
 									options={staffInfo}
+								/>
+
+								<br />
+
+								<label className="text-gray4">Pay Slip Category</label>
+
+								<Select
+									placeholder={"Select PaySlip Category"}
+									defaultValue={selectedPaySlip}
+									onChange={setSelectedPaySlip}
+									className="mt-1"
+									options={payslipTypeData}
 								/>
 
 								{taxes.map((taxItem, index) => (
@@ -555,7 +662,7 @@ function PayRoll() {
 											type="number"
 											placeholder="Tax Percent"
 											label="Tax Percent"
-											value={taxItem.percent}
+											value={taxItem.percentage}
 											onChange={(e) => handleTaxPercentageChange(e, index)}
 										/>
 
@@ -582,7 +689,7 @@ function PayRoll() {
 							<div className="w-1/2 p-3">
 								<br />
 								<div className="bg-gray1 p-3 rounded-md">
-									Gross Salary - {selectedOption?.grossSalary}
+									Gross Salary - {grossSalary}
 								</div>
 								{deductions.map((deduction, index) => (
 									<div>
@@ -752,7 +859,7 @@ function PayRoll() {
 															type="number"
 															placeholder="Tax Percent"
 															label="Tax Percent"
-															value={taxItem.percent}
+															value={taxItem.percentage}
 															onChange={(e) =>
 																handleTaxPercentageChangeEdit(e, index)
 															}
@@ -828,37 +935,34 @@ function PayRoll() {
 									</div>
 								) : null}
 
-								{employeePayData?.map((employee) => {
+								{employeePayData?.map((payslip) => {
 									return (
 										<tr
 											className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-											key={employee.id}
+											key={payslip.id}
 										>
 											<td className="flex">
-												<div className="rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
-													{employee.employeeName[0]}
-												</div>
 												<div>
 													<p className="text-sm p-3 -mt-1 text-gray5">
-														{employee.employeeName}
+														{payslip.staff.first_name} {payslip.staff.last_name}
 													</p>
 												</div>
 											</td>
 											<td className="text-xs p-3 text-gray5">
-												{employee.grossSalary}
+												{payslip.gross_salary}
 											</td>
 											<td className="text-xs p-3 text-gray5">
-												{employee.netSalary}
+												{payslip.net_salary}
 											</td>
 											<td className="text-xs p-3 text-gray5">
 												<div className="flex">
 													<MdDeleteOutline
 														className="text-red w-4 h-4"
-														onClick={() => deleteEmployeePay(employee)}
+														onClick={() => deleteEmployeePay(payslip)}
 													/>
 													<BsPencilSquare
 														className="text-warning h-4 w-4 ml-5"
-														onClick={() => openEditEmployeePay(employee)}
+														onClick={() => openEditEmployeePay(payslip)}
 													/>
 												</div>
 											</td>
