@@ -13,7 +13,6 @@ import ButtonSecondary from "../../components/ButtonSecondary";
 import axiosInstance from "../../axios-instance";
 import { useNavigate } from "react-router-dom";
 
-
 function PayRoll() {
 	const [payslipType, setPayslipType] = useState();
 	const [payslipTypeData, setPayslipTypeData] = useState([]);
@@ -24,40 +23,41 @@ function PayRoll() {
 			category: payslipType,
 		};
 		if (payslipType) {
+			axiosInstance
+				.post("/pay-slip-categories", formData)
+				.then((res) => {
+					setPayslipType("");
+					// fetch after
+					fetchPayslipType();
 
-			axiosInstance.post("/pay-slip-categories", formData).then((res) => {
-				setPayslipType("");
-				// fetch after
-				fetchPayslipType();
-
-				// show alert
-				const MySwal = withReactContent(Swal);
-				MySwal.fire({
-					icon: "success",
-					showConfirmButton: false,
-					timer: 500,
+					// show alert
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "success",
+						showConfirmButton: false,
+						timer: 500,
+					});
+					closeCreate();
+				})
+				.catch((err) => {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						showConfirmButton: false,
+						timer: 500,
+					});
 				});
-				closeCreate();
-			}).catch((err) => {
-				const MySwal = withReactContent(Swal);
-				MySwal.fire({
-					icon: "error",
-					showConfirmButton: false,
-					timer: 500,
-				});
-			});
-
 		}
 	};
 	// fetch payslip types
 	const fetchPayslipType = () => {
 		axiosInstance.get("/pay-slip-categories").then((res) => {
 			const { payload } = res.data;
-			console.log(payload)
+			console.log(payload);
 			const newData = payload.map((payslip) => ({
 				value: payslip.category,
 				label: payslip.category,
-				...payslip
+				...payslip,
 			}));
 			setPayslipTypeData(newData);
 		});
@@ -75,36 +75,38 @@ function PayRoll() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
+				axiosInstance
+					.delete(`/pay-slip-categories/${type.id}`)
+					.then((res) => {
+						// fetch after
+						fetchPayslipType();
+						const { status, payload } = res.data;
 
-				axiosInstance.delete(`/pay-slip-categories/${type.id}`).then((res) => {
-					// fetch after
-					fetchPayslipType();
-					const { status, payload } = res.data;
+						if (status === false) {
+							const MySwal = withReactContent(Swal);
+							MySwal.fire({
+								icon: "error",
+								showConfirmButton: false,
+								timer: 500,
+								title: payload,
+							});
+							return;
+						}
 
-					if (status === false) {
+						Swal.fire({
+							icon: "success",
+							showConfirmButton: false,
+							timer: 500,
+						});
+					})
+					.catch((err) => {
 						const MySwal = withReactContent(Swal);
 						MySwal.fire({
 							icon: "error",
 							showConfirmButton: false,
 							timer: 500,
-							title: payload
 						});
-						return;
-					}
-
-					Swal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
 					});
-				}).catch((err) => {
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "error",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
 			}
 		});
 	};
@@ -122,41 +124,42 @@ function PayRoll() {
 		setTypeId(type.id);
 	};
 	const updatePayslipType = () => {
-
-
 		let formData = {
 			category: typeEdit,
-		}
+		};
 
-		axiosInstance.put(`/pay-slip-categories/${typeId}`, formData).then((res) => {
-			const { status, payload } = res.data;
-			if (status === false) {
+		axiosInstance
+			.put(`/pay-slip-categories/${typeId}`, formData)
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						showConfirmButton: false,
+						timer: 500,
+						title: payload,
+					});
+					return;
+				}
+				// fetch after
+				fetchPayslipType();
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+				closeEditData();
+			})
+			.catch((err) => {
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "error",
 					showConfirmButton: false,
 					timer: 500,
-					title: payload
 				});
-				return;
-			}
-			// fetch after
-			fetchPayslipType();
-			const MySwal = withReactContent(Swal);
-			MySwal.fire({
-				icon: "success",
-				showConfirmButton: false,
-				timer: 500,
 			});
-			closeEditData();
-		}).catch((err) => {
-			const MySwal = withReactContent(Swal);
-			MySwal.fire({
-				icon: "error",
-				showConfirmButton: false,
-				timer: 500,
-			});
-		})
 	};
 
 	// fetching stypes
@@ -175,7 +178,7 @@ function PayRoll() {
 			const newData = payload.map((staff) => ({
 				value: staff.first_name + " " + staff.last_name,
 				label: staff.first_name + " " + staff.last_name,
-				...staff
+				...staff,
 			}));
 			setStaffInfo(newData);
 		});
@@ -271,7 +274,6 @@ function PayRoll() {
 			} else {
 				totalDeductions += 0;
 			}
-
 		});
 
 		const netSalary =
@@ -286,53 +288,53 @@ function PayRoll() {
 			deductions: [...deductions],
 			net_salary: netSalary,
 			paySlipCategory: selectedPaySlip.id,
-			staff: selectedOption.id
+			staff: selectedOption.id,
 		};
 		if (data) {
-
-			axiosInstance.post("/pay-slip", data).then((res) => {
-				const { status, payload } = res.data;
-				if (status === false) {
+			axiosInstance
+				.post("/pay-slip", data)
+				.then((res) => {
+					const { status, payload } = res.data;
+					if (status === false) {
+						const MySwal = withReactContent(Swal);
+						MySwal.fire({
+							icon: "error",
+							showConfirmButton: false,
+							timer: 500,
+							title: payload,
+						});
+						return;
+					}
+					// fetch after
+					fetchEmployeePay();
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "success",
+						showConfirmButton: false,
+						timer: 500,
+					});
+					setTaxes([]);
+					setDeductions([]);
+					setNetSalary(0);
+					setSelectedOption(null);
+					closePay();
+				})
+				.catch((err) => {
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "error",
 						showConfirmButton: false,
 						timer: 500,
-						title: payload
 					});
-					return;
-				}
-				// fetch after
-				fetchEmployeePay();
-				const MySwal = withReactContent(Swal);
-				MySwal.fire({
-					icon: "success",
-					showConfirmButton: false,
-					timer: 500,
 				});
-				setTaxes([]);
-				setDeductions([]);
-				setNetSalary(0);
-				setSelectedOption(null);
-				closePay();
-
-			}).catch((err) => {
-				const MySwal = withReactContent(Swal);
-				MySwal.fire({
-					icon: "error",
-					showConfirmButton: false,
-					timer: 500,
-				});
-			})
 		}
 	};
 	// fetch employee payslip
 	const [employeePayData, setEmployeePayData] = useState([]);
 	const fetchEmployeePay = () => {
-
 		axiosInstance.get("/pay-slip").then((res) => {
 			const { payload } = res.data;
-			console.log(payload)
+			console.log(payload);
 			setEmployeePayData(payload);
 		});
 	};
@@ -353,36 +355,37 @@ function PayRoll() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-
-
-				axiosInstance.delete(`/pay-slip/${payslip.id}`).then((res) => {
-					const { status, payload } = res.data;
-					if (status === false) {
+				axiosInstance
+					.delete(`/pay-slip/${payslip.id}`)
+					.then((res) => {
+						const { status, payload } = res.data;
+						if (status === false) {
+							const MySwal = withReactContent(Swal);
+							MySwal.fire({
+								icon: "error",
+								showConfirmButton: false,
+								timer: 500,
+								title: payload,
+							});
+							return;
+						}
+						// fetch after
+						fetchEmployeePay();
+						const MySwal = withReactContent(Swal);
+						MySwal.fire({
+							icon: "success",
+							showConfirmButton: false,
+							timer: 500,
+						});
+					})
+					.catch((err) => {
 						const MySwal = withReactContent(Swal);
 						MySwal.fire({
 							icon: "error",
 							showConfirmButton: false,
 							timer: 500,
-							title: payload
 						});
-						return;
-					}
-					// fetch after
-					fetchEmployeePay();
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
 					});
-				}).catch((err) => {
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "error",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
 			}
 		});
 	};
@@ -514,45 +517,47 @@ function PayRoll() {
 			deductions: [...formDeductions],
 			net_salary: netSalaryEdit,
 			paySlipCategory: activePaySlip.paySlipCategory.id,
-			staff: employeeId
-		}
+			staff: employeeId,
+		};
 
-		axiosInstance.put(`/pay-slip/${activePaySlip.id}`, data).then((res) => {
-			const { status, payload } = res.data;
-			if (status === false) {
+		axiosInstance
+			.put(`/pay-slip/${activePaySlip.id}`, data)
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					const MySwal = withReactContent(Swal);
+					MySwal.fire({
+						icon: "error",
+						showConfirmButton: false,
+						timer: 500,
+						title: payload,
+					});
+					return;
+				}
+				// fetch after
+				fetchEmployeePay();
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+				closeEditPay();
+			})
+			.catch((err) => {
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "error",
 					showConfirmButton: false,
 					timer: 500,
-					title: payload
 				});
-				return;
-			}
-			// fetch after
-			fetchEmployeePay();
-			const MySwal = withReactContent(Swal);
-			MySwal.fire({
-				icon: "success",
-				showConfirmButton: false,
-				timer: 500,
 			});
-			closeEditPay();
-		}).catch((err) => {
-			const MySwal = withReactContent(Swal);
-			MySwal.fire({
-				icon: "error",
-				showConfirmButton: false,
-				timer: 500,
-			});
-		})
 	};
-
 
 	const [selectedPaySlip, setSelectedPaySlip] = useState(null);
 
 	const handleSelectEmployee = (value) => {
-		setSelectedOption(value)
+		setSelectedOption(value);
 		if (value.salaryInfo.length === 0) {
 			Swal.fire({
 				title: "Employee Has No Salary Info",
@@ -564,17 +569,56 @@ function PayRoll() {
 				confirmButtonText: "Add Salary Info",
 			}).then((result) => {
 				if (result.isConfirmed) {
-					navigate("/app/hrm/salary-info")
+					navigate("/app/hrm/salary-info");
 				}
 			});
 		} else {
-			setGrossSalary(value.salaryInfo[0].gross_salary)
+			setGrossSalary(value.salaryInfo[0].gross_salary);
 		}
-	}
-
+	};
 
 	return (
 		<div className="w-full">
+			<div className="bg-white z-50 absolute w-[50vw] h-full">
+				<div className="p-3 bg-primary text-lg text-white flex justify-between">
+					<div>
+						<p>PaySlip for (payslip name)</p>
+					</div>
+					<div>Omeny Robert</div>
+					<div>12-june-2023</div>
+				</div>
+				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
+					<div>Gross Salary</div>
+					<div>2,500,000</div>
+				</div>
+				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
+					<div className="w-20">PAYEE Tax</div>
+					<div>20%</div>
+					<div>200,000</div>
+				</div>
+				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
+					<div className="w-20">NSSF</div>
+					<div>10%</div>
+					<div>100,000</div>
+				</div>
+				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
+					<div className="w-20">Late Coming</div>
+					<div>100,000</div>
+				</div>
+				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
+					<div className="w-20">Lost Cable</div>
+					<div>50,000</div>
+				</div>
+				<div className="flex bg-gray1 p-5 justify-between text-gray5">
+					<div className="">Total Deductions</div>
+					<div>350,000</div>
+				</div>
+				<div className="flex border-b border-gray1 text-lg text-primary p-5 justify-between font-bold">
+					<div className="">Net Salary</div>
+					<div>2,150,000</div>
+				</div>
+			</div>
+
 			<div className="h-screen mt-2">
 				<div className="flex bg-white p-3 justify-between shadow-lg rounded-md">
 					<div className="flex justify-between w-1/2">
@@ -739,7 +783,7 @@ function PayRoll() {
 					</div>
 				) : null}
 
-				<div className="flex">
+				<div className="flex relative">
 					<div className="w-3/12">
 						<p className="mt-5 text-lg font-medium text-secondary">
 							Payslip Category
@@ -752,7 +796,7 @@ function PayRoll() {
 							<tbody>
 								{/* edit popup start */}
 								{editData ? (
-									<div className="absolute shadow-lg rounded flex w-[400px] p-5 bg-white">
+									<div className="absolute shadow-lg rounded  flex w-[400px] p-5 bg-white">
 										<div className="w-2/3 pr-5">
 											<InputField
 												type="text"
@@ -827,8 +871,8 @@ function PayRoll() {
 							</thead>
 							<tbody>
 								{editEmployeePay ? (
-									<div className="absolute w-1/2 h-[75vh]  overflow-y-auto bg-white shadow-lg rounded-md">
-										<div className="bg-primary p-3 flex justify-between rounded-md text-white">
+									<div className="absolute w-1/2  -mt-32   bg-white shadow-lg rounded-md">
+										<div className="text-primary p-3 flex justify-between rounded-md bg-gray1">
 											<div>Edit Payslip</div>
 											<div>
 												<p onClick={closeEditPay} className="cursor-pointer">
@@ -836,7 +880,7 @@ function PayRoll() {
 												</p>
 											</div>
 										</div>
-										<div className="flex">
+										<div className="flex h-[60vh] overflow-y-auto">
 											<div className="w-1/2 p-3">
 												<label className="text-gray4">Employee</label>
 
@@ -927,6 +971,13 @@ function PayRoll() {
 													Add Deductions
 												</button>
 												<br />
+											</div>
+										</div>
+										<div className="text-primary p-3 flex justify-between rounded-md bg-gray1">
+											<div onClick={closeEditPay}>
+												<ButtonSecondary value={"Close"} />
+											</div>
+											<div>
 												<div onClick={updateEmployeePay}>
 													<Button value={"Update Payslip"} />
 												</div>
