@@ -60,8 +60,8 @@ function Journal() {
 			try {
 				let formData = {
 					date,
-					debit,
-					credit,
+					debit: parseFloat(debit),
+					credit: parseFloat(debit),
 					transactionType,
 					debitAccount: debitAccount && debitAccount.value,
 					debitAccountId: debitAccount && debitAccount.id,
@@ -165,8 +165,9 @@ function Journal() {
 							<InputField
 								type="text"
 								label="Credit"
-								value={credit}
-								onChange={(e) => setCredit(e.target.value)}
+								value={debit}
+								editable={false}
+								// onChange={(e) => setCredit(e.target.value)}
 								placeholder="Enter Amount"
 							/>
 							<Select

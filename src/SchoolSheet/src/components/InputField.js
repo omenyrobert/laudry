@@ -9,11 +9,12 @@ function InputField({
 	type,
 	icon,
 	onChange,
+	editable = true,
 }) {
 	const [required, setRequired] = useState(false);
 
 const validate = (e)=>{
-if(e.target.vaue === ""){
+if(e.target.value === ""){
 	setRequired(true)
 }
 }
@@ -29,6 +30,7 @@ if(e.target.vaue === ""){
 					placeholder={placeholder}
 					onChange={(e) => onChange(e)}
 					onBlur={validate}
+					readOnly={!editable}
 					className="py-1 px-4 rounded-lg my-1 w-full bg-gray1 text-xs text-gray5 h-8"
 				/>
 				<div>{icon}</div>
