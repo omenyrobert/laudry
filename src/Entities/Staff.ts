@@ -34,6 +34,8 @@ export class Staff extends BaseEntity {
     () => {
       onDelete: "CASCADE";
       onUpdate: "CASCADE";
+    }, {
+      eager: true,
     }
   )
   @JoinColumn()
@@ -63,6 +65,30 @@ export class Staff extends BaseEntity {
     }
   )
   paySlips!: PaySlip[];
+
+
+  // Add profile columns all are nullable
+
+  @Column({ nullable: true })
+  profile_picture!: string;
+
+  @Column({ nullable: true })
+  address!: string;
+
+  @Column({ nullable: true })
+  phone_number!: string;
+
+  @Column({ nullable: true })
+  date_of_birth!: Date;
+
+  @Column({ nullable: true })
+  gender!: string;
+
+  @Column({ nullable: true })
+  marital_status!: string;
+
+  @Column({ nullable: true })
+  nationality!: string;
 
 
 }
@@ -150,3 +176,68 @@ export const updatePassword = async (email: string, password: any) => {
   );
   return updatePassword;
 };
+
+
+export const updateProfile = async (
+  id: number,
+  first_name: string,
+  middle_name: string,
+  last_name: string,
+  email: string,
+  staff_type: number,
+  address: string,
+  phone_number: string,
+  date_of_birth: string,
+  gender: string,
+  marital_status: string,
+  nationality: string,
+) => {
+  
+  // get staff account
+  const staff = await Staff.findOne({ where: { id: id } });
+
+  if (!staff) {
+    throw new Error("Staff account does not exist");
+  }
+
+  const getStaffType = await StaffType.findOne({ where: { id: staff_type } });
+
+  if (!getStaffType) {  
+    throw new Error("Staff type does not exist");
+  }
+
+  // update all fields
+  staff.first_name = first_name;
+  staff.middle_name = middle_name;
+  staff.last_name = last_name;
+  staff.staff_type = getStaffType;
+  staff.address = address;
+  staff.phone_number = phone_number;
+  staff.date_of_birth = new Date(date_of_birth);
+  staff.gender = gender
+  staff.marital_status = marital_status;
+  staff.nationality = nationality;
+  staff.email = email;
+
+  // save staff
+  await staff.save();
+
+  return staff;
+};
+
+export const updateProfilePicture = async (
+  id: number,
+  profile_picture: string
+) => {
+  const staff = await Staff.findOne({ where: { id: id } });
+
+  if (!staff) {
+    throw new Error("Staff account does not exist");
+  }
+
+  staff.profile_picture = profile_picture;
+
+  await staff.save();
+
+  return staff;
+}

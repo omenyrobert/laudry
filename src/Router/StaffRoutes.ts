@@ -6,7 +6,8 @@ import {
   removeStaffMember,
   modifyStaffMember,
   passwordUpdate,
-  fetchStaffById
+  fetchStaffById,
+  updateStaffProfile
 } from "../Controllers/StaffController";
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
 
@@ -18,4 +19,5 @@ export default (router: Router) => {
   router.delete(`${staffPrefix}/:id`, JWTAuthMiddleWare, removeStaffMember);
   router.post(`${staffPrefix}/reset-password`, passwordUpdate);
   router.get(`${staffPrefix}/:id`, JWTAuthMiddleWare, fetchStaffById);
+  router.put(`${staffPrefix}/profile/:id`, JWTAuthMiddleWare, updateStaffProfile);
 };

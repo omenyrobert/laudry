@@ -74,6 +74,7 @@ function StaffEditForm(props) {
 			} else {
 				setStaffInfo(payload);
 				setSalaryInfo(payload.salaryInfo)
+				console.log(payload)
 			}
 		} catch (error) {
 			console.log(error);
@@ -122,7 +123,7 @@ function StaffEditForm(props) {
 							</div>
 						</div>
 
-						<BasicInfo />
+						<BasicInfo staffInfo={staffInfo} staffId={staffId} fetchStaffInfo={fetchStaffInfo} />
 
 						<br />
 					</div>
