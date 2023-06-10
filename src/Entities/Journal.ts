@@ -16,13 +16,7 @@ export class Journal extends BaseEntity {
   credit!: number;
 
   @Column({ nullable: true })
-  debitAccount!: string;
-
-  @Column({ nullable: true })
   debitAccountId!: number;
-
-  @Column({ nullable: true })
-  creditAccount!: string;
 
   @Column({ nullable: true })
   creditAccountId!: number;
@@ -60,9 +54,7 @@ export const createJournal = async (
     date,
     debit,
     credit: 0,
-    debitAccount,
     debitAccountId,
-    creditAccount: "",
     creditAccountId: 0,
     transactionType,
     balance1: 0,
@@ -73,9 +65,7 @@ export const createJournal = async (
     date,
     debit: 0,
     credit,
-    debitAccount: "",
     debitAccountId: 0,
-    creditAccount,
     creditAccountId,
     transactionType,
     balance1: 0,
