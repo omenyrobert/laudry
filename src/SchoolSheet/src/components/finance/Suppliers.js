@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare, BsEye } from "react-icons/bs";
 import Button2 from "../Button2";
@@ -8,11 +7,13 @@ import InputField from "../InputField";
 import Button from "../Button";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
-
-let db = new Localbase("db");
+import { useDispatch, useSelector } from "react-redux";
+import axiosInstance from "../../axios-instance";
+import { getSuppliers } from "../../store/schoolSheetSlices/schoolStore";
 
 function Suppliers() {
+	const dispatch = useDispatch();
+	const { suppliers } = useSelector((state) => state.schoolStore);
 	const [showUpdate2, setShowUpdate2] = useState(false);
 
 	const closeShowUpdate2 = () => {
@@ -23,7 +24,7 @@ function Suppliers() {
 
 	const openShowUpdate2 = (sup) => {
 		setShowUpdate2(true);
-		setEditSupplier(sup.supplier);
+		setEditSupplier(sup.supplierName);
 		setSupplierId(sup.id);
 		setContactsEdit(sup.contacts);
 		setEmailsEdit(sup.emails);
@@ -47,7 +48,7 @@ function Suppliers() {
 
 	const openShowUpdate = (sup) => {
 		setShowUpdate(true);
-		setEditSupplier(sup.supplier);
+		setEditSupplier(sup.supplierName);
 		setSupplierId(sup.id);
 		setContactsEdit(sup.contacts);
 		setEmailsEdit(sup.emails);
@@ -56,19 +57,26 @@ function Suppliers() {
 	};
 
 	// update supplier
-	const updateSupplier = () => {
-		db.collection("suppliersTbl")
-			.doc({ id: supplierId })
-			.update({
-				supplier: editSupplier,
+	const updateSupplier = async () => {
+		try {
+			let formData = {
+				id: supplierId,
+				supplierName: editSupplier,
 				contacts: contactsEdit,
 				emails: emailsEdit,
 				address: addressEdit,
 				about: aboutEdit,
-			})
-			.then((response) => {
-				console.log(response);
-				fetchSuppliers();
+			};
+			const grade = await axiosInstance.put(`/suppliers`, formData);
+			const { data } = grade;
+			const { status } = data;
+			if (status) {
+				dispatch(getSuppliers());
+				setEditSupplier("");
+				setContactsEdit("");
+				setEmailsEdit("");
+				setAddressEdit("");
+				setAboutEdit("");
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -76,11 +84,10 @@ function Suppliers() {
 					timer: 500,
 				});
 				closeShowUpdate();
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-
+			}
+		} catch (error) {
+			console.log(error);
+		}
 		// fetch after
 		// fetchSuppliers();
 	};
@@ -96,24 +103,23 @@ function Suppliers() {
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("suppliersTbl")
-					.doc({ id: sup.id })
-					.delete()
-					.then((response) => {
-						fetchSuppliers();
-
+				try {
+					const response = await axiosInstance.delete(`/suppliers/${sup.id}`);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
+						dispatch(getSuppliers());
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
-
+					}
+				} catch (error) {
+					console.log(error);
+				}
 				// fetch after
 			}
 		});
@@ -125,55 +131,41 @@ function Suppliers() {
 	const [emails, setEmails] = useState("");
 	const [address, setAddress] = useState("");
 	const [about, setAbout] = useState("");
-	const postSuppliers = () => {
-		let secId = uuid();
-		let formData = {
-			id: secId,
-			supplier: supplier,
-			contacts: contacts,
-			emails: emails,
-			address: address,
-			about: about,
-		};
-		if (supplier || contacts || emails || address || about) {
-			db.collection("suppliersTbl")
-				.add(formData)
-				.then((response) => {
-					console.log(response);
-					setSupplier("");
-					setContacts("");
-					setEmails("");
-					setAddress("");
-					setAbout("");
+	const postSuppliers = async () => {
+		try {
+			let formData = {
+				supplierName: supplier,
+				contacts: contacts,
+				emails: emails,
+				address: address,
+				about: about,
+			};
 
-					// fetch after
-					fetchSuppliers();
-
-					// show alert
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
-				.catch((error) => {
-					console.log(error);
+			const response = await axiosInstance.post("/suppliers", formData);
+			const { data } = response;
+			const { status } = data;
+			if (status) {
+				dispatch(getSuppliers());
+				setSupplier("");
+				setContacts("");
+				setEmails("");
+				setAddress("");
+				setAbout("");
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
 				});
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
-	const [suppliersData, setSuppliers] = useState([]);
-	const fetchSuppliers = async () => {
-		console.log("fetched");
-		const suppliers = await db.collection("suppliersTbl").get();
-		setSuppliers(suppliers);
-	};
-
-	// fetching supplier
 	useEffect(() => {
-		fetchSuppliers();
-	}, []);
+		dispatch(getSuppliers());
+	}, [dispatch]);
 
 	return (
 		<>
@@ -360,13 +352,13 @@ function Suppliers() {
 								</div>
 							) : null}
 
-							{suppliersData.map((sup) => {
+							{suppliers &&suppliers.map((sup) => {
 								return (
 									<tr
 										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
 										key={sup.id}
 									>
-										<td className="text-xs p-3 text-gray5">{sup.supplier}</td>
+										<td className="text-xs p-3 text-gray5">{sup.supplierName}</td>
 										<td className="text-xs p-3 text-gray5">{sup.contacts}</td>
 										<td className="text-xs p-3 text-gray5">{sup.address}</td>
 										<td>

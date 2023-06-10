@@ -16,6 +16,11 @@ import HouseRoutes from "./HouseRoutes";
 import StudentTypeRoutes from "./StudentTypeRoutes";
 import PaySlipCategoryRoutes from "./PaySlipCategoryRoutes";
 import SalaryInfoRoutes from "./SalaryInfoRoutes";
+import PaySlipRoutes from "./PaySlipRoutes";
+import SchoolRoutes from "./SchoolRoutes";
+import AccountRoutes from "./AccountRoutes";
+import JournalRoutes from "./JournalRoutes";
+import SupplierRoutes from "./SupplierRoutes";
 
 const router = Router();
 
@@ -37,5 +42,10 @@ export default (): Router => {
   StudentTypeRoutes(router);
   PaySlipCategoryRoutes(router);
   SalaryInfoRoutes(router);
+  PaySlipRoutes(router);
+  SchoolRoutes(router);
+  AccountRoutes(router);
+  JournalRoutes(router);
+  SupplierRoutes(router);
   return router;
 };
