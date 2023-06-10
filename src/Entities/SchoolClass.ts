@@ -1,3 +1,4 @@
+import { Student } from "./Student";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -5,11 +6,10 @@ import {
   BaseEntity,
   ManyToMany,
   JoinTable,
-  OneToMany,
+  In,
 } from "typeorm";
 
 import { Stream, getSelectedStream } from "./Stream";
-import { Student } from "./Student";
 
 @Entity()
 export class SchoolClass extends BaseEntity {
@@ -28,12 +28,8 @@ export class SchoolClass extends BaseEntity {
   @JoinTable({ name: "school_class_streams" })
   streams: Stream[];
 
-  @OneToMany(() => Student, (student) => student.studentClass, {
-    //cascade: true,
-    //eager: true,
-    nullable: true,
-  })
-  students!: Student[];
+  @ManyToMany(() => Student, (student) => student.classes)
+  students: [];
 }
 
 export const getClasses = async () => {
@@ -56,7 +52,9 @@ export const createClass = async (name: string, stream: any) => {
 };
 
 export const getClassById = async (id: number) => {
-  const classToFind = await SchoolClass.findOne({ where: { id: id } }) as SchoolClass;
+  const classToFind = (await SchoolClass.findOne({
+    where: { id: id },
+  })) as SchoolClass;
   return classToFind;
 };
 
@@ -81,4 +79,9 @@ export const updateClass = async (id: number, name: string, stream: any) => {
     }
     return classToUpdate;
   }
+};
+
+export const getSelectedClasses = async (ids: any) => {
+  const classes = await SchoolClass.find({ where: { id: In(ids) } });
+  return classes;
 };

@@ -6,6 +6,7 @@ import InputField from "../InputField";
 
 import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
+import { useNavigate } from 'react-router-dom';
 import withReactContent from "sweetalert2-react-content";
 import { useDispatch, useSelector } from "react-redux";
 import { getTerms } from '../../store/schoolSheetSlices/schoolStore';
@@ -13,6 +14,7 @@ import axiosInstance from "../../axios-instance";
 
 const Terms = () => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const [showUpdate, setShowUpdate] = useState(false);
 
 	const closeShowUpdate = () => {
@@ -24,6 +26,7 @@ const Terms = () => {
 	const [termId, setTermId] = useState("");
 	const [toEdit, setToEdit] = useState("");
 	const [fromEdit, setFromEdit] = useState("");
+	const [activeTerm, setActiveTerm] = useState(false);
 	const openShowUpdate = (termItem) => {
 		setShowUpdate(true);
 		setEditTerm(termItem.term);
@@ -40,7 +43,7 @@ const Terms = () => {
 				term: editTerm,
 				from: fromEdit,
 				to: toEdit,
-				selected: 0,
+				selected: activeTerm ? 1 : 0,
 				termId: termId
 			};
 			const response = await axiosInstance.patch("/terms", formData);
@@ -55,6 +58,8 @@ const Terms = () => {
 					timer: 500,
 				});
 				closeShowUpdate();
+				setActiveTerm(false);
+				navigate(0);
 			}
 		} catch (error) {
 			console.log(error);
@@ -127,6 +132,15 @@ const Terms = () => {
 			console.error(error);
 		}
 	};
+
+	const selectTerm = (termItem) => {
+		setActiveTerm(true);
+		setEditTerm(termItem.term);
+		setFromEdit(termItem.from);
+		setToEdit(termItem.to);
+		setTermId(termItem.id);
+		updateTerm();
+	}
 
 	// fetching terms
 	useEffect(() => {
@@ -227,9 +241,9 @@ const Terms = () => {
 								key={termItem.id}
 								className="flex border-b border-gray2 text-xs  hover:bg-gray1 cursor-pointer"
 							>
-								<div className={termItem.isSelected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.term}</div>
-								<div className={termItem.isSelected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.from}</div>
-								<div className={termItem.isSelected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.to}</div>
+								<div className={termItem.is_selected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.term}</div>
+								<div className={termItem.is_selected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.from}</div>
+								<div className={termItem.is_selected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.to}</div>
 								<div className="w-1/3 p-2 flex">
 									<MdDeleteOutline
 										onClick={() => deleteTerm(termItem)}
@@ -240,7 +254,7 @@ const Terms = () => {
 										onClick={() => openShowUpdate(termItem)}
 										className="text-warning h-4 w-4 ml-5"
 									/>
-									<p className="text-primary ml-5">Select</p>
+									<p className="text-primary ml-5" onClick={() => selectTerm(termItem)}>Select</p>
 								</div>
 							</div>
 						))}

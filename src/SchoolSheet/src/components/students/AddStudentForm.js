@@ -9,10 +9,13 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../axios-instance"
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSections } from "../../store/schoolSheetSlices/schoolStore";
 
 
 
-function AddStudentForm(props) {
+const AddStudentForm = (props) => {
+	const dispatch = useDispatch();
 	const [init] = useState(true)
 	const navigate = useNavigate();
 
@@ -28,8 +31,20 @@ function AddStudentForm(props) {
 	const [streams, setStreams] = useState([])
 	const [studentStream, setStudentStream] = useState("")
 
+	const { sections } = useSelector((state) => state.schoolStore);
+
+	const sectionOptions = [];
+
+	sections.forEach((section) => {
+		let newSection = {};
+		newSection.value = section.id;
+		newSection.label = section.section;
+		sectionOptions.push(newSection);
+	})
+
 
 	useEffect(() => {
+		dispatch(getSections());
 		try {
 			fetchStudentType()
 			fetchSchoolClasses()
@@ -43,7 +58,7 @@ function AddStudentForm(props) {
 				text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
 			});
 		}
-	}, [init])
+	}, [init, dispatch])
 
 
 
@@ -103,22 +118,6 @@ function AddStudentForm(props) {
 	}
 
 
-	const sections = [
-		{
-			label: "Boarding",
-			value: "Boarding",
-		},
-		{
-			label: "day",
-			value: "Day",
-		},
-		{
-			label: "Hostel",
-			value: "Hostel",
-		},
-	];
-
-
 	// student info form data
 	const [studentInfo, setStudentInfo] = useState({
 		firstName: "",
@@ -169,17 +168,17 @@ function AddStudentForm(props) {
 			motherContact: studentInfo.motherContact,
 			studentType: studentType.id,
 			studentSection: studentSection.value,
-			studentHouse: studentHouse.id,
-			studentClass: studentClass.id,
+			studentHouse: [studentHouse.id],
+			studentClass: [studentClass.id],
 			feesCategory: feesCategory.id,
-			studentStream: studentStream.id,
+			studentStream: [studentStream.id],
 		};
 		if (studentInfo) {
 
 
 			axiosInstance.post("/students", data)
 				.then((response) => {
-					setStudentInfo("");
+
 					//fetchStudentInfo();
 					// show alert
 					const { status, payload } = response.data;
@@ -198,6 +197,7 @@ function AddStudentForm(props) {
 						showConfirmButton: false,
 						timer: 500,
 					});
+					setStudentInfo("");
 					navigate("/students")
 				})
 				.catch((error) => console.error(error));
@@ -385,7 +385,7 @@ function AddStudentForm(props) {
 							defaultValue={studentSection}
 							name="studentSection"
 							onChange={setStudentSection}
-							options={sections}
+							options={sectionOptions}
 						/>
 						<br />
 						{/* <label className='text-gray4 mt-2'>House/Group</label>

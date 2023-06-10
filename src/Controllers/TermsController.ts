@@ -6,6 +6,7 @@ import {
   createTerm,
   deleteTerm,
   getSingleTerm,
+  getTermBySelect,
 } from "../Entities/Term";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -77,7 +78,22 @@ export const modifyTerm = async (req: Request, res: Response) => {
         .status(200)
         .end();
     }
-    await updateTerm(termId, to, from, term, selected);
+    if (selected === 1) {
+      const selectedTerm = await getTermBySelect();
+      if (selectedTerm === null) {
+        await updateTerm(termId, to, from, term, selected);
+      } else {
+        await updateTerm(
+          selectedTerm.id,
+          selectedTerm.to,
+          selectedTerm.from,
+          selectedTerm.term,
+          0
+        );
+        await updateTerm(termId, to, from, term, selected);
+      }
+    }
+
     return res
       .json(customPayloadResponse(true, "Term Updated"))
       .status(200)

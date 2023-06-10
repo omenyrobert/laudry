@@ -1,37 +1,24 @@
 import React, { useEffect, useState } from "react";
 import "../../assets/styles/main.css";
 import StudentsTable from "../../components/students/studentsTable";
-import EditStudentsForm from "../../components/students/EditStudentsForm";
-import ShowStudentsForm from "../../components/students/ShowStudentsForm";
+// import EditStudentsForm from "../../components/students/EditStudentsForm";
+// import ShowStudentsForm from "../../components/students/ShowStudentsForm";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
-import { BsSearch, BsPrinterFill, BsFillCaretDownFill } from "react-icons/bs";
+import { BsSearch } from "react-icons/bs";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import Button2 from "../../components/Button2";
 import axiosInstance from "../../axios-instance";
 import withReactContent from "sweetalert2-react-content";
-import { FaFilter } from "react-icons/fa";
+// import { FaFilter } from "react-icons/fa";
 import ButtonAlt from "../../components/ButtonAlt";
+import { useDispatch, useSelector } from 'react-redux';
+import { getSections } from "../../store/schoolSheetSlices/schoolStore";
 
-const sections = [
-	{
-		label: "Boarding",
-		value: "Boarding",
-	},
-	{
-		label: "day",
-		value: "Day",
-	},
-	{
-		label: "Hostel",
-		value: "Hostel",
-	},
-	{},
-];
-
-function Students() {
+const Students = () => {
+	const dispatch = useDispatch();
 	const [studentData, setStudentData] = useState([]);
 	const [search, setSearch] = useState(false);
 	const [studentTypes, setStudentTypes] = useState([]);
@@ -47,6 +34,16 @@ function Students() {
 	});
 	const [searchedStudents, setSearchedStudents] = useState([]);
 	const [streams, setStreams] = useState([]);
+	const { sections } = useSelector((state) => state.schoolStore);
+
+	const sectionOptions = [];
+
+	sections.forEach((section) => {
+		let newSection = {};
+		newSection.value = section.id;
+		newSection.label = section.section;
+		sectionOptions.push(newSection);
+	})
 
 	useEffect(() => {
 		try {
@@ -186,9 +183,9 @@ function Students() {
 			const searchSection = student.studentSection
 				.toLowerCase()
 				.includes(filters.section.toLowerCase());
-			console.log("===================")
-			console.log("Filters:", filters)
-			console.log("Student: ", student)
+			// console.log("===================")
+			// console.log("Filters:", filters)
+			// console.log("Student: ", student)
 			const searchStream = student.studentStream.stream
 				.toLowerCase()
 				.includes(filters.stream.toLowerCase());
@@ -218,6 +215,7 @@ function Students() {
 	}
 
 	useEffect(() => {
+		dispatch(getSections());
 		if (
 			filters.query === "" &&
 			filters.type === "" &&
@@ -230,7 +228,7 @@ function Students() {
 		} else {
 			searchStudents();
 		}
-	}, [filters]);
+	}, [filters, dispatch]);
 
 	const printStudents = () => {
 		const documentWindow = window.open("");
@@ -374,7 +372,7 @@ function Students() {
 											onChange={(opt) => {
 												setFilters({ ...filters, section: opt.value });
 											}}
-											options={sections}
+											options={sectionOptions}
 										/>
 										<br />
 										<Select

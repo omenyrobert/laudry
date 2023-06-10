@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToMany,
+  In,
+} from "typeorm";
+import { Student } from "./Student";
 
 @Entity()
 export class Term extends BaseEntity {
@@ -16,6 +25,9 @@ export class Term extends BaseEntity {
 
   @Column()
   is_selected!: number;
+
+  @ManyToMany(() => Student, (student) => student.terms)
+  students: [];
 }
 
 export const getTerms = async () => {
@@ -68,4 +80,18 @@ export const updateTerm = async (
 export const getSingleTerm = async (id: number) => {
   const term = await Term.findOne({ where: { id: id } });
   return term;
+};
+
+export const getTermBySelect = async () => {
+  const term = await Term.findOne({ where: { is_selected: 1 } });
+  return term;
+};
+
+export const selectedTermIds = async () => {
+  const activeTerm = await getTermBySelect();
+  const allTerms = await getTerms();
+  const selectedTerm = await Term.find({
+    where: { id: In([activeTerm !== null ? activeTerm.id : allTerms[0].id]) },
+  });
+  return selectedTerm;
 };

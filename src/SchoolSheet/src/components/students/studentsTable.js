@@ -4,7 +4,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare, BsEye } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
-function StudentsTable(props) {
+const StudentsTable = (props) => {
 	const { studentData, deleteStudentInfo } = props;
 
 	return (
@@ -47,7 +47,7 @@ function StudentsTable(props) {
 
 								<td className="text-xs p-3 text-gray5">{student.email}</td>
 								<td className="text-xs p-3 text-gray5">
-									{student.studentClass.class}
+									{/* {student.studentClass.class} */}
 								</td>
 
 								<td className="text-xs p-3 w-28 text-gray5 flex justify-between">

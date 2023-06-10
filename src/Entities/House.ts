@@ -3,7 +3,8 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
+  ManyToMany,
+  In
 } from "typeorm";
 import { Student } from "./Student";
 
@@ -15,12 +16,8 @@ export class House extends BaseEntity {
   @Column()
   house!: string;
 
-  @OneToMany(() => Student, (student) => student.studentHouse, {
-    //cascade: true,
-    //eager: true,
-    nullable: true,
-  })
-  students!: Student[];
+  @ManyToMany(() => Student, (student) => student.houses)
+  houses: [];
 }
 
 export const getHouses = async () => {
@@ -41,7 +38,7 @@ export const addHouse = async (house: string) => {
 };
 
 export const getHouseById = async (id: number) => {
-  const HouseToFindById = await House.findOne({ where: { id: id } }) as House
+  const HouseToFindById = (await House.findOne({ where: { id: id } })) as House;
   return HouseToFindById;
 };
 
@@ -62,4 +59,9 @@ export const deleteHouse = async (id: number) => {
 export const updateHouse = async (id: number, house: string) => {
   const HouseToUpdate = await House.update(id, { house: house });
   return HouseToUpdate;
+};
+
+export const getSelectedHouses = async (houses: any) => {
+  const selectedHouses = await House.find({ where: { id: In(houses) } });
+  return selectedHouses;
 };

@@ -1,23 +1,21 @@
-// Purpose: TypeScript entity for Student table created using TypeORM.
+import { Term, selectedTermIds } from "./Term";
+import { SchoolClass } from "./SchoolClass";
 import {
   Entity,
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  OneToOne,
-  JoinColumn,
   ManyToOne,
   ManyToMany,
+  JoinTable,
 } from "typeorm";
-import { House, getHouseById } from "./House";
+import { House, getSelectedHouses } from "./House";
 import { StudentType, getStudentTypeById } from "./StudentType";
-import { SchoolClass, getClassById } from "./SchoolClass";
-import { Stream, getSingleStream } from "./Stream";
-
+import { getSelectedClasses } from "./SchoolClass";
+import { Stream, getSelectedStream } from "./Stream";
 
 @Entity()
 export class Student extends BaseEntity {
-
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -48,7 +46,7 @@ export class Student extends BaseEntity {
   @Column()
   residence!: string;
 
-  @Column({nullable: true,})
+  @Column({ nullable: true })
   photo!: string;
 
   @Column()
@@ -72,31 +70,45 @@ export class Student extends BaseEntity {
   @Column()
   studentSection!: string;
 
-  @ManyToOne(() => House, (house) => house.id, {
-    cascade: true,
-    eager: true,
-  })
-  studentHouse!: House;
-
-  @ManyToOne(() => SchoolClass, (schoolClass) => schoolClass.id, {
-    cascade: true,
-    eager: true,
-  })
-  studentClass!: SchoolClass;
-
-  @ManyToOne(() => Stream, (stream) => stream.id, {
-    cascade: true,
-    eager: true,
-    nullable: true,
-  })
-  studentStream!: Stream;
-
   @Column()
   feesCategory!: string;
 
+  @ManyToMany(() => House, {
+    cascade: true,
+    eager: false,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @JoinTable({ name: "students_houses" })
+  houses: House[];
+
+  @ManyToMany(() => SchoolClass, {
+    cascade: true,
+    eager: false,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @JoinTable({ name: "student_classes" })
+  classes: SchoolClass[];
+
+  @ManyToMany(() => Stream, {
+    cascade: true,
+    eager: false,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @JoinTable({ name: "student_streams" })
+  streams: Stream[];
+
+  @ManyToMany(() => Term, {
+    cascade: true,
+    eager: false,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @JoinTable({ name: "student_terms" })
+  terms: Term[];
 }
-
-
 
 export const createStudent = async (
   firstName: string,
@@ -114,41 +126,41 @@ export const createStudent = async (
   motherContact: string,
   studentType: string,
   studentSection: string,
-  studentHouse: string,
-  studentClass: string,
-  feesCategory: string,
-  studentStream: string,
+  studentHouse: any,
+  studentClass: any,
+  feesCategory: any,
+  studentStream: any
 ) => {
-
-  const house = await getHouseById(parseInt(studentHouse));
+  const studentHouses = await getSelectedHouses(studentHouse);
   const studentTypeToInsert = await getStudentTypeById(parseInt(studentType));
-  const studentClassToInsert = await getClassById(parseInt(studentClass));
-  const studentStreamToInsert = await getSingleStream(parseInt(studentStream));
+  const studentClasses = await getSelectedClasses(studentClass);
+  const studentStreams = await getSelectedStream(studentStream);
+  const studentTerms = await selectedTermIds();
 
-  const studentToInsert = new Student();
-  studentToInsert.firstName = firstName;
-  studentToInsert.middleName = middleName;
-  studentToInsert.lastName = lastName;
-  studentToInsert.email = email;
-  studentToInsert.phoneNumber = phoneNumber;
-  studentToInsert.dateOfBirth = dateOfBirth;
-  studentToInsert.gender = gender;
-  studentToInsert.nationality = nationality;
-  studentToInsert.residence = residence;
-  studentToInsert.fatherName = fatherName;
-  studentToInsert.fatherContact = fatherContact;
-  studentToInsert.motherName = motherName;
-  studentToInsert.motherContact = motherContact;
-  studentToInsert.studentType = studentTypeToInsert;
-  studentToInsert.studentSection = studentSection;
-  studentToInsert.studentHouse = house;
-  studentToInsert.studentClass = studentClassToInsert;
-  studentToInsert.feesCategory = feesCategory;
-  studentToInsert.studentStream = studentStreamToInsert
-
-  const student = await Student.save(studentToInsert);
+  const student = await Student.save({
+    firstName: firstName,
+    middleName: middleName,
+    lastName: lastName,
+    email: email,
+    phoneNumber: phoneNumber,
+    dateOfBirth: dateOfBirth,
+    gender: gender,
+    nationality: nationality,
+    residence: residence,
+    fatherName: fatherName,
+    fatherContact: fatherContact,
+    motherName: motherName,
+    motherContact: motherContact,
+    studentType: studentTypeToInsert,
+    studentSection: studentSection,
+    houses: studentHouses,
+    classes: studentClasses,
+    feesCategory: feesCategory,
+    streams: studentStreams,
+    terms: studentTerms,
+  });
   return student;
-}
+};
 
 export const deleteStudent = async (id: number) => {
   const student = await Student.delete(id);
@@ -157,7 +169,7 @@ export const deleteStudent = async (id: number) => {
   } else {
     return false;
   }
-}
+};
 
 export const updateStudent = async (
   id: number,
@@ -180,13 +192,12 @@ export const updateStudent = async (
   studentHouse: string,
   studentClass: string,
   feesCategory: string,
-  studentStream: string,
+  studentStream: string
 ) => {
-  
-  const house = await getHouseById(parseInt(studentHouse));
+  // const house = await getHouseById(parseInt(studentHouse));
   const studentTypeToInsert = await getStudentTypeById(parseInt(studentType));
-  const studentClassToInsert = await getClassById(parseInt(studentClass));
-  const studentStreamToInsert = await getSingleStream(parseInt(studentStream));
+  // const studentClassToInsert = await getClassById(parseInt(studentClass));
+  // const studentStreamToInsert = await getSingleStream(parseInt(studentStream));
 
   const studentToUpdate = await Student.update(id, {
     firstName: firstName,
@@ -195,7 +206,7 @@ export const updateStudent = async (
     email: email,
     phoneNumber: phoneNumber,
     dateOfBirth: dateOfBirth,
-    gender:gender,
+    gender: gender,
     nationality,
     residence: residence,
     photo: photo,
@@ -205,21 +216,19 @@ export const updateStudent = async (
     motherContact: motherContact,
     studentType: studentTypeToInsert,
     studentSection: studentSection,
-    studentHouse: house,
-    studentClass: studentClassToInsert,
+    // studentHouse: house,
+    // studentClass: studentClassToInsert,
     feesCategory: feesCategory,
-    studentStream: studentStreamToInsert
+    // studentStream: studentStreamToInsert
   });
 
   return studentToUpdate;
-  
-}
+};
 
 export const getSingleStudent = async (id: number) => {
   const student = await Student.findOne({ where: { id: id } });
   return student;
-}
-
+};
 
 export const getStudents = async (page: number = 0, limit: number = 50) => {
   const students = await Student.find({
@@ -230,5 +239,4 @@ export const getStudents = async (page: number = 0, limit: number = 50) => {
     skip: page * limit,
   });
   return students;
-}
-
+};
