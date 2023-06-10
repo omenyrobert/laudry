@@ -10,11 +10,16 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import ButtonSecondary from "../ButtonSecondary";
+import { useDispatch, useSelector } from "react-redux";
+import axiosInstance from "../../axios-instance";
+import { getSuppliers } from "../../store/schoolSheetSlices/schoolStore";
 
 let db = new Localbase("db");
 
 function InvoicesList() {
 	const [items, setItems] = useState([]);
+	const dispatch = useDispatch();
+	const { suppliers } = useSelector((state) => state.schoolStore);
 
 	const [item, setItem] = useState("");
 	const [qty, setQty] = useState("");
@@ -57,7 +62,6 @@ function InvoicesList() {
 					setSupplierId("");
 
 					// fetch after
-					fetchSuppliers();
 					fetchInvoices();
 
 					// show alert
@@ -78,22 +82,6 @@ function InvoicesList() {
 
 	const [suppliersData, setSuppliers] = useState([]);
 	const [supplierId, setSupplierId] = useState("");
-	const fetchSuppliers = async () => {
-		console.log("fetched");
-		const suppliers = await db.collection("suppliersTbl").get();
-
-		suppliers.forEach((supplier) => {
-			let supplierObj = {
-				label: supplier.supplier,
-				value: supplier,
-			};
-			suppliers.push(supplierObj);
-		});
-
-		setSuppliers(suppliers);
-
-		console.log("data", suppliersData);
-	};
 
 	const [invoiceData, setInvoiceData] = useState([]);
 	const fetchInvoices = async () => {
@@ -104,9 +92,23 @@ function InvoicesList() {
 
 	// fetching invoices
 	useEffect(() => {
-		fetchSuppliers();
 		fetchInvoices();
-	}, []);
+		if (suppliers) {
+			const _supplierData = suppliers.map((supplier) => 
+				({
+					label: supplier.supplierName,
+					value: supplier,
+			  	}));
+			setSuppliers(_supplierData);
+		 }
+	}, [suppliers]);
+
+	useEffect(() => {
+		dispatch(getSuppliers());
+	}, [dispatch]);
+
+
+
 
 	const removeItems = (index) => {
 		const newList = items.filter((item, i) => i !== index);
