@@ -4,7 +4,7 @@ import Button2 from "../../components/Button2";
 import Button from "../../components/Button";
 import InputField from "../../components/InputField";
 import Select from "react-select";
-import { MdDeleteOutline } from "react-icons/md";
+import { MdDeleteOutline, MdPrint } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import { FaPen } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -491,25 +491,7 @@ function PayRoll() {
 	}, [formTaxes, formGrossSalary, formDeductions]);
 
 	const updateEmployeePay = () => {
-		/*db.collection("employeePaySlipTbl")
-			.doc({ id: employeeId })
-			.update({
-				tax: [...formTaxes],
-				deduction: [...formDeductions],
-				netSalary: netSalaryEdit,
-			})
-			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchEmployeePay();
-				const MySwal = withReactContent(Swal);
-				MySwal.fire({
-					icon: "success",
-					showConfirmButton: false,
-					timer: 500,
-				});
-				closeEditPay();
-			});*/
+
 
 		let data = {
 			gross_salary: formGrossSalary,
@@ -577,47 +559,55 @@ function PayRoll() {
 		}
 	};
 
+
+	const [printing, setPrinting] = useState(false);
+	const [printData, setPrintData] = useState(null);
+
+	const openPrint = (payslip) => {
+		setPrinting(true);
+		setPrintData(payslip);
+	};
+
+	useEffect(() => {
+		if (printing && printData) {
+			const documentWindow = window.open("", "PRINT", "height=600,width=1000")
+			const content = document.getElementById("payslip-pdf").outerHTML;
+
+			documentWindow.document.write(
+				content
+			);
+			// Get All stylesheets
+			const stylesheets = document.querySelectorAll("link");
+			// Append them to the head of the new window
+			stylesheets.forEach((stylesheet) => {
+				documentWindow.document.write(stylesheet.outerHTML)
+			});
+			// Get all style tags 
+			const styleTags = document.querySelectorAll("style");
+			// Append them to the head of the new window
+			styleTags.forEach((styleTag) => {
+				documentWindow.document.write(styleTag.outerHTML)
+			})
+
+			setTimeout(() => {
+				documentWindow.print();
+				setPrinting(false);
+				setPrintData(null);
+			}, 1000);
+
+
+		}
+	}, [printing, printData]);
+
 	return (
 		<div className="w-full">
-			<div className="bg-white z-50 absolute w-[50vw] h-full">
-				<div className="p-3 bg-primary text-lg text-white flex justify-between">
-					<div>
-						<p>PaySlip for (payslip name)</p>
-					</div>
-					<div>Omeny Robert</div>
-					<div>12-june-2023</div>
-				</div>
-				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
-					<div>Gross Salary</div>
-					<div>2,500,000</div>
-				</div>
-				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
-					<div className="w-20">PAYEE Tax</div>
-					<div>20%</div>
-					<div>200,000</div>
-				</div>
-				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
-					<div className="w-20">NSSF</div>
-					<div>10%</div>
-					<div>100,000</div>
-				</div>
-				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
-					<div className="w-20">Late Coming</div>
-					<div>100,000</div>
-				</div>
-				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
-					<div className="w-20">Lost Cable</div>
-					<div>50,000</div>
-				</div>
-				<div className="flex bg-gray1 p-5 justify-between text-gray5">
-					<div className="">Total Deductions</div>
-					<div>350,000</div>
-				</div>
-				<div className="flex border-b border-gray1 text-lg text-primary p-5 justify-between font-bold">
-					<div className="">Net Salary</div>
-					<div>2,150,000</div>
-				</div>
+
+			<div style={{
+				display: 'none',
+			}}>
+				<PaySlipPDF payslip={printData} />
 			</div>
+
 
 			<div className="h-screen mt-2">
 				<div className="flex bg-white p-3 justify-between shadow-lg rounded-md">
@@ -1015,6 +1005,10 @@ function PayRoll() {
 														className="text-warning h-4 w-4 ml-5"
 														onClick={() => openEditEmployeePay(payslip)}
 													/>
+													<MdPrint
+														className="text-primary h-4 w-4 ml-5"
+														onClick={() => openPrint(payslip)}
+													/>
 												</div>
 											</td>
 										</tr>
@@ -1030,3 +1024,68 @@ function PayRoll() {
 }
 
 export default PayRoll;
+
+
+const PaySlipPDF = ({ payslip }) => {
+
+	return (
+		<div id="payslip-pdf" className="bg-white z-50 absolute w-full h-full">
+			<div className="p-3 bg-primary text-lg text-white flex justify-between">
+				<div>
+					<p>PaySlip for {payslip?.staff?.first_name} {payslip?.staff?.middle_name[0]?.toUpperCase()} {payslip?.staff?.last_name} </p>
+				</div>
+				<div>
+					{
+						payslip?.paySlipCategory?.category
+					}
+				</div>
+				<div>
+					{
+						new Date(payslip?.created_at).toLocaleDateString()
+					}
+				</div>
+			</div>
+			<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
+				<div>Gross Salary</div>
+				<div>{payslip?.gross_salary}</div>
+			</div>
+			<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
+				<div className="w-20">PAYEE Tax</div>
+				<div>20%</div>
+				<div>200,000</div>
+			</div>
+			{payslip?.taxes?.map((tax) => (
+				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
+					<div className="w-20">{tax.name}</div>
+					<div>{tax.percentage}%</div>
+					<div>{parseInt(payslip.gross_salary) * parseInt(tax.percentage) / 100}</div>
+				</div>
+			))
+			}
+
+			{payslip?.deductions?.map((deduction) => (
+				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
+					<div className="w-20">{deduction.name}</div>
+					<div>{deduction.amount}</div>
+				</div>
+			))
+			}
+			<div className="flex bg-gray1 p-5 justify-between text-gray5">
+				<div className="">Total Deductions</div>
+				<div>
+					{payslip?.deductions?.reduce((a, b) => a + b.amount, 0)}
+				</div>
+			</div>
+			<div className="flex bg-gray1 p-5 justify-between text-gray5">
+				<div className="">Total Tax</div>
+				<div>{
+					payslip?.taxes?.reduce((a, b) => a + (parseInt(payslip.gross_salary) * parseInt(b.percentage) / 100), 0)
+				}</div>
+			</div>
+			<div className="flex border-b border-gray1 text-lg text-primary p-5 justify-between font-bold">
+				<div className="">Net Salary</div>
+				<div>{payslip?.net_salary}</div>
+			</div>
+		</div>
+	)
+}
