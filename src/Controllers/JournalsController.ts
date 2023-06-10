@@ -90,8 +90,6 @@ export const modifyJournal = async (req: Request, res: Response) => {
         date,
         debit,
         credit,
-        debitAccount,
-        creditAccount,
         transactionType,
         balance1,
         balance2
