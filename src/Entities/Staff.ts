@@ -11,6 +11,7 @@ import {
 import { StaffType } from "./StaffType";
 import { SalaryInfo } from "./SalaryInfo";
 import { PaySlip } from "./PaySlip";
+import { StaffProfile } from "./StaffProfile";
 
 @Entity()
 export class Staff extends BaseEntity {
@@ -89,6 +90,15 @@ export class Staff extends BaseEntity {
 
   @Column({ nullable: true })
   nationality!: string;
+
+
+  @OneToOne(()=> StaffProfile, staffProfile => staffProfile.staff, {
+    cascade: true,
+    eager: true,
+    nullable: true,
+    })
+  @JoinColumn()
+  staffProfile!: StaffProfile;
 
 
 }

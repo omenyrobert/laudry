@@ -306,3 +306,35 @@ export const updateStaffProfile = async (req: Request, res: Response) => {
     console.log(error);
   }
 }
+
+export const updateStaffProfilePicture = async (req: Request, res: Response) => {
+  try {
+    const { 
+      photo
+    } = req.body;
+    const {id} = req.params
+
+    if (!id) {
+      return res
+        .json(customPayloadResponse(false, "Staff Id Required"))
+        .status(200)
+        .end();
+    }
+
+    const staff = await updateProfilePicture(
+      parseInt(id),
+      photo
+    )
+
+    if (staff) {
+      return res.json(customPayloadResponse(true, "Profile Picture Updated")).status(200).end();
+    }
+    return res
+      .json(customPayloadResponse(false, "Staff Member not Found"))
+      .status(200)
+      .end();
+
+  } catch (error) {
+    console.log(error);
+  }
+}

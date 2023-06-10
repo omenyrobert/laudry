@@ -20,6 +20,7 @@ import PaySlipRoutes from "./PaySlipRoutes";
 import SchoolRoutes from "./SchoolRoutes";
 import AccountRoutes from "./AccountRoutes";
 import JournalRoutes from "./JournalRoutes";
+import StaffProfileRoutes from "./StaffProfileRoutes";
 
 const router = Router();
 
@@ -45,5 +46,6 @@ export default (): Router => {
   SchoolRoutes(router);
   AccountRoutes(router);
   JournalRoutes(router);
+  StaffProfileRoutes(router);
   return router;
 };

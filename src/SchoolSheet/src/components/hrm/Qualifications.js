@@ -3,9 +3,12 @@ import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
 import { Bs3SquareFill, BsFillPencilFill } from "react-icons/bs";
 import Button from "../Button";
+import axiosInstance from "../../axios-instance";
+import { useFeedback } from "../../hooks/feedback";
 
-function Qualifications() {
+function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 	const [Qualifications, setQualifications] = useState(false);
+	const { toggleFeedback } = useFeedback()
 
 	const openQualifications = () => {
 		setQualifications(true);
@@ -21,6 +24,57 @@ function Qualifications() {
 	const [school, setSchool] = useState("");
 	const [doc, setDoc] = useState("");
 
+	const addQualifications = () => {
+		if (award === "" || from === "" || to === "" || school === "") {
+			toggleFeedback("error", {
+				title: "Oops...",
+				text: "Please fill all fields",
+			})
+			return;
+		}
+
+		const data = {
+			qualification: award,
+			institution: school,
+			start_date: from,
+			end_date: to,
+			staff: staffId,
+		};
+
+		axiosInstance.post("/staff-profile/education", data)
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					toggleFeedback("error", {
+						title: "Oops...",
+						text: payload,
+					})
+					return;
+				}
+				toggleFeedback("success", {
+					title: "Success",
+					text: "Qualifications added successfully",
+				})
+				fetchStaffInfo();
+				setQualifications(false);
+				setAward("");
+				setFrom("");
+				setTo("");
+				setSchool("");
+			})
+			.catch((err) => {
+				console.log(err)
+				toggleFeedback("error", {
+					title: "Oops...",
+					text: "Something went wrong",
+				})
+			})
+	};
+
+
+
+
+
 	return (
 		<>
 			<div className="flex justify-between">
@@ -34,95 +88,104 @@ function Qualifications() {
 					className="text-sm  flex text-primary cursor-pointer relative p-2 border border-primary rounded h-10 mt-5"
 				>
 					<BsFillPencilFill className="mr-2 mt-1" /> Qualifications
-					
+
 				</div>
-                {Qualifications ? (
-						<div className="border absolute z-50 -mt-[200px] border-gray3 bg-white shadow h-[400px] rounded w-[700px] overflow-y-auto">
-							<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
-								<div>
-									<p>Add Next Of Kin</p>
-								</div>
-								<div>
-									<p className="cursor-pointer" onClick={closeQualifications}>
-										X
-									</p>
-								</div>
+				{Qualifications ? (
+					<div className="border absolute z-50 -mt-[200px] border-gray3 bg-white shadow h-[400px] rounded w-[700px] overflow-y-auto">
+						<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
+							<div>
+								<p>Add Next Of Kin</p>
 							</div>
-							<div className="flex">
-								<div className="w-1/2 p-3">
-									<InputField
-										type="text"
-										placeholder="Award"
-										label="Award"
-										onChange={(e) => setAward(e.target.value)}
-										value={award}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
-									/>
-									<InputField
-										type="text"
-										placeholder="From"
-										label="From Date"
-										onChange={(e) => setFrom(e.target.value)}
-										value={from}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
-									/>
-									<InputField
-										type="text"
-										placeholder="To"
-										label="To Date"
-										onChange={(e) => setTo(e.target.value)}
-										value={to}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
-									/>
-								</div>
-								<div className="w-1/2 p-3 -mt-5">
-									<InputField
-										type="text"
-										placeholder="Enter Institution"
-										label="Institution"
-										name="Institution"
-										onChange={(e) => setSchool(e.target.value)}
-										value={school}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
-									/>
+							<div>
+								<p className="cursor-pointer" onClick={closeQualifications}>
+									X
+								</p>
+							</div>
+						</div>
+						<div className="flex">
+							<div className="w-1/2 p-3">
+								<InputField
+									type="text"
+									placeholder="Award"
+									label="Award"
+									onChange={(e) => setAward(e.target.value)}
+									value={award}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+								<InputField
+									type="text"
+									placeholder="From"
+									label="From Date"
+									onChange={(e) => setFrom(e.target.value)}
+									value={from}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+								<InputField
+									type="text"
+									placeholder="To"
+									label="To Date"
+									onChange={(e) => setTo(e.target.value)}
+									value={to}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
+							</div>
+							<div className="w-1/2 p-3 -mt-5">
+								<InputField
+									type="text"
+									placeholder="Enter Institution"
+									label="Institution"
+									name="Institution"
+									onChange={(e) => setSchool(e.target.value)}
+									value={school}
+									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								/>
 
-									<InputField
-										type="file"
-										
-										label="Document"
-										onChange={(e) => setDoc(e.target.value)}
-										value={doc}
-										
-									/>
+								<InputField
+									type="file"
 
-									<div className="mt-14">
-										<Button value={"Add Qualifications"} />
-									</div>
+									label="Document"
+									onChange={(e) => setDoc(e.target.value)}
+									value={doc}
+
+								/>
+
+								<div onClick={addQualifications} className="mt-14">
+									<Button value={"Add Qualifications"} />
 								</div>
 							</div>
 						</div>
-					) : null}
+					</div>
+				) : null}
 			</div>
-			<div className="flex border-b border-gray1">
-				<div className="p-2 w-1/4 text-sm text-gray5 truncate">
-					Bachelors in Education
-				</div>
-				<div className="p-2 w-1/4 text-sm text-gray5 truncate">
-					2012-06-01 - 2013-06-09 1yrs
-				</div>
-				<div className="p-2 w-1/4 text-sm text-gray5 truncate">Makeerere</div>
-				<div className="p-2 w-1/4 text-sm text-gray5 truncate">file</div>
-			</div>
-			<div className="flex border-b border-gray1">
-				<div className="p-2 w-1/4 text-sm text-gray5 truncate">
-					Bachelors in Education
-				</div>
-				<div className="p-2 w-1/4 text-sm text-gray5 truncate">
-					2012-06-01 - 2013-06-09 1yrs
-				</div>
-				<div className="p-2 w-1/4 text-sm text-gray5 truncate">Makeerere</div>
-				<div className="p-2 w-1/4 text-sm text-gray5 truncate">file</div>
-			</div>
+
+			{
+				staffProfile?.education?.map((qualification, index) => (
+					<div className="flex border-b border-gray1">
+						<div className="p-2 w-1/4 text-sm text-gray5 truncate">
+							{qualification.qualification}
+						</div>
+						<div className="p-2 w-1/4 text-sm text-gray5 truncate">
+							{qualification.start_date} - {qualification.end_date}
+						</div>
+						<div className="p-2 w-1/4 text-sm text-gray5 truncate">
+							{qualification.institution}
+						</div>
+						<div className="p-2 w-1/4 text-sm text-gray5 truncate">
+							{qualification.document}
+						</div>
+					</div>
+				))
+			}
+
+			{
+
+				staffProfile?.education?.length === 0 ? (
+					<div className="flex justify-center items-center h-20">
+						<p className="text-gray5 text-sm">No Qualifications added yet</p>
+					</div>
+				) : null
+			}
+
 		</>
 	);
 }
