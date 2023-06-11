@@ -14,6 +14,7 @@ import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import { BsSearch } from "react-icons/bs";
 import Sample from "../../views/Sample";
+import { Link } from "react-router-dom";
 
 let db = new Localbase("db");
 
@@ -214,9 +215,9 @@ function ExpensesComp() {
 
 	return (
 		<>
-			
-			<Sample/>
-		
+
+			<Sample />
+
 			<div className="flex bg-white">
 				<div className="w-10/12 ">
 					<div className="flex">
@@ -238,8 +239,9 @@ function ExpensesComp() {
 						</div>
 					</div>
 				</div>
-				<div className="w-2/12 px-3 mt-4" onClick={openAdd}>
-					<Button2 value={"Add Expense"} />
+				<div className="w-2/12 px-3 mt-4" >
+					<Link to="/addTransaction"><Button2 value={"Add Expense"} /> </Link>
+
 				</div>
 			</div>
 			<div className="w-full h-[80vh]">

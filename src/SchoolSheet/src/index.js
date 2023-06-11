@@ -53,6 +53,7 @@ import EditStudentsForm from "./components/students/EditStudentsForm";
 import ShowStudentsForm from "./components/students/ShowStudentsForm";
 import Sample from "./views/Sample";
 import StudentAttendanceComp from "./components/classes/StudentAttendanceComp";
+import AddTransaction from "./components/finance/AddTransaction";
 
 const router = createBrowserRouter([
 	{
@@ -213,6 +214,10 @@ const router = createBrowserRouter([
 			{
 				path: "/equity",
 				element: <Equity />,
+			},
+			{
+            path: "/addTransaction",
+			element: <AddTransaction/>
 			},
 
 			//  hrm routes
