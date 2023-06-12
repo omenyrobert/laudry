@@ -163,10 +163,18 @@ function Accounts() {
 								/>
 							</div>
 						</div>
-						<div className="mx-3">
-							<label className="text-gray5">About</label>
-							<br />
-							<textarea className="bg-gray1 border border-gray2 min-h-[100px] w-full"></textarea>
+						<div className="mx-3 flex">
+							<div className="w-60 -mt-7">
+								<InputField
+									label="Opening Balance"
+									placeholder="Opening Balance"
+								/>
+							</div>
+							<div className="ml-5">
+								<label className="text-gray4">About</label>
+								<br />
+								<textarea className="bg-gray1 w-96 border border-gray2 min-h-[100px]"></textarea>
+							</div>
 						</div>
 						<div className="flex justify-between p-3 bg-gray1">
 							<div onClick={closeModal}>
@@ -216,7 +224,7 @@ function Accounts() {
 					<div className="border border-gray1 p-3 w-1/4">Action</div>
 				</div>
 			))}
-			<Loader/>
+			<Loader />
 		</>
 	);
 }
