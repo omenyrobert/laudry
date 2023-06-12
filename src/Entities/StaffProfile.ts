@@ -199,8 +199,7 @@ export const addStaffNextOfKin = async (
 
   
   let staffProfile = await StaffProfile.findOne({
-    //@ts-ignore
-    where: { staff: staffOBJ },
+    where: { id: staffOBJ.staffProfile.id },
   })
   
   if (!staffProfile) {
@@ -235,8 +234,7 @@ export const addStaffEducation = async (
 
   
   let staffProfile = await StaffProfile.findOne({
-    //@ts-ignore
-    where: { staff: staffOBJ },
+    where: { id: staffOBJ.staffProfile.id },
   })
   
   if (!staffProfile) {
@@ -271,8 +269,7 @@ export const addStaffWorkExperience = async (
 
   
   let staffProfile = await StaffProfile.findOne({
-    //@ts-ignore
-    where: { staff: staffOBJ },
+    where: { id: staffOBJ.staffProfile.id },
   })
   
   if (!staffProfile) {
@@ -306,8 +303,7 @@ export const addStaffDocument = async (
 
   
   let staffProfile = await StaffProfile.findOne({
-    //@ts-ignore
-    where: { staff: staffOBJ },
+    where: { id: staffOBJ.staffProfile.id },
   })
   
   if (!staffProfile) {
@@ -333,8 +329,7 @@ export const getStaffProfile = async (staff: number) => {
   }
 
   const staffProfile = await StaffProfile.findOne({
-    //@ts-ignore
-    where: { staff: staffOBJ },
+    where: { id: staffOBJ.staffProfile.id },
     relations: ["staffDocument", "education", "workExperience", "nextOfKin"],
   });
   
