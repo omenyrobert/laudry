@@ -8,8 +8,9 @@ import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useDispatch, useSelector } from "react-redux";
-import { getTerms } from '../../store/schoolSheetSlices/schoolStore';
+import { getTerms } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
+import ButtonLoader from "../ButtonLoader";
 
 const Terms = () => {
 	const dispatch = useDispatch();
@@ -41,7 +42,7 @@ const Terms = () => {
 				from: fromEdit,
 				to: toEdit,
 				selected: 0,
-				termId: termId
+				termId: termId,
 			};
 			const response = await axiosInstance.patch("/terms", formData);
 			const { data } = response;
@@ -98,6 +99,8 @@ const Terms = () => {
 	const [to, setTo] = useState("");
 	const [from, setFrom] = useState("");
 
+	const [isPosting, setIsPosting] = useState(false);
+
 	const postTerms = async () => {
 		try {
 			let formData = {
@@ -107,6 +110,7 @@ const Terms = () => {
 				selected: 0,
 			};
 			if (term) {
+				setIsPosting(true);
 				const response = await axiosInstance.post("/terms", formData);
 				const { data } = response;
 				const { status } = data;
@@ -115,6 +119,7 @@ const Terms = () => {
 					setTo("");
 					setFrom("");
 					dispatch(getTerms());
+					setIsPosting(false);
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
@@ -125,6 +130,7 @@ const Terms = () => {
 			}
 		} catch (error) {
 			console.error(error);
+			setIsPosting(false);
 		}
 	};
 
@@ -166,9 +172,13 @@ const Terms = () => {
 					</div>
 					<div className="mt-5 w-1/4 ml-2">
 						<br />
-						<div onClick={postTerms}>
-							<Button value={"Add terms"} />
-						</div>
+						{isPosting ? (
+							<ButtonLoader />
+						) : (
+							<div onClick={postTerms}>
+								<Button value={"Add terms"} />
+							</div>
+						)}
 					</div>
 				</div>
 
@@ -180,7 +190,7 @@ const Terms = () => {
 				</div>
 				{/* edit div statrt */}
 				{showUpdate ? (
-					<div className="absolute shadow-2xl rounded-md border bg-white  border-gray3  p-2 flex w-[750px]">
+					<div className="absolute shadow-2xl rounded-md border bg-white  border-gray3  p-2 flex md:max-w-[45vw] max-w-[50vw]">
 						<div className="w-1/4">
 							<InputField
 								type="text"
@@ -227,9 +237,33 @@ const Terms = () => {
 								key={termItem.id}
 								className="flex border-b border-gray2 text-xs  hover:bg-gray1 cursor-pointer"
 							>
-								<div className={termItem.isSelected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.term}</div>
-								<div className={termItem.isSelected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.from}</div>
-								<div className={termItem.isSelected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.to}</div>
+								<div
+									className={
+										termItem.isSelected === 1
+											? "bg-primary text-white w-2/3 p-2"
+											: "w-2/3 p-2 text-gray5"
+									}
+								>
+									{termItem.term}
+								</div>
+								<div
+									className={
+										termItem.isSelected === 1
+											? "bg-primary text-white w-2/3 p-2"
+											: "w-2/3 p-2 text-gray5"
+									}
+								>
+									{termItem.from}
+								</div>
+								<div
+									className={
+										termItem.isSelected === 1
+											? "bg-primary text-white w-2/3 p-2"
+											: "w-2/3 p-2 text-gray5"
+									}
+								>
+									{termItem.to}
+								</div>
 								<div className="w-1/3 p-2 flex">
 									<MdDeleteOutline
 										onClick={() => deleteTerm(termItem)}
@@ -248,5 +282,5 @@ const Terms = () => {
 			</div>
 		</div>
 	);
-}
+};
 export default Terms;

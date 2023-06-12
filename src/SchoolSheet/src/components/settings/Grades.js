@@ -11,6 +11,7 @@ import withReactContent from "sweetalert2-react-content";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../../axios-instance";
 import { getGrades } from "../../store/schoolSheetSlices/schoolStore";
+import ButtonLoader from "../ButtonLoader";
 
 function Grades() {
 	const dispatch = useDispatch();
@@ -24,9 +25,10 @@ function Grades() {
 	const [grade, setGrade] = useState("");
 	const [to, setTo] = useState("");
 	const [from, setFrom] = useState("");
-
+	const [isposting, setIsPosting] = useState(false);
 	const postGrade = async () => {
 		try {
+			setIsPosting(true);
 			let formData = {
 				from: from,
 				to: to,
@@ -40,6 +42,7 @@ function Grades() {
 				setFrom("");
 				setTo("");
 				setGrade("");
+				setIsPosting(false);
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -49,6 +52,7 @@ function Grades() {
 			}
 		} catch (error) {
 			console.log(error);
+			setIsPosting(false);
 		}
 	};
 
@@ -168,12 +172,16 @@ function Grades() {
 					</div>
 					<div className="mt-8 mr-5 w-1/4 ml-2">
 						<br />
-						<div onClick={postGrade}>
-							<Button value={"Add"} />
-						</div>
+						{isposting ? (
+							<ButtonLoader />
+						) : (
+							<div onClick={postGrade}>
+								<Button value={"Add"} />
+							</div>
+						)}
 					</div>
 				</div>
-				
+
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">From</th>
@@ -184,8 +192,8 @@ function Grades() {
 					<tbody>
 						{/* edit popup start */}
 						{editData ? (
-							<div className="absolute shadow-2xl rounded flex w-[800px] p-5 bg-white">
-								<div className="w-3/12 pr-5">
+							<div className="absolute shadow-2xl rounded flex w-[50vw] md:w-[45vw] p-5 bg-white">
+								<div className="w-3/12 pr-2">
 									<InputField
 										type="number"
 										placeholder="Enter starting marks"
@@ -205,7 +213,7 @@ function Grades() {
 										icon={<FaPen className="w-3 -ml-7 mt-3" />}
 									/>
 								</div>
-								<div className="w-4/12 pr-2">
+								<div className="w-3/12 pr-2">
 									<InputField
 										type="text"
 										placeholder="Enter grade"
@@ -215,7 +223,7 @@ function Grades() {
 										icon={<FaPen className="w-3 -ml-7 mt-3" />}
 									/>
 								</div>
-								<div className="flex justify-between w-2/12 mt-[55px]">
+								<div className="flex justify-between w-3/12 mt-[55px]">
 									<div onClick={updateGrade}>
 										<ButtonSecondary value={"Update"} />
 									</div>

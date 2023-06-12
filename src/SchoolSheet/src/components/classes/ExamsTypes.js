@@ -162,9 +162,9 @@ function ExamsTypes() {
 				style={customStyles}
 				contentLabel="Example Modal"
 			>
-				<div className="flex px-5 py-3 justify-between text-xl font-semibold bg-gray1 text-primary">
+				<div className="flex px-8 py-3 justify-between text-xl font-semibold bg-gray1 text-primary">
 					<div>
-						<h5 className="">exam Types</h5>
+						<h5 className="">Exam Types</h5>
 					</div>
 					<div>
 						<p onClick={closeModal} className="cursor-pointer">

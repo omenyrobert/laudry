@@ -8,29 +8,29 @@ import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import axiosInstance from "../../axios-instance";
-
-
+import ButtonLoader from "../ButtonLoader";
 
 function StudentsTypes() {
 	const [studentTypesData, setStudentTypesData] = useState([]);
 
 	// posting StudentTypes
 	const [studentType, setStudentType] = useState("");
-
+	const [isPosting, setIsPosting] = useState(false);
 	const postStudentTypes = () => {
-
+		setIsPosting(true);
 		let formData = {
 			type: studentType,
 		};
 
 		if (studentType) {
-			axiosInstance.post('/student-types', formData)
+			axiosInstance
+				.post("/student-types", formData)
 				.then((response) => {
 					setStudentType("");
 
 					// fetch after
 					fetchStudentTypes();
-
+					setIsPosting(false);
 					const { status, payload } = response.data;
 					if (status === false) {
 						const MySwal = withReactContent(Swal);
@@ -43,6 +43,7 @@ function StudentsTypes() {
 					}
 
 					// show alert
+					setIsPosting(false);
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
@@ -50,14 +51,16 @@ function StudentsTypes() {
 						timer: 500,
 					});
 				})
-				.catch((error) => { });
+				.catch((error) => {
+					setIsPosting(false);
+				});
 		}
 	};
 
 	// fetch studentTypes
 	const fetchStudentTypes = () => {
-
-		axiosInstance.get('/student-types')
+		axiosInstance
+			.get("/student-types")
 			.then((response) => {
 				const { status, payload } = response.data;
 				if (status === false) {
@@ -74,7 +77,6 @@ function StudentsTypes() {
 			.catch((error) => {
 				console.log(error);
 			});
-
 	};
 
 	// fetching studentTypes
@@ -94,8 +96,8 @@ function StudentsTypes() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-
-				axiosInstance.delete(`/student-types/${studentTypes.id}`)
+				axiosInstance
+					.delete(`/student-types/${studentTypes.id}`)
 					.then((response) => {
 						const { status, payload } = response.data;
 						if (status === false) {
@@ -137,15 +139,13 @@ function StudentsTypes() {
 	const [studentTypeEdit, setStudentTypeEdit] = useState("");
 	const [studentTypesId, setStudentTypesId] = useState("");
 
-
 	const updateStudentTypes = () => {
-
 		const data = {
 			type: studentTypeEdit,
-			id: studentTypesId
-
-		}
-		axiosInstance.put(`/student-types/${studentTypesId}`, data)
+			id: studentTypesId,
+		};
+		axiosInstance
+			.put(`/student-types/${studentTypesId}`, data)
 			.then((response) => {
 				const { status, payload } = response.data;
 				if (status === false) {
@@ -169,8 +169,7 @@ function StudentsTypes() {
 			})
 			.catch((error) => {
 				console.log(error);
-			})
-
+			});
 	};
 
 	return (
@@ -191,9 +190,13 @@ function StudentsTypes() {
 
 					<div className="mt-8 ml-5 w-[150px]">
 						<br />
-						<div onClick={postStudentTypes}>
-							<Button value={"Add"} />
-						</div>
+						{isPosting ? (
+							<ButtonLoader />
+						) : (
+							<div onClick={postStudentTypes}>
+								<Button value={"Add"} />
+							</div>
+						)}
 					</div>
 					<div className="w-1/4"></div>
 				</div>
@@ -206,7 +209,7 @@ function StudentsTypes() {
 					<tbody>
 						{/* edit popup start */}
 						{editData ? (
-							<div className="absolute shadow-2xl rounded flex w-[500px] p-5 bg-white">
+							<div className="absolute shadow-2xl rounded flex w-[50vw] md:w-[38vw] p-5 bg-white">
 								<div className="w-2/3 pr-5">
 									<InputField
 										type="text"
@@ -240,9 +243,7 @@ function StudentsTypes() {
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
 									key={studentType.id}
 								>
-									<td className="text-xs p-3 text-gray5">
-										{studentType.type}
-									</td>
+									<td className="text-xs p-3 text-gray5">{studentType.type}</td>
 
 									<td className="text-xs p-3 text-gray5 flex">
 										<MdDeleteOutline

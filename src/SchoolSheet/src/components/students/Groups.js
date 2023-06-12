@@ -3,34 +3,32 @@ import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
-import Button2 from "../Button2";
+import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
-import { v4 as uuid } from "uuid";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import axiosInstance from "../../axios-instance";
-
-let db = new Localbase("db");
+import ButtonLoader from "../ButtonLoader";
 
 function Groups() {
-
 	const [groupsData, setGroupsData] = useState([]);
 
 	// posting groups
 	const [group, setGroup] = useState("");
-
+	const [isPosting, setIsPosting] = useState(false);
 	const postgroups = () => {
+		setIsPosting(true);
 		let formData = {
 			house: group,
 		};
 
 		if (group) {
-
-			axiosInstance.post('/houses', formData)
+			axiosInstance
+				.post("/houses", formData)
 				.then((response) => {
 					const { status, payload } = response.data;
 					if (status === false) {
+						setIsPosting(false);
 						const MySwal = withReactContent(Swal);
 						MySwal.fire({
 							icon: "error",
@@ -46,6 +44,7 @@ function Groups() {
 					fetchgroups();
 
 					// show alert
+					setIsPosting(false);
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
@@ -53,16 +52,14 @@ function Groups() {
 						timer: 500,
 					});
 				})
-				.catch((error) => { });
-
-
+				.catch((error) => {});
 		}
 	};
 
 	// fetch groups
 	const fetchgroups = () => {
-
-		axiosInstance.get('/houses')
+		axiosInstance
+			.get("/houses")
 			.then((response) => {
 				const { status, payload } = response.data;
 				if (status === false) {
@@ -76,7 +73,7 @@ function Groups() {
 				}
 				setGroupsData(payload);
 			})
-			.catch((error) => { });
+			.catch((error) => {});
 	};
 
 	// fetching groups
@@ -113,7 +110,8 @@ function Groups() {
 						console.log(error);
 					});*/
 
-				axiosInstance.delete('/houses/' + groups.id)
+				axiosInstance
+					.delete("/houses/" + groups.id)
 					.then((response) => {
 						const { status, payload } = response.data;
 						if (status === false) {
@@ -134,7 +132,7 @@ function Groups() {
 							timer: 500,
 						});
 					})
-					.catch((error) => { });
+					.catch((error) => {});
 			}
 		});
 	};
@@ -153,15 +151,14 @@ function Groups() {
 	const [groupEdit, setGroupEdit] = useState("");
 	const [groupsId, setGroupsId] = useState("");
 
-
 	const updategroups = () => {
-
 		let formData = {
 			house: groupEdit,
-			id: groupsId
-		}
+			id: groupsId,
+		};
 
-		axiosInstance.put('/houses/' + groupsId, formData)
+		axiosInstance
+			.put("/houses/" + groupsId, formData)
 			.then((response) => {
 				const { status, payload } = response.data;
 				if (status === false) {
@@ -183,13 +180,8 @@ function Groups() {
 				});
 				closeEditData();
 			})
-			.catch((error) => { });
+			.catch((error) => {});
 	};
-
-
-
-
-
 
 	return (
 		<>
@@ -208,10 +200,16 @@ function Groups() {
 					</div>
 					<div className="mt-8 mr-5">
 						<br />
-						<div onClick={postgroups}>
-							<Button2 value={"Add House"} />
-						</div>
 
+						{isPosting ? (
+							<div className="w-32">
+							<ButtonLoader />
+							</div>
+						) : (
+							<div className="w-32" onClick={postgroups}>
+								<Button value={"Add House"} />
+							</div>
+						)}
 					</div>
 				</div>
 
@@ -221,11 +219,9 @@ function Groups() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-
-
 						{/* edit popup start */}
-						{editData ?
-							<div className="absolute shadow-lg rounded flex w-[500px] p-5 bg-white">
+						{editData ? (
+							<div className="absolute shadow-lg rounded flex w-[50vw] md:w-[35vw] p-5 bg-white">
 								<div className="w-2/3 pr-5">
 									<InputField
 										type="text"
@@ -242,7 +238,7 @@ function Groups() {
 									</div>
 									<div>
 										<p
-											className="text-black text-lg cursor-pointer"
+											className="text-black text-lg ml-5 cursor-pointer"
 											onClick={closeEditData}
 										>
 											X
@@ -250,11 +246,8 @@ function Groups() {
 									</div>
 								</div>
 							</div>
-							: null}
+						) : null}
 						{/* edit popup end */}
-
-
-
 
 						{groupsData.map((group) => {
 							return (
@@ -262,12 +255,13 @@ function Groups() {
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
 									key={group.id}
 								>
-									<td className="text-xs p-3 text-gray5">
-										{group.house}
-									</td>
+									<td className="text-xs p-3 text-gray5">{group.house}</td>
 									<td className="text-xs p-3 text-gray5">
 										<div className="flex">
-											<MdDeleteOutline onClick={() => deletegroups(group)} className="text-red w-4 h-4" />
+											<MdDeleteOutline
+												onClick={() => deletegroups(group)}
+												className="text-red w-4 h-4"
+											/>
 											<BsPencilSquare
 												onClick={() => openEditData(group)}
 												className="text-warning h-4 w-4 ml-5"

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Button2 from "../Button2";
 import InputField from "../InputField";
-import { BsSearch } from "react-icons/bs";
+// import { BsSearch } from "react-icons/bs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Select from "react-select";
@@ -44,7 +44,7 @@ function Journal() {
 	}, [dispatch]);
 
 	useEffect(() => {
-		const data = accounts.map(acc => ({
+		const data = accounts.map((acc) => ({
 			value: acc.accountName,
 			label: acc.accountName,
 			id: acc.id,
@@ -55,46 +55,46 @@ function Journal() {
 
 	console.log("debitAccount", debitAccount);
 
-		// createJournal
-		const createJournal = async () => {
-			try {
-				let formData = {
-					date,
-					debit: parseFloat(debit),
-					credit: parseFloat(debit),
-					transactionType,
-					debitAccount: debitAccount && debitAccount.value,
-					debitAccountId: debitAccount && debitAccount.id,
-					creditAccount: creditAccount && creditAccount.value,
-					creditAccountId: creditAccount && creditAccount.id,
-				};
+	// createJournal
+	const createJournal = async () => {
+		try {
+			let formData = {
+				date,
+				debit: parseFloat(debit),
+				credit: parseFloat(debit),
+				transactionType,
+				debitAccount: debitAccount && debitAccount.value,
+				debitAccountId: debitAccount && debitAccount.id,
+				creditAccount: creditAccount && creditAccount.value,
+				creditAccountId: creditAccount && creditAccount.id,
+			};
 
-				console.log("formData", formData);
-		
-				const response = await axiosInstance.post("/journals", formData);
-				const { data } = response;
-				const { status } = data;
-		
-				if (status) {
-					dispatch(getAccounts());
-					setDebit(null);
-					setCredit(null);
-					setTransactionType(null);
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-					closeJoun();
-				}
-			} catch(error) {
-				console.log(error);
+			console.log("formData", formData);
+
+			const response = await axiosInstance.post("/journals", formData);
+			const { data } = response;
+			const { status } = data;
+
+			if (status) {
+				dispatch(getAccounts());
+				setDebit(null);
+				setCredit(null);
+				setTransactionType(null);
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+				closeJoun();
 			}
-		};
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	return (
-		<>
+		<div className="bg-white p-3 h-full">
 			<div className="flex relative">
 				<div className="p-2 w-2/12">
 					<p className="text-secondary text-xl font-bold">General Journal</p>
@@ -190,7 +190,42 @@ function Journal() {
 					</div>
 				</div>
 			) : null}
-		</>
+
+			<div className="p-2 border border-gray1 rounded-md my-2">
+				<div className="flex text-gray5 ">
+					<div className="w-1/3">
+						<p>Date: 23673</p>
+					</div>
+					<div className="w-1/3">
+						<p>Journal number: Jn082</p>
+					</div>
+					<div className="w-1/3 flex justify-between">
+						<p>Transaction Type: Bills</p>
+						<p className="text-primary border border-primary rounded-md py-1 px-3 cursor-pointer">Print</p>
+					</div>
+				</div>
+				<div className="flex text-gray5 bg-gray1 py-2 mt-4">
+					<div className="w-1/3">
+						<p>Debit Account: Meals</p>
+					</div>
+					<div className="w-1/3">
+						<p>Amount Debited:300,000 </p>
+					</div>
+					<div className="w-1/3">
+						<p>Description: fhhhhfdf</p>
+					</div>
+				</div>
+				<div className="flex text-gray5  mt-4">
+					<div className="w-1/3">
+						<p>Credit Account: Meals</p>
+					</div>
+					<div className="w-1/3">
+						<p>Amount Credit:300,000 </p>
+					</div>
+					<div className="w-1/3"></div>
+				</div>
+			</div>
+		</div>
 	);
 }
 export default Journal;

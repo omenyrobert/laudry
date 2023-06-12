@@ -53,6 +53,7 @@ import EditStudentsForm from "./components/students/EditStudentsForm";
 import ShowStudentsForm from "./components/students/ShowStudentsForm";
 import Sample from "./views/Sample";
 import StudentAttendanceComp from "./components/classes/StudentAttendanceComp";
+import Journal from "../src/components/finance/Journal";
 
 const router = createBrowserRouter([
 	{
@@ -83,7 +84,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/sample",
-				element: <Sample />
+				element: <Sample />,
 			},
 			{
 				path: "/settings",
@@ -107,7 +108,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/scholarShip",
-				element: <ScholarShip />
+				element: <ScholarShip />,
 			},
 			{
 				path: "/students",
@@ -121,17 +122,16 @@ const router = createBrowserRouter([
 			// students
 			{
 				path: "/addStudentForm",
-				element: <AddStudentForm />
+				element: <AddStudentForm />,
 			},
 			{
 				path: "/editStudentsForm",
-				element: <EditStudentsForm />
+				element: <EditStudentsForm />,
 			},
 			{
 				path: "/showStudentsForm",
-				element: <ShowStudentsForm />
+				element: <ShowStudentsForm />,
 			},
-
 
 			//classes
 			{
@@ -236,6 +236,10 @@ const router = createBrowserRouter([
 			{
 				path: "/reportCardTemplate",
 				element: <ReportCardTemplate />,
+			},
+			{
+				path: "/journal",
+				element: <Journal />,
 			},
 		],
 	},

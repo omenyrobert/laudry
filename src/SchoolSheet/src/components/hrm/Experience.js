@@ -35,7 +35,7 @@ function Experience() {
 					<BsFillPencilFill className="mr-2 mt-1" /> Experience
 				</div>
 				{experience ? (
-					<div className="border absolute z-50  border-gray3 bg-white shadow h-[350px] rounded w-[700px] overflow-y-auto">
+					<div className="border absolute z-50  border-gray3 bg-white shadow h-auto rounded w-[30vw] overflow-y-auto">
 						<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
 							<div>
 								<p>Add Experience</p>

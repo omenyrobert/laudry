@@ -65,7 +65,7 @@ function BasicInfo() {
 					<BsFillPencilFill className="mr-2 mt-1" /> Edit Basic Info
 				</div>
 				{showBasic ? (
-					<div className="border absolute z-50 -mt-[200px] border-gray3 bg-white shadow h-[650px] rounded w-[700px] overflow-y-auto">
+					<div className="border absolute z-50  border-gray3 bg-white shadow h-auto rounded w-[40vw] -mt-[35vh] overflow-y-auto">
 						<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
 							<div>
 								<p>Edit Basic Info</p>

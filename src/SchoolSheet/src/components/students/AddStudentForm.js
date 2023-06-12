@@ -7,13 +7,12 @@ import { FaRegUserCircle, FaPhone } from "react-icons/fa";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
-import axiosInstance from "../../axios-instance"
-import { useNavigate } from 'react-router-dom';
-
-
+import axiosInstance from "../../axios-instance";
+import { useNavigate } from "react-router-dom";
+import ButtonLoader from "../ButtonLoader";
 
 function AddStudentForm(props) {
-	const [init] = useState(true)
+	const [init] = useState(true);
 	const navigate = useNavigate();
 
 	const [gender, setGender] = useState("");
@@ -22,19 +21,18 @@ function AddStudentForm(props) {
 	const [studentHouse, setStudentHouse] = useState("");
 	const [studentSection, setStudentSection] = useState("");
 	const [feesCategory, setFeesCategory] = useState("");
-	const [studentTypes, setStudentTypes] = useState([])
-	const [studentClasses, setStudentClasses] = useState([])
-	const [studentHouses, setStudentHouses] = useState([])
-	const [streams, setStreams] = useState([])
-	const [studentStream, setStudentStream] = useState("")
-
+	const [studentTypes, setStudentTypes] = useState([]);
+	const [studentClasses, setStudentClasses] = useState([]);
+	const [studentHouses, setStudentHouses] = useState([]);
+	const [streams, setStreams] = useState([]);
+	const [studentStream, setStudentStream] = useState("");
 
 	useEffect(() => {
 		try {
-			fetchStudentType()
-			fetchSchoolClasses()
-			fetchSchoolHouses()
-			fetchStreams()
+			fetchStudentType();
+			fetchSchoolClasses();
+			fetchSchoolHouses();
+			fetchStreams();
 		} catch (error) {
 			const MySwal = withReactContent(Swal);
 			MySwal.fire({
@@ -43,65 +41,71 @@ function AddStudentForm(props) {
 				text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
 			});
 		}
-	}, [init])
-
-
-
+	}, [init]);
 
 	const fetchStudentType = () => {
-		axiosInstance.get("/student-types")
-			.then((response) => {
-				console.log("response", response)
-				const { payload } = response.data;
+		axiosInstance.get("/student-types").then((response) => {
+			console.log("response", response);
+			const { payload } = response.data;
 
-				const studenttypesArr = []
-				for (let i = 0; i < payload.length; i++) {
-					studenttypesArr.push({ label: payload[i].type, value: payload[i].type, ...payload[i] })
-				}
-				setStudentTypes(studenttypesArr)
-			})
-	}
+			const studenttypesArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studenttypesArr.push({
+					label: payload[i].type,
+					value: payload[i].type,
+					...payload[i],
+				});
+			}
+			setStudentTypes(studenttypesArr);
+		});
+	};
 
 	const fetchStreams = () => {
-		axiosInstance.get("/streams")
-			.then((response) => {
-				const { payload } = response.data;
-				const studentStreamsArr = []
-				for (let i = 0; i < payload.length; i++) {
-					studentStreamsArr.push({ label: payload[i].stream, value: payload[i].stream, ...payload[i] })
-				}
-				setStreams(studentStreamsArr)
-			})
-	}
-
-
+		axiosInstance.get("/streams").then((response) => {
+			const { payload } = response.data;
+			const studentStreamsArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studentStreamsArr.push({
+					label: payload[i].stream,
+					value: payload[i].stream,
+					...payload[i],
+				});
+			}
+			setStreams(studentStreamsArr);
+		});
+	};
 
 	const fetchSchoolClasses = () => {
-		axiosInstance.get("/class")
-			.then((response) => {
-				console.log("response", response)
-				const { payload } = response.data;
-				const studentClassesArr = []
-				for (let i = 0; i < payload.length; i++) {
-					studentClassesArr.push({ label: payload[i].class, value: payload[i].class, ...payload[i] })
-				}
-				setStudentClasses(studentClassesArr)
-			})
-	}
+		axiosInstance.get("/class").then((response) => {
+			console.log("response", response);
+			const { payload } = response.data;
+			const studentClassesArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studentClassesArr.push({
+					label: payload[i].class,
+					value: payload[i].class,
+					...payload[i],
+				});
+			}
+			setStudentClasses(studentClassesArr);
+		});
+	};
 
 	const fetchSchoolHouses = () => {
-		axiosInstance.get("/houses")
-			.then((response) => {
-				const { payload } = response.data;
-				const studentHousesArr = []
-				console.log("payload", payload)
-				for (let i = 0; i < payload.length; i++) {
-					studentHousesArr.push({ label: payload[i].house, value: payload[i].house, ...payload[i] })
-				}
-				setStudentHouses(studentHousesArr)
-			})
-	}
-
+		axiosInstance.get("/houses").then((response) => {
+			const { payload } = response.data;
+			const studentHousesArr = [];
+			console.log("payload", payload);
+			for (let i = 0; i < payload.length; i++) {
+				studentHousesArr.push({
+					label: payload[i].house,
+					value: payload[i].house,
+					...payload[i],
+				});
+			}
+			setStudentHouses(studentHousesArr);
+		});
+	};
 
 	const sections = [
 		{
@@ -117,7 +121,6 @@ function AddStudentForm(props) {
 			value: "Hostel",
 		},
 	];
-
 
 	// student info form data
 	const [studentInfo, setStudentInfo] = useState({
@@ -150,7 +153,9 @@ function AddStudentForm(props) {
 	};
 
 	// post student info
+	const [isPosting, setIsPosting] = useState(false);
 	const postStudentInfo = (e) => {
+		setIsPosting(false);
 		e.preventDefault();
 		let data = {
 			firstName: studentInfo.firstName,
@@ -175,15 +180,15 @@ function AddStudentForm(props) {
 			studentStream: studentStream.id,
 		};
 		if (studentInfo) {
-
-
-			axiosInstance.post("/students", data)
+			axiosInstance
+				.post("/students", data)
 				.then((response) => {
 					setStudentInfo("");
 					//fetchStudentInfo();
 					// show alert
 					const { status, payload } = response.data;
 					if (status === false) {
+						setIsPosting(false);
 						const MySwal = withReactContent(Swal);
 						MySwal.fire({
 							icon: "error",
@@ -192,13 +197,15 @@ function AddStudentForm(props) {
 						});
 						return;
 					}
+					setIsPosting(false);
 					const MySwal = withReactContent(Swal);
+
 					MySwal.fire({
 						icon: "success",
 						showConfirmButton: false,
 						timer: 500,
 					});
-					navigate("/students")
+					navigate("/students");
 				})
 				.catch((error) => console.error(error));
 		} else {
@@ -434,9 +441,13 @@ function AddStudentForm(props) {
 			<div className="flex justify-between p-2 ">
 				<div></div>
 				<div>
-					<div onClick={postStudentInfo}>
-						<Button value={"Add Student"} />
-					</div>
+					{isPosting ? (
+						<ButtonLoader />
+					) : (
+						<div onClick={postStudentInfo}>
+							<Button value={"Add Student"} />
+						</div>
+					)}
 				</div>
 			</div>
 			<br />

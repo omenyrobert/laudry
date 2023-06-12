@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { TbChevronDown } from "react-icons/tb";
 import { MdNavigateNext } from "react-icons/md";
-import { HiOutlineArrowSmRight,HiOutlineCurrencyDollar } from "react-icons/hi";
+import { HiOutlineArrowSmRight, HiOutlineCurrencyDollar } from "react-icons/hi";
 
 function FinanceLinks() {
 	const location = useLocation();
@@ -275,6 +275,29 @@ function FinanceLinks() {
 						</div>
 					</Link>
 					{/* Equity */}
+
+					{/* journal */}
+					<Link
+						to="/journal"
+						className={
+							location.pathname === "/journal"
+								? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
+								: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
+						}
+					>
+						<div className="flex">
+							<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
+							<p
+								className={
+									location.pathname === "/journal"
+										? "text-sm font-light text-white ml-5"
+										: "text-sm font-light linktext ml-5"
+								}
+							>
+								Journal
+							</p>
+						</div>
+					</Link>
 
 					{/* Accounts */}
 

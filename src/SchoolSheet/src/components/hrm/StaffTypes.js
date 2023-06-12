@@ -150,7 +150,7 @@ const StaffTypes = () => {
 				style={customStyles}
 				contentLabel="Example Modal"
 			>
-						<div className="flex justify-between bg-gray1 p-3">
+						<div className="flex justify-between bg-gray1 py-3 px-8">
 							<div>
 								<p className="text-primary text-xl font-semibold">
 									Staff Types
