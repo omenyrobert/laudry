@@ -90,8 +90,8 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 								type="text"
 								placeholder="ext Of Kin Type"
 								label="Next Of Kin Type"
-								onChange={(e) => setNokType(e.target.value)}
-								value={nokType}
+								onChange={(e) => setRelationship(e.target.value)}
+								value={relationship}
 								icon={<FaPen className="w-3 -ml-7 mt-3" />}
 							/>
 							<InputField
