@@ -12,7 +12,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
-
+import { Link } from "react-router-dom";
 let db = new Localbase("db");
 
 function IncomeComp() {
@@ -261,9 +261,9 @@ function IncomeComp() {
 						</div>
 					</div>
 				</div>
-				<div className="w-2/12 px-3 mt-5" onClick={openAdd}>
-					<Button2 value={"Add Income"} />
-				</div>
+				<Link to="/addTransaction" className="w-2/12 px-3 mt-5">
+					<Button2 value={"Add Income "} />
+				</Link>
 			</div>
 			{add ? (
 				<div className="bg-white shadow-xl absolute z-50 border border-gray2 rounded-md mr-2  w-[1000px]">
