@@ -18,11 +18,23 @@ const accountTypes = [
 	{ label: "Equity", value: "Equity" },
 	{ label: "Income", value: "Income" },
 	{ label: "Expense", value: "Expense" },
+	{ label: "Sales", value: "Sales" },
+	{ label: "Stock", value: "Stock" },
+	{ label: "Purchases", value: "Purchases" },
 ];
 
 const subTypes = [
 	{ label: "CURRENT", value: "CURRENT" },
-	{ label: "NON_CURRENT", value: "NON_CURRENT" },
+	{ label: "NON CURRENT", value: "NON_CURRENT" },
+	{ label: "DIRRECT", value: "DIRRECT" },
+	{ label: "INDIRRECT", value: "INDIRRECT" },
+	{ label: "Loans", value: "Loans" },
+	{ label: "Bank Overdraft", value: "Bank_Overdraft" },
+];
+
+const types = [
+	{ label: "Customer", value: "Customer" },
+	{ label: "Supplier", value: "Supplier" },
 ];
 
 function Accounts() {
@@ -135,13 +147,14 @@ function Accounts() {
 						</p>
 						<div className="p-3 flex">
 							<div className="p-1 w-60">
+								<br/>
 								<label className="text-gray4">Customer/Supplier</label>
 
 								<Select
 									placeholder="Select Category"
 									defaultValue={accountType}
 									onChange={setAccountType}
-									options={accountTypes}
+									options={types}
 								/>
 							</div>
 							<div className="p-1 w-60">
@@ -208,6 +221,7 @@ function Accounts() {
 				<div className="border border-gray1 p-3  w-1/4">Account Name</div>
 				<div className="border border-gray1 p-3 w-1/4">Type</div>
 				<div className="border border-gray1 p-3 w-1/4">Sub Type</div>
+				<div className="border border-gray1 p-3 w-1/4">Category</div>
 				<div className="border border-gray1 p-3 w-1/4">Amount</div>
 				<div className="border border-gray1 p-3 w-1/4">Action</div>
 			</div>
@@ -219,6 +233,7 @@ function Accounts() {
 					<div className="border border-gray1 p-3 w-1/4">
 						{account.accountType}
 					</div>
+					<div className="border border-gray1 p-3 w-1/4">{account.subType}</div>
 					<div className="border border-gray1 p-3 w-1/4">{account.subType}</div>
 					<div className="border border-gray1 p-3 w-1/4">{account.amount}</div>
 					<div className="border border-gray1 p-3 w-1/4">Action</div>
