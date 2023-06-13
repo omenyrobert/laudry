@@ -55,6 +55,7 @@ import Sample from "./views/Sample";
 import StudentAttendanceComp from "./components/classes/StudentAttendanceComp";
 import Journal from "../src/components/finance/Journal";
 import AddTransaction from "./components/finance/AddTransaction";
+import Ledger from "./components/finance/Ledger";
 
 const router = createBrowserRouter([
 	{
@@ -246,6 +247,10 @@ const router = createBrowserRouter([
 				path: "/journal",
 				element: <Journal />,
 			},
+			{
+				path: "/ledger",
+				element: <Ledger/>
+			}
 		],
 	},
 ]);
