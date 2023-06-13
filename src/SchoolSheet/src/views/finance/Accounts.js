@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import axiosInstance from "../../axios-instance";
 import { useDispatch, useSelector } from "react-redux";
-import { getAccounts } from "../../store/schoolSheetSlices/schoolStore";
+import { getAccounts, getSuppliers } from "../../store/schoolSheetSlices/schoolStore";
 import Button2 from "../../components/Button2";
 import ButtonSecondary from "../../components/ButtonSecondary";
 import ButtonLoader from "../../components/ButtonLoader";
@@ -40,9 +40,15 @@ const types = [
 function Accounts() {
 	const dispatch = useDispatch();
 	const [accountName, setAccountName] = useState("");
-	const [accountType, setAccountType] = useState("");
-	const [subType, setSubType] = useState("");
-	const { accounts } = useSelector((state) => state.schoolStore);
+	const [accountType, setAccountType] = useState(null);
+	const [subType, setSubType] = useState(null);
+	const [amount, setAmount] = useState(null);
+	const [supplier, setSupplier] = useState(null);
+	const [supOptions, setSupOptions] = useState([]);
+	const [contacts, setContacts] = useState("");
+	const [address, setAddress] = useState("");
+	const [about, setAbout] = useState("");
+ 	const { accounts, suppliers, loading } = useSelector((state) => state.schoolStore);
 
 	const handleAccountNameChange = (e) => {
 		setAccountName(e.target.value);
@@ -55,8 +61,13 @@ function Accounts() {
 			setPosting(true);
 			let formData = {
 				accountName,
-				accountType: accountType.value,
-				subType: subType.value,
+				accountType: accountType?.value,
+				subType: subType?.value,
+				supplierName: supplier?.value,
+				contacts: contacts,
+				address: address,
+				about: about,
+				amount: parseFloat(amount),
 			};
 
 			const response = await axiosInstance.post("/accounts", formData);
@@ -66,6 +77,13 @@ function Accounts() {
 			if (status) {
 				dispatch(getAccounts());
 				setAccountName("");
+				setSubType(null);
+				setAccountType(null);
+				setSupplier(null);
+				setContacts("");
+				setAddress("");
+				setAbout("");
+				setAmount(null);
 				setPosting(false);
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
@@ -73,6 +91,7 @@ function Accounts() {
 					showConfirmButton: false,
 					timer: 500,
 				});
+				closeModal();
 			}
 		} catch (error) {
 			console.log(error);
@@ -83,7 +102,28 @@ function Accounts() {
 	// getAccounts
 	useEffect(() => {
 		dispatch(getAccounts());
+		dispatch(getSuppliers());
 	}, [dispatch]);
+
+	useEffect(() => {
+		const supplierOptions = suppliers.map(sup =>
+			({
+				label: sup.supplierName,
+				value: sup.supplierName,
+				contacts: sup.contacts,
+				address: sup.address,
+				about: sup.about,
+			}));
+		setSupOptions(supplierOptions);
+		
+	}, [suppliers])
+
+	const handleSupplierChange = (sup) => {
+		setSupplier(sup);
+		setContacts(sup.contacts);
+		setAddress(sup.address);
+		setAbout(sup.about);
+	}
 
 	const [modal, setModal] = useState(false);
 
@@ -93,6 +133,10 @@ function Accounts() {
 	const closeModal = () => {
 		setModal(false);
 	};
+
+	if (loading.accounts || loading.suppliers) {
+		return  <Loader />;
+	  }
 
 	return (
 		<>
@@ -152,9 +196,9 @@ function Accounts() {
 
 								<Select
 									placeholder="Select Category"
-									defaultValue={accountType}
-									onChange={setAccountType}
-									options={types}
+									defaultValue={supplier}
+									onChange={handleSupplierChange}
+									options={supOptions}
 								/>
 							</div>
 							<div className="p-1 w-60">
@@ -162,8 +206,8 @@ function Accounts() {
 									label="Contacts"
 									type="text"
 									placeholder="Contacts"
-									value={accountName}
-									onChange={handleAccountNameChange}
+									value={contacts}
+									onChange={(e) => setContacts(e.target.value)}
 								/>
 							</div>
 							<div className="p-1 w-60">
@@ -171,8 +215,8 @@ function Accounts() {
 									label="Location"
 									type="text"
 									placeholder="Location"
-									value={accountName}
-									onChange={handleAccountNameChange}
+									value={address}
+									onChange={(e) => setAddress(e.target.value)}
 								/>
 							</div>
 						</div>
@@ -181,12 +225,18 @@ function Accounts() {
 								<InputField
 									label="Opening Balance"
 									placeholder="Opening Balance"
+									value={amount}
+									onChange={(e) => setAmount(e.target.value)}
 								/>
 							</div>
 							<div className="ml-5">
 								<label className="text-gray4">About</label>
 								<br />
-								<textarea className="bg-gray1 w-96 border border-gray2 min-h-[100px]"></textarea>
+								<textarea 
+									className="bg-gray1 w-96 border border-gray2 min-h-[100px]"
+									value={about}
+  									onChange={(e) => setAbout(e.target.value)}
+								></textarea>
 							</div>
 						</div>
 						<div className="flex justify-between p-3 bg-gray1">
@@ -239,7 +289,6 @@ function Accounts() {
 					<div className="border border-gray1 p-3 w-1/4">Action</div>
 				</div>
 			))}
-			<Loader />
 		</>
 	);
 }
