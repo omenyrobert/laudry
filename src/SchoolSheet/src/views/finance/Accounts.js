@@ -198,7 +198,7 @@ function Accounts() {
 									placeholder="Select Category"
 									defaultValue={supplier}
 									onChange={handleSupplierChange}
-									options={supOptions}
+									options={types}
 								/>
 							</div>
 							<div className="p-1 w-60">
