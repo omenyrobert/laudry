@@ -67,8 +67,8 @@ function Suppliers() {
 				address: addressEdit,
 				about: aboutEdit,
 			};
-			const grade = await axiosInstance.put(`/suppliers`, formData);
-			const { data } = grade;
+			const supplier = await axiosInstance.put(`/suppliers`, formData);
+			const { data } =  supplier;
 			const { status } = data;
 			if (status) {
 				dispatch(getSuppliers());
@@ -352,7 +352,7 @@ function Suppliers() {
 								</div>
 							) : null}
 
-							{suppliers &&suppliers.map((sup) => {
+							{suppliers && suppliers.map((sup) => {
 								return (
 									<tr
 										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
