@@ -29,7 +29,7 @@ function Ledger() {
 					</div>
 				</div>
 
-				<div className="flex border-b border-gray1 mt-3">
+				<div className="flex border-b border-gray1 bg-primary3 text-primary font-medium mt-3">
 					<div className="w-1/4 p-2">Date</div>
 					<div className="w-1/4 p-2">Transaction Type</div>
 					<div className="w-1/4 p-2">Transaction No</div>
