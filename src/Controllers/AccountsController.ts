@@ -30,7 +30,11 @@ export const addAccount = async (req: Request, res: Response) => {
       accountName,
       accountType,
       subType,
-      amount
+      amount,
+      supplierName,
+      contacts,
+      address,
+      about
     } = req.body;
 
     if (!accountName) {
@@ -54,7 +58,16 @@ export const addAccount = async (req: Request, res: Response) => {
         .end();
     }
 
-    await createAccount(accountName, accountType, subType, amount);
+    await createAccount(
+      accountName,
+      accountType,
+      subType,
+      amount,
+      supplierName,
+      contacts,
+      address,
+      about
+    );
         
     return res
       .json(customPayloadResponse(true, "Account Added"))
@@ -75,7 +88,11 @@ export const modifyAccount = async (req: Request, res: Response) => {
       accountName,
       accountType,
       subType,
-      amount
+      amount,
+      supplierName,
+      contacts,
+      address,
+      about
     } = req.body;
 
     const accountId = id;
@@ -111,7 +128,17 @@ export const modifyAccount = async (req: Request, res: Response) => {
     const accountToModify = await getSingleAccount(accountId);
 
     if (accountToModify) {
-      await updateAccount(accountId, accountName, accountType, subType, amount);
+      await updateAccount(
+        accountId,
+        accountName,
+        accountType,
+        subType,
+        amount,
+        supplierName,
+        contacts, 
+        address,
+        about,
+      );
 
       return res
         .json(customPayloadResponse(true, "Account Modified"))
