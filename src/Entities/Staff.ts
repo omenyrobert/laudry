@@ -249,5 +249,6 @@ export const updateProfilePicture = async (
 
   await staff.save();
 
+
   return staff;
 }

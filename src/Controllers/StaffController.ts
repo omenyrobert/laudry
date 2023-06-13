@@ -309,10 +309,16 @@ export const updateStaffProfile = async (req: Request, res: Response) => {
 
 export const updateStaffProfilePicture = async (req: Request, res: Response) => {
   try {
-    const { 
-      photo
-    } = req.body;
     const {id} = req.params
+    console.log("Uploading files");
+
+    if (!req.file) {
+      return res
+        .json(customPayloadResponse(false, "Profile Picture Required"))
+        .status(200)
+        .end();
+    }
+    
 
     if (!id) {
       return res
@@ -320,6 +326,21 @@ export const updateStaffProfilePicture = async (req: Request, res: Response) => 
         .status(200)
         .end();
     }
+
+    
+    if (!req.file) {
+      return res
+        .json(customPayloadResponse(false, "Profile Picture Required"))
+        .status(200)
+        .end();
+    }
+
+    const photo = req.file.filename
+
+
+
+    
+    
 
     const staff = await updateProfilePicture(
       parseInt(id),
@@ -332,7 +353,7 @@ export const updateStaffProfilePicture = async (req: Request, res: Response) => 
     return res
       .json(customPayloadResponse(false, "Staff Member not Found"))
       .status(200)
-      .end();
+      .end(); 
 
   } catch (error) {
     console.log(error);

@@ -14,7 +14,7 @@ import Qualifications from "./Qualifications";
 import NOK from "./NOK";
 import OtherInfo from "./OtherInfo";
 import SalaryInfo from "./SalaryInfo";
-import axiosInstance from "../../axios-instance"
+import axiosInstance, { UPLOADS_URL } from "../../axios-instance"
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 
@@ -94,6 +94,7 @@ function StaffEditForm(props) {
 				});
 			} else {
 				setStaffProfile(payload);
+				console.log(payload)
 			}
 		} catch (error) {
 			console.log(error);
@@ -110,33 +111,24 @@ function StaffEditForm(props) {
 	const [photo, setPhoto] = useState(staffInfo?.profile_picture);
 
 	const handlePhotoChange = (e) => {
-		// generate data url
-		const reader = new FileReader();
-		reader.onload = () => {
-			if (reader.readyState === 2) {
-				setPhoto(reader.result);
-			}
-		}
-		if (e.target.files[0]) {
-			reader.readAsDataURL(e.target.files[0]);
-		}
+		const file = e.target.files[0];
+		const formData = new FormData();
+		formData.append("profile_picture", file);
+		axiosInstance.post(`/staff/profile-picture/${staffId}`, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		})
+			.then((res) => {
+				fetchStaffInfo()
+				console.log(res.data)
+			}).catch((err) => {
+				console.log(err)
+			})
 
 	};
 
-	useEffect(() => {
-		if (photo) {
-			const data = {
-				photo
-			}
-			axiosInstance.patch(`/staff/profile-picture/${staffId}`, data)
-				.then((res) => {
-					console.log(res)
-				}).catch((err) => {
-					console.log(err)
-				})
-		}
 
-	}, [photo])
 
 
 
@@ -164,7 +156,7 @@ function StaffEditForm(props) {
 							<div className="w-1/2 flex">
 								<div>
 									<img
-										src={photo ? photo : "avata.jpeg"}
+										src={staffInfo?.profile_picture ? UPLOADS_URL + staffInfo?.profile_picture : "avata.jpeg"}
 										className="w-full object-cover rounded-full  border border-gray1 shadow"
 										alt={staffInfo?.firstName}
 									/>
