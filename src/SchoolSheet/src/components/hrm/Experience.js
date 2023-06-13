@@ -100,7 +100,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									label="School"
 									onChange={(e) => setSchool(e.target.value)}
 									value={school}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -108,7 +108,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									label="From Date"
 									onChange={(e) => setFrom(e.target.value)}
 									value={from}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/2 p-3 -mt-5">
@@ -118,7 +118,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									label="To Date"
 									onChange={(e) => setTo(e.target.value)}
 									value={to}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -127,7 +127,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									name="position"
 									onChange={(e) => setPosition(e.target.value)}
 									value={position}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 
 								<div onClick={addExperience} className="mt-14">

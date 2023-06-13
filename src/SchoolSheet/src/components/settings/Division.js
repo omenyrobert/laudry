@@ -12,7 +12,7 @@ import { getSubjects } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../ButtonLoader";
 
-function Subject() {
+function Division() {
 	const dispatch = useDispatch();
 	const [editData, setEditData] = useState(false);
 	const [editSubject, setEditSubject] = useState("");
@@ -126,21 +126,29 @@ function Subject() {
 
 	return (
 		<div className=" bg-white pl-5 shadow-lg rounded-md h-auto p-3">
-			<h5 className="text-xl font-medium ml-5 text-secondary">Subject</h5>
+			<h5 className="text-xl font-medium ml-5 text-secondary">Divisions</h5>
 			<div className="w-full">
 				<div className="flex justify-between ">
-					<div className="w-1/2">
+					<div className="w-2/5 p-2">
 						<InputField
 							type="text"
-							placeholder="Enter Subject"
-							label="Subject"
+							placeholder="Enter Division"
+							label="Division"
 							value={subject}
 							onChange={(e) => setSubject(e.target.value)}
-							
+						/>
+					</div>
+					<div className="w-2/5 p-2">
+						<InputField
+							type="text"
+							placeholder="Enter Points"
+							label="Points"
+							value={subject}
+							onChange={(e) => setSubject(e.target.value)}
 						/>
 					</div>
 
-					<div className="mt-8 mr-5 w-[100px]">
+					<div className="mt-8 mr-5 w-1/3 p-2">
 						<br />
 						{isposting ? (
 							<ButtonLoader />
@@ -152,16 +160,17 @@ function Subject() {
 					</div>
 				</div>
 
-				<table className="mt-10 w-[98%] table-auto">
+				<table className=" w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
-						<th className="p-2 text-primary text-sm text-left">Subject</th>
+						<th className="p-2 text-primary text-sm text-left">Division</th>
+						<th className="p-2 text-primary text-sm text-left">Points</th>
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
 						{/* edit popup start */}
 						{editData ? (
-							<div className="absolute shadow-2xl rounded flex w-[30vw] p-5 bg-white">
-								<div className="w-7/12 pr-2">
+							<div className="absolute shadow-2xl rounded flex w-[40vw] p-5 bg-white">
+								<div className="w-2/5 pr-2">
 									<InputField
 										type="text"
 										placeholder="Enter Subject"
@@ -171,7 +180,17 @@ function Subject() {
 										
 									/>
 								</div>
-								<div className="flex justify-between w-5/12 mt-[55px]">
+								<div className="w-2/5 pr-2">
+									<InputField
+										type="text"
+										placeholder="Enter Subject"
+										label="Subject"
+										onChange={(e) => setEditSubject(e.target.value)}
+										value={editSubject}
+										
+									/>
+								</div>
+								<div className="flex justify-between w-1/5 mt-[55px]">
 									<div onClick={updateSubject}>
 										<ButtonSecondary value={"Update"} />
 									</div>
@@ -195,7 +214,7 @@ function Subject() {
 									key={subject.id}
 								>
 									<td className="text-xs p-3 text-gray5">{subject.subject}</td>
-
+									<td className="text-xs p-3 text-gray5">{subject.subject}</td>
 									<td className="text-xs p-3 text-gray5 flex">
 										<MdDeleteOutline
 											onClick={() => deleteSubject(subject)}
@@ -215,4 +234,4 @@ function Subject() {
 		</div>
 	);
 }
-export default Subject;
+export default Division;

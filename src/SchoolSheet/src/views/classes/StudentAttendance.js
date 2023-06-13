@@ -253,7 +253,7 @@ function StudentAttendance() {
 											name="attendanceType"
 											onChange={(e) => setTypeEdit(e.target.value)}
 											value={typeEdit}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 										<InputField
 											type="time"
@@ -262,7 +262,7 @@ function StudentAttendance() {
 											name="arrival"
 											onChange={(e) => setArrivalEdit(e.target.value)}
 											value={arrivalEdit}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 										<InputField
 											type="time"
@@ -270,7 +270,7 @@ function StudentAttendance() {
 											name="departure"
 											onChange={(e) => setDepartureEdit(e.target.value)}
 											value={departureEdit}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 										<div onClick={updateType}>
 											<ButtonSecondary value={"Update"} />

@@ -156,7 +156,7 @@ function ExpensesTypesComp() {
 									label="Expense Type"
 									value={expenseType}
 									onChange={(e) => setExpenseType(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								</div>
 
@@ -181,7 +181,7 @@ function ExpensesTypesComp() {
 													label="Expense Type"
 													value={expenseTypeEdit}
 													onChange={(e) => setExpenseTypeEdit(e.target.value)}
-													icon={<FaPen className="w-3 -ml-7 mt-3" />}
+													
 												/>
 											</div>
 											<div className="flex justify-between w-1/3 mt-[55px]">

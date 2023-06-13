@@ -277,7 +277,7 @@ function StockComp() {
 								label="Stock"
 								value={stock}
 								onChange={(e) => setstock(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 						<div className="w-1/4 p-1">
@@ -287,7 +287,7 @@ function StockComp() {
 								label="Qty"
 								value={qty}
 								onChange={(e) => setqty(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 						<div className="w-1/4 p-1">
@@ -347,7 +347,7 @@ function StockComp() {
 											label="stock"
 											value={stockEdit}
 											onChange={(e) => setstockEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -357,7 +357,7 @@ function StockComp() {
 											label="qty"
 											value={qtyEdit}
 											onChange={(e) => setqtyEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">

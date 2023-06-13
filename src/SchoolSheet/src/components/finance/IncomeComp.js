@@ -291,7 +291,7 @@ function IncomeComp() {
 								label="Income"
 								value={income}
 								onChange={(e) => setIncome(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 						<div className="w-1/3 p-1">
@@ -301,7 +301,7 @@ function IncomeComp() {
 								label="Amount"
 								value={amount}
 								onChange={(e) => setAmount(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 					</div>
@@ -323,7 +323,7 @@ function IncomeComp() {
 								label="Income Source"
 								value={from}
 								onChange={(e) => setFrom(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 						<div className="w-1/3">
@@ -333,7 +333,7 @@ function IncomeComp() {
 								label="Income description"
 								value={comment}
 								onChange={(e) => setComment(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 					</div>
@@ -404,7 +404,7 @@ function IncomeComp() {
 											label="Income"
 											value={incomeEdit}
 											onChange={(e) => setIncomeEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3 p-1">
@@ -414,7 +414,7 @@ function IncomeComp() {
 											label="Amount"
 											value={amountEdit}
 											onChange={(e) => setAmountEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>
@@ -436,7 +436,7 @@ function IncomeComp() {
 											label="Income Source"
 											value={fromEdit}
 											onChange={(e) => setFromEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3">
@@ -446,7 +446,7 @@ function IncomeComp() {
 											label="Income description"
 											value={commentEdit}
 											onChange={(e) => setCommentEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>

@@ -52,7 +52,7 @@ function AddSalary(props) {
 						type="number"
 						placeholder="Enter Gross"
 						label="Gross"
-						icon={<FaPen className="w-3 -ml-7 mt-3" />}
+						
 					/>
 				</div>
 			</div>
@@ -63,7 +63,7 @@ function AddSalary(props) {
 						placeholder="Enter Net"
 						label="Net Salary"
 						name="amount"
-						icon={<FaPen className="w-3 -ml-7 mt-3" />}
+						
 					/>
 				</div>
 				<div className="w-1/3 px-2">
@@ -71,7 +71,7 @@ function AddSalary(props) {
 						type="number"
 						placeholder="Enter PAYE"
 						label="PAYE"
-						icon={<FaPen className="w-3 -ml-7 mt-3" />}
+						
 					/>
 				</div>
 				<div className="w-1/3 px-2">
@@ -79,7 +79,7 @@ function AddSalary(props) {
 						type="number"
 						placeholder="Enter NSSF"
 						label="NSSF"
-						icon={<FaPen className="w-3 -ml-7 mt-3" />}
+						
 					/>
 				</div>
 			</div>

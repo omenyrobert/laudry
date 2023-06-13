@@ -152,7 +152,7 @@ function IncomesTypeComp() {
 									label="Income Type"
 									value={incomeType}
 									onChange={(e) => setIncomeType(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 
@@ -177,7 +177,7 @@ function IncomesTypeComp() {
 												label="Income Type"
 												value={incomeTypeEdit}
 												onChange={(e) => setincomeTypeEdit(e.target.value)}
-												icon={<FaPen className="w-3 -ml-7 mt-3" />}
+												
 											/>
 										</div>
 										<div className="flex justify-between w-1/3 mt-[55px]">

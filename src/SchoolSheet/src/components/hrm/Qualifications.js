@@ -110,7 +110,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 									label="Award"
 									onChange={(e) => setAward(e.target.value)}
 									value={award}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -118,7 +118,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 									label="From Date"
 									onChange={(e) => setFrom(e.target.value)}
 									value={from}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -126,7 +126,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 									label="To Date"
 									onChange={(e) => setTo(e.target.value)}
 									value={to}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/2 p-3 -mt-5">
@@ -137,7 +137,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 									name="Institution"
 									onChange={(e) => setSchool(e.target.value)}
 									value={school}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 
 								<InputField

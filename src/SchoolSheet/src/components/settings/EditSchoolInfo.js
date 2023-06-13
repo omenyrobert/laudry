@@ -182,7 +182,7 @@ function EditSchoolInfo() {
 									label="Facility Name"
 									onChange={(e) => setName(e.target.value)}
 									value={name}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -206,7 +206,7 @@ function EditSchoolInfo() {
 									label="Description"
 									onChange={(e) => setDescription(e.target.value)}
 									value={description}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/2 ml-5">
@@ -216,7 +216,7 @@ function EditSchoolInfo() {
 									label="motto"
 									onChange={(e) => setMotto(e.target.value)}
 									value={motto}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="email"
