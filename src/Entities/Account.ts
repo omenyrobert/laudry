@@ -25,11 +25,25 @@ export class Account extends BaseEntity {
   @Column({ nullable: true })
   amount!: number;
 
+
   @OneToMany(() => Transaction, transaction => transaction.account, {
     cascade: true,
     nullable: true,
   })
   transactions!: Transaction[];
+
+  @Column({ nullable: true })
+  supplierName!: string;
+
+  @Column({ nullable: true })
+  contacts!: string;
+
+  @Column({ nullable: true })
+  address!: string;
+
+  @Column({ nullable: true })
+  about!: string;
+
 }
 
 export const getAccounts = async () => {
@@ -46,12 +60,20 @@ export const createAccount = async (
   accountType: string,
   subType: string,
   amount: number,
+  supplierName: string,
+  contacts: string,
+  address: string,
+  about: string,
 ) => {
   const accountToInsert = await Account.insert({
     accountName,
     accountType,
     subType,
     amount,
+    supplierName,
+    contacts,
+    address,
+    about,
   });
 
   return accountToInsert;
@@ -70,12 +92,20 @@ export const updateAccount = async (
   accountType: string,
   subType: string,
   amount: number,
+  supplierName: string,
+  contacts: string,
+  address: string,
+  about: string,
 ) => {
   const accountToUpdate = await Account.update(id, {
     accountName,
     accountType,
     subType,
     amount,
+    supplierName,
+    contacts,
+    address,
+    about,
   });
   return accountToUpdate;
 };

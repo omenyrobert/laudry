@@ -39,7 +39,7 @@ function EmployeeType() {
 							placeholder="Enter Employee Type"
 							label="Employee Type"
 							name="employee_type"
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="mt-8 mr-5">
@@ -66,7 +66,7 @@ function EmployeeType() {
 										label="Charge Type"
 										name="Charge_type"
 										value={chargetypeEdit}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="flex justify-between w-1/3 mt-[55px]">

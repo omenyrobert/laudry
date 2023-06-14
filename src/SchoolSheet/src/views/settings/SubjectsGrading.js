@@ -7,6 +7,7 @@ import Button from "../../components/Button";
 import ButtonSecondary from "../../components/ButtonSecondary";
 import Subjects from "../../components/settings/Subjects";
 import Grades from "../../components/settings/Grades";
+import Division from "../../components/settings/Division";
 
 function SubjectsGrading() {
 	return (
@@ -14,8 +15,10 @@ function SubjectsGrading() {
 			<div className="w-1/3 p-5">
 				<Subjects />
 			</div>
-			<div className="w-2/3 ml-5 p-5">
-				<Grades/>
+			<div className="w-2/3 ml-5 p-5 h-[90vh] overflow-y-auto">
+				<Grades />
+				<br />
+				<Division />
 			</div>
 		</div>
 	);

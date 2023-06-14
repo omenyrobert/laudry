@@ -195,7 +195,7 @@ function Groups() {
 							label="House Name"
 							value={group}
 							onChange={(e) => setGroup(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="mt-8 mr-5">
@@ -229,7 +229,7 @@ function Groups() {
 										label="House Name"
 										onChange={(e) => setGroupEdit(e.target.value)}
 										value={groupEdit}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="flex justify-between w-1/3 mt-[55px]">

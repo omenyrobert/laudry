@@ -171,7 +171,7 @@ const StaffForm = (props) => {
 								label="Middle Name"
 								name="middleName"
 								onChange={onChange}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 
 							<br />
@@ -190,7 +190,7 @@ const StaffForm = (props) => {
 								label="Last Name"
 								name="lastName"
 								onChange={onChange}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 						<div className="w-1/3 p-2">
@@ -200,7 +200,7 @@ const StaffForm = (props) => {
 								label="First Name"
 								name="firstName"
 								onChange={onChange}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 					</div>

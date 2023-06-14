@@ -158,7 +158,7 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 									name="firstName"
 									onChange={(e) => setFirstName(e.target.value)}
 									value={firstName}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -167,7 +167,7 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 									name="middleName"
 									onChange={(e) => setMiddleName(e.target.value)}
 									value={middleName}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -176,7 +176,7 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 									name="lastName"
 									onChange={(e) => setLastName(e.target.value)}
 									value={lastName}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -210,7 +210,7 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 									name="residence"
 									onChange={(e) => setResidence(e.target.value)}
 									value={residence}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"

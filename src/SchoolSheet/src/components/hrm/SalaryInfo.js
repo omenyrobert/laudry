@@ -170,7 +170,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 									label="Gross Salary"
 									onChange={(e) => setGrossSalary(e.target.value)}
 									value={gross_salary}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -178,7 +178,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 									label="Bank"
 									onChange={(e) => setBankName(e.target.value)}
 									value={bank_name}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -186,7 +186,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 									label="Account Name"
 									onChange={(e) => setAccountName(e.target.value)}
 									value={account_name}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/2 p-3 -mt-5">
@@ -197,7 +197,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 
 									onChange={(e) => setAccountNumber(e.target.value)}
 									value={account_number}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 
 								<InputField

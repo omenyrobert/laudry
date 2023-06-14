@@ -136,10 +136,10 @@ function Grades() {
 	const { grades } = useSelector((state) => state.schoolStore);
 
 	return (
-		<>
+		<div className=" bg-white pl-5 shadow-lg rounded-md p-3 h-auto" >
 			<h5 className="text-xl font-medium text-secondary">Grading</h5>
-			<div className="w-full h-[80vh]">
-				<div className="flex justify-between bg-white pl-5 shadow-lg rounded-md">
+			<div className="w-full">
+				<div className="flex justify-between">
 					<div className="w-1/4">
 						<InputField
 							type="number"
@@ -147,7 +147,7 @@ function Grades() {
 							label="From"
 							value={from}
 							onChange={(e) => setFrom(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="w-1/4 ml-2">
@@ -157,7 +157,7 @@ function Grades() {
 							label="To"
 							value={to}
 							onChange={(e) => setTo(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="w-1/4 ml-2">
@@ -167,7 +167,17 @@ function Grades() {
 							label="Grade"
 							value={grade}
 							onChange={(e) => setGrade(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
+						/>
+					</div>
+					<div className="w-1/4 ml-2">
+						<InputField
+							type="text"
+							placeholder="Enter grade"
+							label="Points"
+							value={grade}
+							onChange={(e) => setGrade(e.target.value)}
+							
 						/>
 					</div>
 					<div className="mt-8 mr-5 w-1/4 ml-2">
@@ -182,11 +192,12 @@ function Grades() {
 					</div>
 				</div>
 
-				<table className="mt-10 w-[98%] table-auto">
+				<table className="w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">From</th>
 						<th className="p-2 text-primary text-sm text-left">To</th>
 						<th className="p-2 text-primary text-sm text-left">Grade</th>
+						<th className="p-2 text-primary text-sm text-left">Points</th>
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
@@ -200,7 +211,7 @@ function Grades() {
 										label="From"
 										value={fromEdit}
 										onChange={(e) => setFromEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="w-3/12 pr-2">
@@ -210,7 +221,7 @@ function Grades() {
 										label="To"
 										value={toEdit}
 										onChange={(e) => setToEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="w-3/12 pr-2">
@@ -220,7 +231,7 @@ function Grades() {
 										label="Grade"
 										value={gradeEdit}
 										onChange={(e) => setGradeEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="flex justify-between w-3/12 mt-[55px]">
@@ -249,6 +260,7 @@ function Grades() {
 									<td className="text-xs p-3 text-gray5">{grade.from}</td>
 									<td className="text-xs p-3 text-gray5">{grade.to}</td>
 									<td className="text-xs p-3 text-gray5">{grade.grade}</td>
+									<td className="text-xs p-3 text-gray5">{grade.grade}</td>
 									<td className="text-xs p-3 text-gray5 flex">
 										<MdDeleteOutline
 											onClick={(e) => deleteGrade(grade)}
@@ -265,7 +277,7 @@ function Grades() {
 					</tbody>
 				</table>
 			</div>
-		</>
+		</div>
 	);
 }
 export default Grades;

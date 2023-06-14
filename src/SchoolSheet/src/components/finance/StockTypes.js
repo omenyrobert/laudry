@@ -134,7 +134,7 @@ function StockTypes() {
 							label="Stock Type"
 							value={stockType}
 							onChange={(e) => setstockType(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 
@@ -159,7 +159,7 @@ function StockTypes() {
 										label="stock Type"
 										value={stockTypeEdit}
 										onChange={(e) => setstockTypeEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="flex justify-between w-1/3 mt-[55px]">

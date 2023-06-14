@@ -274,7 +274,7 @@ function ExpensesComp() {
 									label="Expense"
 									value={expense}
 									onChange={(e) => setExpense(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/3 p-1">
@@ -284,7 +284,7 @@ function ExpensesComp() {
 									label="Amount"
 									value={amount}
 									onChange={(e) => setAmount(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 						</div>
@@ -316,7 +316,7 @@ function ExpensesComp() {
 									label="Received By"
 									value={to}
 									onChange={(e) => setTo(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 						</div>
@@ -328,7 +328,7 @@ function ExpensesComp() {
 									label="Expense Contacts"
 									value={contacts}
 									onChange={(e) => setContacts(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/3 p-1">
@@ -338,7 +338,7 @@ function ExpensesComp() {
 									label=" Description"
 									value={contacts}
 									onChange={(e) => setContacts(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/3 p-1 mt-14"></div>
@@ -396,7 +396,7 @@ function ExpensesComp() {
 											label="Expense"
 											value={expenseEdit}
 											onChange={(e) => setExpenseEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3 p-1">
@@ -406,7 +406,7 @@ function ExpensesComp() {
 											label="Amount"
 											value={amountEdit}
 											onChange={(e) => setAmountEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>
@@ -438,7 +438,7 @@ function ExpensesComp() {
 											label="Received By"
 											value={toEdit}
 											onChange={(e) => setToEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>
@@ -450,7 +450,7 @@ function ExpensesComp() {
 											label="Expense Contacts"
 											value={contactsEdit}
 											onChange={(e) => setContactsEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3 p-1">
@@ -460,7 +460,7 @@ function ExpensesComp() {
 											label=" Description"
 											value={contactsEdit}
 											onChange={(e) => setContactsEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3 p-1 mt-14"></div>

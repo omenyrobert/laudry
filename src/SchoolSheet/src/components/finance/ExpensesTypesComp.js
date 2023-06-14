@@ -178,6 +178,7 @@ function ExpensesTypesComp() {
 						</div>
 						<div className="w-full h-[80vh]">
 							<div className="bg-white p-5 flex ">
+
 								<div className="w-7/12">
 									<InputField
 										type="text"
@@ -187,6 +188,7 @@ function ExpensesTypesComp() {
 										onChange={(e) => setExpenseType(e.target.value)}
 										icon={<FaPen className="w-3 -ml-7 mt-3" />}
 									/>
+
 								</div>
 
 								<div className="mt-14 ml-2" onClick={postExpenseType}>
@@ -212,7 +214,7 @@ function ExpensesTypesComp() {
 													label="Expense Type"
 													value={expenseTypeEdit}
 													onChange={(e) => setExpenseTypeEdit(e.target.value)}
-													icon={<FaPen className="w-3 -ml-7 mt-3" />}
+													
 												/>
 											</div>
 											<div className="flex justify-between w-1/3 mt-[55px]">

@@ -131,81 +131,241 @@ export const getSuppliers = createAsyncThunk("/schoolSheet/suppliers", async () 
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
 	initialState: {
-		streams: [],
-		staffMembers: [],
-		staffTypes: [],
-		classes: [],
-		sections: [],
-		subjects: [],
-		students: [],
-		houses: [],
-		studentTypes: [],
-		fees: [],
-		examTypes: [],
-		assessments: [],
-		grades: [],
-		terms: [],
-		schools: [],
-		accounts: [],
-		journals: [],
-		suppliers: [],
+	  streams: [],
+	  staffMembers: [],
+	  staffTypes: [],
+	  classes: [],
+	  sections: [],
+	  subjects: [],
+	  students: [],
+	  houses: [],
+	  studentTypes: [],
+	  fees: [],
+	  examTypes: [],
+	  assessments: [],
+	  grades: [],
+	  terms: [],
+	  schools: [],
+	  accounts: [],
+	  journals: [],
+	  suppliers: [],
+	  loading: {
+		streams: false,
+		staffMembers: false,
+		staffTypes: false,
+		classes: false,
+		sections: false,
+		subjects: false,
+		students: false,
+		houses: false,
+		studentTypes: false,
+		fees: false,
+		examTypes: false,
+		assessments: false,
+		grades: false,
+		terms: false,
+		schools: false,
+		accounts: false,
+		journals: false,
+		suppliers: false,
+	  },
 	},
 	extraReducers: {
-		[getStreams.fulfilled]: (state, action) => {
-			state.streams = action.payload;
-		},
-		[getSections.fulfilled]: (state, action) => {
-			state.sections = action.payload;
-		},
-		[getStaffTypes.fulfilled]: (state, action) => {
-			state.staffTypes = action.payload;
-		},
-		[getStaffMembers.fulfilled]: (state, action) => {
-			state.staffMembers = action.payload;
-		},
-		[getClasses.fulfilled]: (state, action) => {
-			state.classes = action.payload;
-		},
-		[getSubjects.fulfilled]: (state, action) => {
-			state.subjects = action.payload;
-		},
-		[getStudents.fulfilled]: (state, action) => {
-			state.students = action.payload;
-		},
-		[getHouses.fulfilled]: (state, action) => {
-			state.houses = action.payload;
-		},
-		[getStudentTypes.fulfilled]: (state, action) => {
-			state.studentTypes = action.payload;
-		},
-		[getFeesStructure.fulfilled]: (state, action) => {
-			state.fees = action.payload;
-		},
-		[getExamTypes.fulfilled]: (state, action) => {
-			state.examTypes = action.payload;
-		},
-		[getAssessments.fulfilled]: (state, action) => {
-			state.assessments = action.payload;
-		},
-		[getGrades.fulfilled]: (state, action) => {
-			state.grades = action.payload;
-		},
-		[getTerms.fulfilled]: (state, action) => {
-			state.terms = action.payload;
-		},
-		[getSchools.fulfilled]: (state, action) => {
-			state.schools = action.payload;
-		},
-		[getAccounts.fulfilled]: (state, action) => {
-			state.accounts = action.payload;
-		},
-		[getJournals.fulfilled]: (state, action) => {
-			state.journals = action.payload;
-		},
-		[getSuppliers.fulfilled]: (state, action) => {
-			state.suppliers = action.payload;
-		},
+	  [getStreams.pending]: (state) => {
+		state.loading.streams = true;
+	  },
+	  [getStreams.fulfilled]: (state, action) => {
+		state.loading.streams = false;
+		state.streams = action.payload;
+	  },
+	  [getStreams.rejected]: (state) => {
+		state.loading.streams = false;
+	  },
+	  [getSections.pending]: (state) => {
+		state.loading.sections = true;
+	  },
+	  [getSections.fulfilled]: (state, action) => {
+		state.loading.sections = false;
+		state.sections = action.payload;
+	  },
+	  [getSections.rejected]: (state) => {
+		state.loading.sections = false;
+	  },
+	  [getStaffTypes.pending]: (state) => {
+		state.loading.staffTypes = true;
+	  },
+	  [getStaffTypes.fulfilled]: (state, action) => {
+		state.loading.staffTypes = false;
+		state.staffTypes = action.payload;
+	  },
+	  [getStaffTypes.rejected]: (state) => {
+		state.loading.staffTypes = false;
+	  },  
+	  [getStaffMembers.pending]: (state) => {
+		state.loading.staffMembers = true;
+	  },
+	  [getStaffMembers.fulfilled]: (state, action) => {
+		state.loading.staffMembers = false;
+		state.staffMembers = action.payload;
+	  },
+	  [getStaffMembers.rejected]: (state) => {
+		state.loading.staffMembers = false;
+	  },
+  
+	  [getClasses.pending]: (state) => {
+		state.loading.classes = true;
+	  },
+	  [getClasses.fulfilled]: (state, action) => {
+		state.loading.classes = false;
+		state.classes = action.payload;
+	  },
+	  [getClasses.rejected]: (state) => {
+		state.loading.classes = false;
+	  },
+  
+	  [getSubjects.pending]: (state) => {
+		state.loading.subjects = true;
+	  },
+	  [getSubjects.fulfilled]: (state, action) => {
+		state.loading.subjects = false;
+		state.subjects = action.payload;
+	  },
+	  [getSubjects.rejected]: (state) => {
+		state.loading.subjects = false;
+	  },
+  
+	  [getStudents.pending]: (state) => {
+		state.loading.students = true;
+	  },
+	  [getStudents.fulfilled]: (state, action) => {
+		state.loading.students = false;
+		state.students = action.payload;
+	  },
+	  [getStudents.rejected]: (state) => {
+		state.loading.students = false;
+	  },
+  
+	  [getHouses.pending]: (state) => {
+		state.loading.houses = true;
+	  },
+	  [getHouses.fulfilled]: (state, action) => {
+		state.loading.houses = false;
+		state.houses = action.payload;
+	  },
+	  [getHouses.rejected]: (state) => {
+		state.loading.houses = false;
+	  },
+  
+	  [getStudentTypes.pending]: (state) => {
+		state.loading.studentTypes = true;
+	  },
+	  [getStudentTypes.fulfilled]: (state, action) => {
+		state.loading.studentTypes = false;
+		state.studentTypes = action.payload;
+	  },
+	  [getStudentTypes.rejected]: (state) => {
+		state.loading.studentTypes = false;
+	  },
+  
+	  [getFeesStructure.pending]: (state) => {
+		state.loading.fees = true;
+	  },
+	  [getFeesStructure.fulfilled]: (state, action) => {
+		state.loading.fees = false;
+		state.fees = action.payload;
+	  },
+	  [getFeesStructure.rejected]: (state) => {
+		state.loading.fees = false;
+	  },
+  
+	  [getExamTypes.pending]: (state) => {
+		state.loading.examTypes = true;
+	  },
+	  [getExamTypes.fulfilled]: (state, action) => {
+		state.loading.examTypes = false;
+		state.examTypes = action.payload;
+	  },
+	  [getExamTypes.rejected]: (state) => {
+		state.loading.examTypes = false;
+	  },
+  
+	  [getAssessments.pending]: (state) => {
+		state.loading.assessments = true;
+	  },
+	  [getAssessments.fulfilled]: (state, action) => {
+		state.loading.assessments = false;
+		state.assessments = action.payload;
+	  },
+	  [getAssessments.rejected]: (state) => {
+		state.loading.assessments = false;
+	  },
+  
+	  [getGrades.pending]: (state) => {
+		state.loading.grades = true;
+	  },
+	  [getGrades.fulfilled]: (state, action) => {
+		state.loading.grades = false;
+		state.grades = action.payload;
+	  },
+	  [getGrades.rejected]: (state) => {
+		state.loading.grades = false;
+	  },
+  
+	  [getTerms.pending]: (state) => {
+		state.loading.terms = true;
+	  },
+	  [getTerms.fulfilled]: (state, action) => {
+		state.loading.terms = false;
+		state.terms = action.payload;
+	  },
+	  [getTerms.rejected]: (state) => {
+		state.loading.terms = false;
+	  },
+  
+	  [getSchools.pending]: (state) => {
+		state.loading.schools = true;
+	  },
+	  [getSchools.fulfilled]: (state, action) => {
+		state.loading.schools = false;
+		state.schools = action.payload;
+	  },
+	  [getSchools.rejected]: (state) => {
+		state.loading.schools = false;
+	  },
+  
+	  [getAccounts.pending]: (state) => {
+		state.loading.accounts = true;
+	  },
+	  [getAccounts.fulfilled]: (state, action) => {
+		state.loading.accounts = false;
+		state.accounts = action.payload;
+	  },
+	  [getAccounts.rejected]: (state) => {
+		state.loading.accounts = false;
+	  },
+  
+	  [getJournals.pending]: (state) => {
+		state.loading.journals = true;
+	  },
+	  [getJournals.fulfilled]: (state, action) => {
+		state.loading.journals = false;
+		state.journals = action.payload;
+	  },
+	  [getJournals.rejected]: (state) => {
+		state.loading.journals = false;
+	  },
+  
+	  [getSuppliers.pending]: (state) => {
+		state.loading.suppliers = true;
+	  },
+	  [getSuppliers.fulfilled]: (state, action) => {
+		state.loading.suppliers = false;
+		state.suppliers = action.payload;
+	  },
+	  [getSuppliers.rejected]: (state) => {
+		state.loading.suppliers = false;
+	  },
 	},
 });
-
+    
 export default schoolSheetSlices.reducer;

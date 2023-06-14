@@ -92,7 +92,7 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 								label="Next Of Kin Type"
 								onChange={(e) => setRelationship(e.target.value)}
 								value={relationship}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 							<InputField
 								type="text"
@@ -100,7 +100,7 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 								label="Next Of Kin Type"
 								onChange={(e) => setNokName(e.target.value)}
 								value={nokname}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 						<div className="w-1/2 p-3 -mt-5">
@@ -111,7 +111,7 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 								name="Contacts"
 								onChange={(e) => setNokContact(e.target.value)}
 								value={nokContact}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 
 							<div className="mt-14">
@@ -154,7 +154,7 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 									label="Relationship"
 									onChange={(e) => setRelationship(e.target.value)}
 									value={relationship}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -162,7 +162,7 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 									label="Name"
 									onChange={(e) => setNokName(e.target.value)}
 									value={nokname}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/2 p-3 -mt-5">
@@ -173,7 +173,7 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 									name="Contacts"
 									onChange={(e) => setNokContact(e.target.value)}
 									value={nokContact}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 
 								<div onClick={addNok} className="mt-14">

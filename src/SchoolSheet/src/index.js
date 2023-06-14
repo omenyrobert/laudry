@@ -27,7 +27,7 @@ import GroupsAndTypes from "./views/students/GroupsAndTypes";
 import Incomes from "./views/finance/Incomes";
 import Expenses from "./views/finance/Expenses";
 import Reports from "./views/finance/Reports";
-import Invoices from "./views/finance/Invoices";
+import Invoices from "./components/finance/Invoices";
 import Staff from "./views/hrm/Staff";
 import PayRoll from "./views/hrm/PayRoll";
 import StaffAttendance from "./views/hrm/StaffAttendance";
@@ -55,6 +55,7 @@ import Sample from "./views/Sample";
 import StudentAttendanceComp from "./components/classes/StudentAttendanceComp";
 import Journal from "../src/components/finance/Journal";
 import AddTransaction from "./components/finance/AddTransaction";
+import Ledger from "./components/finance/Ledger";
 
 const router = createBrowserRouter([
 	{
@@ -246,6 +247,10 @@ const router = createBrowserRouter([
 				path: "/journal",
 				element: <Journal />,
 			},
+			{
+				path: "/ledger",
+				element: <Ledger/>
+			}
 		],
 	},
 ]);

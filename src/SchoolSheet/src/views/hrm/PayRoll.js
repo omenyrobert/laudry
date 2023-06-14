@@ -795,7 +795,7 @@ function PayRoll() {
 												name="Staff_type"
 												value={typeEdit}
 												onChange={(e) => setTypeEdit(e.target.value)}
-												icon={<FaPen className="w-3 -ml-7 mt-3" />}
+												
 											/>
 										</div>
 										<div className="flex justify-between w-1/3 mt-[55px]">

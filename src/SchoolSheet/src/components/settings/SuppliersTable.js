@@ -167,7 +167,7 @@ function SuppliersTable() {
 							label="Suppliers Name"
 							name="suppliers_name"
 							value={chargetypeEdit}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 							<InputField
 							type="text"
@@ -194,7 +194,7 @@ function SuppliersTable() {
 							label="Charge Type"
 							name="Charge_type"
 							value={chargetypeEdit}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 
 						<ButtonSecondary value={"Update"} />

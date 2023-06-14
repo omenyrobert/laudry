@@ -165,7 +165,7 @@ function FeesStrructures() {
 					name="feesName"
 					value={fees.feesName}
 					onChange={onChange}
-					icon={<FaPen className="w-3 -ml-7 mt-3" />}
+					
 				/>
 				<InputField
 					type="text"
@@ -174,7 +174,7 @@ function FeesStrructures() {
 					name="feesAmount"
 					value={fees.feesAmount}
 					onChange={onChange}
-					icon={<FaPen className="w-3 -ml-7 mt-3" />}
+					
 				/>
 				{isposting ? (
 					<ButtonLoader />
@@ -209,7 +209,7 @@ function FeesStrructures() {
 										name="feesNameEdit"
 										value={feesNameEdit}
 										onChange={(e) => setFeesNameEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 									<InputField
 										type="text"
@@ -218,7 +218,7 @@ function FeesStrructures() {
 										name="feesAmountEdit"
 										value={feesAmountEdit}
 										onChange={(e) => setFeesAmountEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 
 									<div onClick={updateFeesInfo}>

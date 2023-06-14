@@ -156,7 +156,7 @@ function AssetsTypes() {
 										label="asset Type"
 										value={assetType}
 										onChange={(e) => setAssetType(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="ml-2 mt-14" onClick={postAssetType}>
@@ -180,7 +180,7 @@ function AssetsTypes() {
 													label="asset Type"
 													value={assetTypeEdit}
 													onChange={(e) => setAssetTypeEdit(e.target.value)}
-													icon={<FaPen className="w-3 -ml-7 mt-3" />}
+													
 												/>
 											</div>
 											<div className="flex justify-between w-1/3 mt-[55px]">

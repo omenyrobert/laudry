@@ -187,7 +187,7 @@ const ClassesComp = () => {
 							label="Class"
 							value={sclass}
 							onChange={(e) => setSclass(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="w-1/3 p-2">
@@ -255,7 +255,7 @@ const ClassesComp = () => {
 										name="Charge"
 										value={sclassEdit}
 										onChange={(e) => setsclassEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="w-2/5 p-2">

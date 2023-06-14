@@ -131,7 +131,7 @@ const StreamsComp = () => {
 							label="Stream Name"
 							value={stream}
 							onChange={(e) => setStream(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="mt-8 mr-5">
@@ -162,7 +162,7 @@ const StreamsComp = () => {
 										label="Stream Name"
 										onChange={(e) => setstreamEdit(e.target.value)}
 										value={streamEdit}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="flex justify-between w-1/3 mt-[55px]">
