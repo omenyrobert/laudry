@@ -25,7 +25,9 @@ export class Transaction extends BaseEntity  {
   @Column()
   amount!: number;
 
-  @Column()
+  @Column( {
+    nullable: true
+  })
   description!: string;
 
   @Column({
@@ -51,7 +53,7 @@ export class Transaction extends BaseEntity  {
   @Column({
     nullable: true
   })
-  transactionCategory!: string;
+  transactionType!: string;
 
 
   @ManyToOne(() => TransactionType, transactionType => transactionType.transactions, {
@@ -60,7 +62,7 @@ export class Transaction extends BaseEntity  {
     nullable: true,
     eager: true,
   })
-  transactionType!: TransactionType;
+  subType!: TransactionType;
 
   // Account
   @ManyToOne(() => Account, account => account.transactions, {
@@ -71,13 +73,10 @@ export class Transaction extends BaseEntity  {
   })
   account!: Account;
 
-  @Column()
-  debit_amount!: number;
 
-  @Column()
-  credit_amount!: number;
-
-  @Column()
+  @Column({
+    nullable: true
+  })
   balance!: number;
 
 
@@ -93,14 +92,23 @@ export const getTransactions = async () => {
   return transactions;
 }
 
+export const deleteTransaction = async (id: number) => {
+  const transaction = await Transaction.findOne(
+    {where: {id: id}}
+  );
+  if (!transaction) {
+    throw new Error("Transaction not found");
+  }
+  await transaction.remove();
+  return transaction;
+}
+
 export const createTransaction = async (
   title: string,
   amount: number,
   description: string,
   transactionCategory: string,
   account: number,
-  debit_amount: number,
-  credit_amount: number,
   balance: number,
   receivedBy: string | null = null,
   contacts: string | null = null,
@@ -131,14 +139,12 @@ export const createTransaction = async (
   transaction.title = title;
   transaction.amount = amount;
   transaction.description = description;
-  transaction.transactionCategory = transactionCategory;
+  transaction.transactionType = transactionCategory;
   transaction.account = accountEntity;
-  transaction.debit_amount = debit_amount;
-  transaction.credit_amount = credit_amount;
   transaction.balance = balance;
   
   if (transactionType) {
-    transaction.transactionType = transactionType;
+    transaction.subType = transactionType;
   }
 
   if (receivedBy) {
@@ -161,17 +167,6 @@ export const createTransaction = async (
   return transaction;
 }
 
-export const deleteTransaction = async (id: number) => {
-  const transaction = await Transaction.findOne(
-    {where: {id: id}}
-  );
-  if (!transaction) {
-    throw new Error("Transaction not found");
-  }
-  await transaction.remove();
-  return transaction;
-}
-
 export const updateTransaction = async (
   id: number,
   title: string,
@@ -179,8 +174,6 @@ export const updateTransaction = async (
   description: string,
   transactionCategory: string,
   account: number,
-  debit_amount: number,
-  credit_amount: number,
   balance: number,
   receivedBy: string | null = null,
   contacts: string | null = null,
@@ -217,14 +210,12 @@ export const updateTransaction = async (
   transaction.title = title;
   transaction.amount = amount;
   transaction.description = description;
-  transaction.transactionCategory = transactionCategory;
+  transaction.transactionType = transactionCategory;
   transaction.account = accountEntity;
-  transaction.debit_amount = debit_amount;
-  transaction.credit_amount = credit_amount;
   transaction.balance = balance;
   
   if (transactionType) {
-    transaction.transactionType = transactionType;
+    transaction.subType = transactionType;
   }
 
   if (receivedBy) {
@@ -249,3 +240,78 @@ export const updateTransaction = async (
 
 
 
+export const createTransactionDoubleEntry = async (
+  title: string,
+  amount: number,
+  description: string,
+  transactionCategory: string,
+  accountToDebit: number,
+  accountToCredit: number,
+  receivedBy: string | null = null,
+  contacts: string | null = null,
+  file: string | null = null,
+  receipt: string | null = null,
+  transactionTypeID: number | null = null,
+) => {
+  // Get Accounts
+  const accountToDebitEntity = await Account.findOne({
+    where: {
+      id: accountToDebit,
+    },
+  })
+
+  const accountToCreditEntity = await Account.findOne({
+    where: {
+      id: accountToCredit,
+    },
+  })
+
+  if (!accountToDebitEntity) {
+    throw new Error("Account to debit not found");
+  }
+
+  if (!accountToCreditEntity) {
+    throw new Error("Account to credit not found");
+  }
+
+  // Create Debit Transaction
+  const debitTransaction = await createTransaction(
+    title,
+    amount,
+    description,
+    transactionCategory,
+    accountToDebit,
+    accountToDebitEntity.amount - amount,
+    receivedBy,
+    contacts,
+    file,
+    receipt,
+    transactionTypeID,
+  );
+
+  // Create Credit Transaction
+  const creditTransaction = await createTransaction(
+    title,
+    amount,
+    description,
+    transactionCategory,
+    accountToCredit,
+    accountToCreditEntity.amount + amount,
+    receivedBy,
+    contacts,
+    file,
+    receipt,
+    transactionTypeID,
+  );
+
+  // Update Accounts
+  accountToDebitEntity.amount = accountToDebitEntity.amount - amount;
+  accountToCreditEntity.amount = accountToCreditEntity.amount + amount;
+  await accountToDebitEntity.save();
+  await accountToCreditEntity.save();
+
+  return {
+    debitTransaction,
+    creditTransaction,
+  };
+}

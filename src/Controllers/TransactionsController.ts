@@ -3,47 +3,73 @@ import { customPayloadResponse } from "../Helpers/Helpers";
 import {
   getTransactions,
   updateTransaction,
-  createTransaction,
   deleteTransaction,
+  createTransactionDoubleEntry
 } from "../Entities/Transaction"
 
 export const addTransaction = async (req: Request, res: Response) => {
   try {
+    
     const {
       title,
       amount,
       description,
       transactionCategory,
-      account,
-      debit_amount,
-      credit_amount,
-      balance,
+      accountToDebit,
+      accountToCredit,
       receivedBy,
       contacts,
       receipt,
-      transactionTypeID
+      transactionTypeID,
     } = req.body;
-
-    console.log(req.body)
 
     const file = req.file ? req.file.filename : null;
 
-    if (!title || !amount || !description || !transactionCategory || !account) {
+    if (!title) {
       return res
-        .json(customPayloadResponse(false, "Please provide all fields"))
+        .json(customPayloadResponse(false, "Title is required"))
         .status(400)
         .end();
     }
 
-    const transaction = await createTransaction(
+    if (!amount) {
+      return res
+        .json(customPayloadResponse(false, "Amount is required"))
+        .status(400)
+        .end();
+    }
+
+
+    if (!transactionCategory) {
+      return res
+        .json(customPayloadResponse(false, "Transaction Category is required"))
+        .status(400)
+        .end();
+    }
+
+    if (!accountToDebit) {
+      return res
+        .json(customPayloadResponse(false, "Account to debit is required"))
+        .status(400)
+        .end();
+    }
+
+    if (!accountToCredit) {
+      return res
+        .json(customPayloadResponse(false, "Account to credit is required"))
+        .status(400)
+        .end();
+    }
+
+    
+
+    const transaction = await createTransactionDoubleEntry(
       title,
       amount,
       description,
       transactionCategory,
-      account,
-      debit_amount,
-      credit_amount,
-      balance,
+      accountToDebit,
+      accountToCredit,
       receivedBy,
       contacts,
       file,
@@ -52,8 +78,9 @@ export const addTransaction = async (req: Request, res: Response) => {
     )
 
     return res.json(customPayloadResponse(true, transaction)).status(200).end();
+
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
@@ -82,8 +109,6 @@ export const updateTransactionController = async (req: Request, res: Response) =
       description,
       transactionCategory,
       account,
-      debit_amount,
-      credit_amount,
       balance,
       receivedBy,
       contacts,
@@ -108,8 +133,6 @@ export const updateTransactionController = async (req: Request, res: Response) =
       description,
       transactionCategory,
       account,
-      debit_amount,
-      credit_amount,
       balance,
       receivedBy,
       contacts,

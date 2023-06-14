@@ -20,7 +20,7 @@ export class TransactionType extends BaseEntity  {
   @Column()
   name!: string;
 
-  @OneToMany(() => Transaction, transaction => transaction.transactionType, {
+  @OneToMany(() => Transaction, transaction => transaction.subType, {
     cascade: true,
     nullable: true,
   })

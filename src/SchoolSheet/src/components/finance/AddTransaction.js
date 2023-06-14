@@ -22,12 +22,11 @@ function AddTransaction() {
 	const [selectedTransactionSubType, setSelectedTransactionSubType] = useState(null);
 	const [subTypesOptions, setSubTypesOptions] = useState([]);
 	const [accounts, setAccounts] = useState([]);
-	const [selectedAccount, setSelectedAccount] = useState(null);
 	const [formLoading, setFormLoading] = useState(false);
+	const [accountToCredit, setAccountToCredit] = useState(null);
+	const [accountToDebit, setAccountToDebit] = useState(null);
 	// Form Fields
 	const [title, setTitle] = useState("");
-	const [debitAmount, setDebitAmount] = useState(0);
-	const [creditAmount, setCreditAmount] = useState(0);
 	const [contacts, setContacts] = useState("");
 	const [description, setDescription] = useState("");
 	const [receipt, setReceipt] = useState("");
@@ -141,8 +140,6 @@ function AddTransaction() {
 		setFormLoading(true);
 		const formData = new FormData();
 		formData.append("title", title);
-		formData.append("debit_amount", debitAmount);
-		formData.append("credit_amount", creditAmount);
 		formData.append("contacts", contacts);
 		formData.append("description", description);
 		formData.append("receipt", receipt);
@@ -150,9 +147,10 @@ function AddTransaction() {
 		formData.append("file", file);
 		formData.append("transactionCategory", transactionType ? transactionType : selectedTransactionType.type);
 		formData.append("transactionTypeID", selectedTransactionSubType ? parseInt(selectedTransactionSubType.id) : null);
-		formData.append("account", parseInt(selectedAccount.id));
-		formData.append("amount", selectedAccount.amount)
-		formData.append("balance", selectedAccount.amount - debitAmount + creditAmount)
+		formData.append("accountToDebit", accountToDebit.id);
+		formData.append("accountToCredit", accountToCredit.id);
+		formData.append("amount", amount);
+
 
 		const response = await axiosInstance.post(`/transactions`, formData, {
 			headers: {
@@ -163,13 +161,13 @@ function AddTransaction() {
 		if (status === false) {
 			setFormLoading(false);
 			setTimeout(() => {
-				toggleFeedback("error", { title: "Error", text: "Transaaction SuccessFully created" });
+				toggleFeedback("error", { title: "Error", text: payload });
 			}, 500);
 			return;
 		}
 		setFormLoading(false);
 		setTimeout(() => {
-			toggleFeedback("success", { title: "Success", text: payload });
+			toggleFeedback("success", { title: "Success", text: "Transaaction SuccessFully created" });
 		}, 500);
 	};
 
@@ -177,14 +175,6 @@ function AddTransaction() {
 	const validateForm = () => {
 		if (!title) {
 			toggleFeedback("error", { title: "Error", text: "Title is required" });
-			return false;
-		}
-		if (!debitAmount && !creditAmount) {
-			toggleFeedback("error", { title: "Error", text: "Debit or Credit Amount is required" });
-			return false;
-		}
-		if (!selectedAccount) {
-			toggleFeedback("error", { title: "Error", text: "Account is required" });
 			return false;
 		}
 		if (!contacts) {
@@ -205,6 +195,31 @@ function AddTransaction() {
 				return false;
 			}
 		}
+
+		// Check debit account
+		if (!accountToDebit) {
+			toggleFeedback("error", { title: "Error", text: "Debit Account is required" });
+			return false;
+		}
+
+		// Check credit account
+		if (!accountToCredit) {
+			toggleFeedback("error", { title: "Error", text: "Credit Account is required" });
+			return false;
+		}
+
+		if (!amount) {
+			toggleFeedback("error", { title: "Error", text: "Amount is required" });
+			return false;
+		}
+
+		// check if credit account and debit account are the same
+		if (accountToCredit.id === accountToDebit.id) {
+			toggleFeedback("error", { title: "Error", text: "Credit Account and Debit Account cannot be the same" });
+			return false;
+		}
+
+
 		return true;
 	};
 
@@ -253,53 +268,43 @@ function AddTransaction() {
 
 
 					<div className="w-1/3 p-1">
+						<InputField
+							type="number"
+							label="Amount"
+							value={amount}
+							onChange={(e) => setAmount(parseInt(e.target.value))}
+						/>
+					</div>
+
+					<div className="w-1/3 p-1">
 						<br />
-						<label className="text-gray4">Account</label>
+						<label className="text-gray4">Account To Debit</label>
 						<Select
 							placeholder="Select Account"
 							options={accounts}
 							onChange={(e) => {
-								setSelectedAccount(e)
-								setAmount(e.amount)
+								setAccountToDebit(e)
 							}}
-							value={selectedAccount}
+							value={accountToDebit}
 						/>
 					</div>
-
-
-					<div className="w-1/3 p-1">
-						<InputField
-							type="number"
-							label="Current Account Balance (Amount)"
-							value={selectedAccount?.amount}
-							editable={false}
-						/>
-					</div>
-
-
 
 				</div>
 				<div className="flex justify-between mx-3">
 
 					<div className="w-1/3 p-1">
-						<InputField
-							type="number"
-							placeholder="Enter Debit Amount"
-							label="Debit Amount"
-							value={debitAmount}
-							onChange={(e) => setDebitAmount(e.target.value)}
+						<br />
+						<label className="text-gray4">Account To Credit</label>
+						<Select
+							placeholder="Select Account"
+							options={accounts}
+							onChange={(e) => {
+								setAccountToCredit(e)
+							}}
+							value={accountToCredit}
 						/>
 					</div>
 
-					<div className="w-1/3 p-1">
-						<InputField
-							type="number"
-							placeholder="Enter Credit Amount"
-							label="Credit Amount"
-							value={creditAmount}
-							onChange={(e) => setCreditAmount(e.target.value)}
-						/>
-					</div>
 
 					<div className="w-1/3 p-1">
 						<InputField
@@ -310,7 +315,20 @@ function AddTransaction() {
 							onChange={(e) => setRecievedBy(e.target.value)}
 						/>
 					</div>
+
+
+					<div className="w-1/3 p-1">
+						<InputField
+							type="text"
+							placeholder="Enter Contacts"
+							label="Contacts"
+							value={contacts}
+							onChange={(e) => setContacts(e.target.value)}
+						/>
+					</div>
+
 				</div>
+
 
 				<div className="flex justify-between mx-3">
 
@@ -356,16 +374,6 @@ function AddTransaction() {
 							onChange={(e) => setContacts(e.target.value)}
 						/>
 					</div>
-				</div>
-
-				<div className="flex justify-between mx-3">
-					<div className="w-4/12 p-1">
-						<InputField
-							type="file"
-							label="Attach receipt / file"
-							onChange={(e) => setFile(e.target.files[0])}
-						/>
-					</div>
 
 
 					<div className="w-4/12 p-1">
@@ -375,6 +383,16 @@ function AddTransaction() {
 							label="Receipt"
 							value={receipt}
 							onChange={(e) => setReceipt(e.target.value)}
+						/>
+					</div>
+				</div>
+
+				<div className="flex justify-between mx-3">
+					<div className="w-4/12 p-1">
+						<InputField
+							type="file"
+							label="Attach receipt / file"
+							onChange={(e) => setFile(e.target.files[0])}
 						/>
 					</div>
 
