@@ -1,0 +1,31 @@
+import { Router } from "express";
+import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
+import {
+  getTransactionsController,
+  deleteTransactionController,
+  addTransaction,
+  updateTransactionController,
+} from "../Controllers/TransactionsController";
+import multer from "multer";
+
+const storage = multer.diskStorage({
+  destination: "useruploads/",
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
+const fileUpload = upload.single("file");
+
+export default (router: Router) => {
+  const transactionPrefix = "/transactions";
+  router.get(`${transactionPrefix}`, JWTAuthMiddleWare, getTransactionsController);
+  router.post(`${transactionPrefix}`, fileUpload, JWTAuthMiddleWare, addTransaction);
+  router.put(`${transactionPrefix}`, fileUpload, JWTAuthMiddleWare, updateTransactionController);
+  router.delete(`${transactionPrefix}/:id`, JWTAuthMiddleWare, deleteTransactionController);
+}
+
+
