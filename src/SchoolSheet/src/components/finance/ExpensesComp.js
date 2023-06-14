@@ -151,7 +151,6 @@ function ExpensesComp() {
 			.update({
 				expenseTypeId: expenseTypeIdEdit,
 				expense: expenseEdit,
-				expense: expenseEdit,
 				from: toEdit,
 				date: dateEdit,
 				contacts: contactsEdit,
@@ -240,7 +239,9 @@ function ExpensesComp() {
 					</div>
 				</div>
 				<div className="w-2/12 px-3 mt-4" >
-					<Link to="/addTransaction"><Button2 value={"Add Expense"} /> </Link>
+					<Link to="/addTransaction?transactionType=expense&action=create">
+						<Button2 value={"Add Expense"} />
+					</Link>
 
 				</div>
 			</div>

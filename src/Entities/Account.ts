@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, In } from "typeorm";
+import { 
+  Entity, 
+  PrimaryGeneratedColumn, 
+  Column, 
+  BaseEntity, 
+  In ,
+  OneToMany,
+} from "typeorm";
+import { Transaction } from "./Transaction";
 
 @Entity()
 export class Account extends BaseEntity {
@@ -16,6 +24,12 @@ export class Account extends BaseEntity {
 
   @Column({ nullable: true })
   amount!: number;
+
+  @OneToMany(() => Transaction, transaction => transaction.account, {
+    cascade: true,
+    nullable: true,
+  })
+  transactions!: Transaction[];
 }
 
 export const getAccounts = async () => {

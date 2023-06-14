@@ -11,24 +11,28 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
+import axiosInstance from "../../axios-instance";
+import ButtonLoader from "../ButtonLoader";
 
 let db = new Localbase("db");
 
 function IncomesTypeComp() {
 	// post Income Type
 	const [incomeType, setIncomeType] = useState("");
+
+	const [loading, setLoading] = useState(false)
 	const postIncomeType = () => {
-		let clId = uuid();
 		let formData = {
-			id: clId,
-			incomeType: incomeType,
+			name: incomeType,
+			type: "income"
 		};
 		if (incomeType) {
-			db.collection("incomeTypesTbl")
-				.add(formData)
+			setLoading(true)
+			axiosInstance.post("/transaction-types", formData)
 				.then((response) => {
-					setIncomeType("");
+					setIncomeType(null);
 					fetchInomeTypes();
+					setLoading(false)
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
@@ -38,23 +42,26 @@ function IncomesTypeComp() {
 				})
 				.catch(console.error());
 		}
+
+
 	};
 
 	// fetch income typess
 	const [incomeTypesData, setIncomeTypesData] = useState([]);
+
 	const fetchInomeTypes = () => {
-		db.collection("incomeTypesTbl")
-			.get()
-			.then((incomeTypes) => {
-				const newData = incomeTypes;
-				setIncomeTypesData(newData);
-			});
+		axiosInstance.get("/transaction-types/income")
+			.then((response) => {
+				setIncomeTypesData(response.data.payload);
+			})
+			.catch(console.error());
 	};
 
 	// update
 	const [editData, setEditData] = useState(false);
 	const [incomeTypeEdit, setincomeTypeEdit] = useState("");
 	const [incomeTypeId, setincomeTypeId] = useState("");
+	const [editLoading, setEditLoading] = useState(false)
 	const closeEditData = () => {
 		setEditData(false);
 	};
@@ -63,24 +70,43 @@ function IncomesTypeComp() {
 		setincomeTypeEdit(incomeType?.incomeType);
 		setincomeTypeId(incomeType.id);
 	};
+
 	const updateIncomeType = () => {
-		db.collection("incomeTypesTbl")
-			.doc({ id: incomeTypeId })
-			.update({
-				incomeType: incomeTypeEdit,
-			})
+
+		let formData = {
+			name: incomeTypeEdit,
+			type: "income",
+			id: incomeTypeId
+		}
+		setEditLoading(true)
+		axiosInstance.put("/transaction-types", formData)
 			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchInomeTypes();
+				const { status, payload } = response.data
+
 				const MySwal = withReactContent(Swal);
+
+				if (status === false) {
+					setEditLoading(false)
+					MySwal.fire({
+						icon: "success",
+						showConfirmButton: false,
+						timer: 500,
+						text: payload,
+						title: "Ooops..."
+					});
+					return
+				}
+				fetchInomeTypes();
+				setEditLoading(false)
 				MySwal.fire({
 					icon: "success",
 					showConfirmButton: false,
 					timer: 500,
 				});
 				closeEditData();
-			});
+			})
+			.catch(console.error());
+
 	};
 
 	// delete
@@ -97,22 +123,30 @@ function IncomesTypeComp() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("incomeTypesTbl")
-					.doc({ id: incomeTypeItem.id })
-					.delete()
+				axiosInstance.delete(`/transaction-types/${incomeTypeItem.id}`)
 					.then((response) => {
-						// fetch after
-						fetchInomeTypes();
+						const { status, payload } = response.data
 
-						Swal.fire({
+						const MySwal = withReactContent(Swal);
+
+						if (status === false) {
+							MySwal.fire({
+								icon: "success",
+								showConfirmButton: false,
+								timer: 500,
+								text: payload,
+								title: "Ooops..."
+							});
+							return
+						}
+						fetchInomeTypes();
+						MySwal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
 					})
-					.catch((error) => {
-						console.log(error);
-					});
+					.catch(console.error());
 			}
 		});
 	};
@@ -157,7 +191,9 @@ function IncomesTypeComp() {
 							</div>
 
 							<div onClick={postIncomeType} className="mt-14 ml-5">
-								<Button value={"Add Income Type"} />
+								{
+									loading ? <ButtonLoader /> : <Button value={"Add Income Type"} />
+								}
 							</div>
 						</div>
 
@@ -182,7 +218,9 @@ function IncomesTypeComp() {
 										</div>
 										<div className="flex justify-between w-1/3 mt-[55px]">
 											<div onClick={updateIncomeType}>
-												<ButtonSecondary value={"Update"} />
+												{
+													editLoading ? <ButtonLoader /> : <ButtonSecondary value={"Update"} />
+												}
 											</div>
 											<div>
 												<p
@@ -201,10 +239,10 @@ function IncomesTypeComp() {
 									return (
 										<tr
 											className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-											key={incomeType.id}
+											key={incomeType?.id}
 										>
 											<td className="text-xs p-3 text-gray5">
-												{incomeTypeItem.incomeType}
+												{incomeTypeItem?.name}
 											</td>
 											<td className="text-xs p-3 text-gray5">
 												<div className="flex">

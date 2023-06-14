@@ -261,7 +261,7 @@ function IncomeComp() {
 						</div>
 					</div>
 				</div>
-				<Link to="/addTransaction" className="w-2/12 px-3 mt-5">
+				<Link to="/addTransaction?transactionType=income&action=create" className="w-2/12 px-3 mt-5">
 					<Button2 value={"Add Income "} />
 				</Link>
 			</div>
@@ -479,79 +479,79 @@ function IncomeComp() {
 
 						{searchInput.length > 1
 							? filteredIncome.map((incomeItem) => {
-									return (
-										<tr
-											className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
-											key={incomeItem?.id}
-										>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.date}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.income}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.incomeTypesObj.value.incomeType}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{Number(incomeItem.amount).toLocaleString()}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.from}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.comment}
-											</td>
-											<td className="text-xs p-3 text-gray5 flex">
-												<MdDeleteOutline
-													onClick={() => deleteIncome(incomeItem)}
-													className="text-red w-4 h-4"
-												/>
-												<BsPencilSquare
-													className="text-warning h-4 w-4 ml-5"
-													onClick={() => openEditData(incomeItem)}
-												/>
-											</td>
-										</tr>
-									);
-							  })
+								return (
+									<tr
+										className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={incomeItem?.id}
+									>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.date}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.income}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.incomeTypesObj.value.incomeType}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{Number(incomeItem.amount).toLocaleString()}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.from}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.comment}
+										</td>
+										<td className="text-xs p-3 text-gray5 flex">
+											<MdDeleteOutline
+												onClick={() => deleteIncome(incomeItem)}
+												className="text-red w-4 h-4"
+											/>
+											<BsPencilSquare
+												className="text-warning h-4 w-4 ml-5"
+												onClick={() => openEditData(incomeItem)}
+											/>
+										</td>
+									</tr>
+								);
+							})
 							: incomesData.map((incomeItem) => {
-									return (
-										<tr
-											className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
-											key={incomeItem?.id}
-										>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.date}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.income}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.incomeTypesObj.value.incomeType}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{Number(incomeItem.amount).toLocaleString()}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.from}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.comment}
-											</td>
-											<td className="text-xs p-3 text-gray5 flex">
-												<MdDeleteOutline
-													onClick={() => deleteIncome(incomeItem)}
-													className="text-red w-4 h-4"
-												/>
-												<BsPencilSquare
-													className="text-warning h-4 w-4 ml-5"
-													onClick={() => openEditData(incomeItem)}
-												/>
-											</td>
-										</tr>
-									);
-							  })}
+								return (
+									<tr
+										className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={incomeItem?.id}
+									>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.date}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.income}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.incomeTypesObj.value.incomeType}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{Number(incomeItem.amount).toLocaleString()}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.from}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.comment}
+										</td>
+										<td className="text-xs p-3 text-gray5 flex">
+											<MdDeleteOutline
+												onClick={() => deleteIncome(incomeItem)}
+												className="text-red w-4 h-4"
+											/>
+											<BsPencilSquare
+												className="text-warning h-4 w-4 ml-5"
+												onClick={() => openEditData(incomeItem)}
+											/>
+										</td>
+									</tr>
+								);
+							})}
 
 						<tr className="bg-white p-5 text-lg font-semibold">
 							<td colSpan="3">Total</td>
