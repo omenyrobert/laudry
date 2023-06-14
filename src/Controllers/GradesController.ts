@@ -19,7 +19,7 @@ export const fetchGrades = async (req: Request, res: Response) => {
 
 export const addGrade = async (req: Request, res: Response) => {
   try {
-    const { from, to, grade } = req.body;
+    const { from, to, grade, points } = req.body;
     if (!grade) {
       return res
         .json(customPayloadResponse(false, "Grade Required"))
@@ -38,7 +38,7 @@ export const addGrade = async (req: Request, res: Response) => {
           .status(200)
           .end();
     }
-    await createGrade(from, to, grade);
+    await createGrade(from, to, grade, points);
     return res
       .json(customPayloadResponse(true, "Grade Added"))
       .status(200)
@@ -51,7 +51,7 @@ export const addGrade = async (req: Request, res: Response) => {
 export const modifyGrade = async (req: Request, res: Response) => {
   try {
     const gradeId = parseInt(req.params.id);
-    const { from, to, grade } = req.body;
+    const { from, to, grade, points } = req.body;
     if (!grade) {
       return res
         .json(customPayloadResponse(false, "Grade Required"))
@@ -78,7 +78,7 @@ export const modifyGrade = async (req: Request, res: Response) => {
     }
     const gradeToUpdate = await getSingleGrade(gradeId);
     if (gradeToUpdate) {
-      await updateGrade(gradeId, from, to, grade);
+      await updateGrade(gradeId, from, to, grade, points);
       return res
         .json(customPayloadResponse(true, "Grade Updated"))
         .status(200)

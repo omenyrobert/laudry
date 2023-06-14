@@ -25,7 +25,8 @@ function Grades() {
 	const [grade, setGrade] = useState("");
 	const [to, setTo] = useState("");
 	const [from, setFrom] = useState("");
-	const [isposting, setIsPosting] = useState(false);
+	const [points, setPoints] = useState("");
+	const [isPosting, setIsPosting] = useState(false);
 	const postGrade = async () => {
 		try {
 			setIsPosting(true);
@@ -33,6 +34,7 @@ function Grades() {
 				from: from,
 				to: to,
 				grade: grade,
+				points
 			};
 			const response = await axiosInstance.post("/grades", formData);
 			const { data } = response;
@@ -42,6 +44,7 @@ function Grades() {
 				setFrom("");
 				setTo("");
 				setGrade("");
+				setPoints("");
 				setIsPosting(false);
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
@@ -97,6 +100,7 @@ function Grades() {
 	const [toEdit, setToEdit] = useState("");
 	const [fromEdit, setFromEdit] = useState("");
 	const [gradeId, setGradeId] = useState("");
+	const [pointsEdit, setPointsEdit] = useState("");
 
 	const openEditData = (grade) => {
 		setEditData(true);
@@ -104,6 +108,7 @@ function Grades() {
 		setToEdit(grade.to);
 		setFromEdit(grade.from);
 		setGradeId(grade.id);
+		setPointsEdit(grade.points);
 	};
 	const updateGrade = async () => {
 		try {
@@ -111,6 +116,7 @@ function Grades() {
 				from: fromEdit,
 				to: toEdit,
 				grade: gradeEdit,
+				points: pointsEdit
 			};
 			const grade = await axiosInstance.put(`/grades/${gradeId}`, formData);
 			const { data } = grade;
@@ -173,16 +179,16 @@ function Grades() {
 					<div className="w-1/4 ml-2">
 						<InputField
 							type="text"
-							placeholder="Enter grade"
+							placeholder="Enter points"
 							label="Points"
-							value={grade}
-							onChange={(e) => setGrade(e.target.value)}
+							value={points}
+							onChange={(e) => setPoints(e.target.value)}
 							
 						/>
 					</div>
 					<div className="mt-8 mr-5 w-1/4 ml-2">
 						<br />
-						{isposting ? (
+						{isPosting ? (
 							<ButtonLoader />
 						) : (
 							<div onClick={postGrade}>
@@ -234,6 +240,16 @@ function Grades() {
 										
 									/>
 								</div>
+								<div className="w-3/12 pr-2">
+									<InputField
+										type="text"
+										placeholder="Enter points"
+										label="Points"
+										value={pointsEdit}
+										onChange={(e) => setPointsEdit(e.target.value)}
+										
+									/>
+								</div>
 								<div className="flex justify-between w-3/12 mt-[55px]">
 									<div onClick={updateGrade}>
 										<ButtonSecondary value={"Update"} />
@@ -260,7 +276,7 @@ function Grades() {
 									<td className="text-xs p-3 text-gray5">{grade.from}</td>
 									<td className="text-xs p-3 text-gray5">{grade.to}</td>
 									<td className="text-xs p-3 text-gray5">{grade.grade}</td>
-									<td className="text-xs p-3 text-gray5">{grade.grade}</td>
+									<td className="text-xs p-3 text-gray5">{grade.points}</td>
 									<td className="text-xs p-3 text-gray5 flex">
 										<MdDeleteOutline
 											onClick={(e) => deleteGrade(grade)}
