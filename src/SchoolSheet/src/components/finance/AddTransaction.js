@@ -365,15 +365,6 @@ function AddTransaction() {
 						/>
 					</div>
 
-					<div className="w-1/3 p-1">
-						<InputField
-							type="text"
-							placeholder="Enter Contacts"
-							label="Contacts"
-							value={contacts}
-							onChange={(e) => setContacts(e.target.value)}
-						/>
-					</div>
 
 
 					<div className="w-4/12 p-1">

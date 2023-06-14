@@ -23,6 +23,9 @@ export class Transaction extends BaseEntity  {
   title!: string;
 
   @Column()
+  transactionId!: string;
+
+  @Column()
   amount!: number;
 
   @Column( {
@@ -79,7 +82,29 @@ export class Transaction extends BaseEntity  {
   })
   balance!: number;
 
+  @Column(
+    {
+      nullable: true
+    }
+  )
+  debit!: number;
 
+  @Column(
+    {
+      nullable: true
+    }
+  )
+  credit!: number;
+
+
+
+}
+
+
+function generateTransactionID() {
+  const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e8);
+  const transactionID = "TID-"+ uniqueSuffix
+  return transactionID
 }
 
 
@@ -104,12 +129,15 @@ export const deleteTransaction = async (id: number) => {
 }
 
 export const createTransaction = async (
+  transID: string,
   title: string,
   amount: number,
   description: string,
   transactionCategory: string,
   account: number,
   balance: number,
+  debit: number,
+  credit: number,
   receivedBy: string | null = null,
   contacts: string | null = null,
   file: string | null = null,
@@ -136,12 +164,15 @@ export const createTransaction = async (
   }
 
   const transaction = new Transaction();
+  transaction.transactionId = transID;
   transaction.title = title;
   transaction.amount = amount;
   transaction.description = description;
   transaction.transactionType = transactionCategory;
   transaction.account = accountEntity;
   transaction.balance = balance;
+  transaction.debit = debit;
+  transaction.credit = credit;
   
   if (transactionType) {
     transaction.subType = transactionType;
@@ -240,6 +271,8 @@ export const updateTransaction = async (
 
 
 
+
+
 export const createTransactionDoubleEntry = async (
   title: string,
   amount: number,
@@ -274,29 +307,43 @@ export const createTransactionDoubleEntry = async (
     throw new Error("Account to credit not found");
   }
 
+  const transID = generateTransactionID()
+
+  const debitAccountBalance = accountToDebitEntity.amount;
+  const creditAccountBalance = accountToCreditEntity.amount;
+  
+  const debitAccountBalanceAfterTransaction = debitAccountBalance + amount;
+  const creditAccountBalanceAfterTransaction = creditAccountBalance - amount;
+
   // Create Debit Transaction
   const debitTransaction = await createTransaction(
+    transID,
     title,
-    amount,
+    debitAccountBalance,
     description,
     transactionCategory,
     accountToDebit,
-    accountToDebitEntity.amount - amount,
+    debitAccountBalanceAfterTransaction,
+    amount,
+    0,
     receivedBy,
     contacts,
     file,
     receipt,
     transactionTypeID,
-  );
+  )
 
   // Create Credit Transaction
   const creditTransaction = await createTransaction(
+    transID,
     title,
-    amount,
+    creditAccountBalance,
     description,
     transactionCategory,
     accountToCredit,
-    accountToCreditEntity.amount + amount,
+    creditAccountBalanceAfterTransaction,
+    0,
+    amount,
     receivedBy,
     contacts,
     file,

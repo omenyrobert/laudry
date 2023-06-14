@@ -65,7 +65,7 @@ export const addTransaction = async (req: Request, res: Response) => {
 
     const transaction = await createTransactionDoubleEntry(
       title,
-      amount,
+      parseInt(amount),
       description,
       transactionCategory,
       accountToDebit,
@@ -74,7 +74,7 @@ export const addTransaction = async (req: Request, res: Response) => {
       contacts,
       file,
       receipt,
-      transactionTypeID
+      parseInt(transactionTypeID)
     )
 
     return res.json(customPayloadResponse(true, transaction)).status(200).end();
