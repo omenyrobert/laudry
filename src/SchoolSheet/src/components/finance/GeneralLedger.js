@@ -6,28 +6,26 @@ function GeneralLedger() {
 	return (
 		<>
 			<div className="bg-white p-3 h-[82vh] mt-2 overflow-y-auto border border-gray2 shadow rounded">
-				<div className="flex relative">
-					<div className="p-2 w-2/12">
+				<div className="flex justify-between">
+					<div>
 						<p className="text-secondary text-xl font-bold">General Journal</p>
 					</div>
-					<div className="p-2 w-7/12 flex gap-4 -mt-5">
-						<InputField placeholder="Search for Income" type="date" />
-						<InputField placeholder="Search for Income" type="date" />
-
-						<InputField
-							placeholder="Search for Income"
-							type="month"
-							format="YYYY"
-						/>
-						<InputField placeholder="Search for Income" type="date" />
-					</div>
-					<div className="p-2 w-2/12"></div>
-					<div className="p-2 w-2/12">
-						<div className="w-auto">
-							<Button value={"Print"} />
+					<div className="flex">
+						<div className="mr-3">
+							<InputField type="date" label="From" />
+						</div>
+						<div className="mr-3">
+							<InputField type="date" label="to" />
+						</div>
+						<div>
+							<InputField type="month" label="By Month" />
+						</div>
+						<div className="ml-5 mt-12">
+							<Button value={"Pdf"} />
 						</div>
 					</div>
 				</div>
+				
 
 				<div className="flex border-b border-gray1 mt-3">
 					<div className="w-1/4 p-2">Date</div>

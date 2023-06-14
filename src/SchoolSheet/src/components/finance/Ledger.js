@@ -1,34 +1,37 @@
 import React from "react";
 import InputField from "../InputField";
 import Button from "../Button";
+import { Link } from "react-router-dom";
 
 function Ledger() {
 	return (
 		<>
 			<div className="bg-white p-3 h-[82vh] mt-2 overflow-y-auto border border-gray2 shadow rounded">
-				<div className="flex relative">
-					<div className="p-2 w-3/12">
-						<p className="text-secondary text-xl font-bold">
+				<div className="flex justify-between">
+					<div className="flex">
+						<Link to="/accounts">
+							<p className="text-primary font-semibold p-2 border border-primary rounded-md h-10 cursor-pointer">
+								Back
+							</p>
+						</Link>
+
+						<p className="text-secondary text-xl font-bold ml-5">
 							Ledger Account Name
 						</p>
 					</div>
-					<div className="p-2 w-6/12 flex gap-4 -mt-5">
-						<InputField placeholder="Search for Income" type="date" />
-						<InputField placeholder="Search for Income" type="date" />
-
-						<InputField
-							placeholder="Search for Income"
-							type="month"
-							format="YYYY"
-						/>
-						<InputField placeholder="Search for Income" type="date" />
-					</div>
-					<div className="p-2 w-2/12"></div>
-					<div className="p-2 w-2/12 flex">
-						<div className="w-20">
-							<Button value={"Print"} />
+					<div className="flex">
+						<div className="mr-3">
+							<InputField type="date" label="From" />
 						</div>
-						<p className="text-primary font-semibold ml-10 mt-2 p-2 border border-primary rounded-md h-10 cursor-pointer">Back</p>
+						<div className="mr-3">
+							<InputField type="date" label="to" />
+						</div>
+						<div>
+							<InputField type="month" label="By Month" />
+						</div>
+						<div className="ml-5 mt-12">
+							<Button value={"Pdf"} />
+						</div>
 					</div>
 				</div>
 
