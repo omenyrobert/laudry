@@ -14,8 +14,6 @@ app.use(cookieParser());
 app.use("/api", router());
 
 app.use(express.static(path.join(__dirname, "SchoolSheet/build")));
-const parentDir = path.join(__dirname, "../useruploads");
-console.log(parentDir);
 
 // serve user uploads in parent directory ../useruploads
 app.use("/useruploads", express.static(path.join(__dirname, "../useruploads")));
