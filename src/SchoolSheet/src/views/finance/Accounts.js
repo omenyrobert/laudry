@@ -228,7 +228,7 @@ function Accounts() {
 				{/* add modal */}
 
 				{modal ? (
-					<div className="absolute bg-white z-50 shadow-2xl rounded-md h-auto">
+					<div className="absolute bg-white z-50 shadow-2xl min-w-[50vw] rounded-md h-auto">
 						<div className="flex justify-between p-3 bg-gray1 text-primary font-medium">
 							<div>Add Account</div>
 							<div className="">
@@ -239,7 +239,7 @@ function Accounts() {
 						</div>
 
 						<div className="p-3 flex">
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<InputField
 									label="Account Name"
 									type="text"
@@ -248,7 +248,7 @@ function Accounts() {
 									onChange={handleAccountNameChange}
 								/>
 							</div>
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<br />
 								<label className="text-gray4">Account Type</label>
 
@@ -259,7 +259,7 @@ function Accounts() {
 									options={accountTypes}
 								/>
 							</div>
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<br />
 								<label className="text-gray4">Sub Type</label>
 								<Select
@@ -274,7 +274,7 @@ function Accounts() {
 							For a Supplier Or a Customer
 						</p>
 						<div className="p-3 flex">
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<br />
 								<label className="text-gray4">Customer/Supplier</label>
 
@@ -284,7 +284,7 @@ function Accounts() {
 									options={types}
 								/>
 							</div>
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<InputField
 									label="Contacts"
 									type="text"
@@ -293,7 +293,7 @@ function Accounts() {
 									onChange={(e) => setContacts(e.target.value)}
 								/>
 							</div>
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<InputField
 									label="Location"
 									type="text"
@@ -304,7 +304,7 @@ function Accounts() {
 							</div>
 						</div>
 						<div className="mx-3 flex">
-							<div className="w-60 -mt-7">
+							<div className="w-1/3 -mt-7">
 								<InputField
 									label="Opening Balance"
 									placeholder="Opening Balance"
@@ -312,11 +312,11 @@ function Accounts() {
 									onChange={(e) => setAmount(e.target.value)}
 								/>
 							</div>
-							<div className="ml-5">
+							<div className="ml-5 w-2/3">
 								<label className="text-gray4">About</label>
 								<br />
 								<textarea
-									className="bg-gray1 w-96 border border-gray2 min-h-[100px]"
+									className="bg-gray1 w-full border border-gray2 min-h-[100px]"
 									value={about}
 									onChange={(e) => setAbout(e.target.value)}
 								></textarea>
@@ -344,8 +344,8 @@ function Accounts() {
 				{/* add modal */}
 
 				{showUpdate ? (
-					<div className="border border-gray2 absolute w-[600px] bg-white  shadow-xl">
-						<div className="bg-primary rounded p-2 text-white flex justify-between">
+					<div className="border border-gray2 min-w-[50vw] absolute bg-white  shadow-xl">
+						<div className="text-primary rounded p-2 bg-gray1 font-semibold flex justify-between">
 							<div>Update Account</div>
 
 							<div>
@@ -354,8 +354,8 @@ function Accounts() {
 								</p>
 							</div>
 						</div>
-						<div className="flex w-full">
-							<div className="p-1 w-1/2">
+						<div className="flex w-full px-3">
+							<div className="p-1 w-1/3">
 								<InputField
 									label="Account Name"
 									type="text"
@@ -364,7 +364,7 @@ function Accounts() {
 									onChange={(e) => setEditAccountName(e.target.value)}
 								/>
 							</div>
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<br />
 								<label className="text-gray4">Account Type</label>
 
@@ -375,7 +375,7 @@ function Accounts() {
 									options={accountTypes}
 								/>
 							</div>
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<br />
 								<label className="text-gray4">Sub Type</label>
 								<Select
@@ -390,7 +390,7 @@ function Accounts() {
 							For a Supplier Or a Customer
 						</p>
 						<div className="p-3 flex">
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<br />
 								<label className="text-gray4">Customer/Supplier</label>
 
@@ -401,7 +401,7 @@ function Accounts() {
 									options={types}
 								/>
 							</div>
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<InputField
 									label="Contacts"
 									type="text"
@@ -410,7 +410,7 @@ function Accounts() {
 									onChange={(e) => setEditContacts(e.target.value)}
 								/>
 							</div>
-							<div className="p-1 w-60">
+							<div className="p-1 w-1/3">
 								<InputField
 									label="Location"
 									type="text"
@@ -421,7 +421,7 @@ function Accounts() {
 							</div>
 						</div>
 						<div className="mx-3 flex">
-							<div className="w-60 -mt-7">
+							<div className="w-1/3 -mt-7">
 								<InputField
 									label="Opening Balance"
 									placeholder="Opening Balance"
@@ -429,19 +429,22 @@ function Accounts() {
 									onChange={(e) => setEditAmount(e.target.value)}
 								/>
 							</div>
-							<div className="ml-5">
+							<div className="ml-5 w-2/3">
 								<label className="text-gray4">About</label>
 								<br />
 								<textarea
-									className="bg-gray1 w-96 border border-gray2 min-h-[100px]"
+									className="bg-gray1 w-full border border-gray2 min-h-[100px]"
 									value={editAbout}
 									onChange={(e) => setEditAbout(e.target.value)}
 								></textarea>
 							</div>
 						</div>
 
-						<div className="flex w-full -mt-10">
-							<div className="p-1 w-1/2 mt-14">
+						<div className="flex w-full justify-between p-3 bg-gray1">
+							<div onClick={closeShowUpdate}>
+								<ButtonSecondary value={"Close"} />
+							</div>
+							<div className="">
 								{posting ? (
 									<div className="w-40">
 										<ButtonLoader />

@@ -7,10 +7,12 @@ function Ledger() {
 		<>
 			<div className="bg-white p-3 h-[82vh] mt-2 overflow-y-auto border border-gray2 shadow rounded">
 				<div className="flex relative">
-					<div className="p-2 w-2/12">
-						<p className="text-secondary text-xl font-bold">Ledger  Account Name</p>
+					<div className="p-2 w-3/12">
+						<p className="text-secondary text-xl font-bold">
+							Ledger Account Name
+						</p>
 					</div>
-					<div className="p-2 w-7/12 flex gap-4 -mt-5">
+					<div className="p-2 w-6/12 flex gap-4 -mt-5">
 						<InputField placeholder="Search for Income" type="date" />
 						<InputField placeholder="Search for Income" type="date" />
 
@@ -22,10 +24,11 @@ function Ledger() {
 						<InputField placeholder="Search for Income" type="date" />
 					</div>
 					<div className="p-2 w-2/12"></div>
-					<div className="p-2 w-2/12">
+					<div className="p-2 w-2/12 flex">
 						<div className="w-20">
 							<Button value={"Print"} />
 						</div>
+						<p className="text-primary font-semibold ml-10 mt-2 p-2 border border-primary rounded-md h-10 cursor-pointer">Back</p>
 					</div>
 				</div>
 
