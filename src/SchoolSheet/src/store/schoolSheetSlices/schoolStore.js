@@ -127,6 +127,15 @@ export const getSuppliers = createAsyncThunk("/schoolSheet/suppliers", async () 
 	if (status) return payload;
 });
 
+export const getDivisions = createAsyncThunk("/schoolSheet/divisions", async () => {
+	const divisions = await axiosInstance.get("/divisions");
+	console.log("apiDivisions", divisions);
+	const { data } =  divisions;
+	console.log("apiData", data);
+	const { status, payload } = data;
+	console.log("payload", payload);
+	if (status) return payload;
+});
 
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
@@ -149,6 +158,7 @@ export const schoolSheetSlices = createSlice({
 	  accounts: [],
 	  journals: [],
 	  suppliers: [],
+	  divisions: [],
 	  loading: {
 		streams: false,
 		staffMembers: false,
@@ -168,6 +178,7 @@ export const schoolSheetSlices = createSlice({
 		accounts: false,
 		journals: false,
 		suppliers: false,
+		divisions: false,
 	  },
 	},
 	extraReducers: {
@@ -364,6 +375,16 @@ export const schoolSheetSlices = createSlice({
 	  },
 	  [getSuppliers.rejected]: (state) => {
 		state.loading.suppliers = false;
+	  },
+	  [getDivisions.pending]: (state) => {
+		state.loading.divisions = true;
+	  },
+	  [getDivisions.fulfilled]: (state, action) => {
+		state.loading.divisions = false;
+		state.divisions = action.payload;
+	  },
+	  [getDivisions.rejected]: (state) => {
+		state.loading.divisions = false;
 	  },
 	},
 });

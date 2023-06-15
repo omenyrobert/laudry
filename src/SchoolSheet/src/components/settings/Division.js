@@ -8,42 +8,47 @@ import { BsPencilSquare } from "react-icons/bs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useDispatch, useSelector } from "react-redux";
-import { getSubjects } from "../../store/schoolSheetSlices/schoolStore";
+import { getDivisions } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../ButtonLoader";
 
 function Division() {
 	const dispatch = useDispatch();
 	const [editData, setEditData] = useState(false);
-	const [editSubject, setEditSubject] = useState("");
-	const [subjectId, setSubjectId] = useState("");
+	const [editDivision, setEditDivision] = useState("");
+	const [editPoints, setEditPoints] = useState("");
+	const [divisionId, setDivisionId] = useState("");
 
 	const closeEditData = () => {
 		setEditData(false);
 	};
-	const openEditData = (subject) => {
+	const openEditData = (div) => {
 		setEditData(true);
-		setEditSubject(subject?.subject);
-		setSubjectId(subject.id);
+		setEditDivision(div?.division);
+		setEditPoints(div.points)
+		setDivisionId(div.id);
 	};
 
-	// posting subject
-	const [isposting, setIsPosting] = useState(false);
-	const [subject, setSubject] = useState("");
-	const postSubject = async () => {
+	// posting division
+	const [isPosting, setIsPosting] = useState(false);
+	const [division, setDivision] = useState("");
+	const [points, setPoints] = useState("");
+	const postDivision = async () => {
 		try {
-			setIsPosting(false);
+			setIsPosting(true);
 			let formData = {
-				subject: subject,
+				division,
+				points: parseFloat(points),
 			};
 
-			const response = await axiosInstance.post("/subjects", formData);
+			const response = await axiosInstance.post("/divisions", formData);
 			const { data } = response;
 			const { status } = data;
 
 			if (status) {
-				dispatch(getSubjects());
-				setSubject("");
+				dispatch(getDivisions());
+				setDivision("");
+				setPoints("");
 				setIsPosting(false);
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
@@ -58,13 +63,13 @@ function Division() {
 		}
 	};
 
-	// fetching subject
+	// fetching divisions
 	useEffect(() => {
-		dispatch(getSubjects());
+		dispatch(getDivisions());
 	}, [dispatch]);
 
-	//deleting subject
-	const deleteSubject = (subject) => {
+	//deleting Division
+	const deleteDivision = (div) => {
 		Swal.fire({
 			title: "Are you sure?",
 			text: "You won't be able to revert this!",
@@ -77,12 +82,12 @@ function Division() {
 			if (result.isConfirmed) {
 				try {
 					const response = await axiosInstance.delete(
-						`/subjects/${subject.id}`
+						`/divisions/${div.id}`
 					);
 					const { data } = response;
 					const { status } = data;
 					if (status) {
-						dispatch(getSubjects());
+						dispatch(getDivisions());
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
@@ -96,19 +101,21 @@ function Division() {
 		});
 	};
 
-	// updating subject
-	const updateSubject = async () => {
+	// updating division
+	const updateDivision = async () => {
 		try {
 			let formData = {
-				subjectId: subjectId,
-				subject: editSubject,
+				id: divisionId,
+				division: editDivision,
+				points: parseFloat(editPoints),
 			};
-			const subject = await axiosInstance.put("/subjects", formData);
+			const subject = await axiosInstance.put("/divisions", formData);
 			const { data } = subject;
 			const { status } = data;
 			if (status) {
-				dispatch(getSubjects());
-				setEditSubject("");
+				dispatch(getDivisions());
+				setEditDivision("");
+				setEditPoints("");
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -122,7 +129,9 @@ function Division() {
 		}
 	};
 
-	const { subjects } = useSelector((state) => state.schoolStore);
+	const { divisions } = useSelector((state) => state.schoolStore);
+
+	console.log("divisions",  divisions);
 
 	return (
 		<div className=" bg-white pl-5 shadow-lg rounded-md h-auto p-3">
@@ -134,8 +143,8 @@ function Division() {
 							type="text"
 							placeholder="Enter Division"
 							label="Division"
-							value={subject}
-							onChange={(e) => setSubject(e.target.value)}
+							value={division}
+							onChange={(e) => setDivision(e.target.value)}
 						/>
 					</div>
 					<div className="w-2/5 p-2">
@@ -143,17 +152,17 @@ function Division() {
 							type="text"
 							placeholder="Enter Points"
 							label="Points"
-							value={subject}
-							onChange={(e) => setSubject(e.target.value)}
+							value={points}
+							onChange={(e) => setPoints(e.target.value)}
 						/>
 					</div>
 
 					<div className="mt-8 mr-5 w-1/3 p-2">
 						<br />
-						{isposting ? (
+						{isPosting ? (
 							<ButtonLoader />
 						) : (
-							<div onClick={postSubject}>
+							<div onClick={postDivision}>
 								<Button value={"Add"} />
 							</div>
 						)}
@@ -173,25 +182,25 @@ function Division() {
 								<div className="w-2/5 pr-2">
 									<InputField
 										type="text"
-										placeholder="Enter Subject"
-										label="Subject"
-										onChange={(e) => setEditSubject(e.target.value)}
-										value={editSubject}
+										placeholder="Enter Division"
+										label="Division"
+										onChange={(e) => setEditDivision(e.target.value)}
+										value={editDivision}
 										
 									/>
 								</div>
 								<div className="w-2/5 pr-2">
 									<InputField
 										type="text"
-										placeholder="Enter Subject"
-										label="Subject"
-										onChange={(e) => setEditSubject(e.target.value)}
-										value={editSubject}
+										placeholder="Enter Points"
+										label="Points"
+										onChange={(e) => setEditPoints(e.target.value)}
+										value={editPoints}
 										
 									/>
 								</div>
 								<div className="flex justify-between w-1/5 mt-[55px]">
-									<div onClick={updateSubject}>
+									<div onClick={updateDivision}>
 										<ButtonSecondary value={"Update"} />
 									</div>
 									<div>
@@ -207,22 +216,22 @@ function Division() {
 						) : null}
 						{/* edit popup end */}
 
-						{subjects.map((subject) => {
+						{divisions.map((div) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={subject.id}
+									key={div.id}
 								>
-									<td className="text-xs p-3 text-gray5">{subject.subject}</td>
-									<td className="text-xs p-3 text-gray5">{subject.subject}</td>
+									<td className="text-xs p-3 text-gray5">{div.division}</td>
+									<td className="text-xs p-3 text-gray5">{div.points}</td>
 									<td className="text-xs p-3 text-gray5 flex">
 										<MdDeleteOutline
-											onClick={() => deleteSubject(subject)}
+											onClick={() => deleteDivision(div)}
 											className="text-red w-4 h-4"
 										/>
 										<BsPencilSquare
 											className="text-warning h-4 w-4 ml-5"
-											onClick={() => openEditData(subject)}
+											onClick={() => openEditData(div)}
 										/>
 									</td>
 								</tr>

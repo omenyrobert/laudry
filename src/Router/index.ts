@@ -24,6 +24,7 @@ import SupplierRoutes from "./SupplierRoutes";
 import StaffProfileRoutes from "./StaffProfileRoutes";
 import TransactionTypeRoutes from "./TransactionTypeRoutes";
 import TransactionRoutes from "./TransactionRoutes";
+import DivisionRoutes from "./DivisionRoutes";
 
 const router = Router();
 
@@ -53,6 +54,7 @@ export default (): Router => {
   StaffProfileRoutes(router);
   TransactionTypeRoutes(router);
   TransactionRoutes(router);
+  DivisionRoutes(router);
 
   return router;
 };
