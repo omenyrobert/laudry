@@ -129,13 +129,20 @@ export const getSuppliers = createAsyncThunk("/schoolSheet/suppliers", async () 
 
 export const getDivisions = createAsyncThunk("/schoolSheet/divisions", async () => {
 	const divisions = await axiosInstance.get("/divisions");
-	console.log("apiDivisions", divisions);
 	const { data } =  divisions;
-	console.log("apiData", data);
 	const { status, payload } = data;
-	console.log("payload", payload);
 	if (status) return payload;
 });
+
+export const getTransactionsByAccountId = createAsyncThunk(
+	"/schoolSheet/transactionsByAccountId",
+	async (accountId) => {
+	  const response = await axiosInstance.get(`/transactions/accounts/${accountId}`);
+	  const { data } = response;
+	  const { status, payload } = data;
+	  if (status) return payload;
+	}
+);
 
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
@@ -159,6 +166,7 @@ export const schoolSheetSlices = createSlice({
 	  journals: [],
 	  suppliers: [],
 	  divisions: [],
+	  transactionsByAccountId: [],
 	  loading: {
 		streams: false,
 		staffMembers: false,
@@ -179,6 +187,7 @@ export const schoolSheetSlices = createSlice({
 		journals: false,
 		suppliers: false,
 		divisions: false,
+		transactionsByAccountId: false,
 	  },
 	},
 	extraReducers: {
@@ -385,6 +394,16 @@ export const schoolSheetSlices = createSlice({
 	  },
 	  [getDivisions.rejected]: (state) => {
 		state.loading.divisions = false;
+	  },
+	  [getTransactionsByAccountId.pending]: (state) => {
+		state.loading.transactionsByAccountId = true;
+	  },
+	  [getTransactionsByAccountId.fulfilled]: (state, action) => {
+		state.loading.transactionsByAccountId = false;
+		state.transactionsByAccountId = action.payload;
+	  },
+	  [getTransactionsByAccountId.rejected]: (state) => {
+		state.loading.transactionsByAccountId = false;
 	  },
 	},
 });

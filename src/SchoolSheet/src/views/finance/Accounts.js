@@ -507,7 +507,7 @@ function Accounts() {
 										className="text-warning "
 									/>
 								</div>
-								<Link to="/ledger">
+								<Link to={`/ledger/${account.id}`}>
 									<p className="text-primary p-2 bg-primary3 rounded-md">
 										Ledger
 									</p>
