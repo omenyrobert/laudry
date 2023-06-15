@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import { customPayloadResponse } from "../Helpers/Helpers";
 import {
   getTransactions,
-  updateTransaction,
-  deleteTransaction,
-  createTransactionDoubleEntry
+  createTransactionDoubleEntry,
+  updateTransactionDoubleEntry,
+  deleteTransactionDoubleEntry,
+  getTransactionsByTransId,
+  getTransactionsByTransactionType
 } from "../Entities/Transaction"
 
 export const addTransaction = async (req: Request, res: Response) => {
@@ -101,39 +103,75 @@ export const getTransactionsController = async (req: Request, res: Response) => 
 }
 
 
-export const updateTransactionController = async (req: Request, res: Response) => {
+
+export const updateTransaction = async (req: Request, res: Response) => {
   try {
     const {
+      transactionId,
       title,
       amount,
       description,
       transactionCategory,
-      account,
-      balance,
+      accountToDebit,
+      accountToCredit,
       receivedBy,
       contacts,
       receipt,
       transactionTypeID,
-      id
-    } = req.body;
-
+    } = req.body
     const file = req.file ? req.file.filename : null;
 
-    if (!title || !amount || !description || !transactionCategory || !account || !id) {
+    if (!transactionId) {
       return res
-        .json(customPayloadResponse(false, "Please provide all fields"))
+        .json(customPayloadResponse(false, "Title is required"))
         .status(400)
         .end();
     }
 
-    const transaction = await updateTransaction(
-      id,
+    if (!title) {
+      return res
+        .json(customPayloadResponse(false, "Title is required"))
+        .status(400)
+        .end();
+    }
+
+    if (!amount) {
+      return res
+        .json(customPayloadResponse(false, "Amount is required"))
+        .status(400)
+        .end();
+    }
+
+
+    if (!transactionCategory) {
+      return res
+        .json(customPayloadResponse(false, "Transaction Category is required"))
+        .status(400)
+        .end();
+    }
+
+    if (!accountToDebit) {
+      return res
+        .json(customPayloadResponse(false, "Account to debit is required"))
+        .status(400)
+        .end();
+    }
+
+    if (!accountToCredit) {
+      return res
+        .json(customPayloadResponse(false, "Account to credit is required"))
+        .status(400)
+        .end();
+    }
+
+    const transaction = await updateTransactionDoubleEntry(
+      transactionId,
       title,
-      amount,
+      parseInt(amount),
       description,
       transactionCategory,
-      account,
-      balance,
+      accountToDebit,
+      accountToCredit,
       receivedBy,
       contacts,
       file,
@@ -142,6 +180,25 @@ export const updateTransactionController = async (req: Request, res: Response) =
     )
 
     return res.json(customPayloadResponse(true, transaction)).status(200).end();
+
+  } catch (error) {
+    console.log(error)
+    return res
+      .json(customPayloadResponse(false, "An Error Occured"))
+      .status(500)
+      .end();
+  }
+}
+
+
+export const getTransactionsByTransIDController = async (req: Request, res: Response) => {
+  try{
+    const {transactionId} = req.params
+
+    const transactions = await getTransactionsByTransId(transactionId)
+
+    return res.json(customPayloadResponse(true, transactions)).status(200).end();
+
   } catch (error) {
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
@@ -150,17 +207,16 @@ export const updateTransactionController = async (req: Request, res: Response) =
   }
 }
 
-export const deleteTransactionController = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    if (!id) {
-      return res
-        .json(customPayloadResponse(false, "Please provide all fields"))
-        .status(400)
-        .end();
-    }
-    const transaction = await deleteTransaction(parseInt(id));
-    return res.json(customPayloadResponse(true, transaction)).status(200).end();
+
+export const deleteTransactionsByTransIDController = async (req: Request, res: Response) => {
+  try{
+    const {transactionId} = req.params
+    console.log("Delete Transaction", transactionId)
+
+    await deleteTransactionDoubleEntry(transactionId)
+
+    return res.json(customPayloadResponse(true, "SuccessFully deleted Transaction")).status(200).end();
+
   } catch (error) {
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
@@ -169,3 +225,18 @@ export const deleteTransactionController = async (req: Request, res: Response) =
   }
 }
 
+export const getTransactionsByTransactionTypeController = async (req: Request, res: Response) => {
+  try{
+    const {transactionType} = req.params
+
+    const transactions = await getTransactionsByTransactionType(transactionType)
+
+    return res.json(customPayloadResponse(true, transactions)).status(200).end();
+
+  } catch (error) {
+    return res
+      .json(customPayloadResponse(false, "An Error Occured"))
+      .status(500)
+      .end();
+  }
+}
