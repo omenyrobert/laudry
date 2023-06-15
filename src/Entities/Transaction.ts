@@ -352,8 +352,8 @@ export const createTransactionDoubleEntry = async (
   );
 
   // Update Accounts
-  accountToDebitEntity.amount = accountToDebitEntity.amount - amount;
-  accountToCreditEntity.amount = accountToCreditEntity.amount + amount;
+  accountToDebitEntity.amount = debitAccountBalanceAfterTransaction;
+  accountToCreditEntity.amount = creditAccountBalanceAfterTransaction;
   await accountToDebitEntity.save();
   await accountToCreditEntity.save();
 
