@@ -5,7 +5,6 @@ import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getTransactionsByAccountId } from "../../store/schoolSheetSlices/schoolStore";
 import Loader from "../../components/Loader";
-import generatePDF from "../../utils/generatePdf";
 
 function Ledger() {
   const { accountId } = useParams();
@@ -59,36 +58,29 @@ function Ledger() {
   };
 
   const handleGeneratePDF = () => {
-    const data = {
-	  filename: "ledger.pdf",
-      title: "Transactions Ledger",
-      subtitle: `Account: ${transactionsByAccountId[0].account.accountName}`,
-	  columnWidths: [50, 50, 50, "*", 50, 50, 50, 50, 50],
-      tableHeaders: [
-        "Date",
-        "Transaction Type",
-        "Transaction No",
-        "Description",
-        "Account",
-        "Credit",
-        "Debit",
-        "Amount",
-        "Balance",
-      ],
-      tableRows: filteredTransactions.map((transaction) => [
-        formatDate(transaction.date),
-        transaction.transactionType,
-        transaction.transactionId,
-        { text: transaction.description, style: "description" },
-        transaction.account.accountName,
-        transaction.credit,
-        transaction.debit,
-        transaction.amount,
-        transaction.balance,
-      ]),
-    };
+    const documentWindow = window.open("", "PRINT", "height=600,width=1000");
+    const content = document.getElementById("ledger-table").outerHTML;
 
-    generatePDF(data);
+    documentWindow.document.write(
+      content
+    );
+    
+    // Get All stylesheets
+    const stylesheets = document.querySelectorAll("link");
+    // Append them to the head of the new window
+    stylesheets.forEach((stylesheet) => {
+      documentWindow.document.write(stylesheet.outerHTML)
+    });
+    // Get all style tags 
+    const styleTags = document.querySelectorAll("style");
+    // Append them to the head of the new window
+    styleTags.forEach((styleTag) => {
+      documentWindow.document.write(styleTag.outerHTML)
+    })
+
+    setTimeout(() => {
+      documentWindow.print();
+    }, 1000);
   };
 
   return (
@@ -127,37 +119,41 @@ function Ledger() {
           </div>
         </div>
 
-        <div className="flex border-b border-gray1 bg-primary3 text-primary font-medium mt-3">
-          <div className="w-1/4 p-2">Date</div>
-          <div className="w-1/4 p-2">Transaction Type</div>
-          <div className="w-1/4 p-2">Transaction No</div>
-          <div className="w-1/4 p-2">Description</div>
-          <div className="w-1/4 p-2">Account</div>
-          <div className="w-1/4 p-2">Credit</div>
-          <div className="w-1/4 p-2">Debit</div>
-          <div className="w-1/4 p-2">Amount</div>
-          <div className="w-1/4 p-2">Balance</div>
-        </div>
+        <div  id="ledger-table">
+          <div  className="flex border-b border-gray1 bg-primary3 text-primary font-medium mt-3">
+            <div className="w-1/4 p-2">Date</div>
+            <div className="w-1/4 p-2">Transaction Type</div>
+            <div className="w-1/4 p-2">Transaction No</div>
+            <div className="w-1/4 p-2">Description</div>
+            <div className="w-1/4 p-2">Account</div>
+            <div className="w-1/4 p-2">Credit</div>
+            <div className="w-1/4 p-2">Debit</div>
+            <div className="w-1/4 p-2">Amount</div>
+            <div className="w-1/4 p-2">Balance</div>
+          </div>
 
-        {filteredTransactions.length > 0 &&
-          filteredTransactions.map((transaction) => {
-            return (
-              <div
-                className="flex border-b border-gray1 text-gray5 text-sm cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg"
-                key={transaction.transactionId}
-              >
-                <div className="w-1/4 p-2">{formatDate(transaction.date)}</div>
-                <div className="w-1/4 p-2">{transaction.transactionType}</div>
-                <div className="w-1/4 p-2">{transaction.transactionId}</div>
-                <div className="w-1/4 p-2 truncate">{transaction.description}</div>
-                <div className="w-1/4 p-2">{transaction.account.accountName}</div>
-                <div className="w-1/4 p-2">{transaction.credit}</div>
-                <div className="w-1/4 p-2">{transaction.debit}</div>
-                <div className="w-1/4 p-2">{transaction.amount}</div>
-                <div className="w-1/4 p-2">{transaction.balance}</div>
-              </div>
-            );
-          })}
+          <div id="ledger-rows">
+            {filteredTransactions.length > 0 &&
+              filteredTransactions.map((transaction) => {
+                return (
+                  <div
+                    className="flex border-b border-gray1 text-gray5 text-sm cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg"
+                    key={transaction.transactionId}
+                  >
+                    <div className="w-1/4 p-2">{formatDate(transaction.date)}</div>
+                    <div className="w-1/4 p-2">{transaction.transactionType}</div>
+                    <div className="w-1/4 p-2">{transaction.transactionId}</div>
+                    <div className="w-1/4 p-2 truncate">{transaction.description}</div>
+                    <div className="w-1/4 p-2">{transaction.account.accountName}</div>
+                    <div className="w-1/4 p-2">{transaction.credit}</div>
+                    <div className="w-1/4 p-2">{transaction.debit}</div>
+                    <div className="w-1/4 p-2">{transaction.amount}</div>
+                    <div className="w-1/4 p-2">{transaction.balance}</div>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
         {loading.transactionsByAccountId && <Loader />}
       </div>
     </>
