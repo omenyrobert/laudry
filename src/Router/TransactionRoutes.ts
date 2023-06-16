@@ -5,6 +5,7 @@ import {
   deleteTransactionController,
   addTransaction,
   updateTransactionController,
+  getTransactionsByAccountIdController
 } from "../Controllers/TransactionsController";
 import multer from "multer";
 
@@ -26,6 +27,7 @@ export default (router: Router) => {
   router.post(`${transactionPrefix}`, fileUpload, JWTAuthMiddleWare, addTransaction);
   router.put(`${transactionPrefix}`, fileUpload, JWTAuthMiddleWare, updateTransactionController);
   router.delete(`${transactionPrefix}/:id`, JWTAuthMiddleWare, deleteTransactionController);
+  router.get(`${transactionPrefix}/accounts/:accountId`, JWTAuthMiddleWare, getTransactionsByAccountIdController);
 }
 
 

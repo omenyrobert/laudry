@@ -362,3 +362,14 @@ export const createTransactionDoubleEntry = async (
     creditTransaction,
   };
 }
+
+export const getTransactionsByAccountId = async (accountId: number) => {
+  const transactions = await Transaction.find({
+    where: {
+      account: { id: accountId },
+    },
+    relations: ["account"],
+  });
+
+  return transactions;
+};

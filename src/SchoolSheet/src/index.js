@@ -248,7 +248,7 @@ const router = createBrowserRouter([
 				element: <Journal />,
 			},
 			{
-				path: "/ledger",
+				path: "/ledger/:accountId",
 				element: <Ledger/>
 			}
 		],

@@ -4,7 +4,8 @@ import {
   getTransactions,
   updateTransaction,
   deleteTransaction,
-  createTransactionDoubleEntry
+  createTransactionDoubleEntry,
+  getTransactionsByAccountId
 } from "../Entities/Transaction"
 
 export const addTransaction = async (req: Request, res: Response) => {
@@ -168,4 +169,30 @@ export const deleteTransactionController = async (req: Request, res: Response) =
       .end();
   }
 }
+
+export const getTransactionsByAccountIdController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { accountId } = req.params;
+    if (!accountId) {
+      return res
+        .json(customPayloadResponse(false, "Please provide an account ID"))
+        .status(400)
+        .end();
+    }
+
+    const transactions = await getTransactionsByAccountId(parseInt(accountId));
+    return res
+      .json(customPayloadResponse(true, transactions))
+      .status(200)
+      .end();
+  } catch (error) {
+    return res
+      .json(customPayloadResponse(false, "An Error Occurred"))
+      .status(500)
+      .end();
+  }
+};
 
