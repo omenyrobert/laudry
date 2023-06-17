@@ -75,7 +75,7 @@ function EmployeeSubType() {
 							placeholder="Enter Sub Type"
 							label="Sub Type"
 							name="sub_type"
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 
@@ -116,7 +116,7 @@ function EmployeeSubType() {
 										label="Charge Type"
 										name="Charge_type"
 										value={chargetypeEdit}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="flex justify-between w-1/5 mt-[55px]">

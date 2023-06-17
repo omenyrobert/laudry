@@ -39,7 +39,7 @@ function PatientTypeComp() {
 							placeholder="Enter Patient Type"
 							label="Patient Type"
 							name="patient_type"
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="mt-8 mr-5">
@@ -66,7 +66,7 @@ function PatientTypeComp() {
 									label="Charge Type"
 									name="Charge_type"
 									value={chargetypeEdit}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="flex justify-between w-1/3 mt-[55px]">

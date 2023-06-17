@@ -14,6 +14,7 @@ import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import { BsSearch } from "react-icons/bs";
 import Sample from "../../views/Sample";
+import { Link } from "react-router-dom";
 
 let db = new Localbase("db");
 
@@ -150,7 +151,6 @@ function ExpensesComp() {
 			.update({
 				expenseTypeId: expenseTypeIdEdit,
 				expense: expenseEdit,
-				expense: expenseEdit,
 				from: toEdit,
 				date: dateEdit,
 				contacts: contactsEdit,
@@ -214,9 +214,9 @@ function ExpensesComp() {
 
 	return (
 		<>
-			
-			<Sample/>
-		
+
+			<Sample />
+
 			<div className="flex bg-white">
 				<div className="w-10/12 ">
 					<div className="flex">
@@ -238,8 +238,11 @@ function ExpensesComp() {
 						</div>
 					</div>
 				</div>
-				<div className="w-2/12 px-3 mt-4" onClick={openAdd}>
-					<Button2 value={"Add Expense"} />
+				<div className="w-2/12 px-3 mt-4" >
+					<Link to="/addTransaction?transactionType=expense&action=create">
+						<Button2 value={"Add Expense"} />
+					</Link>
+
 				</div>
 			</div>
 			<div className="w-full h-[80vh]">
@@ -271,7 +274,7 @@ function ExpensesComp() {
 									label="Expense"
 									value={expense}
 									onChange={(e) => setExpense(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/3 p-1">
@@ -281,7 +284,7 @@ function ExpensesComp() {
 									label="Amount"
 									value={amount}
 									onChange={(e) => setAmount(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 						</div>
@@ -313,7 +316,7 @@ function ExpensesComp() {
 									label="Received By"
 									value={to}
 									onChange={(e) => setTo(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 						</div>
@@ -325,7 +328,7 @@ function ExpensesComp() {
 									label="Expense Contacts"
 									value={contacts}
 									onChange={(e) => setContacts(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/3 p-1">
@@ -335,7 +338,7 @@ function ExpensesComp() {
 									label=" Description"
 									value={contacts}
 									onChange={(e) => setContacts(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/3 p-1 mt-14"></div>
@@ -393,7 +396,7 @@ function ExpensesComp() {
 											label="Expense"
 											value={expenseEdit}
 											onChange={(e) => setExpenseEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3 p-1">
@@ -403,7 +406,7 @@ function ExpensesComp() {
 											label="Amount"
 											value={amountEdit}
 											onChange={(e) => setAmountEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>
@@ -435,7 +438,7 @@ function ExpensesComp() {
 											label="Received By"
 											value={toEdit}
 											onChange={(e) => setToEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>
@@ -447,7 +450,7 @@ function ExpensesComp() {
 											label="Expense Contacts"
 											value={contactsEdit}
 											onChange={(e) => setContactsEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3 p-1">
@@ -457,7 +460,7 @@ function ExpensesComp() {
 											label=" Description"
 											value={contactsEdit}
 											onChange={(e) => setContactsEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3 p-1 mt-14"></div>

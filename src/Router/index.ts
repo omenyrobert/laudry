@@ -21,6 +21,10 @@ import SchoolRoutes from "./SchoolRoutes";
 import AccountRoutes from "./AccountRoutes";
 import JournalRoutes from "./JournalRoutes";
 import SupplierRoutes from "./SupplierRoutes";
+import StaffProfileRoutes from "./StaffProfileRoutes";
+import TransactionTypeRoutes from "./TransactionTypeRoutes";
+import TransactionRoutes from "./TransactionRoutes";
+import DivisionRoutes from "./DivisionRoutes";
 
 const router = Router();
 
@@ -47,5 +51,10 @@ export default (): Router => {
   AccountRoutes(router);
   JournalRoutes(router);
   SupplierRoutes(router);
+  StaffProfileRoutes(router);
+  TransactionTypeRoutes(router);
+  TransactionRoutes(router);
+  DivisionRoutes(router);
+
   return router;
 };

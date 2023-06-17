@@ -162,9 +162,9 @@ function ExamsTypes() {
 				style={customStyles}
 				contentLabel="Example Modal"
 			>
-				<div className="flex px-5 py-3 justify-between text-xl font-semibold bg-gray1 text-primary">
+				<div className="flex px-8 py-3 justify-between text-xl font-semibold bg-gray1 text-primary">
 					<div>
-						<h5 className="">exam Types</h5>
+						<h5 className="">Exam Types</h5>
 					</div>
 					<div>
 						<p onClick={closeModal} className="cursor-pointer">
@@ -181,7 +181,7 @@ function ExamsTypes() {
 							label="Exam Type"
 							value={examType}
 							onChange={(e) => setexamType(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 						<InputField
 							type="text"
@@ -189,7 +189,7 @@ function ExamsTypes() {
 							label="Mark"
 							value={mark}
 							onChange={(e) => setMark(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 
 						<div onClick={postexamType}>
@@ -214,7 +214,7 @@ function ExamsTypes() {
 											label="exam Type"
 											value={examTypeEdit}
 											onChange={(e) => setexamTypeEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-full pr-5">
@@ -224,7 +224,7 @@ function ExamsTypes() {
 											label="Mark"
 											value={markEdit}
 											onChange={(e) => setMarkEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 										/>
 									</div>
 

@@ -114,7 +114,7 @@ function OrdersComp() {
 							placeholder="Enter Item"
 							label="Item"
 							name="Item"
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 				</div>
@@ -124,7 +124,7 @@ function OrdersComp() {
 							type="text"
 							placeholder="Enter quantity"
 							label="Qty"
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="w-1/3 px-2">
@@ -132,7 +132,7 @@ function OrdersComp() {
 							type="text"
 							placeholder="Enter Unicost"
 							label="Unitcost"
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="w-1/3 px-2">
@@ -140,7 +140,7 @@ function OrdersComp() {
 							type="text"
 							placeholder="Enter Item"
 							label="Total"
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 				</div>
@@ -192,7 +192,7 @@ function OrdersComp() {
 											placeholder="Enter Item"
 											label="Item"
 											name="Item"
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>
@@ -202,7 +202,7 @@ function OrdersComp() {
 											type="text"
 											placeholder="Enter quantity"
 											label="Qty"
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3 px-2">
@@ -210,7 +210,7 @@ function OrdersComp() {
 											type="text"
 											placeholder="Enter Unicost"
 											label="Unitcost"
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3 px-2">
@@ -218,7 +218,7 @@ function OrdersComp() {
 											type="text"
 											placeholder="Enter Item"
 											label="Total"
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>

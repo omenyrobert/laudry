@@ -14,7 +14,7 @@ import Qualifications from "./Qualifications";
 import NOK from "./NOK";
 import OtherInfo from "./OtherInfo";
 import SalaryInfo from "./SalaryInfo";
-import axiosInstance from "../../axios-instance"
+import axiosInstance, { UPLOADS_URL } from "../../axios-instance"
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 
@@ -59,6 +59,7 @@ function StaffEditForm(props) {
 	};
 
 	const [staffInfo, setStaffInfo] = useState({})
+	const [staffProfile, setStaffProfile] = useState({})
 
 	const fetchStaffInfo = async () => {
 		try {
@@ -80,11 +81,56 @@ function StaffEditForm(props) {
 		}
 	};
 
+	const fetchStaffProfile = async () => {
+		try {
+			const response = await axiosInstance.post(`/staff-profile/get-profile`, { staff: staffId });
+			const { status, payload } = response.data;
+			if (status === false) {
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: payload,
+				});
+			} else {
+				setStaffProfile(payload);
+				console.log(payload)
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	useEffect(() => {
 		fetchStaffInfo();
+		fetchStaffProfile()
 	}, []);
 
 	// fetch stypes
+
+	const [photo, setPhoto] = useState(staffInfo?.profile_picture);
+
+	const handlePhotoChange = (e) => {
+		const file = e.target.files[0];
+		const formData = new FormData();
+		formData.append("profile_picture", file);
+		axiosInstance.post(`/staff/profile-picture/${staffId}`, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		})
+			.then((res) => {
+				fetchStaffInfo()
+				console.log(res.data)
+			}).catch((err) => {
+				console.log(err)
+			})
+
+	};
+
+
+
+
 
 	return (
 		<>
@@ -110,40 +156,45 @@ function StaffEditForm(props) {
 							<div className="w-1/2 flex">
 								<div>
 									<img
-										src="avata.jpeg"
+										src={staffInfo?.profile_picture ? UPLOADS_URL + staffInfo?.profile_picture : "avata.jpeg"}
 										className="w-full object-cover rounded-full  border border-gray1 shadow"
+										alt={staffInfo?.firstName}
 									/>
+									<input onChange={handlePhotoChange} id="ppImage" type="file" hidden accept="image/*" />
 								</div>
 								<div className="relative">
-									<div className="bg-primary w-8 rounded-full h-8  absolute -ml-10 mt-10">
+									<div onClick={(e) => {
+										const imgInput = document.getElementById("ppImage")
+										imgInput.click()
+									}} className="bg-primary w-8 rounded-full h-8  absolute -ml-10 mt-10">
 										<BsCameraFill className="w-4 m-2 text-center text-white h-4" />
 									</div>
 								</div>
 							</div>
 						</div>
 
-						<BasicInfo />
+						<BasicInfo staffInfo={staffInfo} staffProfile={staffProfile} staffId={staffId} fetchStaffInfo={fetchStaffInfo} />
 
 						<br />
 					</div>
 
 					<div className="w-7/12 p-2">
-						<Experience />
+						<Experience staffInfo={staffInfo} staffProfile={staffProfile} staffId={staffId} fetchStaffInfo={fetchStaffProfile} />
 						<hr className="text-gray2 my-10" />
-						<Qualifications />
+						<Qualifications staffInfo={staffInfo} staffProfile={staffProfile} staffId={staffId} fetchStaffInfo={fetchStaffProfile} />
 						<hr className="text-gray2 my-10" />
-						<SalaryInfo salaryInfo={salaryInfo} staffId={staffId} fetchStaffInfo={fetchStaffInfo} />
+						<SalaryInfo salaryInfo={salaryInfo} staffProfile={staffProfile} staffId={staffId} fetchStaffInfo={fetchStaffInfo} />
 					</div>
 				</div>
 				<hr className="text-gray2" />
 
 				<div className="flex p-3">
 					<div className="w-3/12 py-2 pl-2 pr-5">
-						<NOK />
+						<NOK staffProfile={staffProfile} staffInfo={staffInfo} staffId={staffId} fetchStaffInfo={fetchStaffProfile} />
 					</div>
-					<div className="w-9/12 p-2">
+					{/*<div className="w-9/12 p-2">
 						<OtherInfo />
-					</div>
+								</div>*/}
 				</div>
 			</div>
 		</>

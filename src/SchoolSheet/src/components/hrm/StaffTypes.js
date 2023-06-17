@@ -150,7 +150,7 @@ const StaffTypes = () => {
 				style={customStyles}
 				contentLabel="Example Modal"
 			>
-						<div className="flex justify-between bg-gray1 p-3">
+						<div className="flex justify-between bg-gray1 py-3 px-8">
 							<div>
 								<p className="text-primary text-xl font-semibold">
 									Staff Types
@@ -198,7 +198,7 @@ const StaffTypes = () => {
 												name="Staff_type"
 												value={typeEdit}
 												onChange={(e) => setTypeEdit(e.target.value)}
-												icon={<FaPen className="w-3 -ml-7 mt-3" />}
+												
 											/>
 										</div>
 										<div className="flex justify-between w-1/3 mt-[55px]">

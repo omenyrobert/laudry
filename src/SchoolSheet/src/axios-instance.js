@@ -1,11 +1,14 @@
 import axios from "axios";
 
-const PRODUCTION_URL = "https://school-app-gvvr.onrender.com/api";
-const DEVELOPMENT_URL = "http://localhost:3001/api";
+
+//const HOST_URL = "https://school-app-gvvr.onrender.com";
+const HOST_URL = "http://localhost:3001";
+
+export const UPLOADS_URL = HOST_URL + "/useruploads/";
 
 
 const axiosInstance = axios.create({
-	baseURL: DEVELOPMENT_URL,
+	baseURL: HOST_URL + "/api",
 });
 
 const requestHandler = (request) => {

@@ -10,6 +10,7 @@ import { getStreams } from "../../store/schoolSheetSlices/schoolStore";
 import { useDispatch, useSelector } from "react-redux";
 import withReactContent from "sweetalert2-react-content";
 import axiosInstance from "../../axios-instance";
+import ButtonLoader from "../ButtonLoader";
 
 const StreamsComp = () => {
 	const dispatch = useDispatch();
@@ -18,9 +19,11 @@ const StreamsComp = () => {
 	const [streamId, setstreamId] = useState("");
 
 	// posting Streams
+	const [isposting, setIsPosting] = useState(false);
 	const [stream, setStream] = useState("");
 	const postStream = async () => {
 		try {
+			setIsPosting(true);
 			let formData = {
 				stream: stream,
 			};
@@ -31,6 +34,7 @@ const StreamsComp = () => {
 				dispatch(getStreams());
 				setStream("");
 				const MySwal = withReactContent(Swal);
+				setIsPosting(false);
 				MySwal.fire({
 					icon: "success",
 					showConfirmButton: false,
@@ -39,6 +43,7 @@ const StreamsComp = () => {
 			}
 		} catch (error) {
 			console.log(error);
+			setIsPosting(false);
 		}
 	};
 
@@ -126,14 +131,18 @@ const StreamsComp = () => {
 							label="Stream Name"
 							value={stream}
 							onChange={(e) => setStream(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="mt-8 mr-5">
 						<br />
-						<div onClick={postStream}>
-							<Button value={"Add  Stream"} />
-						</div>
+						{isposting ? (
+							<ButtonLoader />
+						) : (
+							<div onClick={postStream}>
+								<Button value={"Add  Stream"} />
+							</div>
+						)}
 					</div>
 				</div>
 
@@ -153,7 +162,7 @@ const StreamsComp = () => {
 										label="Stream Name"
 										onChange={(e) => setstreamEdit(e.target.value)}
 										value={streamEdit}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="flex justify-between w-1/3 mt-[55px]">

@@ -1,10 +1,30 @@
 import React from "react";
+import Button from "../Button";
+import InputField from "../InputField";
 
 function CashFlow() {
 	return (
 		<>
 			<div className="bg-white p-3 h-[82vh] mt-2 border border-gray2 shadow rounded">
-				<p className="text-secondary text-xl font-bold">Cash Flow</p>
+				<div className="flex justify-between">
+					<div>
+						<p className="text-secondary text-xl font-bold">Cash Flow</p>
+					</div>
+					<div className="flex">
+						<div className="mr-3">
+							<InputField type="date" label="From" />
+						</div>
+						<div className="mr-3">
+							<InputField type="date" label="to" />
+						</div>
+						<div>
+							<InputField type="month" label="By Month" />
+						</div>
+						<div className="ml-5 mt-12">
+							<Button value={"Pdf"} />
+						</div>
+					</div>
+				</div>
 
 				<div className="flex border-b border-gray1">
 					<div className="w-1/4 p-2">Date</div>

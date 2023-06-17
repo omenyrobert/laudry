@@ -156,7 +156,7 @@ function PaymentTypes() {
 										label="Payment Type"
 										value={paymentType}
 										onChange={(e) => setpaymentType(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 
@@ -181,7 +181,7 @@ function PaymentTypes() {
 													label="payment Type"
 													value={paymentTypeEdit}
 													onChange={(e) => setpaymentTypeEdit(e.target.value)}
-													icon={<FaPen className="w-3 -ml-7 mt-3" />}
+													
 												/>
 											</div>
 											<div className="flex justify-between w-1/3 mt-[55px]">

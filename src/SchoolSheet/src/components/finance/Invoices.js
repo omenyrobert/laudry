@@ -12,11 +12,12 @@ import Localbase from "localbase";
 import ButtonSecondary from "../ButtonSecondary";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../../axios-instance";
+import { BsSearch } from "react-icons/bs";
 import { getSuppliers } from "../../store/schoolSheetSlices/schoolStore";
 
 let db = new Localbase("db");
 
-function InvoicesList() {
+function Invoices() {
 	const [items, setItems] = useState([]);
 	const dispatch = useDispatch();
 	const { suppliers } = useSelector((state) => state.schoolStore);
@@ -94,21 +95,17 @@ function InvoicesList() {
 	useEffect(() => {
 		fetchInvoices();
 		if (suppliers) {
-			const _supplierData = suppliers.map((supplier) => 
-				({
-					label: supplier.supplierName,
-					value: supplier,
-			  	}));
+			const _supplierData = suppliers.map((supplier) => ({
+				label: supplier.supplierName,
+				value: supplier,
+			}));
 			setSuppliers(_supplierData);
-		 }
+		}
 	}, [suppliers]);
 
 	useEffect(() => {
 		dispatch(getSuppliers());
 	}, [dispatch]);
-
-
-
 
 	const removeItems = (index) => {
 		const newList = items.filter((item, i) => i !== index);
@@ -166,8 +163,11 @@ function InvoicesList() {
 	const openView = (invoice) => {
 		setView(true);
 		setSingleInvoice(invoice);
-		let total2 = invoice.items.reduce((acc, item)=> acc + (item.qty * item.unitCost),0)
-		setSingleTotal(total2)
+		let total2 = invoice.items.reduce(
+			(acc, item) => acc + item.qty * item.unitCost,
+			0
+		);
+		setSingleTotal(total2);
 	};
 
 	const closeView = () => {
@@ -179,8 +179,32 @@ function InvoicesList() {
 			{/* enter invoice div */}
 
 			<div className="w-full h-[80vh]">
-				<div onClick={openshow} className="w-[200px]">
-					<Button2 value={"Register Invoice"} />
+				<div className="flex bg-white p-2">
+					<div className="w-10/12">
+						<div className="flex">
+							<div className="w-6/12 px-2">
+								<InputField
+									placeholder="Search for Income"
+									type="search"
+									icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+								/>
+							</div>
+							<div className="w-3/12 px-2">
+								<InputField placeholder="Filter By Type" />
+							</div>{" "}
+							<div className="w-2/12 px-2">
+								<InputField type="date" />
+							</div>
+							<div className="w-2/12">
+								<InputField type="date" />
+							</div>
+						</div>
+					</div>
+					<div className="w-2/12 ml-5 mt-5">
+						<div onClick={openshow} className="w-[200px]">
+							<Button2 value={"Register Invoice"} />
+						</div>
+					</div>
 				</div>
 
 				{show ? (
@@ -198,20 +222,20 @@ function InvoicesList() {
 						<div className="flex p-3 -mt-8">
 							<div className="w-2/3 p-1 flex">
 								<div className="w-1/2">
-								<InputField
-									type="date"
-									value={date}
-									onChange={(e) => setDate(e.target.value)}
-									label="Date"
-								/>
+									<InputField
+										type="date"
+										value={date}
+										onChange={(e) => setDate(e.target.value)}
+										label="Date"
+									/>
 								</div>
 								<div className="w-1/2 ml-2">
-								<InputField
-									type="date"
-									value={date}
-									onChange={(e) => setDate(e.target.value)}
-									label="Due Date"
-								/>
+									<InputField
+										type="date"
+										value={date}
+										onChange={(e) => setDate(e.target.value)}
+										label="Due Date"
+									/>
 								</div>
 							</div>
 							<div className="w-1/3 p-1">
@@ -304,7 +328,7 @@ function InvoicesList() {
 						</div>
 						<div className="flex justify-between p-3 mt-5 bg-gray1">
 							<div onClick={closeshow}>
-								<ButtonSecondary value={"Close"}/>
+								<ButtonSecondary value={"Close"} />
 							</div>
 							<div onClick={postInvoice}>
 								<Button value={"Add Invoice"} />
@@ -342,7 +366,10 @@ function InvoicesList() {
 
 									{singleInvoice.items.map((item, index) => {
 										return (
-											<div key={item.index} className="flex text-gray5 cursor-pointer hover:bg-gray1 mx-5">
+											<div
+												key={item.index}
+												className="flex text-gray5 cursor-pointer hover:bg-gray1 mx-5"
+											>
 												<div className="p-2 w-1/4 text-sm">{item.item}</div>
 												<div className="p-2 w-1/4 text-sm">
 													{Number(item.qty).toLocaleString()}
@@ -360,10 +387,10 @@ function InvoicesList() {
 										<div className="p-2 w-1/4">Total</div>
 										<div className="p-2 w-1/4"></div>
 										<div className="p-2 w-1/4"></div>
-										<div className="p-2 w-1/4">{Number(singleTotal).toLocaleString()}</div>
+										<div className="p-2 w-1/4">
+											{Number(singleTotal).toLocaleString()}
+										</div>
 									</div>
-
-
 								</div>
 							</div>
 						</div>
@@ -384,33 +411,28 @@ function InvoicesList() {
 						{invoiceData.map((invoice) => {
 							return (
 								<tr
-									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+									className="shadow-sm border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"
 									key={invoice.id}
 								>
-									<td className="text-xs text-gray5 p-3 text-gray5">001</td>
-									<td className="text-xs text-gray5 p-3 text-gray5">
-										{invoice.date}
-									</td>
-									<td className="text-xs text-gray5 p-3 text-gray5">2</td>
-									<td className="text-xs text-gray5 p-3 text-gray5">0</td>
-									<td className="text-xs text-gray5 p-3 text-gray5">0</td>
-									<td className="text-xs text-gray5 p-3 text-gray5">0</td>
-									<td className="text-xs text-gray5 p-3 text-red">
-										{invoice.status}
-									</td>
-									<td className="text-xs text-gray5 p-3 text-red">
+									<td className="text-xs text-gray5 p-3 ">001</td>
+									<td className="text-xs text-gray5 p-3">{invoice.date}</td>
+									<td className="text-xs text-gray5 p-3">2</td>
+									<td className="text-xs text-gray5 p-3">0</td>
+									<td className="text-xs text-gray5 p-3">0</td>
+									<td className="text-xs text-gray5 p-3">0</td>
+									<td className="text-xs p-3 text-red">{invoice.status}</td>
+									<td className="text-xs p-3 text-red w-28">
 										<div className="flex justify-between w-18">
 											<MdDeleteOutline
 												onClick={() => deleteInvoice(invoice)}
 												className="text-red"
 											/>
-		
+
 											<BsEye
 												onClick={() => openView(invoice)}
 												className="text-primary"
 											/>
-																				<BsFillPrinterFill className="text-black"/>
-
+											<BsFillPrinterFill className="text-black" />
 										</div>
 									</td>
 								</tr>
@@ -422,4 +444,4 @@ function InvoicesList() {
 		</>
 	);
 }
-export default InvoicesList;
+export default Invoices;

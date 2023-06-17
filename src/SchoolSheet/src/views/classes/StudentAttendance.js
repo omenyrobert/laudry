@@ -176,7 +176,7 @@ function StudentAttendance() {
 				style={customStyles}
 				contentLabel="Example Modal"
 			>
-				<div className="flex justify-between font-medium text-primary  bg-gray1 p-3">
+				<div className="flex justify-between font-medium text-primary  bg-gray1 py-3 px-8">
 					<div>Attedance Times</div>
 					<div>
 						<p onClick={closeModal} className="cursor-pointer">
@@ -214,9 +214,9 @@ function StudentAttendance() {
 								onChange={onChange}
 							/>
 						</div>
-						<div className="w-1/2 p-2 mt-10">
+						<div className="w-1/2 p-2 mt-14">
 							<div onClick={postType}>
-								<Button value={"Add Attendance Time"} />
+								<Button value={"Add"} />
 							</div>
 						</div>
 					</div>
@@ -253,7 +253,7 @@ function StudentAttendance() {
 											name="attendanceType"
 											onChange={(e) => setTypeEdit(e.target.value)}
 											value={typeEdit}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 										<InputField
 											type="time"
@@ -262,7 +262,7 @@ function StudentAttendance() {
 											name="arrival"
 											onChange={(e) => setArrivalEdit(e.target.value)}
 											value={arrivalEdit}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 										<InputField
 											type="time"
@@ -270,7 +270,7 @@ function StudentAttendance() {
 											name="departure"
 											onChange={(e) => setDepartureEdit(e.target.value)}
 											value={departureEdit}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 										<div onClick={updateType}>
 											<ButtonSecondary value={"Update"} />

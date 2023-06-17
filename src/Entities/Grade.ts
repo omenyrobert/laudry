@@ -13,6 +13,9 @@ export class Grade extends BaseEntity {
 
   @Column()
   grade!: string;
+
+  @Column({nullable: true})
+  points!: Number;
 }
 
 export const getGrades = async () => {
@@ -24,8 +27,8 @@ export const getGrades = async () => {
   return grades;
 };
 
-export const createGrade = async (from: number, to: number, grade: string) => {
-  const GradeToInsert = await Grade.insert({ from: from, to: to, grade: grade });
+export const createGrade = async (from: number, to: number, grade: string, points: number) => {
+  const GradeToInsert = await Grade.insert({ from: from, to: to, grade: grade, points });
   return GradeToInsert;
 };
 
@@ -36,8 +39,14 @@ export const deleteGrade = async (id: number) => {
   }
 };
 
-export const updateGrade = async (id: number, from: number, to: number, grade: string) => {
-  const GradeToUpdate = await Grade.update(id, { from: from, to: to, grade: grade });
+export const updateGrade = async (
+  id: number,
+  from: number,
+  to: number,
+  grade: string,
+  points: number,
+) => {
+  const GradeToUpdate = await Grade.update(id, { from: from, to: to, grade: grade, points });
   return GradeToUpdate;
 };
 

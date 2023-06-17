@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import axiosInstance from "../../axios-instance";
 import { getStudents } from '../../store/schoolSheetSlices/schoolStore';
 
-let db = new Localbase('db');
+let db = new Localbase("db");
 
 const Fees = () => {
     const dispatch = useDispatch();

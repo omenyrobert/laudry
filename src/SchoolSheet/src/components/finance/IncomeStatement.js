@@ -1,10 +1,32 @@
 import React from "react";
+import Button from "../Button";
+import InputField from "../InputField";
 
 function IncomeStatement() {
 	return (
 		<>
 			<div className="bg-white p-3 h-[82vh] mt-2 border border-gray2 shadow rounded">
-                <p className="text-secondary text-xl font-bold">Income Statement </p>
+				<div className="flex justify-between">
+					<div>
+						<p className="text-secondary text-xl font-bold">
+							Income Statement (Profit & Loss){" "}
+						</p>
+					</div>
+					<div className="flex">
+						<div className="mr-3">
+							<InputField type="date" label="From" />
+						</div>
+						<div className="mr-3">
+							<InputField type="date" label="to" />
+						</div>
+						<div>
+							<InputField type="month" label="By Month" />
+						</div>
+						<div className="ml-5 mt-12">
+							<Button value={"Pdf"} />
+						</div>
+					</div>
+				</div>
 
 				<p className="mt-5 text-primary text-xl  font-medium">Incomes</p>
 				<div className="mt-2 flex  border border-gray1">
@@ -50,12 +72,12 @@ function IncomeStatement() {
 				</div>
 				<div className="flex bg-primary text-white mt-5">
 					<div className="border border-gray1 p-3  w-10/12">Net Profit</div>
-					
+
 					<div className="border border-gray1 p-3 w-2/12">24,890,000</div>
 				</div>
-            </div>
+			</div>
 		</>
 	);
 }
 
-export default IncomeStatement
+export default IncomeStatement;

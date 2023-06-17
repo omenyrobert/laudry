@@ -271,7 +271,7 @@ function Bills() {
 									label="bill"
 									value={bill}
 									onChange={(e) => setbill(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/4 p-1">
@@ -281,7 +281,7 @@ function Bills() {
 									label="Amount"
 									value={amount}
 									onChange={(e) => setAmount(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/4 p-1">
@@ -291,7 +291,7 @@ function Bills() {
 									label="Description"
 									value={amount}
 									onChange={(e) => setAmount(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 						</div>
@@ -345,7 +345,7 @@ function Bills() {
 									label="Received By"
 									value={amount}
 									onChange={(e) => setAmount(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/4 p-1">
@@ -355,7 +355,7 @@ function Bills() {
 									label="Contacts"
 									value={amount}
 									onChange={(e) => setAmount(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/4"></div>
@@ -413,7 +413,7 @@ function Bills() {
 											label="bill"
 											value={bill}
 											onChange={(e) => setbill(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -423,7 +423,7 @@ function Bills() {
 											label="Amount"
 											value={amount}
 											onChange={(e) => setAmount(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -433,7 +433,7 @@ function Bills() {
 											label="Description"
 											value={amount}
 											onChange={(e) => setAmount(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>
@@ -487,7 +487,7 @@ function Bills() {
 											label="Received By"
 											value={amount}
 											onChange={(e) => setAmount(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -497,7 +497,7 @@ function Bills() {
 											label="Contacts"
 											value={amount}
 											onChange={(e) => setAmount(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4"></div>

@@ -16,6 +16,7 @@ import {
 	getClasses,
 	getStreams,
 } from "../../store/schoolSheetSlices/schoolStore";
+import ButtonLoader from "../ButtonLoader";
 
 const ClassesComp = () => {
 	const dispatch = useDispatch();
@@ -37,10 +38,12 @@ const ClassesComp = () => {
 	let streamOptions = filter(streams, selectedStream);
 
 	// posting classes
+	const [isposting, setIsPosting] = useState(false);
 	const [sclass, setSclass] = useState("");
 
 	const postClass = async () => {
 		try {
+			setIsPosting(true);
 			let formData = {
 				name: sclass,
 				stream: selectedStream,
@@ -53,6 +56,7 @@ const ClassesComp = () => {
 					setSclass("");
 					setSelectedStream([]);
 					dispatch(getClasses());
+					setIsPosting(false);
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
@@ -63,6 +67,7 @@ const ClassesComp = () => {
 			}
 		} catch (error) {
 			console.log(error);
+			setIsPosting(false);
 		}
 	};
 
@@ -182,7 +187,7 @@ const ClassesComp = () => {
 							label="Class"
 							value={sclass}
 							onChange={(e) => setSclass(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="w-1/3 p-2">
@@ -217,21 +222,17 @@ const ClassesComp = () => {
 								})}
 							</div>
 						) : null}
-
-						{/* <Select
-							placeholder={"Select Stream"}
-							defaultValue={selectedStream}
-							onChange={handleStreamChange}
-							className="mt-1"
-							options={streamOptions}
-						/> */}
 					</div>
 
 					<div className="mt-6 mr-8 p-2">
 						<br />
-						<div onClick={postClass} className="w-auto">
-							<Button value={"Add"} />
-						</div>
+						{isposting ? (
+							<ButtonLoader />
+						) : (
+							<div onClick={postClass} className="w-auto">
+								<Button value={"Add Class"} />
+							</div>
+						)}
 					</div>
 				</div>
 
@@ -254,7 +255,7 @@ const ClassesComp = () => {
 										name="Charge"
 										value={sclassEdit}
 										onChange={(e) => setsclassEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="w-2/5 p-2">

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import InputField from "../InputField";
@@ -8,28 +7,28 @@ import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import Button2 from "../Button2";
-import Expenses from "../../views/finance/Expenses";
+import axiosInstance from "../../axios-instance";
+import ButtonLoader from "../ButtonLoader";
 
-let db = new Localbase("db");
 
 function ExpensesTypesComp() {
 	// post expense Type
-	const [expenseType, setExpenseType] = useState("");
+	const [expenseType, setExpenseType] = useState(null);
+	const [loading, setLoading] = useState(false)
 	const postExpenseType = () => {
-		let clId = uuid();
 		let formData = {
-			id: clId,
-			expenseType: expenseType,
+			name: expenseType,
+			type: "expense"
 		};
 		if (expenseType) {
-			db.collection("expenseTypesTbl")
-				.add(formData)
+			setLoading(true)
+			axiosInstance.post("/transaction-types", formData)
 				.then((response) => {
-					setExpenseType("");
+					setExpenseType(null);
 					fetchExpenseTypes();
+					setLoading(false)
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
@@ -39,49 +38,69 @@ function ExpensesTypesComp() {
 				})
 				.catch(console.error());
 		}
+
+
 	};
 
 	// fetch expense typess
 	const [expenseTypesData, setExpenseTypesData] = useState([]);
 	const fetchExpenseTypes = () => {
-		db.collection("expenseTypesTbl")
-			.get()
-			.then((expenseTypes) => {
-				const newData = expenseTypes;
-				setExpenseTypesData(newData);
-			});
+		axiosInstance.get("/transaction-types/expense")
+			.then((response) => {
+				setExpenseTypesData(response.data.payload);
+			})
+			.catch(console.error());
 	};
 
 	// update
 	const [editData, setEditData] = useState(false);
 	const [expenseTypeEdit, setExpenseTypeEdit] = useState("");
 	const [expenseTypeId, setExpenseTypeId] = useState("");
+	const [editLoading, setEditLoading] = useState(false)
 	const closeEditData = () => {
 		setEditData(false);
 	};
 	const openEditData = (expenseTypeItem) => {
 		setEditData(true);
-		setExpenseTypeEdit(expenseTypeItem?.expenseType);
+		setExpenseTypeEdit(expenseTypeItem?.name);
 		setExpenseTypeId(expenseTypeItem.id);
 	};
 	const updateExpenseType = () => {
-		db.collection("expenseTypesTbl")
-			.doc({ id: expenseTypeId })
-			.update({
-				expenseType: expenseTypeEdit,
-			})
+
+		let formData = {
+			name: expenseTypeEdit,
+			type: "expense",
+			id: expenseTypeId
+		}
+		setEditLoading(true)
+		axiosInstance.put("/transaction-types", formData)
 			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchExpenseTypes();
+				const { status, payload } = response.data
+
 				const MySwal = withReactContent(Swal);
+
+				if (status === false) {
+					setEditLoading(false)
+					MySwal.fire({
+						icon: "success",
+						showConfirmButton: false,
+						timer: 500,
+						text: payload,
+						title: "Ooops..."
+					});
+					return
+				}
+				fetchExpenseTypes();
+				setEditLoading(false)
 				MySwal.fire({
 					icon: "success",
 					showConfirmButton: false,
 					timer: 500,
 				});
 				closeEditData();
-			});
+			})
+			.catch(console.error());
+
 	};
 
 	// delete
@@ -98,22 +117,32 @@ function ExpensesTypesComp() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("expenseTypesTbl")
-					.doc({ id: expenseTypeItem.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchExpenseTypes();
 
-						Swal.fire({
+				axiosInstance.delete(`/transaction-types/${expenseTypeItem.id}`)
+					.then((response) => {
+						const { status, payload } = response.data
+
+						const MySwal = withReactContent(Swal);
+
+						if (status === false) {
+							MySwal.fire({
+								icon: "success",
+								showConfirmButton: false,
+								timer: 500,
+								text: payload,
+								title: "Ooops..."
+							});
+							return
+						}
+						fetchExpenseTypes();
+						MySwal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
 					})
-					.catch((error) => {
-						console.log(error);
-					});
+					.catch(console.error());
+
 			}
 		});
 	};
@@ -149,19 +178,23 @@ function ExpensesTypesComp() {
 						</div>
 						<div className="w-full h-[80vh]">
 							<div className="bg-white p-5 flex ">
-							<div className="w-7/12">
-								<InputField
-									type="text"
-									placeholder="Enter Expense Type"
-									label="Expense Type"
-									value={expenseType}
-									onChange={(e) => setExpenseType(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
-								/>
+
+								<div className="w-7/12">
+									<InputField
+										type="text"
+										placeholder="Enter Expense Type"
+										label="Expense Type"
+										value={expenseType}
+										onChange={(e) => setExpenseType(e.target.value)}
+										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									/>
+
 								</div>
 
 								<div className="mt-14 ml-2" onClick={postExpenseType}>
-									<Button value={"Add Expense Type"} />
+									{
+										loading ? <ButtonLoader /> : <Button value={"Add Expense Type"} />
+									}
 								</div>
 							</div>
 
@@ -181,12 +214,14 @@ function ExpensesTypesComp() {
 													label="Expense Type"
 													value={expenseTypeEdit}
 													onChange={(e) => setExpenseTypeEdit(e.target.value)}
-													icon={<FaPen className="w-3 -ml-7 mt-3" />}
+													
 												/>
 											</div>
 											<div className="flex justify-between w-1/3 mt-[55px]">
 												<div onClick={updateExpenseType}>
-													<ButtonSecondary value={"Update"} />
+													{
+														editLoading ? <ButtonLoader /> : <ButtonSecondary value={"Update"} />
+													}
 												</div>
 												<div>
 													<p
@@ -208,7 +243,7 @@ function ExpensesTypesComp() {
 												key={expenseTypeItem.id}
 											>
 												<td className="text-xs p-3 text-gray5">
-													{expenseTypeItem.expenseType}
+													{expenseTypeItem.name}
 												</td>
 												<td className="text-xs p-3 text-gray5">
 													<div className="flex">

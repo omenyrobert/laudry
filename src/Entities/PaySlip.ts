@@ -5,6 +5,7 @@ import {
   BaseEntity,
   OneToMany,
   ManyToOne,
+  CreateDateColumn
 } from "typeorm";
 import { PaySlipCategory } from "./PaySlipCategory";
 import { Staff } from "./Staff";
@@ -13,6 +14,9 @@ import { Staff } from "./Staff";
 export class PaySlip extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @CreateDateColumn()
+  created_at!: Date;
 
   @Column()
   gross_salary!: number;

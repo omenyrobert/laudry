@@ -27,7 +27,7 @@ import GroupsAndTypes from "./views/students/GroupsAndTypes";
 import Incomes from "./views/finance/Incomes";
 import Expenses from "./views/finance/Expenses";
 import Reports from "./views/finance/Reports";
-import Invoices from "./views/finance/Invoices";
+import Invoices from "./components/finance/Invoices";
 import Staff from "./views/hrm/Staff";
 import PayRoll from "./views/hrm/PayRoll";
 import StaffAttendance from "./views/hrm/StaffAttendance";
@@ -53,6 +53,9 @@ import EditStudentsForm from "./components/students/EditStudentsForm";
 import ShowStudentsForm from "./components/students/ShowStudentsForm";
 import Sample from "./views/Sample";
 import StudentAttendanceComp from "./components/classes/StudentAttendanceComp";
+import Journal from "../src/components/finance/Journal";
+import AddTransaction from "./components/finance/AddTransaction";
+import Ledger from "./components/finance/Ledger";
 
 const router = createBrowserRouter([
 	{
@@ -83,7 +86,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/sample",
-				element: <Sample />
+				element: <Sample />,
 			},
 			{
 				path: "/settings",
@@ -107,7 +110,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/scholarShip",
-				element: <ScholarShip />
+				element: <ScholarShip />,
 			},
 			{
 				path: "/students",
@@ -121,17 +124,16 @@ const router = createBrowserRouter([
 			// students
 			{
 				path: "/addStudentForm",
-				element: <AddStudentForm />
+				element: <AddStudentForm />,
 			},
 			{
 				path: "/editStudentsForm",
-				element: <EditStudentsForm />
+				element: <EditStudentsForm />,
 			},
 			{
 				path: "/showStudentsForm",
-				element: <ShowStudentsForm />
+				element: <ShowStudentsForm />,
 			},
-
 
 			//classes
 			{
@@ -214,6 +216,10 @@ const router = createBrowserRouter([
 				path: "/equity",
 				element: <Equity />,
 			},
+			{
+            path: "/addTransaction",
+			element: <AddTransaction/>
+			},
 
 			//  hrm routes
 
@@ -237,6 +243,14 @@ const router = createBrowserRouter([
 				path: "/reportCardTemplate",
 				element: <ReportCardTemplate />,
 			},
+			{
+				path: "/journal",
+				element: <Journal />,
+			},
+			{
+				path: "/ledger/:accountId",
+				element: <Ledger/>
+			}
 		],
 	},
 ]);

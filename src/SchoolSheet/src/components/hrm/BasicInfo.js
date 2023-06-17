@@ -1,26 +1,49 @@
+
 import React, { useEffect, useState } from "react";
 import { BsFillPencilFill } from "react-icons/bs";
 import InputField from "../InputField";
 import Select from "react-select";
-import Localbase from "localbase";
 import { FaPen } from "react-icons/fa";
 import InputSelect from "../InputSelect";
 import Button from "../Button";
+import axiosInstance from "../../axios-instance"
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
-let db = new Localbase("db");
 
-function BasicInfo() {
-	const [staffType, setStaffType] = useState("staffType");
-	const [firstName, setFirstName] = useState("firstName");
-	const [middleName, setMiddleName] = useState("middleName");
-	const [lastName, setLastName] = useState("lastName");
-	const [phoneNumbers, setPhoneNumbers] = useState("phoneNumbers");
-	const [email, setEmail] = useState("email");
-	const [nationality, setNationality] = useState("nationality");
-	const [residence, setResidence] = useState("residence");
-	const [dateOfBirth, setDateOfBirth] = useState("dateOfBirth");
-	const [maritalStatus, setMaritalStatus] = useState("maritalStatus");
-	const [gender, setGender] = useState("gender");
+
+function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
+	const [staffType, setStaffType] = useState(staffInfo.staffType);
+	const [firstName, setFirstName] = useState(staffInfo.first_name);
+	const [middleName, setMiddleName] = useState(staffInfo.middle_name);
+	const [lastName, setLastName] = useState(staffInfo.last_name);
+	const [phoneNumbers, setPhoneNumbers] = useState(staffInfo.phone_number);
+	const [email, setEmail] = useState(staffInfo.email);
+	const [nationality, setNationality] = useState(staffInfo.nationality);
+	const [residence, setResidence] = useState(staffInfo.address);
+	const [dateOfBirth, setDateOfBirth] = useState(new Date(staffInfo.date_of_birth));
+	const [maritalStatus, setMaritalStatus] = useState(staffInfo.marital_status);
+	const [gender, setGender] = useState(staffInfo.gender);
+
+	useEffect(() => {
+		if (staffInfo) {
+			setStaffType({
+				value: staffInfo?.staffType?.type,
+				label: staffInfo?.staffType?.type,
+				...staffInfo.staffType,
+			});
+			setFirstName(staffInfo.first_name);
+			setMiddleName(staffInfo.middle_name);
+			setLastName(staffInfo.last_name);
+			setPhoneNumbers(staffInfo.phone_number);
+			setEmail(staffInfo.email);
+			setNationality(staffInfo.nationality);
+			setResidence(staffInfo.address);
+			setDateOfBirth(new Date(staffInfo.date_of_birth));
+			setMaritalStatus(staffInfo.marital_status);
+			setGender(staffInfo.gender)
+		}
+	}, [staffInfo]);
 
 	const maritalOptions = [
 		{ value: "Single", label: "Single" },
@@ -38,25 +61,69 @@ function BasicInfo() {
 
 	const [options, setOptions] = useState();
 	const fetchStaffTypes = () => {
-		db.collection("staffType")
-			.get()
-			.then((staffType) => {
-				const newData = staffType.map((res) => ({
-					value: res.staffType,
-					label: res.staffType,
-				}));
-				setOptions(newData);
-			});
+
+		axiosInstance.get("/staffTypes")
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status) {
+					const newDatas = payload.map((data) => ({
+						value: data.id,
+						label: data.type,
+						...data,
+					}));
+					setOptions(newDatas);
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+
+
 	};
+
+
 	useEffect(() => {
 		fetchStaffTypes();
 	}, []);
+
+	const updateBasicInfo = () => {
+		const data = {
+			id: staffId,
+			staff_type: staffType?.id,
+			first_name: firstName,
+			middle_name: middleName,
+			last_name: lastName,
+			phone_number: phoneNumbers,
+			email: email,
+			address: residence,
+			nationality,
+			date_of_birth: dateOfBirth,
+			marital_status: maritalStatus?.value,
+		};
+		axiosInstance.put(`/staff/profile/${staffId}`, data)
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status) {
+					fetchStaffInfo();
+					closeBasic();
+				} else {
+					Swal.fire({
+						icon: "error",
+						title: "Oops...",
+						text: payload,
+					});
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+	}
 	return (
 		<>
 			<div className="flex justify-between">
 				<div>
-					<p className="text-2xl text-primary font-bold mt-5">Omeny Robert</p>
-					<p className="text-gray5">Deputy</p>
+					<p className="text-2xl text-primary font-bold mt-5">
+						{staffInfo?.first_name} {staffInfo?.middle_name}{" "} {staffInfo?.last_name}
+					</p>
+					<p className="text-gray5">{staffInfo?.staff_type?.type}</p>
 				</div>
 				<div
 					onClick={openBasic}
@@ -65,7 +132,7 @@ function BasicInfo() {
 					<BsFillPencilFill className="mr-2 mt-1" /> Edit Basic Info
 				</div>
 				{showBasic ? (
-					<div className="border absolute z-50 -mt-[200px] border-gray3 bg-white shadow h-[650px] rounded w-[700px] overflow-y-auto">
+					<div className="border absolute z-50  border-gray3 bg-white shadow h-auto rounded w-[40vw] -mt-[35vh] overflow-y-auto">
 						<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
 							<div>
 								<p>Edit Basic Info</p>
@@ -91,7 +158,7 @@ function BasicInfo() {
 									name="firstName"
 									onChange={(e) => setFirstName(e.target.value)}
 									value={firstName}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -100,7 +167,7 @@ function BasicInfo() {
 									name="middleName"
 									onChange={(e) => setMiddleName(e.target.value)}
 									value={middleName}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -109,7 +176,7 @@ function BasicInfo() {
 									name="lastName"
 									onChange={(e) => setLastName(e.target.value)}
 									value={lastName}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -143,7 +210,7 @@ function BasicInfo() {
 									name="residence"
 									onChange={(e) => setResidence(e.target.value)}
 									value={residence}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -168,7 +235,7 @@ function BasicInfo() {
 									onChange={setGender}
 									className="mt-1"
 								/>
-								<div className="mt-14">
+								<div onClick={updateBasicInfo} className="mt-14">
 									<Button value={"Update Basic Info"} />
 								</div>
 							</div>
@@ -180,22 +247,25 @@ function BasicInfo() {
 			<hr className="my-5 text-gray2" />
 			<div className="flex justify-between">
 				<div>
-					<p className="text-gray5 font-light">rob@mail.com</p>
-					<p className="text-gray5 font-light mt-2">Male</p>
-					<p className="text-gray5 font-light mt-2">Single</p>
-					<p className="text-gray5 font-light mt-2">07-09-1996 - 27yrs</p>
+					<p className="text-gray5 font-light">{staffInfo?.email}</p>
+					<p className="text-gray5 font-light mt-2">{staffInfo?.gender}</p>
+					<p className="text-gray5 font-light mt-2">{staffInfo?.marital_status}</p>
+					<p className="text-gray5 font-light mt-2">
+						{new Date(staffInfo?.date_of_birth).toDateString()} -
+						{new Date().getFullYear() - new Date(staffInfo?.date_of_birth).getFullYear()} years
+					</p>
 				</div>
 				<div>
-					<p className="font-light">Location: Kira</p>
-					<p className="text-gray5 font-light">Kira</p>
+					<p className="font-light">Location:</p>
+					<p className="text-gray5 font-light">{staffInfo?.address}</p>
 					<p className="mt-2">
 						Contacts
 					</p>
 					<p className="text-gray5 font-light">
-						0798776, 07876767
+						{staffInfo?.phone_number}
 					</p>
 					<p className="mt-2">Nationality</p>
-					<p className="text-gray5 font-light">Ugandan</p>
+					<p className="text-gray5 font-light">{staffInfo?.nationality}</p>
 				</div>
 			</div>
 

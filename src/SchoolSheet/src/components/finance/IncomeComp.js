@@ -12,7 +12,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
-
+import { Link } from "react-router-dom";
 let db = new Localbase("db");
 
 function IncomeComp() {
@@ -261,9 +261,9 @@ function IncomeComp() {
 						</div>
 					</div>
 				</div>
-				<div className="w-2/12 px-3 mt-5" onClick={openAdd}>
-					<Button2 value={"Add Income"} />
-				</div>
+				<Link to="/addTransaction?transactionType=income&action=create" className="w-2/12 px-3 mt-5">
+					<Button2 value={"Add Income "} />
+				</Link>
 			</div>
 			{add ? (
 				<div className="bg-white shadow-xl absolute z-50 border border-gray2 rounded-md mr-2  w-[1000px]">
@@ -291,7 +291,7 @@ function IncomeComp() {
 								label="Income"
 								value={income}
 								onChange={(e) => setIncome(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 						<div className="w-1/3 p-1">
@@ -301,7 +301,7 @@ function IncomeComp() {
 								label="Amount"
 								value={amount}
 								onChange={(e) => setAmount(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 					</div>
@@ -323,7 +323,7 @@ function IncomeComp() {
 								label="Income Source"
 								value={from}
 								onChange={(e) => setFrom(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 						<div className="w-1/3">
@@ -333,7 +333,7 @@ function IncomeComp() {
 								label="Income description"
 								value={comment}
 								onChange={(e) => setComment(e.target.value)}
-								icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 							/>
 						</div>
 					</div>
@@ -404,7 +404,7 @@ function IncomeComp() {
 											label="Income"
 											value={incomeEdit}
 											onChange={(e) => setIncomeEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3 p-1">
@@ -414,7 +414,7 @@ function IncomeComp() {
 											label="Amount"
 											value={amountEdit}
 											onChange={(e) => setAmountEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>
@@ -436,7 +436,7 @@ function IncomeComp() {
 											label="Income Source"
 											value={fromEdit}
 											onChange={(e) => setFromEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/3">
@@ -446,7 +446,7 @@ function IncomeComp() {
 											label="Income description"
 											value={commentEdit}
 											onChange={(e) => setCommentEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>
@@ -479,79 +479,79 @@ function IncomeComp() {
 
 						{searchInput.length > 1
 							? filteredIncome.map((incomeItem) => {
-									return (
-										<tr
-											className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
-											key={incomeItem?.id}
-										>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.date}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.income}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.incomeTypesObj.value.incomeType}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{Number(incomeItem.amount).toLocaleString()}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.from}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.comment}
-											</td>
-											<td className="text-xs p-3 text-gray5 flex">
-												<MdDeleteOutline
-													onClick={() => deleteIncome(incomeItem)}
-													className="text-red w-4 h-4"
-												/>
-												<BsPencilSquare
-													className="text-warning h-4 w-4 ml-5"
-													onClick={() => openEditData(incomeItem)}
-												/>
-											</td>
-										</tr>
-									);
-							  })
+								return (
+									<tr
+										className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={incomeItem?.id}
+									>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.date}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.income}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.incomeTypesObj.value.incomeType}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{Number(incomeItem.amount).toLocaleString()}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.from}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.comment}
+										</td>
+										<td className="text-xs p-3 text-gray5 flex">
+											<MdDeleteOutline
+												onClick={() => deleteIncome(incomeItem)}
+												className="text-red w-4 h-4"
+											/>
+											<BsPencilSquare
+												className="text-warning h-4 w-4 ml-5"
+												onClick={() => openEditData(incomeItem)}
+											/>
+										</td>
+									</tr>
+								);
+							})
 							: incomesData.map((incomeItem) => {
-									return (
-										<tr
-											className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
-											key={incomeItem?.id}
-										>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.date}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.income}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.incomeTypesObj.value.incomeType}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{Number(incomeItem.amount).toLocaleString()}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.from}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.comment}
-											</td>
-											<td className="text-xs p-3 text-gray5 flex">
-												<MdDeleteOutline
-													onClick={() => deleteIncome(incomeItem)}
-													className="text-red w-4 h-4"
-												/>
-												<BsPencilSquare
-													className="text-warning h-4 w-4 ml-5"
-													onClick={() => openEditData(incomeItem)}
-												/>
-											</td>
-										</tr>
-									);
-							  })}
+								return (
+									<tr
+										className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={incomeItem?.id}
+									>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.date}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.income}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.incomeTypesObj.value.incomeType}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{Number(incomeItem.amount).toLocaleString()}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.from}
+										</td>
+										<td className="text-xs p-3 text-gray5">
+											{incomeItem.comment}
+										</td>
+										<td className="text-xs p-3 text-gray5 flex">
+											<MdDeleteOutline
+												onClick={() => deleteIncome(incomeItem)}
+												className="text-red w-4 h-4"
+											/>
+											<BsPencilSquare
+												className="text-warning h-4 w-4 ml-5"
+												onClick={() => openEditData(incomeItem)}
+											/>
+										</td>
+									</tr>
+								);
+							})}
 
 						<tr className="bg-white p-5 text-lg font-semibold">
 							<td colSpan="3">Total</td>

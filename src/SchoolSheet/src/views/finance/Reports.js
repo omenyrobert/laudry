@@ -96,7 +96,7 @@ function Reports() {
 							: "w-1/4 cursor-pointer p-3  text-primary"
 					}
 				>
-					Income Statement
+					Income Statement(Profit & Loss)
 				</div>
 				<div
 					onClick={showGen}

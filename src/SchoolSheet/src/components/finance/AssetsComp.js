@@ -250,7 +250,7 @@ function AssetsComp() {
 									label="asset"
 									value={asset}
 									onChange={(e) => setAsset(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/3 p-1">
@@ -260,7 +260,7 @@ function AssetsComp() {
 									label="cost"
 									value={cost}
 									onChange={(e) => setCost(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 						</div>
@@ -302,7 +302,7 @@ function AssetsComp() {
 									label="Purchased From"
 									value={purchasedFrom}
 									onChange={(e) => setPurchasedFrom(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/3 p-1">
@@ -312,7 +312,7 @@ function AssetsComp() {
 									label="Sellers Contacts"
 									value={sellersContacts}
 									onChange={(e) => setSellersContacts(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/3 p-1">
@@ -370,7 +370,7 @@ function AssetsComp() {
 											label="asset"
 											value={assetEdit}
 											onChange={(e) => setAssetEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -380,7 +380,7 @@ function AssetsComp() {
 											label="cost"
 											value={costEdit}
 											onChange={(e) => setCostEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -402,7 +402,7 @@ function AssetsComp() {
 											label="asset Description"
 											value={descriptionEdit}
 											onChange={(e) => setDescriptionEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -412,7 +412,7 @@ function AssetsComp() {
 											label="asset Comment"
 											value={commentEdit}
 											onChange={(e) => Edit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 ml-5"></div>

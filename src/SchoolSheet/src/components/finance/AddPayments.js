@@ -277,7 +277,7 @@ function AddPayments() {
 									label="payment"
 									value={payment}
 									onChange={(e) => setpayment(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+								
 								/>
 							</div>
 							<div className="w-1/4 p-1">
@@ -287,7 +287,7 @@ function AddPayments() {
 									label="Amount"
 									value={amount}
 									onChange={(e) => setAmount(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/4 p-1">
@@ -319,7 +319,7 @@ function AddPayments() {
 									label="Description"
 									value={to}
 									onChange={(e) => setTo(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/4 p-1">
@@ -329,7 +329,7 @@ function AddPayments() {
 									label="Received By"
 									value={to}
 									onChange={(e) => setTo(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/4 p-1">
@@ -339,7 +339,7 @@ function AddPayments() {
 									label="payment Contacts"
 									value={contacts}
 									onChange={(e) => setContacts(e.target.value)}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 						</div>
@@ -392,7 +392,7 @@ function AddPayments() {
 											label="payment"
 											value={paymentEdit}
 											onChange={(e) => setpaymentEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -402,7 +402,7 @@ function AddPayments() {
 											label="Amount"
 											value={amountEdit}
 											onChange={(e) => setAmountEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -434,7 +434,7 @@ function AddPayments() {
 											label="Description"
 											value={to}
 											onChange={(e) => setTo(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -444,7 +444,7 @@ function AddPayments() {
 											label="Received By"
 											value={toEdit}
 											onChange={(e) => setToEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -454,7 +454,7 @@ function AddPayments() {
 											label="payment Contacts"
 											value={contactsEdit}
 											onChange={(e) => setContactsEdit(e.target.value)}
-											icon={<FaPen className="w-3 -ml-7 mt-3" />}
+											
 										/>
 									</div>
 								</div>

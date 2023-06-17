@@ -8,9 +8,10 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import ButtonSecondary from "../ButtonSecondary";
 import Modal from "react-modal";
-import axiosInstance from "../../axios-instance"
+import axiosInstance from "../../axios-instance";
 import { useDispatch, useSelector } from "react-redux";
 import { getSchools } from "../../store/schoolSheetSlices/schoolStore";
+import ButtonLoader from "../ButtonLoader";
 
 const customStyles = {
 	overlay: {
@@ -18,9 +19,11 @@ const customStyles = {
 	},
 	content: {
 		width: "800px",
-		height: "auto",
+		// height: "50%",
+		backgroundColor: "rgba(0, 0, 0, 0.0)",
+		borderColor: "rgba(0, 0, 0, 0.1)",
 		padding: "0px",
-		marginLeft: "25vw",
+		marginLeft: "15vw",
 		marginTop: "5vw",
 	},
 };
@@ -40,7 +43,10 @@ function EditSchoolInfo() {
 	const [school, setSchool] = useState(null);
 	const { schools } = useSelector((state) => state.schoolStore);
 
+	const [isUpdating, setIsUpdating] = useState(false);
+
 	const updateInfo = () => {
+		setIsUpdating(true);
 		let data = {
 			name: name,
 			motto: motto,
@@ -51,7 +57,7 @@ function EditSchoolInfo() {
 			description: description,
 			id,
 		};
-		  
+
 		const formData = new FormData();
 
 		for (const key in data) {
@@ -62,11 +68,12 @@ function EditSchoolInfo() {
 			formData.append("logo", photo);
 		}
 
-		axiosInstance.put(`schools`, formData, {
-			headers: {
-				"Content-Type": "multipart/form-data",
-			}
-		})
+		axiosInstance
+			.put(`schools`, formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			})
 			.then((response) => {
 				const { status, payload } = response.data;
 				if (status === false) {
@@ -86,22 +93,23 @@ function EditSchoolInfo() {
 				});
 				dispatch(getSchools());
 				setIsOpen(false);
+				setIsUpdating(false);
 			})
 			.catch((error) => {
+				setIsUpdating(false);
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "error",
 					title: "Oops...",
 					text: "An Error Occurred while trying to update student. Please try again",
 				});
-			})
+			});
 	};
 
 	// fetching section
 	useEffect(() => {
 		dispatch(getSchools());
 	}, [dispatch]);
-
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -114,7 +122,6 @@ function EditSchoolInfo() {
 	};
 
 	function selectPhoto(e) {
-
 		const { files } = e.target;
 		if (files && files[0]) {
 			setPhoto(files[0]);
@@ -124,26 +131,26 @@ function EditSchoolInfo() {
 	useEffect(() => {
 		setSchool(schools[0]);
 		if (schools[0]) {
-		  const {
-			name,
-			motto,
-			location,
-			phoneNumbers,
-			emails,
-			description,
-			sites,
-			id
-		  } = schools[0];
-		  setName(name);
-		  setMotto(motto);
-		  setLocation(location);
-		  setPhones(phoneNumbers);
-		  setEmails(emails);
-		  setDescription(description);
-		  setSites(sites);
-		  setId(id);
+			const {
+				name,
+				motto,
+				location,
+				phoneNumbers,
+				emails,
+				description,
+				sites,
+				id,
+			} = schools[0];
+			setName(name);
+			setMotto(motto);
+			setLocation(location);
+			setPhones(phoneNumbers);
+			setEmails(emails);
+			setDescription(description);
+			setSites(sites);
+			setId(id);
 		}
-	  }, [schools]);
+	}, [schools]);
 
 	return (
 		<>
@@ -158,7 +165,7 @@ function EditSchoolInfo() {
 					style={customStyles}
 					contentLabel="Example Modal"
 				>
-
+					<div>
 						<div className="text-primary flex justify-between p-3 bg-gray1 font-semibold">
 							<div>Update School Info</div>
 							<div>
@@ -167,7 +174,7 @@ function EditSchoolInfo() {
 								</p>
 							</div>
 						</div>
-						<div className="p-3 flex">
+						<div className="p-3 flex max-h-[60vh] overflow-y-auto bg-white">
 							<div className="w-1/2">
 								<InputField
 									type="text"
@@ -175,7 +182,7 @@ function EditSchoolInfo() {
 									label="Facility Name"
 									onChange={(e) => setName(e.target.value)}
 									value={name}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="text"
@@ -199,7 +206,7 @@ function EditSchoolInfo() {
 									label="Description"
 									onChange={(e) => setDescription(e.target.value)}
 									value={description}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 							</div>
 							<div className="w-1/2 ml-5">
@@ -209,7 +216,7 @@ function EditSchoolInfo() {
 									label="motto"
 									onChange={(e) => setMotto(e.target.value)}
 									value={motto}
-									icon={<FaPen className="w-3 -ml-7 mt-3" />}
+									
 								/>
 								<InputField
 									type="email"
@@ -243,12 +250,19 @@ function EditSchoolInfo() {
 							<div onClick={closeModal}>
 								<ButtonSecondary value={"Close"} />
 							</div>
+
 							<div>
-								<div onClick={updateInfo}>
-									<Button value={"Update"} />
-								</div>
+								{isUpdating ? (
+									<div className="w-32">
+										<ButtonLoader />
+									</div>
+								) : (
+									<div className="w-32" onClick={updateInfo}>
+										<Button value={"Update"} />
+									</div>
+								)}
 							</div>
-						
+						</div>
 					</div>
 				</Modal>
 			</div>

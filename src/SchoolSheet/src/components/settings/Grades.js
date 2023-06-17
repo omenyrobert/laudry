@@ -11,6 +11,7 @@ import withReactContent from "sweetalert2-react-content";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "../../axios-instance";
 import { getGrades } from "../../store/schoolSheetSlices/schoolStore";
+import ButtonLoader from "../ButtonLoader";
 
 function Grades() {
 	const dispatch = useDispatch();
@@ -24,13 +25,16 @@ function Grades() {
 	const [grade, setGrade] = useState("");
 	const [to, setTo] = useState("");
 	const [from, setFrom] = useState("");
-
+	const [points, setPoints] = useState("");
+	const [isPosting, setIsPosting] = useState(false);
 	const postGrade = async () => {
 		try {
+			setIsPosting(true);
 			let formData = {
 				from: from,
 				to: to,
 				grade: grade,
+				points
 			};
 			const response = await axiosInstance.post("/grades", formData);
 			const { data } = response;
@@ -40,6 +44,8 @@ function Grades() {
 				setFrom("");
 				setTo("");
 				setGrade("");
+				setPoints("");
+				setIsPosting(false);
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -49,6 +55,7 @@ function Grades() {
 			}
 		} catch (error) {
 			console.log(error);
+			setIsPosting(false);
 		}
 	};
 
@@ -93,6 +100,7 @@ function Grades() {
 	const [toEdit, setToEdit] = useState("");
 	const [fromEdit, setFromEdit] = useState("");
 	const [gradeId, setGradeId] = useState("");
+	const [pointsEdit, setPointsEdit] = useState("");
 
 	const openEditData = (grade) => {
 		setEditData(true);
@@ -100,6 +108,7 @@ function Grades() {
 		setToEdit(grade.to);
 		setFromEdit(grade.from);
 		setGradeId(grade.id);
+		setPointsEdit(grade.points);
 	};
 	const updateGrade = async () => {
 		try {
@@ -107,6 +116,7 @@ function Grades() {
 				from: fromEdit,
 				to: toEdit,
 				grade: gradeEdit,
+				points: pointsEdit
 			};
 			const grade = await axiosInstance.put(`/grades/${gradeId}`, formData);
 			const { data } = grade;
@@ -132,10 +142,10 @@ function Grades() {
 	const { grades } = useSelector((state) => state.schoolStore);
 
 	return (
-		<>
+		<div className=" bg-white pl-5 shadow-lg rounded-md p-3 h-auto" >
 			<h5 className="text-xl font-medium text-secondary">Grading</h5>
-			<div className="w-full h-[80vh]">
-				<div className="flex justify-between bg-white pl-5 shadow-lg rounded-md">
+			<div className="w-full">
+				<div className="flex justify-between">
 					<div className="w-1/4">
 						<InputField
 							type="number"
@@ -143,7 +153,7 @@ function Grades() {
 							label="From"
 							value={from}
 							onChange={(e) => setFrom(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="w-1/4 ml-2">
@@ -153,7 +163,7 @@ function Grades() {
 							label="To"
 							value={to}
 							onChange={(e) => setTo(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
 						/>
 					</div>
 					<div className="w-1/4 ml-2">
@@ -163,36 +173,51 @@ function Grades() {
 							label="Grade"
 							value={grade}
 							onChange={(e) => setGrade(e.target.value)}
-							icon={<FaPen className="w-3 -ml-7 mt-3" />}
+							
+						/>
+					</div>
+					<div className="w-1/4 ml-2">
+						<InputField
+							type="text"
+							placeholder="Enter points"
+							label="Points"
+							value={points}
+							onChange={(e) => setPoints(e.target.value)}
+							
 						/>
 					</div>
 					<div className="mt-8 mr-5 w-1/4 ml-2">
 						<br />
-						<div onClick={postGrade}>
-							<Button value={"Add"} />
-						</div>
+						{isPosting ? (
+							<ButtonLoader />
+						) : (
+							<div onClick={postGrade}>
+								<Button value={"Add"} />
+							</div>
+						)}
 					</div>
 				</div>
-				
-				<table className="mt-10 w-[98%] table-auto">
+
+				<table className="w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">From</th>
 						<th className="p-2 text-primary text-sm text-left">To</th>
 						<th className="p-2 text-primary text-sm text-left">Grade</th>
+						<th className="p-2 text-primary text-sm text-left">Points</th>
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
 						{/* edit popup start */}
 						{editData ? (
-							<div className="absolute shadow-2xl rounded flex w-[800px] p-5 bg-white">
-								<div className="w-3/12 pr-5">
+							<div className="absolute shadow-2xl rounded flex w-[50vw] md:w-[45vw] p-5 bg-white">
+								<div className="w-3/12 pr-2">
 									<InputField
 										type="number"
 										placeholder="Enter starting marks"
 										label="From"
 										value={fromEdit}
 										onChange={(e) => setFromEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
 								<div className="w-3/12 pr-2">
@@ -202,20 +227,30 @@ function Grades() {
 										label="To"
 										value={toEdit}
 										onChange={(e) => setToEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
-								<div className="w-4/12 pr-2">
+								<div className="w-3/12 pr-2">
 									<InputField
 										type="text"
 										placeholder="Enter grade"
 										label="Grade"
 										value={gradeEdit}
 										onChange={(e) => setGradeEdit(e.target.value)}
-										icon={<FaPen className="w-3 -ml-7 mt-3" />}
+										
 									/>
 								</div>
-								<div className="flex justify-between w-2/12 mt-[55px]">
+								<div className="w-3/12 pr-2">
+									<InputField
+										type="text"
+										placeholder="Enter points"
+										label="Points"
+										value={pointsEdit}
+										onChange={(e) => setPointsEdit(e.target.value)}
+										
+									/>
+								</div>
+								<div className="flex justify-between w-3/12 mt-[55px]">
 									<div onClick={updateGrade}>
 										<ButtonSecondary value={"Update"} />
 									</div>
@@ -241,6 +276,7 @@ function Grades() {
 									<td className="text-xs p-3 text-gray5">{grade.from}</td>
 									<td className="text-xs p-3 text-gray5">{grade.to}</td>
 									<td className="text-xs p-3 text-gray5">{grade.grade}</td>
+									<td className="text-xs p-3 text-gray5">{grade.points}</td>
 									<td className="text-xs p-3 text-gray5 flex">
 										<MdDeleteOutline
 											onClick={(e) => deleteGrade(grade)}
@@ -257,7 +293,7 @@ function Grades() {
 					</tbody>
 				</table>
 			</div>
-		</>
+		</div>
 	);
 }
 export default Grades;

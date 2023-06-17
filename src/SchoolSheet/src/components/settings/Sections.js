@@ -10,6 +10,7 @@ import withReactContent from "sweetalert2-react-content";
 import { useDispatch, useSelector } from 'react-redux';
 import { getSections } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from '../../axios-instance';
+import ButtonLoader from "../ButtonLoader";
 
 const Sections = () => {
 	const [showUpdate, setShowUpdate] = useState(false);
@@ -89,9 +90,13 @@ const Sections = () => {
 		});
 	};
 
+
+	const [isposting, setIsPosting] = useState(false);
+
 	// posting Sections
 	const postSections = async () => {
 		try {
+			setIsPosting(true)
 			let formData = {
 				section: section,
 			};
@@ -102,6 +107,7 @@ const Sections = () => {
 				if (status) {
 					setSection("");
 					dispatch(getSections());
+					setIsPosting(false)
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
@@ -112,6 +118,7 @@ const Sections = () => {
 			}
 		} catch (error) {
 			console.log(error);
+			setIsPosting(false)
 		}
 	};
 
@@ -137,19 +144,17 @@ const Sections = () => {
 						/>
 					</div>
 					<div className="mt-5 ml-5">
-						<div onClick={postSections}>
+						{isposting ? <ButtonLoader/> : <div onClick={postSections}>
 							<Button value={"Add Section"} />
-						</div>
+						</div> }
+						
+						
 					</div>
 				</div>
 
-				<div className="mt-5 flex bg-gray1 cursor-pointer">
-					<div className="w-2/3 p-2">Sections</div>
-					<div className="w-1/3 p-2">Action</div>
-				</div>
-				{/* edit div statrt */}
+				<div className="mt-5 flex relative bg-gray1 cursor-pointer">
 				{showUpdate ? (
-					<div className="absolute shadow-2xl rounded-md border bg-white  border-gray3  p-2 flex w-[500px]">
+					<div className="absolute shadow-2xl md:w-[460px] rounded-md border bg-white  border-gray3  p-2 flex w-[500px]">
 						<div className="w-3/5">
 							<InputField
 								type="text"
@@ -172,6 +177,11 @@ const Sections = () => {
 				) : (
 					""
 				)}
+					<div className="w-2/3 p-2">Sections</div>
+					<div className="w-1/3 p-2">Action</div>
+				</div>
+				{/* edit div statrt */}
+				
 				{/* edit div end */}
 				<div className="h-52 overflow-y-auto">
 					{sections &&

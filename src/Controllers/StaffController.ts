@@ -16,6 +16,8 @@ import {
   getMemberByEmail,
   updateMember,
   updatePassword,
+  updateProfile,
+  updateProfilePicture
 } from "../Entities/Staff";
 
 export const fetchMembers = async (req: Request, res: Response) => {
@@ -247,6 +249,112 @@ export const fetchStaffById = async (req: Request, res: Response) => {
       .json(customPayloadResponse(false, "Staff Member not Found"))
       .status(200)
       .end();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+export const updateStaffProfile = async (req: Request, res: Response) => {
+  try {
+    const { 
+      first_name, 
+      middle_name, 
+      last_name,
+      email, 
+      gender,
+      address,
+      phone_number,
+      date_of_birth,
+      marital_status,
+      nationality,
+      staff_type
+    } = req.body;
+    const {id} = req.params
+
+    if (!id) {
+      return res
+        .json(customPayloadResponse(false, "Staff Id Required"))
+        .status(200)
+        .end();
+    }
+
+    const staff = await updateProfile(
+      parseInt(id),
+      first_name,
+      middle_name,
+      last_name,
+      email,
+      staff_type,
+      address,
+      phone_number,
+      date_of_birth,
+      gender,
+      marital_status,
+      nationality
+    )
+
+    if (staff) {
+      return res.json(customPayloadResponse(true, "Profile Updated")).status(200).end();
+    }
+    return res
+      .json(customPayloadResponse(false, "Staff Member not Found"))
+      .status(200)
+      .end();
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const updateStaffProfilePicture = async (req: Request, res: Response) => {
+  try {
+    const {id} = req.params
+    console.log("Uploading files");
+
+    if (!req.file) {
+      return res
+        .json(customPayloadResponse(false, "Profile Picture Required"))
+        .status(200)
+        .end();
+    }
+    
+
+    if (!id) {
+      return res
+        .json(customPayloadResponse(false, "Staff Id Required"))
+        .status(200)
+        .end();
+    }
+
+    
+    if (!req.file) {
+      return res
+        .json(customPayloadResponse(false, "Profile Picture Required"))
+        .status(200)
+        .end();
+    }
+
+    const photo = req.file.filename
+
+
+
+    
+    
+
+    const staff = await updateProfilePicture(
+      parseInt(id),
+      photo
+    )
+
+    if (staff) {
+      return res.json(customPayloadResponse(true, "Profile Picture Updated")).status(200).end();
+    }
+    return res
+      .json(customPayloadResponse(false, "Staff Member not Found"))
+      .status(200)
+      .end(); 
+
   } catch (error) {
     console.log(error);
   }
