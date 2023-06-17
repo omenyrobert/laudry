@@ -5,24 +5,21 @@ import Button2 from "../Button2";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import axiosInstance from "../../axios-instance"
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 
-function ShowStudentsForm() {
+const ShowStudentsForm = () => {
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const studentId = searchParams.get("student");
-	const navigate = useNavigate();
 
 	const [student, setStudent] = useState({})
 
-
-
-	const fetchSingleStudent = () => {
+	useEffect(() => {
 		axiosInstance.get(`/students/${studentId}`)
 			.then((response) => {
 				const { status, payload } = response.data;
-				console.log(payload)
+				// console.log('student', payload)
 
 				if (status === false) {
 					const MySwal = withReactContent(Swal);
@@ -37,11 +34,7 @@ function ShowStudentsForm() {
 				setStudent(payload)
 
 			})
-	}
-
-	useEffect(() => {
-		fetchSingleStudent()
-	}, [])
+	}, [studentId])
 
 	return (
 		<div className=" bg-white h-full">
@@ -79,7 +72,13 @@ function ShowStudentsForm() {
 								)}
 								yrs
 							</p>
-							<p className="font-light mt-5">{student.studentClass.class} - {student.studentStream.stream}</p>
+							<p className="font-light mt-5">
+								{student.classes?.map((c, i) => {
+									return i === student.classes.length - 1 ? <span>{c.class}</span> : null
+								})} - {student.streams?.map((s, i) => {
+									return i === student.streams.length - 1 ? <span>{s.stream}</span> : null
+								})}
+							</p>
 							<p className="text-sm font-light">{student?.gender?.value}</p>
 							<p className="text-sm font-light">{student?.residence}</p>
 						</div>

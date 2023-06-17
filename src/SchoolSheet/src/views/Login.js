@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdLockOutline, MdAlternateEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBriefcase } from "react-icons/fa";
@@ -38,6 +38,12 @@ const Login = () => {
 			setIsLoging(false)
 		}
 	};
+	useEffect(() => {
+		const token = localStorage.getItem('schoolSoftToken');
+		if (token !== null || token !== undefined) {
+			navigate('/dashboard');
+		}
+	}, [navigate])
 	return (
 		<div className="flex overflow-hidden h-screen w-full bgdiv">
 			<div className="w-7/12 flex justify-center items-center">
@@ -83,9 +89,9 @@ const Login = () => {
 						</div>
 					</div>
 					<div >
-						{isLoging ? <ButtonLoader/> : <div onClick={handleLogin}> <Button value={"Login"} /> </div>}
-						
-						
+						{isLoging ? <ButtonLoader /> : <div onClick={handleLogin}> <Button value={"Login"} /> </div>}
+
+
 					</div>
 				</div>
 			</div>

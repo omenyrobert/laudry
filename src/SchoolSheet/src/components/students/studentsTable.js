@@ -42,14 +42,14 @@ const StudentsTable = (props) => {
 
 								<td className="text-xs p-3 text-gray5">{student.gender}</td>
 								<td className="text-xs p-3 text-gray5">
-									{student.student_types.map((t, i) => {
+									{student.student_types?.map((t, i) => {
 										return i === student.student_types.length - 1 ? <span>{t.type}</span> : null
 									})}
 								</td>
 
 								<td className="text-xs p-3 text-gray5">{student.email}</td>
 								<td className="text-xs p-3 text-gray5">
-									{student.classes.map((c, i) => {
+									{student.classes?.map((c, i) => {
 										return i === student.classes.length - 1 ? <span>{c.class}</span> : null
 									})}
 								</td>
