@@ -1,18 +1,20 @@
-import { Term, selectedTermIds } from "./Term";
-import { SchoolClass } from "./SchoolClass";
 import {
   Entity,
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   ManyToMany,
   JoinTable,
 } from "typeorm";
 import { House, getSelectedHouses } from "./House";
-import { StudentType, getStudentTypeById } from "./StudentType";
+import { StudentType, selectedType } from "./StudentType";
 import { getSelectedClasses } from "./SchoolClass";
 import { Stream, getSelectedStream } from "./Stream";
+import { Section, selectedSections } from "./Section";
+import { DatabaseConnection } from "../Database/database";
+import { Fee, selectedFee } from "./Fee";
+import { Term, selectedTermIds, getTermBySelect } from "./Term";
+import { SchoolClass } from "./SchoolClass";
 
 @Entity()
 export class Student extends BaseEntity {
@@ -61,21 +63,9 @@ export class Student extends BaseEntity {
   @Column()
   motherContact!: string;
 
-  @ManyToOne(() => StudentType, (studentType) => studentType.id, {
-    cascade: true,
-    eager: true,
-  })
-  studentType!: StudentType;
-
-  @Column()
-  studentSection!: string;
-
-  @Column()
-  feesCategory!: string;
-
   @ManyToMany(() => House, {
     cascade: true,
-    eager: false,
+    eager: true,
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
@@ -84,7 +74,7 @@ export class Student extends BaseEntity {
 
   @ManyToMany(() => SchoolClass, {
     cascade: true,
-    eager: false,
+    eager: true,
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
@@ -93,7 +83,7 @@ export class Student extends BaseEntity {
 
   @ManyToMany(() => Stream, {
     cascade: true,
-    eager: false,
+    eager: true,
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
@@ -102,13 +92,154 @@ export class Student extends BaseEntity {
 
   @ManyToMany(() => Term, {
     cascade: true,
-    eager: false,
+    eager: true,
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
   @JoinTable({ name: "student_terms" })
   terms: Term[];
+
+  @ManyToMany(() => Fee, {
+    cascade: true,
+    eager: true,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @JoinTable({ name: "student_fees" })
+  fees: Fee[];
+
+  @ManyToMany(() => Section, {
+    cascade: true,
+    eager: true,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @JoinTable({ name: "student_section" })
+  sections: Section[];
+
+  @ManyToMany(() => StudentType, {
+    cascade: true,
+    eager: true,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @JoinTable({ name: "student_student_types" })
+  student_types: StudentType[];
 }
+
+const extractArrays = (array: [], key: string, extraData: number) => {
+  let newArray = array.map((a: any) => a[key]);
+  if (newArray.length > 0 && extraData !== null) {
+    newArray.pop();
+    newArray.push(extraData);
+  }
+  if (newArray.length == 0 && extraData !== null) {
+    newArray.push(extraData);
+  }
+  return newArray;
+};
+
+const studentExtraData = async (
+  studentId: number,
+  house: any = null,
+  classId: any = null,
+  streamId: any = null,
+  studentTypeId: any = null,
+  sectionId: any = null,
+  feeId: any = null,
+  termId: any = null
+) => {
+  interface data {
+    houses: any;
+    classes: any;
+    streams: any;
+    studentTypes: any;
+    sections: any;
+    fees: any;
+    terms: any;
+  }
+
+  const queryRunner = DatabaseConnection.createQueryRunner();
+
+  //houses
+  const houseStudentQuery = await queryRunner.manager.query(
+    `SELECT * FROM students_houses WHERE studentId = ${studentId}`
+  );
+
+  const houseIds = extractArrays(houseStudentQuery, "houseId", house);
+
+  const studentHouses = await getSelectedHouses(houseIds);
+
+  //classes
+  const classStudentQuery = await queryRunner.manager.query(
+    `SELECT * FROM student_classes WHERE studentId = ${studentId}`
+  );
+
+  const classIds = extractArrays(classStudentQuery, "schoolClassId", classId);
+
+  const studentClasses = await getSelectedClasses(classIds);
+
+  //streams
+  const streamStudentQuery = await queryRunner.manager.query(
+    `SELECT * FROM student_streams WHERE studentId = ${studentId}`
+  );
+
+  const streamIds = extractArrays(streamStudentQuery, "streamId", streamId);
+
+  const studentStreams = await getSelectedStream(streamIds);
+
+  //student types
+  const studentTypesQuery = await queryRunner.manager.query(
+    `SELECT * FROM student_student_types WHERE studentId = ${studentId}`
+  );
+
+  const studentTypesIds = extractArrays(
+    studentTypesQuery,
+    "studentTypeId",
+    studentTypeId
+  );
+
+  const studentTypes = await selectedType(studentTypesIds);
+
+  //sections
+  const studentSectionQuery = await queryRunner.manager.query(
+    `SELECT * FROM student_section WHERE studentId = ${studentId}`
+  );
+
+  const sectionIds = extractArrays(studentSectionQuery, "sectionId", sectionId);
+
+  const studentSections = await selectedSections(sectionIds);
+
+  //fees category
+  const feeStudentQuery = await queryRunner.manager.query(
+    `SELECT * FROM student_fees WHERE studentId = ${studentId}`
+  );
+
+  const feesIds = extractArrays(feeStudentQuery, "feeId", feeId);
+
+  const studentFees = await selectedFee(feesIds);
+
+  //terms
+
+  const studentTermsQuery = await queryRunner.manager.query(
+    `SELECT * FROM student_terms WHERE studentId = ${studentId}`
+  );
+
+  const termIds = extractArrays(studentTermsQuery, "termId", termId);
+
+  const studentTerms = await selectedTermIds(termIds);
+
+  const newData: data = {
+    houses: studentHouses,
+    classes: studentClasses,
+    streams: studentStreams,
+    studentTypes: studentTypes,
+    sections: studentSections,
+    fees: studentFees,
+    terms: studentTerms,
+  };
+  return newData;
+};
 
 export const createStudent = async (
   firstName: string,
@@ -131,12 +262,6 @@ export const createStudent = async (
   feesCategory: any,
   studentStream: any
 ) => {
-  const studentHouses = await getSelectedHouses(studentHouse);
-  const studentTypeToInsert = await getStudentTypeById(parseInt(studentType));
-  const studentClasses = await getSelectedClasses(studentClass);
-  const studentStreams = await getSelectedStream(studentStream);
-  const studentTerms = await selectedTermIds();
-
   const student = await Student.save({
     firstName: firstName,
     middleName: middleName,
@@ -151,15 +276,42 @@ export const createStudent = async (
     fatherContact: fatherContact,
     motherName: motherName,
     motherContact: motherContact,
-    studentType: studentTypeToInsert,
-    studentSection: studentSection,
-    houses: studentHouses,
-    classes: studentClasses,
-    feesCategory: feesCategory,
-    streams: studentStreams,
-    terms: studentTerms,
   });
-  return student;
+
+  let termId;
+  const currentTerm = await getTermBySelect();
+
+  if (currentTerm !== null) {
+    termId = currentTerm.id;
+  }
+
+  const newData: any = await studentExtraData(
+    student.id,
+    studentHouse,
+    studentClass,
+    studentStream,
+    studentType,
+    studentSection,
+    feesCategory,
+    termId
+  );
+
+  const loadStudentRelations = await Student.preload({
+    id: student.id,
+    houses: newData.houses,
+    classes: newData.classes,
+    streams: newData.streams,
+    student_types: newData.studentTypes,
+    sections: newData.sections,
+    fees: newData.fees,
+    terms: newData.terms,
+  });
+
+  if (loadStudentRelations) {
+    await Student.save(loadStudentRelations);
+  }
+
+  return loadStudentRelations;
 };
 
 export const deleteStudent = async (id: number) => {
@@ -194,12 +346,7 @@ export const updateStudent = async (
   feesCategory: string,
   studentStream: string
 ) => {
-  // const house = await getHouseById(parseInt(studentHouse));
-  const studentTypeToInsert = await getStudentTypeById(parseInt(studentType));
-  // const studentClassToInsert = await getClassById(parseInt(studentClass));
-  // const studentStreamToInsert = await getSingleStream(parseInt(studentStream));
-
-  const studentToUpdate = await Student.update(id, {
+  await Student.update(id, {
     firstName: firstName,
     middleName: middleName,
     lastName: lastName,
@@ -214,15 +361,42 @@ export const updateStudent = async (
     fatherContact: fatherContact,
     motherName: motherName,
     motherContact: motherContact,
-    studentType: studentTypeToInsert,
-    studentSection: studentSection,
-    // studentHouse: house,
-    // studentClass: studentClassToInsert,
-    feesCategory: feesCategory,
-    // studentStream: studentStreamToInsert
   });
 
-  return studentToUpdate;
+  let termId;
+  const currentTerm = await getTermBySelect();
+
+  if (currentTerm !== null) {
+    termId = currentTerm.id;
+  }
+
+  const newData: any = await studentExtraData(
+    id,
+    studentHouse,
+    studentClass,
+    studentStream,
+    studentType,
+    studentSection,
+    feesCategory,
+    termId
+  );
+
+  const loadStudentRelations = await Student.preload({
+    id: id,
+    houses: newData.houses,
+    classes: newData.classes,
+    streams: newData.streams,
+    student_types: newData.studentTypes,
+    sections: newData.sections,
+    fees: newData.fees,
+    terms: newData.terms,
+  });
+
+  if (loadStudentRelations) {
+    await Student.save(loadStudentRelations);
+  }
+
+  return loadStudentRelations;
 };
 
 export const getSingleStudent = async (id: number) => {

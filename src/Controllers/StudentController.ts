@@ -22,7 +22,6 @@ export const fetchStudents = async (req: Request, res: Response) => {
 }
 
 export const addStudent = async (req: Request, res: Response) => {
-  // console.log(req.body);
   try {
     const {
       firstName,
@@ -45,7 +44,6 @@ export const addStudent = async (req: Request, res: Response) => {
       feesCategory,
       studentStream
     } = req.body;
-    // console.log(typeof(studentHouse))
 
     const student = await createStudent(
       firstName,

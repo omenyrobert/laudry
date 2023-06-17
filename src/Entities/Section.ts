@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToMany,
+  In,
+} from "typeorm";
+import { Student } from "./Student";
 
 @Entity()
 export class Section extends BaseEntity {
@@ -7,6 +15,9 @@ export class Section extends BaseEntity {
 
   @Column()
   section!: string;
+
+  @ManyToMany(() => Student, (student) => student.sections)
+  students: [];
 }
 
 export const getSections = async () => {
@@ -38,4 +49,11 @@ export const updateSections = async (id: number, sections: string) => {
 export const getSingleSections = async (id: number) => {
   const sectionToFind = await Section.findOne({ where: { id: id } });
   return sectionToFind;
+};
+
+export const selectedSections = async (ids: any) => {
+  const selectedSection = await Section.find({
+    where: { id: In(ids) },
+  });
+  return selectedSection;
 };

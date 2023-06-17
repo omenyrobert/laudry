@@ -145,7 +145,7 @@ const Terms = () => {
 	// fetching terms
 	useEffect(() => {
 		dispatch(getTerms());
-	}, [dispatch]);
+	}, [dispatch, termId, editTerm, fromEdit, toEdit]);
 
 	return (
 		<div>

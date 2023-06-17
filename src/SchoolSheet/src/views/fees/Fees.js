@@ -5,23 +5,29 @@ import Button from '../../components/Button';
 import { BsSearch } from 'react-icons/bs';
 import Localbase from 'localbase';
 import FeesTable from '../../components/fees/FeesTable';
+import { useSelector, useDispatch } from 'react-redux';
+import axiosInstance from "../../axios-instance";
+import { getStudents } from '../../store/schoolSheetSlices/schoolStore';
 
 let db = new Localbase('db');
 
-function Fees() {
-    const [studentData, setStudentData] = useState([]);
-    const fetchStudentInfo = () => {
-        db.collection('studentInfo')
-            .get()
-            .then((student) => {
-                const newData = student;
-                setStudentData(newData);
-            });
-    };
+const Fees = () => {
+    const dispatch = useDispatch();
+    const { students } = useSelector((state) => state.schoolStore)
+    // const [studentData, setStudentData] = useState([]);
+    // const fetchStudentInfo = () => {
+    //     db.collection('studentInfo')
+    //         .get()
+    //         .then((student) => {
+    //             const newData = student;
+    //             setStudentData(newData);
+    //         });
+    // };
 
     useEffect(() => {
-        fetchStudentInfo();
-    }, []);
+        // fetchStudentInfo();
+        dispatch(getStudents());
+    }, [dispatch]);
 
     // search by class filter:
     const [allStudents, setAllStudents] = useState(true);
@@ -37,7 +43,7 @@ function Fees() {
     const SearchStudents = (e) => {
         e.preventDefault();
         setSearchResults(
-            studentData?.filter((student) =>
+            students?.filter((student) =>
                 student.studentClass.value
                     .toLowerCase()
                     .includes(query.toLowerCase())
@@ -63,9 +69,9 @@ function Fees() {
                 setFeesData(newData);
             });
     };
-    useEffect(() => {
-        fetchFeesInfo();
-    }, []);
+    // useEffect(() => {
+    //     fetchFeesInfo();
+    // }, []);
 
     const [percentResults, setPercentResults] = useState();
     const [checkInput, setCheckInput] = useState('');
@@ -74,7 +80,7 @@ function Fees() {
         e.preventDefault();
         if (checkInput === 'below') {
             setPercentResults(
-                studentData?.filter((student) => {
+                students?.filter((student) => {
                     let value = (student.paid / feesData.feesAmount) * 100;
                     if (value < percent) {
                         return student;
@@ -85,7 +91,7 @@ function Fees() {
             setPercent();
         } else if (checkInput === 'above') {
             setPercentResults(
-                studentData?.filter((student) => {
+                students?.filter((student) => {
                     let value = (student.paid / feesData.feesAmount) * 100;
                     if (value > percent) {
                         return student;
@@ -100,8 +106,8 @@ function Fees() {
 
     return (
         <>
-        <p className='text-secondary text-xl font-medium'>Fees Payments</p>
-        <br/>
+            <p className='text-secondary text-xl font-medium'>Fees Payments</p>
+            <br />
             <div className='flex p-2 bg-white shadow-lg rounded-md'>
                 <div className='w-1/3 flex pl-5'>
                     <div className='w-1/3'>
@@ -190,7 +196,7 @@ function Fees() {
                     </div>
                 </div>
             </div>
-            {allStudents ? <FeesTable studentData={studentData} /> : null}
+            {allStudents ? <FeesTable studentData={students} /> : null}
             {SearchAllStudents ? (
                 <FeesTable studentData={searchResults} />
             ) : null}

@@ -87,11 +87,9 @@ export const getTermBySelect = async () => {
   return term;
 };
 
-export const selectedTermIds = async () => {
-  const activeTerm = await getTermBySelect();
-  const allTerms = await getTerms();
-  const selectedTerm = await Term.find({
-    where: { id: In([activeTerm !== null ? activeTerm.id : allTerms[0].id]) },
+export const selectedTermIds = async (ids:any) => {
+  const selectedTerms = await Term.find({
+    where: { id: In(ids) },
   });
-  return selectedTerm;
+  return selectedTerms;
 };

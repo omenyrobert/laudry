@@ -42,12 +42,16 @@ const StudentsTable = (props) => {
 
 								<td className="text-xs p-3 text-gray5">{student.gender}</td>
 								<td className="text-xs p-3 text-gray5">
-									{student.studentType.type}
+									{student.student_types.map((t, i) => {
+										return i === student.student_types.length - 1 ? <span>{t.type}</span> : null
+									})}
 								</td>
 
 								<td className="text-xs p-3 text-gray5">{student.email}</td>
 								<td className="text-xs p-3 text-gray5">
-									{/* {student.studentClass.class} */}
+									{student.classes.map((c, i) => {
+										return i === student.classes.length - 1 ? <span>{c.class}</span> : null
+									})}
 								</td>
 
 								<td className="text-xs p-3 w-28 text-gray5 flex justify-between">

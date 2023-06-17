@@ -168,10 +168,10 @@ const AddStudentForm = (props) => {
 			motherContact: studentInfo.motherContact,
 			studentType: studentType.id,
 			studentSection: studentSection.value,
-			studentHouse: [studentHouse.id],
-			studentClass: [studentClass.id],
+			studentHouse: studentHouse.id,
+			studentClass: studentClass.id,
 			feesCategory: feesCategory.id,
-			studentStream: [studentStream.id],
+			studentStream: studentStream.id,
 		};
 		if (studentInfo) {
 

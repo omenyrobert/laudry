@@ -11,7 +11,7 @@ import axiosInstance from "../../axios-instance"
 import { useNavigate } from 'react-router-dom';
 
 
-function EditStudentsForm(props) {
+const EditStudentsForm = (props) => {
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const studentId = searchParams.get("student");
@@ -39,6 +39,7 @@ function EditStudentsForm(props) {
 	const [studentSection, setStudentSection] = useState("");
 	const [feesCategory, setFeesCategory] = useState("");
 	const [studentTypes, setStudentTypes] = useState([])
+	const [sections, setSections] = useState([])
 	const [classes, setStudentClasses] = useState([])
 	const [houses, setStudentHouses] = useState([])
 	const [init] = useState(true)
@@ -49,6 +50,7 @@ function EditStudentsForm(props) {
 			fetchStudentType()
 			fetchSchoolClasses()
 			fetchSchoolHouses()
+			fetchSections()
 		} catch (error) {
 			const MySwal = withReactContent(Swal);
 			MySwal.fire({
@@ -88,6 +90,17 @@ function EditStudentsForm(props) {
 			})
 	}
 
+	const fetchSections = () => {
+		axiosInstance.get('/sections').then((response) => {
+			const { payload } = response.data;
+			const sectionsArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				sectionsArr.push({ label: payload[i].section, value: payload[i].section, ...payload[i] })
+			}
+			setSections(sectionsArr);
+		});
+	}
+
 	const fetchSchoolHouses = () => {
 		axiosInstance.get("/houses")
 			.then((response) => {
@@ -100,12 +113,22 @@ function EditStudentsForm(props) {
 			})
 	}
 
+	const extraLatestArrayIndex = (array) => {
+		let lastIndexItem = null;
+		for (let i = 0; i < array.length; i++) {
+			if (array.length - 1 === i) {
+				lastIndexItem = array[i];
+			}
+		}
+		console.log('lastIndexItem', lastIndexItem);
+		return lastIndexItem
+	}
+
 	// fetch student info
 	const fetchSingleStudent = () => {
 		axiosInstance.get(`/students/${studentId}`)
 			.then((response) => {
 				const { status, payload } = response.data;
-				console.log(payload)
 
 				if (status === false) {
 					const MySwal = withReactContent(Swal);
@@ -130,34 +153,27 @@ function EditStudentsForm(props) {
 				setGender({ label: payload.gender, value: payload.gender })
 				setNationality(payload.nationality);
 				setResidence(payload.residence);
-				setStudentType({ label: payload.studentType.type, value: payload.studentType.type, ...payload.studentType })
-				setStudentClass({ label: payload.studentClass.class, value: payload.studentClass.class, ...payload.studentClass })
-				setStudentHouse({ label: payload.studentHouse.house, value: payload.studentHouse.house, ...payload.studentHouse })
-				setStudentSection({ label: payload.studentSection, value: payload.studentSection })
-				setFeesCategory({ label: payload.studentType.type, value: payload.studentType.type, ...payload.studentType })
 
+				let type = extraLatestArrayIndex(payload.student_types);
+				setStudentType({ label: type?.type, value: type?.type, ...type });
+
+				let studentClass = extraLatestArrayIndex(payload.classes);
+				setStudentClass({ label: studentClass?.class, value: studentClass?.class, ...studentClass });
+
+				let house = extraLatestArrayIndex(payload.houses);
+				setStudentHouse({ label: house?.house, value: house?.house, ...house });
+
+				let fee = extraLatestArrayIndex(payload.fees);
+				setFeesCategory({ label: fee?.name, value: fee?.name, ...fee });
+
+				let section = extraLatestArrayIndex(payload.sections);
+				setStudentSection({ label: section?.section, value: section?.section, ...section });
 
 			})
 	}
 
 
-	const sections = [
-		{
-			label: "Boarding",
-			value: "Boarding",
-		},
-		{
-			label: "day",
-			value: "Day",
-		},
-		{
-			label: "Hostel",
-			value: "Hostel",
-		},
-	];
-
-
-	function selectPhoto(e) {
+	const selectPhoto = (e) => {
 
 		const { files } = e.target;
 		if (files && files[0]) {
@@ -430,7 +446,7 @@ function EditStudentsForm(props) {
 						<label className="text-gray4 mt-2">Class</label>
 
 						<Select
-							placeholder={"Select House/Group"}
+							placeholder={"Select Class"}
 							defaultValue={studentClass}
 							onChange={setStudentClass}
 							options={classes}

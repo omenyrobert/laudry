@@ -834,10 +834,10 @@ function FeesTable(props) {
                                 </p>
                             </td>
                             <td className='text-xs p-3 text-gray5'>
-                                {student.studentType.value}
+                                {/* {student.studentType.value} */}
                             </td>
                             <td className='text-xs p-3 text-gray5'>
-                                {student.studentClass.value}
+                                {/* {student.studentClass.value} */}
                             </td>
                             <td className='text-xs p-3 text-gray5'>
                                 1,040,000{/* fetch fees */}

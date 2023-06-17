@@ -3,7 +3,8 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
+  ManyToMany,
+  In
 } from "typeorm";
 import { Student } from "./Student";
 
@@ -15,12 +16,8 @@ export class StudentType extends BaseEntity {
   @Column()
   type!: string;
 
-  @OneToMany(() => Student, (student) => student.studentType, {
-    //cascade: true,
-    //eager: true,
-    nullable: true,
-  })
-  students!: Student[];
+  @ManyToMany(() => Student, (student) => student.student_types)
+  students: [];
 }
 
 export const getStudentTypes = async () => {
@@ -41,7 +38,9 @@ export const addStudentType = async (type: string) => {
 };
 
 export const getStudentTypeById = async (id: number) => {
-  const studentTypeToFindById = await StudentType.findOne({ where: { id: id } }) as StudentType
+  const studentTypeToFindById = (await StudentType.findOne({
+    where: { id: id },
+  })) as StudentType;
   return studentTypeToFindById;
 };
 
@@ -62,4 +61,11 @@ export const deleteStudentType = async (id: number) => {
 export const updateStudentType = async (id: number, type: string) => {
   const studentTypeToUpdate = await StudentType.update(id, { type: type });
   return studentTypeToUpdate;
+};
+
+export const selectedType = async (ids:any) => {
+  const selectedTypes = await StudentType.find({
+    where: { id: In(ids) },
+  });
+  return selectedTypes;
 };
