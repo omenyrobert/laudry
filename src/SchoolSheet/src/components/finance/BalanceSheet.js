@@ -10,34 +10,15 @@ function BalanceSheet() {
 	const [nonCurrentAssets, setNonCurrentAssets] = useState([]);
 	const [currentLiabilities, setCurrentLiabilities] = useState([]);
 	const [nonCurrentLiabilities, setNonCurrentLiabilities] = useState([]);
-	const [currentExpenses, setCurrentExpenses] = useState([]);
-	const [nonCurrentExpenses, setNonCurrentExpenses] = useState([]);
-	const [currentIncomes, setCurrentIncomes] = useState([]);
-	const [nonCurrentIncomes, setNonCurrentIncomes] = useState([]);
 	const [currentEquity, setCurrentEquity] = useState([]);
 	const [nonCurrentEquity, setNonCurrentEquity] = useState([]);
-	const [currentSales, setCurrentSales] = useState([]);
-	const [nonCurrentSales, setNonCurrentSales] = useState([]);
-	const [currentStocks, setCurrentStocks] = useState([]);
-	const [nonCurrentStocks, setNonCurrentStocks] = useState([]);
-	const [currentPurchases, setCurrentPurchases] = useState([]);
-	const [nonCurrentPurchases, setNonCurrentPurchases] = useState([]);
 	const [currentAssetsSum, setCurrentAssetsSum] = useState(0);
 	const [nonCurrentAssetsSum, setNonCurrentAssetsSum] = useState(0);
 	const [currentLiabilitiesSum, setCurrentLiabilitiesSum] = useState(0);
 	const [nonCurrentLiabilitiesSum, setNonCurrentLiabilitiesSum] = useState(0);
 	const [currentEquitySum, setCurrentEquitySum] = useState(0);
 	const [nonCurrentEquitySum, setNonCurrentEquitySum] = useState(0);
-	const [currentExpensesSum, setCurrentExpensesSum] = useState(0);
-	const [nonCurrentExpensesSum, setNonCurrentExpensesSum] = useState(0);
-	const [currentIncomesSum, setCurrentIncomesSum] = useState(0);
-	const [nonCurrentIncomesSum, setNonCurrentIncomesSum] = useState(0);
-	const [currentSalesSum, setCurrentSalesSum] = useState(0);
-	const [nonCurrentSalesSum, setNonCurrentSalesSum] = useState(0);
-	const [currentStocksSum, setCurrentStocksSum] = useState(0);
-	const [nonCurrentStocksSum, setNonCurrentStocksSum] = useState(0);
-	const [currentPurchasesSum, setCurrentPurchasesSum] = useState(0);
-	const [nonCurrentPurchasesSum, setNonCurrentPurchasesSum] = useState(0);
+
 
 	const { accounts, loading } = useSelector((state) => state.schoolStore);
 
@@ -61,41 +42,11 @@ function BalanceSheet() {
 				nonCurrentAssets: accounts.filter(
 				  (account) => account.accountType === "Asset" && account.subType === "NON_CURRENT"
 				),
-				currentExpenses: accounts.filter(
-				  (account) => account.accountType === "Expense" && account.subType === "CURRENT"
-				),
-				nonCurrentExpenses: accounts.filter(
-				  (account) => account.accountType === "Expense" && account.subType === "NON_CURRENT"
-				),
-				currentIncomes: accounts.filter(
-				  (account) => account.accountType === "Income" && account.subType === "CURRENT"
-				),
-				nonCurrentIncomes: accounts.filter(
-				  (account) => account.accountType === "Income" && account.subType === "NON_CURRENT"
-				),
 				currentEquity: accounts.filter(
 					(account) => account.accountType === "Asset" && account.subType === "CURRENT"
 				  ),
 				nonCurrentEquity: accounts.filter(
 					(account) => account.accountType === "Asset" && account.subType === "NON_CURRENT"
-				),
-				currentSales: accounts.filter(
-					(account) => account.accountType === "Sales" && account.subType === "CURRENT"
-				),
-				nonCurrentSales: accounts.filter(
-					(account) => account.accountType === "Sales" && account.subType === "NON_CURRENT"
-				),
-				currentStocks: accounts.filter(
-					(account) => account.accountType === "Stocks" && account.subType === "CURRENT"
-				),
-				nonCurrentStocks: accounts.filter(
-					(account) => account.accountType === "Stocks" && account.subType === "NON_CURRENT"
-				),
-				currentPurchases: accounts.filter(
-					(account) => account.accountType === "Purchases" && account.subType === "CURRENT"
-				),
-				nonCurrentPurchases: accounts.filter(
-					(account) => account.accountType === "Purchases" && account.subType === "NON_CURRENT"
 				),
 			  };
 		  
@@ -103,18 +54,8 @@ function BalanceSheet() {
 			  setNonCurrentLiabilities(groupedAccounts.nonCurrentLiabilities);
 			  setCurrentAssets(groupedAccounts.currentAssets);
 			  setNonCurrentAssets(groupedAccounts.nonCurrentAssets);
-			  setCurrentExpenses(groupedAccounts.currentExpenses);
-			  setNonCurrentExpenses(groupedAccounts.nonCurrentExpenses);
-			  setCurrentIncomes(groupedAccounts.currentIncomes);
-			  setNonCurrentIncomes(groupedAccounts.nonCurrentIncomes);
 			  setCurrentEquity(groupedAccounts.currentEquity);
 			  setNonCurrentEquity(groupedAccounts.nonCurrentEquity);
-			  setCurrentSales(groupedAccounts.currentSales);
-			  setNonCurrentSales(groupedAccounts.nonCurrentSales);
-			  setCurrentStocks(groupedAccounts.currentStocks);
-			  setNonCurrentStocks(groupedAccounts.nonCurrentStocks);
-			  setCurrentPurchases(groupedAccounts.currentPurchases);
-			  setNonCurrentPurchases(groupedAccounts.nonCurrentPurchases);
 		  
 			  // Calculate the sums
 			  const currentAssetsSum = groupedAccounts.currentAssets.reduce((total, asset) => total + asset.amount, 0);
@@ -123,16 +64,7 @@ function BalanceSheet() {
 			  const nonCurrentLiabilitiesSum = groupedAccounts.nonCurrentLiabilities.reduce((total, liability) => total + liability.amount, 0);
 			  const currentEquitySum = groupedAccounts.currentAssets.reduce((total, equity) => total + equity.amount, 0);
 			  const nonCurrentEquitySum = groupedAccounts.nonCurrentAssets.reduce((total, equity) => total + equity.amount, 0);
-			  const currentExpansesSum = groupedAccounts.currentExpenses.reduce((total, expenses) => total + expenses.amount, 0);
-			  const nonCurrentExpensesSum = groupedAccounts.nonCurrentExpenses.reduce((total, expenses) => total + expenses.amount, 0);
-			  const currentIncomesSum = groupedAccounts.currentIncomes.reduce((total, income) => total + income.amount, 0);
-			  const nonCurrentIncomesSum = groupedAccounts.nonCurrentIncomes.reduce((total, income) => total + income.amount, 0);
-			  const currentSalesSum = groupedAccounts.currentSales.reduce((total, sale) => total + sale.amount, 0);
-			  const nonCurrentSalesSum = groupedAccounts.nonCurrentSales.reduce((total, sale) => total + sale.amount, 0);
-			  const currentStocksSum = groupedAccounts.currentStocks.reduce((total, stock) => total + stock.amount, 0);
-			  const nonCurrentStocksSum = groupedAccounts.nonCurrentStocks.reduce((total, stock) => total + stock.amount, 0);
-			  const currentPurchasesSum = groupedAccounts.currentPurchases.reduce((total, purchase) => total + purchase.amount, 0);
-			  const nonCurrentPurchasedSum = groupedAccounts.nonCurrentPurchases.reduce((total, purchase) => total + purchase.amount, 0);
+
 
 		  
 			  setCurrentAssetsSum(currentAssetsSum);
@@ -141,16 +73,6 @@ function BalanceSheet() {
 			  setNonCurrentLiabilitiesSum(nonCurrentLiabilitiesSum);
 			  setCurrentEquitySum(currentEquitySum);
 			  setNonCurrentEquitySum(nonCurrentEquitySum);
-			  setCurrentExpensesSum(currentExpansesSum);
-			  setNonCurrentExpensesSum(nonCurrentExpensesSum);
-			  setCurrentIncomesSum(currentIncomesSum);
-			  setNonCurrentIncomesSum(nonCurrentIncomesSum);
-			  setCurrentSalesSum(currentSalesSum);
-			  setNonCurrentSalesSum(nonCurrentSalesSum);
-			  setCurrentStocksSum(currentStocksSum);
-			  setNonCurrentStocksSum(nonCurrentStocksSum);
-			  setCurrentPurchasesSum(currentPurchasesSum);
-			  setNonCurrentPurchasesSum(nonCurrentPurchasedSum);
 		}
 	}, [accounts]);
 	
@@ -307,227 +229,6 @@ function BalanceSheet() {
 				</div>
 				<br />
 
-				<p className="mt-5 text-primary font-medium text-xl">Expenses</p>
-				<div className="mt-3 flex bg-primary text-white border border-gray2">
-					<div className="w-10/12 p-3">Total Expenses</div>
-					<div className="w-2/12 border border-gray2 p-3">{currentExpensesSum + nonCurrentExpensesSum}</div>
-				</div>
-
-				<p className="mt-5  font-medium">Current Expenses</p>
-				{
-					currentExpenses.map(expense => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{expense.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{expense.amount}
-							</div>
-						</div>
-					))
-				}
-	
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Current Expenses</div>
-					<div className="w-2/12 border border-primary3 p-3">{currentExpensesSum}</div>
-				</div>
-
-				<br />
-				<p className="mt-5  font-medium">Non Current Expenses</p>
-				{
-					nonCurrentExpenses.map(expense => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{expense.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{expense.amount}
-							</div>
-						</div>
-					))
-				}
-
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Non Current Expenses</div>
-					<div className="w-2/12 border border-primary3 p-3">{nonCurrentExpensesSum}</div>
-				</div>
-				<br />
-
-
-				<p className="mt-5 text-primary font-medium text-xl">Incomes</p>
-				<div className="mt-3 flex bg-primary text-white border border-gray2">
-					<div className="w-10/12 p-3">Total Incomes</div>
-					<div className="w-2/12 border border-gray2 p-3">{currentIncomesSum + nonCurrentIncomesSum}</div>
-				</div>
-
-				<p className="mt-5  font-medium">Current Incomes</p>
-				{
-					currentIncomes.map(income => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{income.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{income.amount}
-							</div>
-						</div>
-					))
-				}
-	
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Current Incomes</div>
-					<div className="w-2/12 border border-primary3 p-3">{currentIncomesSum}</div>
-				</div>
-
-				<br />
-				<p className="mt-5  font-medium">Non Current Incomes</p>
-				{
-					nonCurrentIncomes.map(income => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{income.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{income.amount}
-							</div>
-						</div>
-					))
-				}
-
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Non Current Incomes</div>
-					<div className="w-2/12 border border-primary3 p-3">{nonCurrentIncomesSum}</div>
-				</div>
-				<br />
-
-				<p className="mt-5 text-primary font-medium text-xl">Sales</p>
-				<div className="mt-3 flex bg-primary text-white border border-gray2">
-					<div className="w-10/12 p-3">Total Sales</div>
-					<div className="w-2/12 border border-gray2 p-3">{currentSalesSum + nonCurrentSalesSum}</div>
-				</div>
-
-				<p className="mt-5  font-medium">Current Sales</p>
-				{
-					currentSales.map(sale => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{sale.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{sale.amount}
-							</div>
-						</div>
-					))
-				}
-	
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Current Sales</div>
-					<div className="w-2/12 border border-primary3 p-3">{currentSalesSum}</div>
-				</div>
-
-				<br />
-				<p className="mt-5  font-medium">Non Current Sales</p>
-				{
-					nonCurrentSales.map(sale => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{sale.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{sale.amount}
-							</div>
-						</div>
-					))
-				}
-
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Non Current Sales</div>
-					<div className="w-2/12 border border-primary3 p-3">{nonCurrentSalesSum}</div>
-				</div>
-				<br />
-
-				<p className="mt-5 text-primary font-medium text-xl">Stocks</p>
-				<div className="mt-3 flex bg-primary text-white border border-gray2">
-					<div className="w-10/12 p-3">Total Stocks</div>
-					<div className="w-2/12 border border-gray2 p-3">{currentStocksSum + nonCurrentStocksSum}</div>
-				</div>
-
-				<p className="mt-5  font-medium">Current Stocks</p>
-				{
-					currentStocks.map(stock => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{stock.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{stock.amount}
-							</div>
-						</div>
-					))
-				}
-	
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Current Stocks</div>
-					<div className="w-2/12 border border-primary3 p-3">{currentStocksSum}</div>
-				</div>
-
-				<br />
-				<p className="mt-5  font-medium">Non Current Stocks</p>
-				{
-					nonCurrentStocks.map(stock => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{stock.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{stock.amount}
-							</div>
-						</div>
-					))
-				}
-
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Non Current Stocks</div>
-					<div className="w-2/12 border border-primary3 p-3">{nonCurrentStocksSum}</div>
-				</div>
-				<br />
-
-				<p className="mt-5 text-primary font-medium text-xl">Purchases</p>
-				<div className="mt-3 flex bg-primary text-white border border-gray2">
-					<div className="w-10/12 p-3">Total Purchases</div>
-					<div className="w-2/12 border border-gray2 p-3">{currentPurchasesSum + nonCurrentPurchasesSum}</div>
-				</div>
-
-				<p className="mt-5  font-medium">Current Purchases</p>
-				{
-					currentPurchases.map(pur => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{pur.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{pur.amount}
-							</div>
-						</div>
-					))
-				}
-	
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Current Purchases</div>
-					<div className="w-2/12 border border-primary3 p-3">{currentPurchasesSum}</div>
-				</div>
-
-				<br />
-				<p className="mt-5  font-medium">Non Current Purchases</p>
-				{
-					nonCurrentPurchases.map(pur => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{pur.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{pur.amount}
-							</div>
-						</div>
-					))
-				}
-
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Non Current Purchases</div>
-					<div className="w-2/12 border border-primary3 p-3">{nonCurrentPurchasesSum}</div>
-				</div>
-
-				<br />
 
 			</div>
 		</>
