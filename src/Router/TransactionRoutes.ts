@@ -2,10 +2,13 @@ import { Router } from "express";
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
 import {
   getTransactionsController,
-  deleteTransactionController,
   addTransaction,
-  updateTransactionController,
-  getTransactionsByAccountIdController
+  //updateTransactionController,
+  getTransactionsByAccountIdController,
+  getTransactionsByTransIDController,
+  updateTransaction,
+  deleteTransactionsByTransIDController,
+  getTransactionsByTransactionTypeController,
 } from "../Controllers/TransactionsController";
 import multer from "multer";
 
@@ -25,9 +28,14 @@ export default (router: Router) => {
   const transactionPrefix = "/transactions";
   router.get(`${transactionPrefix}`, JWTAuthMiddleWare, getTransactionsController);
   router.post(`${transactionPrefix}`, fileUpload, JWTAuthMiddleWare, addTransaction);
-  router.put(`${transactionPrefix}`, fileUpload, JWTAuthMiddleWare, updateTransactionController);
-  router.delete(`${transactionPrefix}/:id`, JWTAuthMiddleWare, deleteTransactionController);
+  //router.put(`${transactionPrefix}`, fileUpload, JWTAuthMiddleWare, updateTransactionController);
+  //router.delete(`${transactionPrefix}/:id`, JWTAuthMiddleWare, deleteTransactionController);
   router.get(`${transactionPrefix}/accounts/:accountId`, JWTAuthMiddleWare, getTransactionsByAccountIdController);
+  router.get(`${transactionPrefix}/:transactionId`, JWTAuthMiddleWare, getTransactionsByTransIDController);
+  router.put(`${transactionPrefix}`, fileUpload, JWTAuthMiddleWare, updateTransaction);
+  router.delete(`${transactionPrefix}/:transactionId`, JWTAuthMiddleWare, deleteTransactionsByTransIDController);
+  router.get(`${transactionPrefix}/type/:transactionType`, JWTAuthMiddleWare, getTransactionsByTransactionTypeController);
+
 }
 
 

@@ -1,5 +1,5 @@
+
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import InputField from "../InputField";
@@ -9,167 +9,79 @@ import Button2 from "../Button2";
 import ButtonSecondary from "../ButtonSecondary";
 import SelectComp from "../SelectComp";
 import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import { BsSearch } from "react-icons/bs";
 import Sample from "../../views/Sample";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../axios-instance";
+import { useFeedback } from "../../hooks/feedback";
+import { useNavigate } from "react-router-dom";
 
-let db = new Localbase("db");
+//let db = new Localbase("db");
 
 function ExpensesComp() {
-	// post expense Type
-	const [add, setAdd] = useState(false);
-	const openAdd = () => {
-		setAdd(true);
-	};
-	const closeAdd = () => {
-		setAdd(false);
-	};
-	const [expenseTypeId, setExpenseTypeId] = useState("");
-	const [expense, setExpense] = useState("");
-	const [amount, setAmount] = useState("");
-	const [to, setTo] = useState("");
-	const [date, setDate] = useState("");
-	const [contacts, setContacts] = useState("");
-	const postExpense = () => {
-		let clId = uuid();
-		let formData = {
-			id: clId,
-			expenseTypeId: expenseTypeId,
-			expense: expense,
-			amount: amount,
-			to: to,
-			date: date,
-			contacts: contacts,
-		};
-		if (expenseTypeId || expense || amount || to || date || contacts) {
-			db.collection("expensesTbl")
-				.add(formData)
-				.then((response) => {
-					setExpenseTypeId("");
-					setExpense("");
-					setAmount("");
-					setTo("");
-					setDate("");
-					setContacts("");
-
-					fetchExpense();
-
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
-				.catch(console.error());
-		}
-	};
+	const { setLoading, toggleFeedback } = useFeedback()
+	const navigate = useNavigate()
 
 	// fetch expense typess
 	const [expenseTypesData, setExpenseTypesData] = useState([]);
-	const fetchExpenseTypes = () => {
-		return db
-			.collection("expenseTypesTbl")
-			.get()
-			.then((expenseTypes) => {
-				expenseTypes.forEach((element) => {
-					let Obj = {
-						label: element.expenseType,
-						value: element,
-					};
-					expenseTypesData.push(Obj);
-				});
-				// console.log("expense types array", expenseTypesData);
-				// const newData = expenseTypes;
-				// setExpenseTypesData(newData);
-			});
+
+	const fetchExpenseTypes = async () => {
+		const response = await axiosInstance.get("/transaction-types/expense")
+
+		setExpenseTypesData(response.data.payload);
+
 	};
 
 	// fetch expenses
 	const [expensesData, setExpensesData] = useState([]);
 	const [expenseTotal, setexpenseTotal] = useState("");
-	const fetchExpense = () => {
-		db.collection("expensesTbl")
-			.get()
-			.then((expenses) => {
-				const newData = expenses.map((s) => {
-					const expenseTypesObj = expenseTypesData.find((c) => {
-						console.log("idd", c.value.id, s.expenseTypeId);
-						return c.value.id === s.expenseTypeId;
-					});
+	const fetchExpense = async () => {
 
-					return {
-						id: s.id,
-						expense: s.expense,
-						date: s.date,
-						amount: s.amount,
-						from: s.from,
-						to: s.to,
-						contacts: s.contacts,
-						expenseTypesObj,
-					};
-				});
-				setExpensesData(newData);
-				let total = expenses.reduce(
-					(acc, item) => acc + parseInt(item.amount),
-					0
-				);
-				setexpenseTotal(total);
-				// console.log("expenses data", newData);
-			});
-	};
+		const res = await axiosInstance.get("/transactions/type/expense")
 
-	// update
-	const [editData, setEditData] = useState(false);
-	const [expenseTypeIdEdit, setExpenseTypeIdEdit] = useState("");
-	const [expenseIdEdit, setExpenseIdEdit] = useState("");
-	const [expenseEdit, setExpenseEdit] = useState("");
-	const [amountEdit, setAmountEdit] = useState("");
-	const [toEdit, setToEdit] = useState("");
-	const [dateEdit, setDateEdit] = useState("");
-	const [contactsEdit, setContactsEdit] = useState("");
-	const closeEditData = () => {
-		setEditData(false);
-	};
-	const openEditData = (expenseItem) => {
-		setEditData(true);
-		setExpenseTypeIdEdit(expenseItem?.expenseTypeId);
-		setExpenseIdEdit(expenseItem.id);
-		setExpenseEdit(expenseItem.expense);
-		setAmountEdit(expenseItem.amount);
-		setToEdit(expenseItem.to);
-		setDateEdit(expenseItem.date);
-		setContactsEdit(expenseItem.contacts);
-	};
+		const { status, payload } = res.data
 
-	const updateExpense = () => {
-		db.collection("expensesTbl")
-			.doc({ id: expenseIdEdit })
-			.update({
-				expenseTypeId: expenseTypeIdEdit,
-				expense: expenseEdit,
-				from: toEdit,
-				date: dateEdit,
-				contacts: contactsEdit,
+		if (status === false) {
+			setLoading(false)
+			toggleFeedback("error", payload)
+			return
+		}
+
+		const coupledTransactions = []
+
+		for (let i = 0; i < payload.length; i++) {
+			const transaction = payload[i]
+
+			if (coupledTransactions.find(t => t.transactionId === transaction.transactionId)) continue;
+
+			// find corresponding transaction with same id
+			const correspondingTransaction = payload.find(t => {
+				return t.transactionId === transaction.transactionId && t.id !== transaction.id
 			})
-			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchExpense();
-				const MySwal = withReactContent(Swal);
-				MySwal.fire({
-					icon: "success",
-					showConfirmButton: false,
-					timer: 500,
-				});
-				closeEditData();
-			});
+
+			if (correspondingTransaction) {
+				coupledTransactions.push({
+					transactionId: transaction.transactionId,
+					...transaction,
+					transactionAmount: transaction.debit === 0 ? transaction.credit : transaction.debit,
+				})
+			}
+		}
+
+		setExpensesData(coupledTransactions)
+
+		let total = coupledTransactions.reduce(
+			(acc, item) => acc + parseInt(item.transactionAmount),
+			0
+		);
+
+		setexpenseTotal(total);
+
+
 	};
 
-	// delete
+
 
 	//deleting expense types
 	const deleteExpense = (expenseItem) => {
@@ -183,31 +95,41 @@ function ExpensesComp() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("expensesTbl")
-					.doc({ id: expenseItem.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchExpense();
 
-						Swal.fire({
-							icon: "success",
-							showConfirmButton: false,
-							timer: 500,
-						});
+				axiosInstance.delete(`/transactions/${expenseItem.transactionId}`)
+					.then((response) => {
+						console.log(response)
+						const { status, payload } = response.data
+						toggleFeedback(status ? "success" : "error", {
+							title: payload
+						})
+						fetchExpense()
 					})
 					.catch((error) => {
-						console.log(error);
-					});
+						console.log(error)
+						toggleFeedback("error", error.message)
+					}
+					);
 			}
 		});
 	};
 
 	// fetching expense types
 	useEffect(() => {
-		fetchExpenseTypes().then(() => {
-			fetchExpense();
-		});
+		async function fetchData() {
+			setLoading(true)
+			try {
+				await fetchExpenseTypes();
+				await fetchExpense();
+				setLoading(false)
+			} catch (error) {
+				setLoading(false);
+				toggleFeedback("error", { title: "Error", text: error.message });
+			}
+		}
+
+		fetchData();
+
 	}, []);
 
 
@@ -246,238 +168,18 @@ function ExpensesComp() {
 				</div>
 			</div>
 			<div className="w-full h-[80vh]">
-				{add ? (
-					<div className="bg-white w-[1000px] rounded-md mr-2 absolute border border-gray3 shadow-2xl">
-						<div className="flex bg-gray1 justify-between p-3 text-primary font-semibold">
-							<div>
-								<p>Add Expense</p>
-							</div>
-							<div>
-								<p className="cursor-pointer" onClick={closeAdd}>
-									X
-								</p>
-							</div>
-						</div>
-						<div className="flex justify-between mx-3">
-							<div className="w-1/3 p-1">
-								<InputField
-									type="date"
-									label="Date"
-									value={date}
-									onChange={(e) => setDate(e.target.value)}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<InputField
-									type="text"
-									placeholder="Enter expense"
-									label="Expense"
-									value={expense}
-									onChange={(e) => setExpense(e.target.value)}
-									
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<InputField
-									type="number"
-									placeholder="Enter Amounnt"
-									label="Amount"
-									value={amount}
-									onChange={(e) => setAmount(e.target.value)}
-									
-								/>
-							</div>
-						</div>
-						<div className="flex justify-between mx-3">
-							<div className="w-1/3 p-1">
-								<SelectComp
-									options={expenseTypesData}
-									placeholder="Select expense Type"
-									label="Expense Type"
-									setSelectedOptionObj={(value) => {
-										setExpenseTypeId(value.id);
-									}}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<SelectComp
-									options={expenseTypesData}
-									placeholder="Select Account"
-									label="Account"
-									setSelectedOptionObj={(value) => {
-										setExpenseTypeId(value.id);
-									}}
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<InputField
-									type="text"
-									placeholder="Enter Received By "
-									label="Received By"
-									value={to}
-									onChange={(e) => setTo(e.target.value)}
-									
-								/>
-							</div>
-						</div>
-						<div className="flex justify-between mx-3">
-							<div className="w-1/3 p-1">
-								<InputField
-									type="text"
-									placeholder="Enter Contacts"
-									label="Expense Contacts"
-									value={contacts}
-									onChange={(e) => setContacts(e.target.value)}
-									
-								/>
-							</div>
-							<div className="w-1/3 p-1">
-								<InputField
-									type="text"
-									placeholder="Enter Description"
-									label=" Description"
-									value={contacts}
-									onChange={(e) => setContacts(e.target.value)}
-									
-								/>
-							</div>
-							<div className="w-1/3 p-1 mt-14"></div>
-						</div>
-						<div className="flex justify-between bg-gray1  p-3 ounded">
-							<div onClick={closeAdd}>
-								<ButtonSecondary value={"Close"} />
-							</div>
-							<div>
-								<div onClick={postExpense}>
-									<Button value={"Add Expense"} />
-								</div>
-							</div>
-						</div>
-					</div>
-				) : null}
 
 				<table className="mt-5 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
-						<th className="p-2 text-primary text-sm text-left">expense</th>
-						<th className="p-2 text-primary text-sm text-left">expense Type</th>
+						<th className="p-2 text-primary text-sm text-left">Name</th>
+						<th className="p-2 text-primary text-sm text-left">Expense Type</th>
 						<th className="p-2 text-primary text-sm text-left">Amount</th>
 						<th className="p-2 text-primary text-sm text-left">Received By</th>
 						<th className="p-2 text-primary text-sm text-left">Contacts</th>
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-						{/* edit popup start */}
-						{editData ? (
-							<div className="absolute shadow-2xl rounded w-[1000px] bg-white">
-								<div className="flex justify-between font-semibold text-primary bg-gray1 p-2 rounded-md">
-									<div>
-										<p>Edit expense</p>
-									</div>
-									<div>
-										<p className="cursor-pointer" onClick={closeEditData}>
-											X
-										</p>
-									</div>
-								</div>
-								<div className="flex justify-between mx-3">
-									<div className="w-1/3 p-1">
-										<InputField
-											type="date"
-											label="Date"
-											value={dateEdit}
-											onChange={(e) => setDateEdit(e.target.value)}
-										/>
-									</div>
-									<div className="w-1/3 p-1">
-										<InputField
-											type="text"
-											placeholder="Enter expense"
-											label="Expense"
-											value={expenseEdit}
-											onChange={(e) => setExpenseEdit(e.target.value)}
-											
-										/>
-									</div>
-									<div className="w-1/3 p-1">
-										<InputField
-											type="number"
-											placeholder="Enter Amounnt"
-											label="Amount"
-											value={amountEdit}
-											onChange={(e) => setAmountEdit(e.target.value)}
-											
-										/>
-									</div>
-								</div>
-								<div className="flex justify-between mx-3">
-									<div className="w-1/3 p-1">
-										<SelectComp
-											options={expenseTypesData}
-											placeholder="Select expense Type"
-											label="Expense Type"
-											setSelectedOptionObj={(value) => {
-												setExpenseTypeId(value.id);
-											}}
-										/>
-									</div>
-									<div className="w-1/3 p-1">
-										<SelectComp
-											options={expenseTypesData}
-											placeholder="Select Account"
-											label="Account"
-											setSelectedOptionObj={(value) => {
-												setExpenseTypeId(value.id);
-											}}
-										/>
-									</div>
-									<div className="w-1/3 p-1">
-										<InputField
-											type="text"
-											placeholder="Enter Received By "
-											label="Received By"
-											value={toEdit}
-											onChange={(e) => setToEdit(e.target.value)}
-											
-										/>
-									</div>
-								</div>
-								<div className="flex justify-between mx-3">
-									<div className="w-1/3 p-1">
-										<InputField
-											type="text"
-											placeholder="Enter Contacts"
-											label="Expense Contacts"
-											value={contactsEdit}
-											onChange={(e) => setContactsEdit(e.target.value)}
-											
-										/>
-									</div>
-									<div className="w-1/3 p-1">
-										<InputField
-											type="text"
-											placeholder="Enter Description"
-											label=" Description"
-											value={contactsEdit}
-											onChange={(e) => setContactsEdit(e.target.value)}
-											
-										/>
-									</div>
-									<div className="w-1/3 p-1 mt-14"></div>
-								</div>
-								<div className="flex justify-between font-semibold text-primary bg-gray1 p-2 rounded-md">
-									<div onClick={closeEditData}>
-										<ButtonSecondary value={"Close"} />
-									</div>
-									<div>
-										<div onClick={updateExpense}>
-											<Button value={"Update Expense"} />
-										</div>
-									</div>
-								</div>
-							</div>
-						) : null}
-						{/* edit popup end */}
 
 						{expensesData.map((expenseItem) => {
 							return (
@@ -485,17 +187,21 @@ function ExpensesComp() {
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
 									key={expenseItem.id}
 								>
-									<td className="text-xs p-3 text-gray5">{expenseItem.date}</td>
 									<td className="text-xs p-3 text-gray5">
-										{expenseItem.expense}
+										{
+											new Date(expenseItem.date).toLocaleDateString()
+										}
 									</td>
 									<td className="text-xs p-3 text-gray5">
-										{expenseItem?.expenseTypesObj?.value?.expenseType}
+										{expenseItem.title}
 									</td>
 									<td className="text-xs p-3 text-gray5">
-										{Number(expenseItem.amount).toLocaleString()}
+										{expenseItem?.subType?.name}
 									</td>
-									<td className="text-xs p-3 text-gray5">{expenseItem.to}</td>
+									<td className="text-xs p-3 text-gray5">
+										{Number(expenseItem.transactionAmount).toLocaleString()}
+									</td>
+									<td className="text-xs p-3 text-gray5">{expenseItem.receivedBy}</td>
 									<td className="text-xs p-3 text-gray5">
 										{expenseItem.contacts}
 									</td>
@@ -506,7 +212,9 @@ function ExpensesComp() {
 										/>
 										<BsPencilSquare
 											className="text-warning h-4 w-4 ml-5"
-											onClick={() => openEditData(expenseItem)}
+											onClick={() => {
+												navigate(`/addTransaction?transactionType=expense&action=edit&transactionId=${expenseItem.transactionId}`)
+											}}
 										/>
 									</td>
 								</tr>

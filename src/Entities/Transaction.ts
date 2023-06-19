@@ -25,6 +25,7 @@ export class Transaction extends BaseEntity  {
   @Column()
   transactionId!: string;
 
+  // Account balance before transaction
   @Column()
   amount!: number;
 
@@ -77,6 +78,7 @@ export class Transaction extends BaseEntity  {
   account!: Account;
 
 
+  // Account balance after transaction
   @Column({
     nullable: true
   })
@@ -198,79 +200,6 @@ export const createTransaction = async (
   return transaction;
 }
 
-export const updateTransaction = async (
-  id: number,
-  title: string,
-  amount: number,
-  description: string,
-  transactionCategory: string,
-  account: number,
-  balance: number,
-  receivedBy: string | null = null,
-  contacts: string | null = null,
-  file: string | null = null,
-  receipt: string | null = null,
-  transactionTypeID: number | null = null,
-) => {
-  const transaction = await Transaction.findOne(
-    {where: {id: id}}
-  );
-  if (!transaction) {
-    throw new Error("Transaction not found");
-  }
-
-  let transactionType : TransactionType | null = null;
-  if (transactionTypeID) {
-    transactionType = await TransactionType.findOne({
-      where: {
-        id: transactionTypeID,
-      },
-    })
-  }
-
-  const accountEntity = await Account.findOne({
-    where: {
-      id: account,
-    },
-  })
-
-  if (!accountEntity) {
-    throw new Error("Account not found");
-  }
-
-  transaction.title = title;
-  transaction.amount = amount;
-  transaction.description = description;
-  transaction.transactionType = transactionCategory;
-  transaction.account = accountEntity;
-  transaction.balance = balance;
-  
-  if (transactionType) {
-    transaction.subType = transactionType;
-  }
-
-  if (receivedBy) {
-    transaction.receivedBy = receivedBy;
-  }
-
-  if (contacts) {
-    transaction.contacts = contacts;
-  }
-
-  if (file) {
-    transaction.file = file;
-  }
-
-  if (receipt) {
-    transaction.receipt = receipt;
-  }
-
-  await transaction.save();
-  return transaction;
-}
-
-
-
 
 
 export const createTransactionDoubleEntry = async (
@@ -373,3 +302,350 @@ export const getTransactionsByAccountId = async (accountId: number) => {
 
   return transactions;
 };
+
+export const updateTransaction = async (
+  id: number,
+  title: string,
+  amount: number,
+  description: string,
+  transactionCategory: string,
+  account: number,
+  balance: number,
+  debit: number,
+  credit: number,
+  receivedBy: string | null = null,
+  contacts: string | null = null,
+  file: string | null = null,
+  receipt: string | null = null,
+  transactionTypeID: number | null = null,
+) => {
+  const transaction = await Transaction.findOne(
+    {where: {id: id}}
+  );
+  if (!transaction) {
+    throw new Error("Transaction not found");
+  }
+
+  let transactionType : TransactionType | null = null;
+  if (transactionTypeID) {
+    transactionType = await TransactionType.findOne({
+      where: {
+        id: transactionTypeID,
+      },
+    })
+  }
+
+  const accountEntity = await Account.findOne({
+    where: {
+      id: account,
+    },
+  })
+
+  if (!accountEntity) {
+    throw new Error("Account not found");
+  }
+
+  transaction.title = title;
+  transaction.amount = amount;
+  transaction.description = description;
+  transaction.transactionType = transactionCategory;
+  transaction.account = accountEntity;
+  transaction.balance = balance;
+  transaction.debit = debit;
+  transaction.credit = credit;
+  
+  if (transactionType) {
+    transaction.subType = transactionType;
+  }
+
+  if (receivedBy) {
+    transaction.receivedBy = receivedBy;
+  }
+
+  if (contacts) {
+    transaction.contacts = contacts;
+  }
+
+  if (file) {
+    transaction.file = file;
+  }
+
+  if (receipt) {
+    transaction.receipt = receipt;
+  }
+
+  await transaction.save();
+  return transaction;
+}
+
+
+// A function that updates a transaction with double entry
+export const updateTransactionDoubleEntry = async (
+  transId: string,
+  title: string,
+  amount: number,
+  description: string,
+  transactionCategory: string,
+  accountToDebit: number,
+  accountToCredit: number,
+  receivedBy: string | null = null,
+  contacts: string | null = null,
+  file: string | null = null,
+  receipt: string | null = null,
+  transactionTypeID: number | null = null,
+) => {
+  
+
+  // Get Both Transactions with the same transaction ID
+  const transactions = await Transaction.find({
+    where: {
+      transactionId: transId,
+    },
+  });
+
+  if (transactions.length !== 2) {
+    throw new Error("Transaction not found");
+  }
+
+  const transactionsObj: {
+    debitTransaction: Transaction | null,
+    creditTransaction: Transaction | null,
+  } = {
+    debitTransaction: null,
+    creditTransaction: null,
+  }
+
+  for (const transaction of transactions) {
+    if (transaction.debit === 0) {
+      transactionsObj.creditTransaction = transaction;
+    } else if (transaction.credit === 0) {
+      transactionsObj.debitTransaction = transaction;
+    }
+  }
+
+  if (!transactionsObj.creditTransaction || !transactionsObj.debitTransaction) {
+    throw new Error("Transaction not found");
+  }
+
+  // Get old accounts
+  const oldAccountToDebitEntity = transactionsObj.debitTransaction.account;
+  const oldAccountToCreditEntity = transactionsObj.creditTransaction.account;
+
+  if (!oldAccountToDebitEntity || !oldAccountToCreditEntity) {
+    throw new Error("Transaction not found");
+  }
+
+  // Get old balances
+  const oldDebitAccountBalance = transactionsObj.debitTransaction.debit;
+  const oldCreditAccountBalance = transactionsObj.creditTransaction.credit;
+
+  // Restore old balances
+  oldAccountToDebitEntity.amount -= oldDebitAccountBalance;
+  oldAccountToCreditEntity.amount += oldCreditAccountBalance;
+
+  // Update old accounts
+  await oldAccountToDebitEntity.save();
+  await oldAccountToCreditEntity.save();
+
+  // Get new accounts
+  const accountToDebitEntity = await Account.findOne({
+    where: {
+      id: accountToDebit,
+    },
+  })
+
+  const accountToCreditEntity = await Account.findOne({
+    where: {
+      id: accountToCredit,
+    },
+  })
+
+  if (!accountToDebitEntity) {
+    throw new Error("Account to debit not found");
+  }
+
+  if (!accountToCreditEntity) {
+    throw new Error("Account to credit not found");
+  }
+
+  // Get new balances
+  const debitAccountBalance = accountToDebitEntity.amount;
+  const creditAccountBalance = accountToCreditEntity.amount;
+
+  // Update new balances
+  const debitAccountBalanceAfterTransaction = debitAccountBalance + amount;
+  const creditAccountBalanceAfterTransaction = creditAccountBalance - amount;
+
+  // Update new accounts
+  accountToDebitEntity.amount = debitAccountBalanceAfterTransaction;
+  accountToCreditEntity.amount = creditAccountBalanceAfterTransaction;
+
+  // Save new accounts
+  await accountToDebitEntity.save();
+  await accountToCreditEntity.save();
+
+  // Update debit transaction
+  const debitTransaction = await updateTransaction(
+    transactionsObj.debitTransaction.id,
+    title,
+    debitAccountBalance,
+    description,
+    transactionCategory,
+    accountToDebit,
+    debitAccountBalanceAfterTransaction,
+    amount,
+    0,
+    receivedBy,
+    contacts,
+    file,
+    receipt,
+    transactionTypeID,
+  )
+
+  // Update credit transaction
+  const creditTransaction = await updateTransaction(
+    transactionsObj.creditTransaction.id,
+    title,
+    creditAccountBalance,
+    description,
+    transactionCategory,
+    accountToCredit,
+    creditAccountBalanceAfterTransaction,
+    0,
+    amount,
+    receivedBy,
+    contacts,
+    file,
+    receipt,
+    transactionTypeID,
+  )
+
+  return {
+    debitTransaction,
+    creditTransaction,
+  };
+
+}
+
+
+export const getTransaction = async (id: number) => {
+  const transaction = await Transaction.findOne(
+    {where: {id: id}}
+  );
+  if (!transaction) {
+    throw new Error("Transaction not found");
+  }
+  return transaction;
+}
+
+
+export const deleteTransactionDoubleEntry = async (
+  transID: string
+) => {
+  // Get Both Transactions with the same transaction ID
+  const transactions = await Transaction.find({
+    where: {
+      transactionId: transID,
+    },
+  });
+
+  if (transactions.length !== 2) {
+    throw new Error("Transaction not found");
+  }
+
+  const transactionsObj: {
+    debitTransaction: Transaction | null,
+    creditTransaction: Transaction | null,
+  } = {
+    debitTransaction: null,
+    creditTransaction: null,
+  }
+
+  for (const transaction of transactions) {
+    if (transaction.debit === 0) {
+      transactionsObj.creditTransaction = transaction;
+    } else if (transaction.credit === 0) {
+      transactionsObj.debitTransaction = transaction;
+    }
+  }
+
+  if (!transactionsObj.creditTransaction || !transactionsObj.debitTransaction) {
+    throw new Error("Transaction not found");
+  }
+
+  // Get old accounts
+  const oldAccountToDebitEntity = transactionsObj.debitTransaction.account;
+  const oldAccountToCreditEntity = transactionsObj.creditTransaction.account;
+
+  if (!oldAccountToDebitEntity || !oldAccountToCreditEntity) {
+    throw new Error("Transaction not found");
+  }
+
+  // Get debited and credited amounts
+  const debitedAmount = transactionsObj.debitTransaction.debit;
+  const creditedAmount = transactionsObj.creditTransaction.credit;
+
+  // Restore amounts to creditAccount and debitAccount
+  oldAccountToDebitEntity.amount -= debitedAmount;
+  oldAccountToCreditEntity.amount += creditedAmount;
+
+  // Save old accounts
+  await oldAccountToDebitEntity.save();
+  await oldAccountToCreditEntity.save();
+
+  for (const transaction of transactions) {
+    // delete transaction
+    await transaction.remove();
+  }
+
+  return "Transaction deleted successfully"
+}
+
+
+export const getTransactionsByTransId = async (
+  transId: string
+) => {
+  // Get Both Transactions with the same transaction ID
+  const transactions = await Transaction.find({
+    where: {
+      transactionId: transId,
+    },
+  });
+
+  if (transactions.length !== 2) {
+    throw new Error("Transaction not found");
+  }
+
+  const transactionsObj: {
+    debitTransaction: Transaction | null,
+    creditTransaction: Transaction | null,
+  } = {
+    debitTransaction: null,
+    creditTransaction: null,
+  }
+
+  for (const transaction of transactions) {
+    if (transaction.debit === 0) {
+      transactionsObj.creditTransaction = transaction;
+    } else if (transaction.credit === 0) {
+      transactionsObj.debitTransaction = transaction;
+    }
+  }
+
+  if (!transactionsObj.creditTransaction || !transactionsObj.debitTransaction) {
+    throw new Error("Transaction not found");
+  }
+
+  return transactionsObj;
+}
+
+export const getTransactionsByTransactionType = async (
+  transactionType: string
+) => {
+  const transactions = await Transaction.find({
+    where: {
+      transactionType: transactionType,
+    },
+  });
+  return transactions;
+}

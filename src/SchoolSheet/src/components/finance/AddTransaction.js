@@ -6,9 +6,11 @@ import Select from "react-select";
 import { Link, useLocation } from "react-router-dom";
 import { useFeedback } from "../../hooks/feedback";
 import axiosInstance from "../../axios-instance";
+import { useNavigate } from "react-router-dom";
 
 
 function AddTransaction() {
+	const navigate = useNavigate();
 	const [date, setDate] = useState("");
 	const [amount, setAmount] = useState("");
 	const location = useLocation();
@@ -35,7 +37,6 @@ function AddTransaction() {
 
 	const defaultTypes = [
 		{ label: "BILL", value: "bill", type: "bill" },
-		{ label: "ASSET", value: "asset", type: "asset" },
 		{ label: "LIABILITY", value: "liability", type: "liability" },
 		{ label: "EQUITY", value: "equity", type: "equity" },
 		{ label: "TRANSFER", value: "transfer", type: "transfer" },
@@ -58,6 +59,7 @@ function AddTransaction() {
 				}, 500);
 				return;
 			}
+			console.log(payload)
 			const transSubTypes = payload.map((transactionType) => {
 				return { label: transactionType.name?.toLocaleUpperCase(), value: transactionType.name, ...transactionType };
 			})
@@ -106,14 +108,48 @@ function AddTransaction() {
 	};
 
 
+	const [transactionData, setTransactionData] = useState({});
+
+	const fetchTransaction = async () => {
+		const transactionId = searchParams.get("transactionId");
+		const response = await axiosInstance.get(`/transactions/${transactionId}`)
+		const { status, payload } = response.data;
+		if (status === false) {
+			setTimeout(() => {
+				toggleFeedback("error", { title: "Error", text: payload });
+			}, 500);
+			return;
+		}
+		const debitTransaction = payload.debitTransaction;
+		const creditTransaction = payload.creditTransaction;
+
+		// Set Form Values
+		setTitle(debitTransaction.title);
+		setContacts(debitTransaction.contacts);
+		setDescription(debitTransaction.description);
+		setReceipt(debitTransaction.receipt);
+		setRecievedBy(debitTransaction.receivedBy);
+		setAmount(debitTransaction.debit);
+		setAccountToDebit({ label: debitTransaction.account.accountName, value: debitTransaction.account.accountName, ...debitTransaction.account });
+		setAccountToCredit({ label: creditTransaction.account.accountName, value: creditTransaction.account.accountName, ...creditTransaction.account });
+		if (debitTransaction.subType) {
+			setSelectedTransactionSubType({ label: debitTransaction.subType.name, value: debitTransaction.subType.name, ...debitTransaction.subType });
+		}
+	};
+
+
 	useEffect(() => {
 		async function fetchData() {
 			setLoading(true);
 			try {
 				await fetchTransactionSubTypes();
 				await fetchAccounts();
+				if (action === "edit") {
+					await fetchTransaction();
+				}
 				setLoading(false);
 			} catch (error) {
+				console.log(error)
 				setLoading(false);
 				toggleFeedback("error", { title: "Error", text: error.message });
 			}
@@ -143,7 +179,7 @@ function AddTransaction() {
 		formData.append("contacts", contacts);
 		formData.append("description", description);
 		formData.append("receipt", receipt);
-		formData.append("recievedBy", recievedBy);
+		formData.append("receivedBy", recievedBy);
 		formData.append("file", file);
 		formData.append("transactionCategory", transactionType ? transactionType : selectedTransactionType.type);
 		formData.append("transactionTypeID", selectedTransactionSubType ? parseInt(selectedTransactionSubType.id) : null);
@@ -162,6 +198,9 @@ function AddTransaction() {
 			setFormLoading(false);
 			setTimeout(() => {
 				toggleFeedback("error", { title: "Error", text: payload });
+				setTimeout(() => {
+					navigate(-1)
+				}, 500);
 			}, 500);
 			return;
 		}
@@ -229,11 +268,66 @@ function AddTransaction() {
 			return;
 		}
 		try {
-			await postFormData();
+			if (action === "edit") {
+				await postUpdateFormData();
+			} else if (action === "create") {
+				await postFormData();
+			} else {
+				await postFormData();
+			}
 		} catch (error) {
 			toggleFeedback("error", { title: "Error", text: error.message });
 		}
 	};
+
+
+	const postUpdateFormData = async () => {
+		setFormLoading(true);
+
+		// Get transaction id from url
+		const transactionId = searchParams.get("transactionId");
+
+
+
+
+		const formData = new FormData();
+		formData.append("title", title);
+		formData.append("contacts", contacts);
+		formData.append("description", description);
+		formData.append("receipt", receipt);
+		formData.append("receivedBy", recievedBy);
+		formData.append("file", file);
+		formData.append("transactionCategory", transactionType ? transactionType : selectedTransactionType.type);
+		formData.append("transactionTypeID", selectedTransactionSubType ? parseInt(selectedTransactionSubType.id) : null);
+		formData.append("accountToDebit", accountToDebit.id);
+		formData.append("accountToCredit", accountToCredit.id);
+		formData.append("amount", amount);
+		formData.append("transactionId", transactionId);
+
+
+		const response = await axiosInstance.put(`/transactions`, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
+		const { status, payload } = response.data;
+		if (status === false) {
+			setFormLoading(false);
+			setTimeout(() => {
+				toggleFeedback("error", { title: "Error", text: payload });
+			}, 500);
+			return;
+		}
+		setFormLoading(false);
+		setTimeout(() => {
+			toggleFeedback("success", { title: "Success", text: "Transaaction SuccessFully Updated" });
+			setTimeout(() => {
+				navigate(-1)
+			}, 500);
+		}, 500);
+	};
+
+
 
 
 
@@ -251,7 +345,9 @@ function AddTransaction() {
 						</p>
 					</div>
 					<div>
-						<p className="cursor-pointer">Back</p>
+						<p className="cursor-pointer" onClick={() => {
+							navigate(-1)
+						}} >Back</p>
 					</div>
 				</div>
 
@@ -412,7 +508,7 @@ function AddTransaction() {
 								</div>
 							) : (
 								<div onClick={handleSubmit} className="w-40">
-									<Button value={"Add"} />
+									<Button value={"Submit"} />
 								</div>
 							)
 						}

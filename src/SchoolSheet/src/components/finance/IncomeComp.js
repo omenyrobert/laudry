@@ -13,18 +13,20 @@ import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../axios-instance";
+import { useFeedback } from "../../hooks/feedback";
+import { useNavigate } from "react-router-dom";
+
+
 let db = new Localbase("db");
 
+
 function IncomeComp() {
-	// useEffect(()=>{
-	// 	console.log('useEffect')
-	// },[])
+	const { setLoading, toggleFeedback } = useFeedback()
+	const navigate = useNavigate()
 
 	// post Income Type
 	const [add, setAdd] = useState(false);
-	const openAdd = () => {
-		setAdd(true);
-	};
 
 	const closeAdd = () => {
 		setAdd(false);
@@ -59,7 +61,7 @@ function IncomeComp() {
 					setDate("");
 					setComment("");
 					closeAdd();
-					fetchInomes();
+					fetchIncomes();
 
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
@@ -76,23 +78,12 @@ function IncomeComp() {
 	const [incomeTypesData, setIncomeTypesData] = useState([]);
 	const [incomeTotal, setIncomeTotal] = useState("");
 
-	const fetchInomeTypes = () => {
-		return db
-			.collection("incomeTypesTbl")
-			.get()
-			.then((incomeTypes) => {
-				//  incomeTypesData.push(incomeTypes);
-				// setIncomeTypesData2(newData);
-				console.log("incomeTypesData", incomeTypesData);
-				incomeTypes.forEach((element) => {
-					let Obj = {
-						label: element.incomeType,
-						value: element,
-					};
-					incomeTypesData.push(Obj);
-				});
-				// console.log("income types array", incomeTypesData);
-			});
+
+	const fetchIncomeTypes = async () => {
+		const response = await axiosInstance.get("/transaction-types/income")
+
+		setIncomeTypesData(response.data.payload);
+
 	};
 
 	// fetch incomes
@@ -113,38 +104,51 @@ function IncomeComp() {
 			setIncomesData(incomesData);
 		}
 	};
-	const fetchInomes = () => {
-		db.collection("incomesTbl")
-			.get()
-			.then((incomes) => {
-				// const newData = incomes;
-				// setIncomesData(newData);
 
-				const newData = incomes.map((s) => {
-					const incomeTypesObj = incomeTypesData.find((c) => {
-						console.log("idd", c);
-						return c.value.id === s.incomeTypeId;
-					});
 
-					return {
-						id: s.id,
-						income: s.income,
-						date: s.date,
-						amount: s.amount,
-						from: s.from,
-						to: s.to,
-						comment: s.comment,
-						incomeTypesObj,
-					};
-				});
-				setIncomesData(newData);
-				// console.log("new income", newData);
-				let total = incomes.reduce(
-					(acc, item) => acc + parseInt(item.amount),
-					0
-				);
-				setIncomeTotal(total);
-			});
+	const fetchIncomes = async () => {
+
+		const res = await axiosInstance.get("/transactions/type/expense")
+
+		const { status, payload } = res.data
+
+		if (status === false) {
+			setLoading(false)
+			toggleFeedback("error", payload)
+			return
+		}
+
+		const coupledTransactions = []
+
+		for (let i = 0; i < payload.length; i++) {
+			const transaction = payload[i]
+
+			if (coupledTransactions.find(t => t.transactionId === transaction.transactionId)) continue;
+
+			// find corresponding transaction with same id
+			const correspondingTransaction = payload.find(t => {
+				return t.transactionId === transaction.transactionId && t.id !== transaction.id
+			})
+
+			if (correspondingTransaction) {
+				coupledTransactions.push({
+					transactionId: transaction.transactionId,
+					...transaction,
+					transactionAmount: transaction.debit === 0 ? transaction.credit : transaction.debit,
+				})
+			}
+		}
+
+		setIncomesData(coupledTransactions)
+
+		let total = coupledTransactions.reduce(
+			(acc, item) => acc + parseInt(item.transactionAmount),
+			0
+		);
+
+		setIncomeTotal(total);
+
+
 	};
 
 	// update
@@ -170,35 +174,10 @@ function IncomeComp() {
 		setCommentEdit(incomeItem.comment);
 	};
 
-	const updateIncome = () => {
-		db.collection("incomesTbl")
-			.doc({ id: incomeIdEdit })
-			.update({
-				incomeTypeId: incomeTypeIdEdit,
-				income: incomeEdit,
-				income: incomeEdit,
-				from: fromEdit,
-				date: dateEdit,
-				comment: commentEdit,
-			})
-			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchInomes();
-				const MySwal = withReactContent(Swal);
-				MySwal.fire({
-					icon: "success",
-					showConfirmButton: false,
-					timer: 500,
-				});
-				closeEditData();
-			});
-	};
 
-	// delete
 
-	//deleting income types
-	const deleteIncome = (incomeItem) => {
+
+	const deleteIncome = (income) => {
 		Swal.fire({
 			title: "Are you sure?",
 			text: "You won't be able to revert this!",
@@ -209,32 +188,40 @@ function IncomeComp() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("incomesTbl")
-					.doc({ id: incomeItem.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchInomes();
 
-						Swal.fire({
-							icon: "success",
-							showConfirmButton: false,
-							timer: 500,
-						});
+				axiosInstance.delete(`/transactions/${income.transactionId}`)
+					.then((response) => {
+						console.log(response)
+						const { status, payload } = response.data
+						toggleFeedback(status ? "success" : "error", {
+							title: payload
+						})
+						fetchIncomes()
 					})
 					.catch((error) => {
-						console.log(error);
-					});
+						console.log(error)
+						toggleFeedback("error", error.message)
+					}
+					);
 			}
 		});
 	};
 
-	// fetching income types
 	useEffect(() => {
-		fetchInomeTypes().then(() => {
-			console.log("fetchInomes");
-			fetchInomes();
-		});
+		async function fetchData() {
+			setLoading(true)
+			try {
+				await fetchIncomeTypes();
+				await fetchIncomes();
+				setLoading(false)
+			} catch (error) {
+				setLoading(false);
+				toggleFeedback("error", { title: "Error", text: error.message });
+			}
+		}
+
+		fetchData();
+
 	}, []);
 
 	return (
@@ -291,7 +278,7 @@ function IncomeComp() {
 								label="Income"
 								value={income}
 								onChange={(e) => setIncome(e.target.value)}
-								
+
 							/>
 						</div>
 						<div className="w-1/3 p-1">
@@ -301,7 +288,7 @@ function IncomeComp() {
 								label="Amount"
 								value={amount}
 								onChange={(e) => setAmount(e.target.value)}
-								
+
 							/>
 						</div>
 					</div>
@@ -323,7 +310,7 @@ function IncomeComp() {
 								label="Income Source"
 								value={from}
 								onChange={(e) => setFrom(e.target.value)}
-								
+
 							/>
 						</div>
 						<div className="w-1/3">
@@ -333,7 +320,7 @@ function IncomeComp() {
 								label="Income description"
 								value={comment}
 								onChange={(e) => setComment(e.target.value)}
-								
+
 							/>
 						</div>
 					</div>
@@ -367,115 +354,15 @@ function IncomeComp() {
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
-						<th className="p-2 text-primary text-sm text-left">Income</th>
+						<th className="p-2 text-primary text-sm text-left">Name</th>
 						<th className="p-2 text-primary text-sm text-left">Income Type</th>
 						<th className="p-2 text-primary text-sm text-left">Amount</th>
 						<th className="p-2 text-primary text-sm text-left">Source</th>
-						<th className="p-2 text-primary text-sm text-left">Description</th>
+						<th className="p-2 text-primary text-sm text-left">Contact</th>
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-						{/* edit popup start */}
-						{editData ? (
-							<div className="absolute shadow-2xl rounded w-[1000px] bg-white">
-								<div className="flex justify-between text-primary bg-gray1 font-semibold p-2 rounded-md">
-									<div>
-										<p>Edit Income</p>
-									</div>
-									<div>
-										<p className="cursor-pointer" onClick={closeEditData}>
-											X
-										</p>
-									</div>
-								</div>
-								<div className="flex px-3 justify-between">
-									<div className="w-1/3 p-1">
-										<InputField
-											type="date"
-											label="Date"
-											value={dateEdit}
-											onChange={(e) => setDateEdit(e.target.value)}
-										/>
-									</div>
-									<div className="w-1/3 p-1">
-										<InputField
-											type="text"
-											placeholder="Enter Income"
-											label="Income"
-											value={incomeEdit}
-											onChange={(e) => setIncomeEdit(e.target.value)}
-											
-										/>
-									</div>
-									<div className="w-1/3 p-1">
-										<InputField
-											type="number"
-											placeholder="Enter Amounnt"
-											label="Amount"
-											value={amountEdit}
-											onChange={(e) => setAmountEdit(e.target.value)}
-											
-										/>
-									</div>
-								</div>
-								<div className="flex px-3 justify-between">
-									<div className="w-1/3 p-1">
-										<SelectComp
-											options={incomeTypesData}
-											placeholder="Select Income Type"
-											label="Income Type"
-											setSelectedOptionObj={(value) => {
-												setIncomeTypeId(value.id);
-											}}
-										/>
-									</div>
-									<div className="w-1/3 p-1">
-										<InputField
-											type="text"
-											placeholder="Enter Source"
-											label="Income Source"
-											value={fromEdit}
-											onChange={(e) => setFromEdit(e.target.value)}
-											
-										/>
-									</div>
-									<div className="w-1/3">
-										<InputField
-											type="text"
-											placeholder="Enter description"
-											label="Income description"
-											value={commentEdit}
-											onChange={(e) => setCommentEdit(e.target.value)}
-											
-										/>
-									</div>
-								</div>
-								<div className="flex p-3 -mt-5">
-									<div className="w-1/3 p-1">
-										<SelectComp
-											options={incomeTypesData}
-											placeholder="Select Account"
-											label="Account"
-											setSelectedOptionObj={(value) => {
-												setIncomeTypeId(value.id);
-											}}
-										/>
-									</div>
-									<div className="w-1/3 mt-14"></div>
-								</div>
-								<div className="flex justify-between text-primary bg-gray1 font-semibold p-2 rounded-md">
-									<div onClick={closeEditData}>
-										<ButtonSecondary value={"Close"} />
-									</div>
-									<div>
-										<div onClick={postIncome}>
-											<Button value={"Update Income"} />
-										</div>
-									</div>
-								</div>
-							</div>
-						) : null}
-						{/* edit popup end */}
+
 
 						{searchInput.length > 1
 							? filteredIncome.map((incomeItem) => {
@@ -485,22 +372,24 @@ function IncomeComp() {
 										key={incomeItem?.id}
 									>
 										<td className="text-xs p-3 text-gray5">
-											{incomeItem.date}
+											{
+												new Date(incomeItem.date).toLocaleDateString()
+											}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{incomeItem.income}
+											{incomeItem?.title}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{incomeItem.incomeTypesObj.value.incomeType}
+											{incomeItem?.subType?.name}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{Number(incomeItem.amount).toLocaleString()}
+											{Number(incomeItem.transactionAmount).toLocaleString()}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{incomeItem.from}
+											{incomeItem.receivedBy}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{incomeItem.comment}
+											{incomeItem.contacts}
 										</td>
 										<td className="text-xs p-3 text-gray5 flex">
 											<MdDeleteOutline
@@ -509,7 +398,9 @@ function IncomeComp() {
 											/>
 											<BsPencilSquare
 												className="text-warning h-4 w-4 ml-5"
-												onClick={() => openEditData(incomeItem)}
+												onClick={() => {
+													navigate(`/addTransaction?transactionType=income&action=edit&transactionId=${incomeItem.transactionId}`)
+												}}
 											/>
 										</td>
 									</tr>
@@ -522,22 +413,24 @@ function IncomeComp() {
 										key={incomeItem?.id}
 									>
 										<td className="text-xs p-3 text-gray5">
-											{incomeItem.date}
+											{
+												new Date(incomeItem.date).toLocaleDateString()
+											}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{incomeItem.income}
+											{incomeItem?.title}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{incomeItem.incomeTypesObj.value.incomeType}
+											{incomeItem?.subType?.name}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{Number(incomeItem.amount).toLocaleString()}
+											{Number(incomeItem.transactionAmount).toLocaleString()}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{incomeItem.from}
+											{incomeItem.receivedBy}
 										</td>
 										<td className="text-xs p-3 text-gray5">
-											{incomeItem.comment}
+											{incomeItem.contacts}
 										</td>
 										<td className="text-xs p-3 text-gray5 flex">
 											<MdDeleteOutline
@@ -546,7 +439,9 @@ function IncomeComp() {
 											/>
 											<BsPencilSquare
 												className="text-warning h-4 w-4 ml-5"
-												onClick={() => openEditData(incomeItem)}
+												onClick={() => {
+													navigate(`/addTransaction?transactionType=income&action=edit&transactionId=${incomeItem.transactionId}`)
+												}}
 											/>
 										</td>
 									</tr>
