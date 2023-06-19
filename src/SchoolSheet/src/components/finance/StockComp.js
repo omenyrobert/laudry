@@ -246,7 +246,7 @@ function StockComp() {
 	};
 	useEffect(() => {
 		fetchStocksReduced();
-	});
+	},[]);
 	// fetching stock types
 	useEffect(() => {
 		fetchStocksTypes().then(() => {

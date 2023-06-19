@@ -47,7 +47,7 @@ function Ledger() {
         return transactionMonth === selectedMonthValue;
       }
       return true;
-    });
+    },[]);
 
     setFilteredTransactions(filtered);
   }, [transactionsByAccountId, fromDate, toDate, selectedMonth]);
