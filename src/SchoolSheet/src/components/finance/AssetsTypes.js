@@ -11,24 +11,29 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
+import axiosInstance from "../../axios-instance";
+import ButtonLoader from "../ButtonLoader";
 
 let db = new Localbase("db");
 
 function AssetsTypes() {
 	// post asset Type
 	const [assetType, setAssetType] = useState("");
+	const [loading, setLoading] = useState(false)
 	const postAssetType = () => {
-		let clId = uuid();
+
+
 		let formData = {
-			id: clId,
-			assetType: assetType,
+			name: assetType,
+			type: "asset"
 		};
 		if (assetType) {
-			db.collection("assetTypesTbl")
-				.add(formData)
+			setLoading(true)
+			axiosInstance.post("/transaction-types", formData)
 				.then((response) => {
-					setAssetType("");
+					setAssetType(null);
 					fetchAssetTypes();
+					setLoading(false)
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
@@ -43,44 +48,62 @@ function AssetsTypes() {
 	// fetch asset typess
 	const [assetTypesData, setAssetTypesData] = useState([]);
 	const fetchAssetTypes = () => {
-		db.collection("assetTypesTbl")
-			.get()
-			.then((assetTypes) => {
-				const newData = assetTypes;
-				setAssetTypesData(newData);
-			});
+
+		axiosInstance.get("/transaction-types/asset")
+			.then((response) => {
+				setAssetTypesData(response.data.payload);
+			})
+			.catch(console.error());
 	};
 
 	// update
 	const [editData, setEditData] = useState(false);
 	const [assetTypeEdit, setAssetTypeEdit] = useState("");
 	const [assetTypeId, setAssetTypeId] = useState("");
+	const [editLoading, setEditLoading] = useState(false)
 	const closeEditData = () => {
 		setEditData(false);
 	};
 	const openEditData = (assetType) => {
 		setEditData(true);
-		setAssetTypeEdit(assetType?.assetType);
+		setAssetTypeEdit(assetType?.name);
 		setAssetTypeId(assetType.id);
 	};
 	const updateassetType = () => {
-		db.collection("assetTypesTbl")
-			.doc({ id: assetTypeId })
-			.update({
-				assetType: assetTypeEdit,
-			})
+
+		let formData = {
+			name: assetTypeEdit,
+			type: "asset",
+			id: assetTypeId
+		}
+		setEditLoading(true)
+		axiosInstance.put("/transaction-types", formData)
 			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchAssetTypes();
+				const { status, payload } = response.data
+
 				const MySwal = withReactContent(Swal);
+
+				if (status === false) {
+					setEditLoading(false)
+					MySwal.fire({
+						icon: "success",
+						showConfirmButton: false,
+						timer: 500,
+						text: payload,
+						title: "Ooops..."
+					});
+					return
+				}
+				fetchAssetTypes();
+				setEditLoading(false)
 				MySwal.fire({
 					icon: "success",
 					showConfirmButton: false,
 					timer: 500,
 				});
 				closeEditData();
-			});
+			})
+			.catch(console.error());
 	};
 
 	// delete
@@ -97,22 +120,30 @@ function AssetsTypes() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("assetTypesTbl")
-					.doc({ id: assetTypeItem.id })
-					.delete()
+				axiosInstance.delete(`/transaction-types/${assetTypeItem.id}`)
 					.then((response) => {
-						// fetch after
-						fetchAssetTypes();
+						const { status, payload } = response.data
 
-						Swal.fire({
+						const MySwal = withReactContent(Swal);
+
+						if (status === false) {
+							MySwal.fire({
+								icon: "success",
+								showConfirmButton: false,
+								timer: 500,
+								text: payload,
+								title: "Ooops..."
+							});
+							return
+						}
+						fetchAssetTypes();
+						MySwal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
 					})
-					.catch((error) => {
-						console.log(error);
-					});
+					.catch(console.error());
 			}
 		});
 	};
@@ -156,7 +187,7 @@ function AssetsTypes() {
 										label="asset Type"
 										value={assetType}
 										onChange={(e) => setAssetType(e.target.value)}
-										
+
 									/>
 								</div>
 								<div className="ml-2 mt-14" onClick={postAssetType}>
@@ -180,7 +211,7 @@ function AssetsTypes() {
 													label="asset Type"
 													value={assetTypeEdit}
 													onChange={(e) => setAssetTypeEdit(e.target.value)}
-													
+
 												/>
 											</div>
 											<div className="flex justify-between w-1/3 mt-[55px]">
@@ -204,10 +235,10 @@ function AssetsTypes() {
 										return (
 											<tr
 												className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-												key={assetType.id}
+												key={assetType?.id}
 											>
 												<td className="text-xs p-3 text-gray5">
-													{assetTypeItem.assetType}
+													{assetTypeItem.name}
 												</td>
 												<td className="text-xs p-3 text-gray5">
 													<div className="flex">

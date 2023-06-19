@@ -37,7 +37,6 @@ function AddTransaction() {
 
 	const defaultTypes = [
 		{ label: "BILL", value: "bill", type: "bill" },
-		{ label: "ASSET", value: "asset", type: "asset" },
 		{ label: "LIABILITY", value: "liability", type: "liability" },
 		{ label: "EQUITY", value: "equity", type: "equity" },
 		{ label: "TRANSFER", value: "transfer", type: "transfer" },
@@ -60,6 +59,7 @@ function AddTransaction() {
 				}, 500);
 				return;
 			}
+			console.log(payload)
 			const transSubTypes = payload.map((transactionType) => {
 				return { label: transactionType.name?.toLocaleUpperCase(), value: transactionType.name, ...transactionType };
 			})
@@ -132,7 +132,9 @@ function AddTransaction() {
 		setAmount(debitTransaction.debit);
 		setAccountToDebit({ label: debitTransaction.account.accountName, value: debitTransaction.account.accountName, ...debitTransaction.account });
 		setAccountToCredit({ label: creditTransaction.account.accountName, value: creditTransaction.account.accountName, ...creditTransaction.account });
-		setSelectedTransactionSubType({ label: debitTransaction.subType.name, value: debitTransaction.subType.name, ...debitTransaction.subType });
+		if (debitTransaction.subType) {
+			setSelectedTransactionSubType({ label: debitTransaction.subType.name, value: debitTransaction.subType.name, ...debitTransaction.subType });
+		}
 	};
 
 
@@ -147,6 +149,7 @@ function AddTransaction() {
 				}
 				setLoading(false);
 			} catch (error) {
+				console.log(error)
 				setLoading(false);
 				toggleFeedback("error", { title: "Error", text: error.message });
 			}
@@ -268,6 +271,8 @@ function AddTransaction() {
 			if (action === "edit") {
 				await postUpdateFormData();
 			} else if (action === "create") {
+				await postFormData();
+			} else {
 				await postFormData();
 			}
 		} catch (error) {
