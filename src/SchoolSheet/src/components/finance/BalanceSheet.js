@@ -75,6 +75,32 @@ function BalanceSheet() {
 			  setNonCurrentEquitySum(nonCurrentEquitySum);
 		}
 	}, [accounts]);
+
+	const handleGeneratePDF = () => {
+		const documentWindow = window.open("", "PRINT", "height=600,width=1000");
+		const content = document.getElementById("ledger-table").outerHTML;
+	
+		documentWindow.document.write(
+		  content
+		);
+		
+		// Get All stylesheets
+		const stylesheets = document.querySelectorAll("link");
+		// Append them to the head of the new window
+		stylesheets.forEach((stylesheet) => {
+		  documentWindow.document.write(stylesheet.outerHTML)
+		});
+		// Get all style tags 
+		const styleTags = document.querySelectorAll("style");
+		// Append them to the head of the new window
+		styleTags.forEach((styleTag) => {
+		  documentWindow.document.write(styleTag.outerHTML)
+		})
+	
+		setTimeout(() => {
+		  documentWindow.print();
+		}, 1000);
+	};
 	
 	return (
 		<>
@@ -93,150 +119,152 @@ function BalanceSheet() {
 						<div>
 							<InputField type="month" label="By Month" />
 						</div>
-						<div className="ml-5 mt-12">
+						<div className="ml-5 mt-12" onClick={handleGeneratePDF}>
 							<Button value={"Pdf"} />
 						</div>
 					</div>
 				</div>
 
-				<p className="mt-5 text-primary font-medium text-xl">Assets</p>
-				<div className="mt-3 flex bg-primary text-white border border-gray2">
-					<div className="w-10/12 p-3">Total Assets</div>
-					<div className="w-2/12 border border-gray2 p-3">{currentAssetsSum + nonCurrentAssetsSum}</div>
-				</div>
+				<div  id="ledger-table">
+					<p className="mt-5 text-primary font-medium text-xl">Assets</p>
+					<div className="mt-3 flex bg-primary text-white border border-gray2">
+						<div className="w-10/12 p-3">Total Assets</div>
+						<div className="w-2/12 border border-gray2 p-3">{currentAssetsSum + nonCurrentAssetsSum}</div>
+					</div>
 
-				<p className="mt-5  font-medium">Current Assets</p>
-				{
-					currentAssets.map(asset => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{asset.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{asset.amount}
+					<p className="mt-5  font-medium">Current Assets</p>
+					{
+						currentAssets.map(asset => (
+							<div className="mt-2 flex  border border-gray1">
+								<div className="w-10/12 p-3 text-gray5">{asset.accountName}</div>
+								<div className="w-2/12 border border-gray1 p-3 text-gray5">
+									{" "}
+									{asset.amount}
+								</div>
 							</div>
-						</div>
-					))
-				}
-	
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Current Assets</div>
-					<div className="w-2/12 border border-primary3 p-3">{currentAssetsSum}</div>
-				</div>
+						))
+					}
+		
+					<div className="flex bg-primary3 text-primary border border-primary3">
+						<div className="w-10/12 p-3">Total Current Assets</div>
+						<div className="w-2/12 border border-primary3 p-3">{currentAssetsSum}</div>
+					</div>
 
-				<br />
-				<p className="mt-5  font-medium">Non Current Assets</p>
-				{
-					nonCurrentAssets.map(asset => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{asset.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{asset.amount}
+					<br />
+					<p className="mt-5  font-medium">Non Current Assets</p>
+					{
+						nonCurrentAssets.map(asset => (
+							<div className="mt-2 flex  border border-gray1">
+								<div className="w-10/12 p-3 text-gray5">{asset.accountName}</div>
+								<div className="w-2/12 border border-gray1 p-3 text-gray5">
+									{" "}
+									{asset.amount}
+								</div>
 							</div>
-						</div>
-					))
-				}
+						))
+					}
 
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Non Current Assets</div>
-					<div className="w-2/12 border border-primary3 p-3">{nonCurrentAssetsSum}</div>
-				</div>
+					<div className="flex bg-primary3 text-primary border border-primary3">
+						<div className="w-10/12 p-3">Total Non Current Assets</div>
+						<div className="w-2/12 border border-primary3 p-3">{nonCurrentAssetsSum}</div>
+					</div>
 
-				<br />
-				<p className="mt-5 text-primary font-medium text-xl">Liabilities</p>
-				<div className="mt-3 flex bg-primary3 text-primary border border-gray2">
-					<div className="w-10/12 p-3">Total Liabilities</div>
-					<div className="w-2/12 border border-gray2 p-3">{currentLiabilitiesSum + nonCurrentLiabilitiesSum}</div>
-				</div>
-				<p className="mt-5  font-medium">Current Liabilities</p>
-				{
-					currentLiabilities.map(liability => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{liability.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{liability.amount}
+					<br />
+					<p className="mt-5 text-primary font-medium text-xl">Liabilities</p>
+					<div className="mt-3 flex bg-primary3 text-primary border border-gray2">
+						<div className="w-10/12 p-3">Total Liabilities</div>
+						<div className="w-2/12 border border-gray2 p-3">{currentLiabilitiesSum + nonCurrentLiabilitiesSum}</div>
+					</div>
+					<p className="mt-5  font-medium">Current Liabilities</p>
+					{
+						currentLiabilities.map(liability => (
+							<div className="mt-2 flex  border border-gray1">
+								<div className="w-10/12 p-3 text-gray5">{liability.accountName}</div>
+								<div className="w-2/12 border border-gray1 p-3 text-gray5">
+									{" "}
+									{liability.amount}
+								</div>
 							</div>
-						</div>
-					))
-				}
+						))
+					}
 
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Current Liabilities</div>
-					<div className="w-2/12 border border-primary3 p-3">{currentLiabilitiesSum}</div>
-				</div>
+					<div className="flex bg-primary3 text-primary border border-primary3">
+						<div className="w-10/12 p-3">Total Current Liabilities</div>
+						<div className="w-2/12 border border-primary3 p-3">{currentLiabilitiesSum}</div>
+					</div>
 
-				<br />
-				<p className="mt-5  font-medium">Non Current Liabilities</p>
-				{
-					nonCurrentLiabilities.map(liability => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{liability.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{liability.amount}
+					<br />
+					<p className="mt-5  font-medium">Non Current Liabilities</p>
+					{
+						nonCurrentLiabilities.map(liability => (
+							<div className="mt-2 flex  border border-gray1">
+								<div className="w-10/12 p-3 text-gray5">{liability.accountName}</div>
+								<div className="w-2/12 border border-gray1 p-3 text-gray5">
+									{" "}
+									{liability.amount}
+								</div>
 							</div>
-						</div>
-					))
-				}
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Non Current Liabilities</div>
-					<div className="w-2/12 border border-primary3 p-3">{nonCurrentLiabilitiesSum}</div>
-				</div>
+						))
+					}
+					<div className="flex bg-primary3 text-primary border border-primary3">
+						<div className="w-10/12 p-3">Total Non Current Liabilities</div>
+						<div className="w-2/12 border border-primary3 p-3">{nonCurrentLiabilitiesSum}</div>
+					</div>
 
-				<br />
-				<p className="mt-5  font-medium">Equity</p>
-				<div className="mt-3 flex bg-primary text-white border border-gray2">
-					<div className="w-10/12 p-3">Total Equity</div>
-					<div className="w-2/12 border border-gray2 p-3">{currentEquitySum + nonCurrentEquitySum}</div>
-				</div>
+					<br />
+					<p className="mt-5  font-medium">Equity</p>
+					<div className="mt-3 flex bg-primary text-white border border-gray2">
+						<div className="w-10/12 p-3">Total Equity</div>
+						<div className="w-2/12 border border-gray2 p-3">{currentEquitySum + nonCurrentEquitySum}</div>
+					</div>
 
-				<p className="mt-5  font-medium">Current Equity</p>
-				{
-					currentEquity.map(equity => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{equity.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{equity.amount}
+					<p className="mt-5  font-medium">Current Equity</p>
+					{
+						currentEquity.map(equity => (
+							<div className="mt-2 flex  border border-gray1">
+								<div className="w-10/12 p-3 text-gray5">{equity.accountName}</div>
+								<div className="w-2/12 border border-gray1 p-3 text-gray5">
+									{" "}
+									{equity.amount}
+								</div>
 							</div>
-						</div>
-					))
-				}
+						))
+					}
 
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Current Equity</div>
-					<div className="w-2/12 border border-primary3 p-3">{currentEquitySum}</div>
-				</div>
+					<div className="flex bg-primary3 text-primary border border-primary3">
+						<div className="w-10/12 p-3">Total Current Equity</div>
+						<div className="w-2/12 border border-primary3 p-3">{currentEquitySum}</div>
+					</div>
 
-				<br />
-				<p className="mt-5  font-medium">Non Current Equity</p>
-				{
-					nonCurrentEquity.map(equity => (
-						<div className="mt-2 flex  border border-gray1">
-							<div className="w-10/12 p-3 text-gray5">{equity.accountName}</div>
-							<div className="w-2/12 border border-gray1 p-3 text-gray5">
-								{" "}
-								{equity.amount}
+					<br />
+					<p className="mt-5  font-medium">Non Current Equity</p>
+					{
+						nonCurrentEquity.map(equity => (
+							<div className="mt-2 flex  border border-gray1">
+								<div className="w-10/12 p-3 text-gray5">{equity.accountName}</div>
+								<div className="w-2/12 border border-gray1 p-3 text-gray5">
+									{" "}
+									{equity.amount}
+								</div>
 							</div>
-						</div>
-					))
-				}
+						))
+					}
 
-				<div className="flex bg-primary3 text-primary border border-primary3">
-					<div className="w-10/12 p-3">Total Non Current Equity</div>
-					<div className="w-2/12 border border-primary3 p-3">{nonCurrentEquitySum}</div>
-				</div>
-				<br />
+					<div className="flex bg-primary3 text-primary border border-primary3">
+						<div className="w-10/12 p-3">Total Non Current Equity</div>
+						<div className="w-2/12 border border-primary3 p-3">{nonCurrentEquitySum}</div>
+					</div>
+					<br />
 
-				<div className="mt-3 flex bg-primary text-white border border-gray2">
-					<div className="w-10/12 p-3">Total </div>
-					<div className="w-2/12 border border-gray2 p-3">{
-						currentLiabilitiesSum + nonCurrentLiabilitiesSum + currentEquitySum + nonCurrentEquitySum
-					}</div>
+					<div className="mt-3 flex bg-primary text-white border border-gray2">
+						<div className="w-10/12 p-3">Total </div>
+						<div className="w-2/12 border border-gray2 p-3">{
+							currentLiabilitiesSum + nonCurrentLiabilitiesSum + currentEquitySum + nonCurrentEquitySum
+						}</div>
+					</div>
+					<br />
+					<br />
 				</div>
-				<br />
-				<br />
 			</div>
 		</>
 	);
