@@ -43,10 +43,10 @@ function BalanceSheet() {
 				  (account) => account.accountType === "Asset" && account.subType === "NON_CURRENT"
 				),
 				currentEquity: accounts.filter(
-					(account) => account.accountType === "Asset" && account.subType === "CURRENT"
+					(account) => account.accountType === "Equity" && account.subType === "CURRENT"
 				  ),
 				nonCurrentEquity: accounts.filter(
-					(account) => account.accountType === "Asset" && account.subType === "NON_CURRENT"
+					(account) => account.accountType === "Equity" && account.subType === "NON_CURRENT"
 				),
 			  };
 		  
