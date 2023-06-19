@@ -229,7 +229,14 @@ function BalanceSheet() {
 				</div>
 				<br />
 
-
+				<div className="mt-3 flex bg-primary text-white border border-gray2">
+					<div className="w-10/12 p-3">Total </div>
+					<div className="w-2/12 border border-gray2 p-3">{
+						currentLiabilitiesSum + nonCurrentLiabilitiesSum + currentEquitySum + nonCurrentEquitySum
+					}</div>
+				</div>
+				<br />
+				<br />
 			</div>
 		</>
 	);
