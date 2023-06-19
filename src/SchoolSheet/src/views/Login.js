@@ -40,12 +40,12 @@ const Login = () => {
 	};
 	useEffect(() => {
 		const token = localStorage.getItem('schoolSoftToken');
-		if (token !== null || token !== undefined) {
+		if (token !== null && token !== undefined) {
 			navigate('/dashboard');
 		}
 	}, [navigate])
 	return (
-		<div className="flex overflow-hidden h-screen w-full bgdiv">
+	<div className="flex overflow-hidden h-screen w-full bgdiv">
 			<div className="w-7/12 flex justify-center items-center">
 				<div>
 					<img src="login2.png" className="w-[500px]" alt="Logo" />
