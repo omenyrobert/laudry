@@ -129,7 +129,7 @@ function AddTransaction() {
 		setDescription(debitTransaction.description);
 		setReceipt(debitTransaction.receipt);
 		setRecievedBy(debitTransaction.receivedBy);
-		setAmount(debitTransaction.amount);
+		setAmount(debitTransaction.debit);
 		setAccountToDebit({ label: debitTransaction.account.accountName, value: debitTransaction.account.accountName, ...debitTransaction.account });
 		setAccountToCredit({ label: creditTransaction.account.accountName, value: creditTransaction.account.accountName, ...creditTransaction.account });
 		setSelectedTransactionSubType({ label: debitTransaction.subType.name, value: debitTransaction.subType.name, ...debitTransaction.subType });

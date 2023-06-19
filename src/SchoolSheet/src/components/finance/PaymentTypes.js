@@ -11,24 +11,29 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
 import "../../assets/styles/main.css";
+import axiosInstance from "../../axios-instance";
+import ButtonLoader from "../ButtonLoader";
 
 let db = new Localbase("db");
 
 function PaymentTypes() {
 	// post payment Type
+	const [loading, setLoading] = useState(false)
 	const [paymentType, setpaymentType] = useState("");
+
+
 	const postpaymentType = () => {
-		let clId = uuid();
 		let formData = {
-			id: clId,
-			paymentType: paymentType,
+			name: paymentType,
+			type: "payment"
 		};
 		if (paymentType) {
-			db.collection("paymentTypesTbl")
-				.add(formData)
+			setLoading(true)
+			axiosInstance.post("/transaction-types", formData)
 				.then((response) => {
-					setpaymentType("");
+					setpaymentType(null);
 					fetchpayamentTypes();
+					setLoading(false)
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
@@ -38,49 +43,69 @@ function PaymentTypes() {
 				})
 				.catch(console.error());
 		}
+
+
 	};
 
 	// fetch payment typess
 	const [paymentTypesData, setpaymentTypesData] = useState([]);
+
 	const fetchpayamentTypes = () => {
-		db.collection("paymentTypesTbl")
-			.get()
-			.then((paymentTypes) => {
-				const newData = paymentTypes;
-				setpaymentTypesData(newData);
-			});
+		axiosInstance.get("/transaction-types/payment")
+			.then((response) => {
+				setpaymentTypesData(response.data.payload);
+			})
+			.catch(console.error());
 	};
 
 	// update
 	const [editData, setEditData] = useState(false);
 	const [paymentTypeEdit, setpaymentTypeEdit] = useState("");
 	const [paymentTypeId, setpaymentTypeId] = useState("");
+	const [editLoading, setEditLoading] = useState(false)
 	const closeEditData = () => {
 		setEditData(false);
 	};
 	const openEditData = (paymentType) => {
 		setEditData(true);
-		setpaymentTypeEdit(paymentType?.paymentType);
+		setpaymentTypeEdit(paymentType?.name);
 		setpaymentTypeId(paymentType.id);
 	};
 	const updatepaymentType = () => {
-		db.collection("paymentTypesTbl")
-			.doc({ id: paymentTypeId })
-			.update({
-				paymentType: paymentTypeEdit,
-			})
+
+		let formData = {
+			name: paymentTypeEdit,
+			type: "payment",
+			id: paymentTypeId
+		}
+		setEditLoading(true)
+		axiosInstance.put("/transaction-types", formData)
 			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchpayamentTypes();
+				const { status, payload } = response.data
+
 				const MySwal = withReactContent(Swal);
+
+				if (status === false) {
+					setEditLoading(false)
+					MySwal.fire({
+						icon: "success",
+						showConfirmButton: false,
+						timer: 500,
+						text: payload,
+						title: "Ooops..."
+					});
+					return
+				}
+				fetchpayamentTypes();
+				setEditLoading(false)
 				MySwal.fire({
 					icon: "success",
 					showConfirmButton: false,
 					timer: 500,
 				});
 				closeEditData();
-			});
+			})
+			.catch(console.error());
 	};
 
 	// delete
@@ -97,22 +122,30 @@ function PaymentTypes() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("paymentTypesTbl")
-					.doc({ id: paymentTypeItem.id })
-					.delete()
+				axiosInstance.delete(`/transaction-types/${paymentTypeItem.id}`)
 					.then((response) => {
-						// fetch after
-						fetchpayamentTypes();
+						const { status, payload } = response.data
 
-						Swal.fire({
+						const MySwal = withReactContent(Swal);
+
+						if (status === false) {
+							MySwal.fire({
+								icon: "success",
+								showConfirmButton: false,
+								timer: 500,
+								text: payload,
+								title: "Ooops..."
+							});
+							return
+						}
+						fetchpayamentTypes();
+						MySwal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
 					})
-					.catch((error) => {
-						console.log(error);
-					});
+					.catch(console.error());
 			}
 		});
 	};
@@ -156,12 +189,14 @@ function PaymentTypes() {
 										label="Payment Type"
 										value={paymentType}
 										onChange={(e) => setpaymentType(e.target.value)}
-										
+
 									/>
 								</div>
 
 								<div className="ml-2 mt-14" onClick={postpaymentType}>
-									<Button value={"Add Payment Type"} />
+									{
+										loading ? <ButtonLoader /> : <Button value={"Add Payment Type"} />
+									}
 								</div>
 							</div>
 
@@ -181,12 +216,15 @@ function PaymentTypes() {
 													label="payment Type"
 													value={paymentTypeEdit}
 													onChange={(e) => setpaymentTypeEdit(e.target.value)}
-													
+
 												/>
 											</div>
 											<div className="flex justify-between w-1/3 mt-[55px]">
 												<div onClick={updatepaymentType}>
-													<ButtonSecondary value={"Update"} />
+													{
+														editLoading ? <ButtonLoader /> : <ButtonSecondary value={"Update"} />
+													}
+
 												</div>
 												<div className="ml-3">
 													<p
@@ -205,10 +243,10 @@ function PaymentTypes() {
 										return (
 											<tr
 												className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-												key={paymentType.id}
+												key={paymentType?.id}
 											>
 												<td className="text-xs p-3 text-gray5">
-													{paymentTypeItem.paymentType}
+													{paymentTypeItem?.name}
 												</td>
 												<td className="text-xs p-3 text-gray5">
 													<div className="flex">
