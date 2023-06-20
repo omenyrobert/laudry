@@ -475,7 +475,7 @@ function Accounts() {
 				<div className="border border-gray1 p-3 w-1/4">Amount</div>
 				<div className="border border-gray1 p-3 w-1/4">Action</div>
 			</div>
-			{accounts.length > 0 &&
+			{accounts && accounts.length > 0 &&
 				accounts.map((account) => (
 					<div className="flex text-gray5 font-light text-sm border-b border-gray2 cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
 						<div className="border border-gray1 p-3  w-1/4">
