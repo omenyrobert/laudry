@@ -9,6 +9,7 @@ import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import axiosInstance from "../../axios-instance"
 import { useNavigate } from 'react-router-dom';
+import ButtonLoader from "../ButtonLoader";
 
 
 const EditStudentsForm = (props) => {
@@ -16,6 +17,7 @@ const EditStudentsForm = (props) => {
 	const searchParams = new URLSearchParams(location.search);
 	const studentId = searchParams.get("student");
 	const navigate = useNavigate();
+	const [loading, setLoading] = useState(false);
 
 
 	const [firstName, setFirstName] = useState("");
@@ -182,6 +184,7 @@ const EditStudentsForm = (props) => {
 	}
 
 	const updateStudentInfo = () => {
+		setLoading(true)
 		let data = {
 			id: studentId,
 			firstName: firstName,
@@ -223,6 +226,7 @@ const EditStudentsForm = (props) => {
 			.then((response) => {
 				const { status, payload } = response.data;
 				if (status === false) {
+					setLoading(false)
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "error",
@@ -240,6 +244,7 @@ const EditStudentsForm = (props) => {
 				navigate("/students")
 			})
 			.catch((error) => {
+				setLoading(false)
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "error",
@@ -458,9 +463,16 @@ const EditStudentsForm = (props) => {
 			</div>
 			<div className="flex justify-between p-2">
 				<div></div>
-				<div onClick={updateStudentInfo}>
-					<Button value={"Update Student"} />
-				</div>
+				{
+					loading ? (
+						<div>
+							<ButtonLoader />
+						</div>) : (
+						<div onClick={updateStudentInfo}>
+							<Button value={"Update Student"} />
+						</div>
+					)
+				}
 			</div>
 		</div>
 	);

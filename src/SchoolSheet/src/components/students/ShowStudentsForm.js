@@ -4,7 +4,7 @@ import { BsCameraFill } from "react-icons/bs";
 import Button2 from "../Button2";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import axiosInstance from "../../axios-instance"
+import axiosInstance, { UPLOADS_URL } from "../../axios-instance"
 // import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 
@@ -19,7 +19,7 @@ const ShowStudentsForm = () => {
 		axiosInstance.get(`/students/${studentId}`)
 			.then((response) => {
 				const { status, payload } = response.data;
-				// console.log('student', payload)
+				console.log('student', payload)
 
 				if (status === false) {
 					const MySwal = withReactContent(Swal);
@@ -54,8 +54,9 @@ const ShowStudentsForm = () => {
 								<BsCameraFill className="text-2xl" />
 							</span>
 							<img
-								src="avata.jpeg"
+								src={student?.photo ? UPLOADS_URL + student?.photo : "avata.jpeg"}
 								className="w-full object-cover  rounded-full  border border-gray1 shadow"
+								alt="profp"
 							/>
 
 						</div>
@@ -128,156 +129,45 @@ const ShowStudentsForm = () => {
 							</p>
 						</div>
 					</div>
-					<div className="bg-gray1 rounded-md p-2 flex mt-5">
-						<div className="w-1/2">
-							<p className="text-primary text-sm mt-10">
-								Term 1 from 3rd March to 14 April
-							</p>
-						</div>
-						<div className="w-1/2 ml-2">
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
+
+
+					{
+						student?.terms?.map((term, i) => {
+							return (
+								<div className="bg-gray1 rounded-md p-2 flex mt-5">
+									<div className="w-1/2">
+										<p className="text-primary text-sm mt-10">
+											Term {term.term} from {term.from} to {term.to}
+										</p>
+									</div>
+									<div className="w-1/2 ml-2">
+										<div className="flex text-xs">
+											<div className="p-2 bg-white border border-gray2 w-1/3">
+												Math
+											</div>
+											<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
+											<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
+										</div>
+										<div className="flex text-xs">
+											<div className="p-2 bg-white border border-gray2 w-1/3">
+												Math
+											</div>
+											<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
+											<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
+										</div>
+										<div className="flex text-xs">
+											<div className="p-2 bg-white border border-gray2 w-1/3">
+												Math
+											</div>
+											<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
+											<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
+										</div>
+									</div>
 								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-						</div>
-					</div>
-					<div className="bg-gray1 rounded-md p-2 flex mt-5">
-						<div className="w-1/2">
-							<p className="text-primary text-sm mt-10">
-								Term 1 from 3rd March to 14 April
-							</p>
-						</div>
-						<div className="w-1/2 ml-2">
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-						</div>
-					</div>
-					<div className="bg-gray1 rounded-md p-2 flex mt-5">
-						<div className="w-1/2">
-							<p className="text-primary text-sm mt-10">
-								Term 1 from 3rd March to 14 April
-							</p>
-						</div>
-						<div className="w-1/2 ml-2">
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-						</div>
-					</div>
-					<div className="bg-gray1 rounded-md p-2 flex mt-5">
-						<div className="w-1/2">
-							<p className="text-primary text-sm mt-10">
-								Term 1 from 3rd March to 14 April
-							</p>
-						</div>
-						<div className="w-1/2 ml-2">
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-						</div>
-					</div>
-					<div className="bg-gray1 rounded-md p-2 flex mt-5">
-						<div className="w-1/2">
-							<p className="text-primary text-sm mt-10">
-								Term 1 from 3rd March to 14 April
-							</p>
-						</div>
-						<div className="w-1/2 ml-2">
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-							<div className="flex text-xs">
-								<div className="p-2 bg-white border border-gray2 w-1/3">
-									Math
-								</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">81</div>
-								<div className="p-2 bg-white border border-gray2 w-1/3">D1</div>
-							</div>
-						</div>
-					</div>
+
+							)
+						})
+					}
 				</div>
 			</div>
 		</div>

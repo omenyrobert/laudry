@@ -12,24 +12,23 @@ import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
 import multer from "multer";
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./public/images/students");
-  },
+  destination: "useruploads/",
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
   },
 });
 
 const upload = multer({ storage });
 
-
+const profilePictureUpload = upload.single("photo");
 
 export default (router: Router) => {
   const studentRoutePrefix = "/students";
   router.get(`${studentRoutePrefix}`, JWTAuthMiddleWare, fetchStudents);
   router.get(`${studentRoutePrefix}/:id`, JWTAuthMiddleWare, fetchSingleStudent);
   router.post(`${studentRoutePrefix}`, JWTAuthMiddleWare, validateStudentRequest, addStudent);
-  router.put(`${studentRoutePrefix}/edit`, JWTAuthMiddleWare, upload.any(), validateStudentRequest, editStudent);
+  router.put(`${studentRoutePrefix}/edit`, JWTAuthMiddleWare, profilePictureUpload, validateStudentRequest, editStudent);
   router.delete(`${studentRoutePrefix}/:id`, JWTAuthMiddleWare, removeStudent);
-  router.get(`${studentRoutePrefix}/paginated`, JWTAuthMiddleWare, fetchStudentsPanginated);
+  router.get(`${studentRoutePrefix}/fetch/paginated`, JWTAuthMiddleWare, fetchStudentsPanginated);
 };
