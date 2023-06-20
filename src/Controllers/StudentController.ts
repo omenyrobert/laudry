@@ -117,7 +117,6 @@ export const editStudent = async (req: Request, res: Response) => {
       gender,
       nationality,
       residence,
-      photo,
       fatherName,
       fatherContact,
       motherName,
@@ -129,6 +128,8 @@ export const editStudent = async (req: Request, res: Response) => {
       feesCategory,
       studentStream,
     } = req.body;
+
+    const photo = req.file ? req.file.filename : "";
 
     const student = await updateStudent(
       parseInt(id),
@@ -197,6 +198,10 @@ export const fetchSingleStudent = async (req: Request, res: Response) => {
 }
 
 export const fetchStudentsPanginated = async (req: Request, res: Response) => {
+  console.log("=================================")
+  console.log("Fetching paginated Students")
+  console.log(req.query)
+  console.log("=================================")
   try {
     const { page, limit } = req.query;
     if (!page || !limit) {
@@ -205,7 +210,9 @@ export const fetchStudentsPanginated = async (req: Request, res: Response) => {
         .status(400)
         .end();
     }
+    console.log(page, limit)
     const students = await getStudents(parseInt(page as string), parseInt(limit as string));
+    console.log(students)
     return res.json(customPayloadResponse(true, students)).status(200).end();
   } catch (error) {
     return res

@@ -46,83 +46,86 @@ const Students = () => {
 	})
 
 	useEffect(() => {
-		try {
-			fetchStudentInfo();
-			fetchStudentType();
-			fetchSchoolClasses();
-			fetchSchoolHouses();
-			fetchStreams();
-		} catch (error) {
-			const MySwal = withReactContent(Swal);
-			MySwal.fire({
-				icon: "error",
-				title: "Oops...",
-				text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
-			});
+		const fetchData = async () => {
+
+			try {
+				await fetchMoreStudents();
+				await fetchStudentType();
+				await fetchSchoolClasses();
+				await fetchSchoolHouses();
+				await fetchStreams();
+			} catch (error) {
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
+				});
+			}
 		}
+		fetchData();
 	}, []);
 
-	const fetchStudentType = () => {
-		axiosInstance.get("/student-types").then((response) => {
-			//console.log("response", response)
-			const { payload } = response.data;
+	const fetchStudentType = async () => {
+		const response = await axiosInstance.get("/student-types")
+		//console.log("response", response)
+		const { payload } = response.data;
 
-			const studenttypesArr = [];
-			for (let i = 0; i < payload.length; i++) {
-				studenttypesArr.push({
-					label: payload[i].type,
-					value: payload[i].type,
-					...payload[i],
-				});
-			}
-			setStudentTypes(studenttypesArr);
-		});
+		const studenttypesArr = [];
+		for (let i = 0; i < payload.length; i++) {
+			studenttypesArr.push({
+				label: payload[i].type,
+				value: payload[i].type,
+				...payload[i],
+			});
+		}
+		setStudentTypes(studenttypesArr);
+
 	};
 
-	const fetchSchoolClasses = () => {
-		axiosInstance.get("/class").then((response) => {
-			const { payload } = response.data;
-			const studentClassesArr = [];
-			for (let i = 0; i < payload.length; i++) {
-				studentClassesArr.push({
-					label: payload[i].class,
-					value: payload[i].class,
-					...payload[i],
-				});
-			}
-			setStudentClasses(studentClassesArr);
-		});
+	const fetchSchoolClasses = async () => {
+		const response = await axiosInstance.get("/class")
+		const { payload } = response.data;
+		const studentClassesArr = [];
+		for (let i = 0; i < payload.length; i++) {
+			studentClassesArr.push({
+				label: payload[i].class,
+				value: payload[i].class,
+				...payload[i],
+			});
+		}
+		setStudentClasses(studentClassesArr);
 	};
 
-	const fetchStreams = () => {
-		axiosInstance.get("/streams").then((response) => {
-			const { payload } = response.data;
-			const studentStreamsArr = [];
-			for (let i = 0; i < payload.length; i++) {
-				studentStreamsArr.push({
-					label: payload[i].stream,
-					value: payload[i].stream,
-					...payload[i],
-				});
-			}
-			setStreams(studentStreamsArr);
-		});
+	const fetchStreams = async () => {
+		const response = await axiosInstance.get("/streams")
+		const { payload } = response.data;
+		const studentStreamsArr = [];
+		for (let i = 0; i < payload.length; i++) {
+			studentStreamsArr.push({
+				label: payload[i].stream,
+				value: payload[i].stream,
+				...payload[i],
+			});
+		}
+		setStreams(studentStreamsArr);
+
 	};
 
-	const fetchSchoolHouses = () => {
-		axiosInstance.get("/houses").then((response) => {
-			const { payload } = response.data;
-			const studentHousesArr = [];
+	const fetchSchoolHouses = async () => {
+		const response = await axiosInstance.get("/houses")
+		const { payload } = response.data;
+		const studentHousesArr = [];
 
-			for (let i = 0; i < payload.length; i++) {
-				studentHousesArr.push({
-					label: payload[i].house,
-					value: payload[i].house,
-					...payload[i],
-				});
-			}
-			setStudentHouses(studentHousesArr);
-		});
+		for (let i = 0; i < payload.length; i++) {
+			studentHousesArr.push({
+				label: payload[i].house,
+				value: payload[i].house,
+				...payload[i],
+			});
+		}
+		setStudentHouses(studentHousesArr);
+
 	};
 
 	// fetch student info
@@ -261,33 +264,22 @@ const Students = () => {
 	const [page, setPage] = useState(0)
 	const [hasMore, setHasMore] = useState(true)
 
-	const fetchMoreStudents = () => {
+	const fetchMoreStudents = async () => {
 		const offset = 50
-		axiosInstance.get(`/students/paginated?limit=${offset}&page=${page}`)
-			.then((response) => {
-				const { payload } = response.data
-				if (payload.length === 0) {
-					setHasMore(false)
-				} else {
-					setStudentData([...studentData, ...payload])
-					setPage(page + 1)
-				}
-			})
-	}
+		const response = await axiosInstance.get(`/students/fetch/paginated?limit=${offset}&page=${page}`)
 
-
-	const handleScroll = (e) => {
-		const { scrollTop, clientHeight, scrollHeight } = e.currentTarget
-		if (scrollHeight - scrollTop === clientHeight) {
-			fetchMoreStudents()
+		const { payload } = response.data
+		if (payload.length === 0 || payload.length < offset) {
+			setStudentData([...studentData, ...payload])
+			setHasMore(false)
+		} else {
+			setStudentData([...studentData, ...payload])
+			setPage(page + 1)
 		}
+
 	}
 
-	useEffect(() => {
-		window.addEventListener("scroll", handleScroll)
 
-		return () => window.removeEventListener("scroll", handleScroll)
-	}, [])
 
 
 	// Export `studentData` to csv
@@ -453,6 +445,20 @@ const Students = () => {
 						deleteStudentInfo={deleteStudentInfo}
 						studentData={studentData}
 					/>
+				)}
+				{hasMore ? (
+					<div className="flex justify-center">
+						<button
+							onClick={fetchMoreStudents}
+							className="bg-secondary text-white p-2 rounded-md mt-2"
+						>
+							Load More
+						</button>
+					</div>
+				) : (
+					<div className="flex justify-center">
+						<p className="text-gray2">No more students to load</p>
+					</div>
 				)}
 			</div>
 		</div>
