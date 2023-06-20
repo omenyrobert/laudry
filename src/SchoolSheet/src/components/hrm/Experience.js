@@ -103,7 +103,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									
 								/>
 								<InputField
-									type="text"
+									type="date"
 									placeholder="From"
 									label="From Date"
 									onChange={(e) => setFrom(e.target.value)}
@@ -113,7 +113,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 							</div>
 							<div className="w-1/2 p-3 -mt-5">
 								<InputField
-									type="text"
+									type="date"
 									placeholder="To"
 									label="To Date"
 									onChange={(e) => setTo(e.target.value)}

@@ -16,6 +16,7 @@ import withReactContent from "sweetalert2-react-content";
 import ButtonAlt from "../../components/ButtonAlt";
 import { useDispatch, useSelector } from 'react-redux';
 import { getSections } from "../../store/schoolSheetSlices/schoolStore";
+import Loader from "../../components/Loader"
 
 const Students = () => {
 	const dispatch = useDispatch();
@@ -448,6 +449,7 @@ const Students = () => {
 				)}
 				{hasMore ? (
 					<div className="flex justify-center">
+						<Loader/>
 						<button
 							onClick={fetchMoreStudents}
 							className="bg-secondary text-white p-2 rounded-md mt-2"
