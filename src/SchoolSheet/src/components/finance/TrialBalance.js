@@ -62,6 +62,32 @@ function TrialBalance() {
 			  
 			}
 		}, [accounts]);
+
+	const handleGeneratePDF = () => {
+		const documentWindow = window.open("", "PRINT", "height=600,width=1000");
+		const content = document.getElementById("ledger-table").outerHTML;
+	
+		documentWindow.document.write(
+			content
+		);
+		
+		// Get All stylesheets
+		const stylesheets = document.querySelectorAll("link");
+		// Append them to the head of the new window
+		stylesheets.forEach((stylesheet) => {
+			documentWindow.document.write(stylesheet.outerHTML)
+		});
+		// Get all style tags 
+		const styleTags = document.querySelectorAll("style");
+		// Append them to the head of the new window
+		styleTags.forEach((styleTag) => {
+			documentWindow.document.write(styleTag.outerHTML)
+		})
+	
+		setTimeout(() => {
+			documentWindow.print();
+		}, 1000);
+	};
 	
 	return (
 		<>
@@ -80,113 +106,115 @@ function TrialBalance() {
 						<div>
 							<InputField type="month" label="By Month" />
 						</div>
-						<div className="ml-5 mt-12">
+						<div className="ml-5 mt-12" onClick={handleGeneratePDF}>
 							<Button value={"Pdf"} />
 						</div>
 					</div>
 				</div>
 
-				<div className="flex bg-primary text-white mt-5">
-					<div className="border border-gray1 p-3  w-3/5">Accounts</div>
-					<div className="border border-gray1 p-3 w-1/5">Debit</div>
-					<div className="border border-gray1 p-3 w-1/5">Credit</div>
+				<div  id="ledger-table">
+					<div className="flex bg-primary text-white mt-5">
+						<div className="border border-gray1 p-3  w-3/5">Accounts</div>
+						<div className="border border-gray1 p-3 w-1/5">Debit</div>
+						<div className="border border-gray1 p-3 w-1/5">Credit</div>
+					</div>
+
+					<div className="border border-gray1 p-3 text-primary text-xl">
+						Assets
+					</div>
+					
+					{
+						currentAssets.map(curr => (
+							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+								<div className="border border-gray1 p-3  w-3/5">{curr.accountName}</div>
+								<div className="border border-gray1 p-3 w-1/5">{curr.amount}</div>
+								<div className="border border-gray1 p-3 w-1/5"></div>
+							</div>
+						))
+					}
+
+					{
+						nonCurrentAssets.map(nonCurr => (
+							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+								<div className="border border-gray1 p-3  w-3/5">{nonCurr.accountName}</div>
+								<div className="border border-gray1 p-3 w-1/5"></div>
+								<div className="border border-gray1 p-3 w-1/5">{nonCurr.amount}</div>
+							</div>
+						))
+					}
+					
+					<div className="border border-gray1 p-3 text-primary text-xl">
+						Liabilities
+					</div>
+
+					{
+						currentLiabilities.map(curr => (
+							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+								<div className="border border-gray1 p-3  w-3/5">{curr.accountName}</div>
+								<div className="border border-gray1 p-3 w-1/5">{curr.amount}</div>
+								<div className="border border-gray1 p-3 w-1/5"></div>
+							</div>
+						))
+					}
+
+					{
+						nonCurrentLiabilities.map(nonCurr => (
+							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+								<div className="border border-gray1 p-3  w-3/5">{nonCurr.accountName}</div>
+								<div className="border border-gray1 p-3 w-1/5"></div>
+								<div className="border border-gray1 p-3 w-1/5">{nonCurr.amount}</div>
+							</div>
+						))
+					}
+
+					<div className="border border-gray1 p-3 text-primary text-xl">
+						Incomes
+					</div>
+					
+					{
+						currentIncomes.map(curr => (
+							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+								<div className="border border-gray1 p-3  w-3/5">{curr.accountName}</div>
+								<div className="border border-gray1 p-3 w-1/5">{curr.amount}</div>
+								<div className="border border-gray1 p-3 w-1/5"></div>
+							</div>
+						))
+					}
+
+					{
+						nonCurrentIncomes.map(nonCurr => (
+							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+								<div className="border border-gray1 p-3  w-3/5">{nonCurr.accountName}</div>
+								<div className="border border-gray1 p-3 w-1/5"></div>
+								<div className="border border-gray1 p-3 w-1/5">{nonCurr.amount}</div>
+							</div>
+						))
+					}
+					
+					<div className="border border-gray1 p-3 text-primary text-xl">
+						Expenses
+					</div>
+
+					{
+						currentExpenses.map(curr => (
+							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+								<div className="border border-gray1 p-3  w-3/5">{curr.accountName}</div>
+								<div className="border border-gray1 p-3 w-1/5">{curr.amount}</div>
+								<div className="border border-gray1 p-3 w-1/5"></div>
+							</div>
+						))
+					}
+
+					{
+						nonCurrentExpenses.map(nonCurr => (
+							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+								<div className="border border-gray1 p-3  w-3/5">{nonCurr.accountName}</div>
+								<div className="border border-gray1 p-3 w-1/5"></div>
+								<div className="border border-gray1 p-3 w-1/5">{nonCurr.amount}</div>
+							</div>
+						))
+					}
 				</div>
-
-				<div className="border border-gray1 p-3 text-primary text-xl">
-					Assets
-				</div>
-				
-				{
-					currentAssets.map(curr => (
-						<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-							<div className="border border-gray1 p-3  w-3/5">{curr.accountName}</div>
-							<div className="border border-gray1 p-3 w-1/5">{curr.amount}</div>
-							<div className="border border-gray1 p-3 w-1/5"></div>
-						</div>
-					))
-				}
-
-				{
-					nonCurrentAssets.map(nonCurr => (
-						<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-							<div className="border border-gray1 p-3  w-3/5">{nonCurr.accountName}</div>
-							<div className="border border-gray1 p-3 w-1/5"></div>
-							<div className="border border-gray1 p-3 w-1/5">{nonCurr.amount}</div>
-						</div>
-					))
-				}
-				
-				<div className="border border-gray1 p-3 text-primary text-xl">
-					Liabilities
-				</div>
-
-				{
-					currentLiabilities.map(curr => (
-						<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-							<div className="border border-gray1 p-3  w-3/5">{curr.accountName}</div>
-							<div className="border border-gray1 p-3 w-1/5">{curr.amount}</div>
-							<div className="border border-gray1 p-3 w-1/5"></div>
-						</div>
-					))
-				}
-
-				{
-					nonCurrentLiabilities.map(nonCurr => (
-						<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-							<div className="border border-gray1 p-3  w-3/5">{nonCurr.accountName}</div>
-							<div className="border border-gray1 p-3 w-1/5"></div>
-							<div className="border border-gray1 p-3 w-1/5">{nonCurr.amount}</div>
-						</div>
-					))
-				}
-
-				<div className="border border-gray1 p-3 text-primary text-xl">
-					Incomes
-				</div>
-				 
-				{
-					currentIncomes.map(curr => (
-						<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-							<div className="border border-gray1 p-3  w-3/5">{curr.accountName}</div>
-							<div className="border border-gray1 p-3 w-1/5">{curr.amount}</div>
-							<div className="border border-gray1 p-3 w-1/5"></div>
-						</div>
-					))
-				}
-
-				{
-					nonCurrentIncomes.map(nonCurr => (
-						<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-							<div className="border border-gray1 p-3  w-3/5">{nonCurr.accountName}</div>
-							<div className="border border-gray1 p-3 w-1/5"></div>
-							<div className="border border-gray1 p-3 w-1/5">{nonCurr.amount}</div>
-						</div>
-					))
-				}
-				
-				<div className="border border-gray1 p-3 text-primary text-xl">
-					Expenses
-				</div>
-
-				{
-					currentExpenses.map(curr => (
-						<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-							<div className="border border-gray1 p-3  w-3/5">{curr.accountName}</div>
-							<div className="border border-gray1 p-3 w-1/5">{curr.amount}</div>
-							<div className="border border-gray1 p-3 w-1/5"></div>
-						</div>
-					))
-				}
-
-				{
-					nonCurrentExpenses.map(nonCurr => (
-						<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-							<div className="border border-gray1 p-3  w-3/5">{nonCurr.accountName}</div>
-							<div className="border border-gray1 p-3 w-1/5"></div>
-							<div className="border border-gray1 p-3 w-1/5">{nonCurr.amount}</div>
-						</div>
-					))
-				}
 			</div>
 		</>
 	);
