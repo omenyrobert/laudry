@@ -153,11 +153,11 @@ function StaffEditForm(props) {
 				<div className="flex p-3">
 					<div className="w-5/12 py-3 pl-3 pr-10">
 						<div className="flex justify-center">
-							<div className="w-1/2 flex">
+							<div className="flex">
 								<div>
 									<img
 										src={staffInfo?.profile_picture ? UPLOADS_URL + staffInfo?.profile_picture : "avata.jpeg"}
-										className="w-full object-cover rounded-full  border border-gray1 shadow"
+										className="w-60 h-60 object-cover rounded-full  border border-gray1 shadow"
 										alt={staffInfo?.firstName}
 									/>
 									<input onChange={handlePhotoChange} id="ppImage" type="file" hidden accept="image/*" />

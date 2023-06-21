@@ -36,7 +36,7 @@ function Journal() {
 		const years = Array(now - (now - 20))
 			.fill("")
 			.map((v, idx) => now - idx);
-	});
+	},[]);
 
 	// getAccounts
 	useEffect(() => {

@@ -8,7 +8,7 @@ const StudentsTable = (props) => {
 	const { studentData, deleteStudentInfo } = props;
 
 	return (
-		<div id="studentTable" className="h-[52vh] overflow-y-auto">
+		<div id="studentTable" className="h-[75vh] overflow-y-auto">
 			<table className="mt-4 w-full table-auto" >
 				<thead style={{ backgroundColor: "#0d6dfd10" }}>
 					<th className="p-2 text-primary text-sm text-left">Full Name</th>

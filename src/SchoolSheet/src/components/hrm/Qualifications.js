@@ -94,7 +94,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 					<div className="border absolute z-50 -mt-[200px] border-gray3 bg-white shadow h-[400px] rounded w-[700px] overflow-y-auto">
 						<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
 							<div>
-								<p>Add Next Of Kin</p>
+								<p>Add Qualification</p>
 							</div>
 							<div>
 								<p className="cursor-pointer" onClick={closeQualifications}>
@@ -113,7 +113,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 									
 								/>
 								<InputField
-									type="text"
+									type="date"
 									placeholder="From"
 									label="From Date"
 									onChange={(e) => setFrom(e.target.value)}
@@ -121,7 +121,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 									
 								/>
 								<InputField
-									type="text"
+									type="date"
 									placeholder="To"
 									label="To Date"
 									onChange={(e) => setTo(e.target.value)}
