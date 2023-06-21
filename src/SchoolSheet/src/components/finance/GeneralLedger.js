@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { getTransactions } from "../../store/schoolSheetSlices/schoolStore";
 import InputField from "../InputField";
@@ -12,6 +12,9 @@ export const formatDate = (dateString) => {
 
 function GeneralLedger() {
 	const dispatch = useDispatch();
+	const [fromDate, setFromDate] = useState("");
+	const [toDate, setToDate] = useState("");
+	const [filteredTransactions, setFilteredTransactions] = useState([]);
 
 	const { transactions, loading } = useSelector((state) => state.schoolStore);
 
@@ -19,6 +22,24 @@ function GeneralLedger() {
 	useEffect(() => {
 		dispatch(getTransactions());
 	}, [dispatch]);
+
+	useEffect(() => {
+		const filtered = transactions.filter((transaction) => {
+		  let include = true;
+	
+		  if (fromDate && transaction.date < fromDate) {
+			include = false;
+		  }
+	
+		  if (toDate && transaction.date > toDate) {
+			include = false;
+		  }
+	
+		  return include;
+		});
+	
+		setFilteredTransactions(filtered);
+	  }, [transactions, fromDate, toDate]);
 
 	const handleGeneratePDF = () => {
 		const documentWindow = window.open("", "PRINT", "height=600,width=1000");
@@ -56,10 +77,20 @@ function GeneralLedger() {
 					</div>
 					<div className="flex">
 						<div className="mr-3">
-							<InputField type="date" label="From" />
+							<InputField
+								type="date"
+								label="From" 
+								value={fromDate}
+								onChange={(e) => setFromDate(e.target.value)}
+							/>
 						</div>
 						<div className="mr-3">
-							<InputField type="date" label="to" />
+							<InputField
+								type="date"
+								label="to"
+								value={toDate}
+								onChange={(e) => setToDate(e.target.value)}
+							/>
 						</div>
 						<div>
 							<InputField type="month" label="By Month" />
@@ -83,7 +114,7 @@ function GeneralLedger() {
 						<div className="w-1/4 p-2">Balance</div>
 					</div>
 					{
-						transactions.map(transaction => (
+						filteredTransactions.map(transaction => (
 							<div className="flex border-b border-gray1 text-gray5 text-sm cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg"
 							key={transaction.transactionId}
 							>
