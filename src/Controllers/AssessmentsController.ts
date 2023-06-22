@@ -36,6 +36,8 @@ export const addAssessment = async (req: Request, res: Response) => {
       term,
       grade,
       examPercent,
+      stream,
+      points,
     } = req.body;
 
     if (!studentId) {
@@ -111,6 +113,8 @@ export const addAssessment = async (req: Request, res: Response) => {
       term,
       grade,
       examPercent,
+      stream,
+      points
     );
         
     return res
@@ -138,6 +142,8 @@ export const modifyAssessment = async (req: Request, res: Response) => {
       term,
       grade,
       examPercent,
+      stream,
+      points
     } = req.body;
 
     const assessmentId = id;
@@ -218,7 +224,9 @@ export const modifyAssessment = async (req: Request, res: Response) => {
         comment,
         term,
         grade,
-        examPercent
+        examPercent,
+        stream,
+        points
       );
 
       return res
