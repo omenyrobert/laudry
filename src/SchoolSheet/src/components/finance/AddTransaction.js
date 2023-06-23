@@ -39,7 +39,8 @@ function AddTransaction() {
 		{ label: "BILL", value: "bill", type: "bill" },
 		{ label: "LIABILITY", value: "liability", type: "liability" },
 		{ label: "EQUITY", value: "equity", type: "equity" },
-		{ label: "TRANSFER", value: "transfer", type: "transfer" },
+		{ label: "INVOICE", value: "invoice", type: "invoice" },
+		{ label: "RECEIPT", value: "receipt", type: "receipt" },
 	]
 
 
