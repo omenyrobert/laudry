@@ -1,26 +1,19 @@
 import React, { useEffect, useState } from "react";
 import '../../assets/styles/main.css';
-import Localbase from 'localbase';
+import { useDispatch, useSelector } from "react-redux";
 import ReportCardTemplate from '../../components/classes/ReportCardTemplate';
-
-let db = new Localbase('db');
+import { getStudents  } from "../../store/schoolSheetSlices/schoolStore"
 
 function ReportCards(props) {
-    const [studentData, setStudentData] = useState([]);
+    const dispatch = useDispatch();
     const [studentInfo, setStudentInfo] = useState();
+   
+    const { students } = useSelector((state) => state.schoolStore);
 
-    const fetchStudentInfo = () => {
-        db.collection('studentInfo')
-            .get()
-            .then((student) => {
-                const newData = student;
-                setStudentData(newData);
-            });
-    };
-
-    useEffect(() => {
-        fetchStudentInfo();
-    }, []);
+    // get students
+	useEffect(() => {
+		dispatch(getStudents());
+	}, [dispatch]);
 
     const [card, setCard] = useState(false);
     const openCard = (student) => {
@@ -73,7 +66,11 @@ function ReportCards(props) {
                     </th>
                 </thead>
                 <tbody>
-                    {studentData.map((student) => {
+                    {students.map((student) => {
+                        const studentType = student?.student_types[0];
+
+                        const _class = student?.classes[0]
+
                         return (
                             <tr
                                 className='shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md'
@@ -81,17 +78,17 @@ function ReportCards(props) {
                             >
                                 <td className='flex mx-4'>
                                     <div className='rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3'>
-                                        {student.firstName[0]}{' '}
-                                        {student.lastName[0]}
+                                        {student.firstName}{' '}
+                                        {student.lastName}
                                     </div>
                                     <div>
                                         <p className='text-sm p-3 -mt-1 text-gray5'>
                                             {student.firstName}{' '}
-                                            {student.middleName}{' '}
+                                            {student?.middleName}{' '}
                                             {student.lastName}
                                         </p>
                                         <p className='text-red text-xs -mt-3 ml-3'>
-                                            {student.nin}
+                                            {student?.nin}
                                         </p>
                                     </div>
                                 </td>
@@ -106,10 +103,10 @@ function ReportCards(props) {
                                     yrs
                                 </td>
                                 <td className='text-xs p-3 text-gray5'>
-                                    {student.gender.value}
+                                    {student.gender}
                                 </td>
                                 <td className='text-xs p-3 text-gray5'>
-                                    {student.studentType.value}
+                                    {studentType?.type}
                                 </td>
                                 <td className='text-xs p-3 text-gray5'>
                                     {student.fatherContact}
@@ -121,7 +118,7 @@ function ReportCards(props) {
                                     {student.email}
                                 </td>
                                 <td className='text-xs p-3 text-gray5'>
-                                    {student.studentClass.value}
+                                    {_class?.class}
                                 </td>
                                 <td className='text-xs p-3 text-gray5'>
                                     {student.residence}

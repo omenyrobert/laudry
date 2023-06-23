@@ -171,7 +171,7 @@ function Assessment() {
 												</p>
 												<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 z-50">
 													
-													{subjects.map((subject) => {
+													{subjects && subjects.map((subject) => {
 														return (
 														<div className="p-2 hover:bg-gray1"
 															onClick={() => openAdd({...student, selectedSubject: subject.subject})} 

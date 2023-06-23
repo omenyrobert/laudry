@@ -13,6 +13,7 @@ export function assessSubjects(data) {
         BOT: "0/0",
         MOT: "0/0",
         EOT: "0/0",
+        HolidayPackage: "0/0",
         totalMark: 0,
         totalPercent: 0,
         markGrade: 0,
@@ -32,6 +33,8 @@ export function assessSubjects(data) {
       result[subject].MOT = `${finalMark}/${examPercent}`;
     } else if (examType === "EOT") {
       result[subject].EOT = `${finalMark}/${examPercent}`;
+    } else if (examType === "Holiday Package") {
+      result[subject].HolidayPackage = `${finalMark}/${examPercent}`;
     }
 
     result[subject].markGrade =

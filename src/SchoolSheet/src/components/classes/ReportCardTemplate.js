@@ -1,44 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import Localbase from 'localbase';
-
-let db = new Localbase('db');
+import { useDispatch, useSelector } from "react-redux";
+import { getAssessments, getGrades, getSchools } from "../../store/schoolSheetSlices/schoolStore";
+import { assessSubjects, assignGrade } from "../../utils/assessment";
+import { UPLOADS_URL } from "../../axios-instance"
 
 function ReportCardTemplate({ closeCard, studentData }) {
+    const dispatch = useDispatch();
     const [name, setName] = useState('');
     const [motto, setMotto] = useState('');
     const [location, setLocation] = useState('');
     const [phones, setPhones] = useState('');
     const [emails, setEmails] = useState('');
-
-    const fetchAboutInfo = async () => {
-        console.log('fetched');
-        const aboutInfo = await db.collection('aboutInfoTbl').get();
-        // setName(aboutInfo[0].name);
-        // setMotto(aboutInfo[0].motto);
-        // setLocation(aboutInfo[0].location);
-        // setPhones(aboutInfo[0].phones);
-        // setEmails(aboutInfo[0].emails);
-    };
-
-    // fetching section
-    useEffect(() => {
-        fetchAboutInfo();
-    }, []);
-
     const [assessData, setAssessData] = useState([]);
-    const fetchAssessment = () => {
-        db.collection('assessTbl')
-            .get()
-            .then((student) => {
-                const newData = student;
-                setAssessData(newData);
-            });
-    };
 
-    // fetching subject
+    const { schools, assessments, grades } = useSelector((state) => state.schoolStore);
+
+    // get assessments
+	useEffect(() => {
+        dispatch(getAssessments());
+        dispatch(getGrades());
+        dispatch(getSchools());
+	}, [dispatch]);
+
     useEffect(() => {
-        fetchAssessment();
-    }, []);
+		if (assessments) {
+			const data = assessments.filter((assessment) => {
+				return assessment.studentId === studentData.id.toString()
+			});
+			setAssessData(assessSubjects(data));
+		}
+	}, [assessments, studentData.id]);
 
     return (
         <>
@@ -48,10 +39,14 @@ function ReportCardTemplate({ closeCard, studentData }) {
                         <div className=''>
                             <img
                                 className='w-28 h-28 object-cover rounded'
-                                src=''
-                                alt=''
+                                src={studentData.photo}
+                                alt='student_image'
                             />
-                            {/* school logo */}
+                            <img
+                                src={schools && schools.length > 0 && schools[0].logo ? UPLOADS_URL + schools[0].logo : "avatar.jpeg"}
+                                className="w-28 h-28 object-cover rounded"
+                                alt="school_logo"
+						    />
                         </div>
                         <div className='ml-5'>
                             <h1 className='text-2xl  font-semibold'>{name}</h1>
@@ -80,7 +75,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
                         <img
                             className='w-32 h-32 object-cover rounded'
                             src={studentData.photo}
-                            alt=''
+                            alt='student_image'
                         />
                     </div>
                     <div className='ml-5'>
@@ -94,7 +89,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
                             </div>
                             <div className='w-1/2'>
                                 <h1 className='text-gray5 text-md'>
-                                    {studentData?.studentClass?.value}
+                                    {studentData?.classes[0]?.class}
                                 </h1>
                             </div>
                         </div>
@@ -116,7 +111,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
                             </div>
                             <div className='w-1/2'>
                                 <h1 className='text-gray5 text-md'>
-                                    {studentData?.studentSection?.value}
+                                    {studentData?.student_types[0]?.type}
                                 </h1>
                             </div>
                         </div>
@@ -126,7 +121,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
                             </div>
                             <div className='w-1/2'>
                                 <h1 className='text-gray5 text-md'>
-                                    {studentData?.studentHouse?.value}
+                                    {studentData?.houses[0]?.house}
                                 </h1>
                             </div>
                         </div>
@@ -136,7 +131,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
                     <div className=' p-2 m-1 w-1/2 text-white'>SUBJECT</div>
                     <div className='p-2 m-1 w-1/2 text-white'>
                         <div className='flex'>
-                            <div className='w-3/12'>Exam</div>
+                            <div className='w-3/12'>Exam Type</div>
                             <div className='w-4/12 flex'>
                                 <div className='w-1/2'>Marks</div>
                                 <div className='w-1/2'></div>
@@ -146,46 +141,33 @@ function ReportCardTemplate({ closeCard, studentData }) {
                         </div>
                     </div>
                 </div>
-                {assessData.map((assess) => {
-                    if (studentData.id === assess.studentId) {
-                        return (
-                            <>
-                                <div
-                                    className='flex mx-4 text-gray5 text-xs'
-                                    key={assess.id}
-                                >
-                                    <div className=' p-2 m-1 w-1/2'>
-                                        {assess.subject?.value}
+                {assessData.map((data) => {
+					const gradeObj = assignGrade(data.markGrade, grades);
+					return (
+						<div className='flex mx-4 text-gray5 text-xs'>
+							<div className='p-2 m-1 w-1/2'>{data.subject}</div>
+                            <div  className='w-3/12'>
+                                <div className='flex'>
+                                    <div className='w-1/2 '>
+                                        <div className="p-1">BOT</div> <div className="p-1">{data.BOT}</div>
                                     </div>
-                                    <div className=' p-2 m-1 w-1/2'>
-                                        <div className='flex'>
-                                            <div className='w-3/12'>
-                                                {assess?.examType?.value}
-                                            </div>
-                                            <div className='w-4/12 flex'>
-                                                <div className='w-1/2'>
-                                                    {assess.finalMark}
-                                                </div>
-                                                <div className='w-1/2'>
-                                                    {assess.finalMark}/
-                                                    {assess?.examType?.percent}
-                                                </div>
-                                            </div>
-                                            <div className='w-2/12'>
-                                                {/* {assess.comment} */}
-                                            </div>
-                                            <div className='w-3/12'>
-                                                {assess.comment}
-                                            </div>
-                                        </div>
+                                    <div className='w-1/2'>
+                                        <div className="p-1">MOT</div> <div className="p-1">{data.MOT}</div>
+                                    </div>
+                                    <div className='w-1/2'>
+                                        <div className="p-1">EOT</div> <div className="p-1">{data.EOT}</div>
                                     </div>
                                 </div>
-                                <hr className='text-gray2 mx-5' />
-                            </>
-                        );
-                    }
-                    return null;
-                })}
+                            </div>
+							<div  className='p-2 m-1 w-1/2'>
+								<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div> 
+							</div>
+							<div  className='w-1/2'>
+								<div className="p-1">{gradeObj.grade}</div>
+							</div>
+						</div>
+					);
+				})}
 
                 <div className='flex mx-4 text-gray5 bg-primary3 text-sm font-medium'>
                     <div className=' p-2 m-1 w-1/2'>Total</div>
