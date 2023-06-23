@@ -10,6 +10,7 @@ import {
 	getAssessments,
 	getSubjects,
 	getStudents,
+	getTerms,
 } from "../../store/schoolSheetSlices/schoolStore";
 import { assessSubjects } from "../../utils/assessment";
 
@@ -20,14 +21,18 @@ function Assessment() {
 	const [studentInfo, setStudentInfo] = useState();
 	const [add, setAdd] = useState(false);
 	const [selectedSubject, setSelectedSubject] = useState("");
+	const [term, setTerm] = useState(null);
+	const [stream, setStream] = useState("");
 
-	const { examTypes, subjects, students } = useSelector((state) => state.schoolStore);
+	const { examTypes, subjects, students, terms } = useSelector((state) => state.schoolStore);
 
 	const openAdd = (student) => {
+		const { streams } = student;
 		setAdd(true);
 		setStudentId(student.id);
 		setStudentInfo(student);
 		setSelectedSubject(student.selectedSubject);
+		setStream(streams.length > 0 && streams[0].stream)
 	};
 	const closeAdd = () => {
 		setAdd(false);
@@ -46,6 +51,7 @@ function Assessment() {
 	useEffect(() => {
 		dispatch(getSubjects());
 		dispatch(getStudents());
+		dispatch(getTerms());
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -96,6 +102,14 @@ function Assessment() {
 		setEditDataId(student.id);
 	};
 
+
+	// set Term
+	useEffect(() => {
+		const _term = terms.length > 0 && 
+			terms.filter(term => term.is_selected === 0)[0]?.term;
+		setTerm(_term);
+	  }, [terms]);
+
 	return (
 		<div>
 			<div className="flex justify-between mr-5 mt-5">
@@ -107,69 +121,72 @@ function Assessment() {
 				</div>
 			</div>
 
-			<div className="w-full flex">
+			<div className="w-full flex overflow-y-auto">
 				<div className="w-4/12 bg-white p-3">
-					<InputField
-						placeholder="Search student..."
-						icon={<BsSearch className="mt-3 mr-4" />}
-					/>
-					<table className="mt-4 w-full table-auto">
-						<thead style={{ backgroundColor: "#0d6dfd10" }}>
-							<th className="p-2 text-primary text-sm text-left">Full Name</th>
+					<div className="bg-white p-3 overflow-y-auto h-[80vh]">
+						<InputField
+							placeholder="Search student..."
+							icon={<BsSearch className="mt-3 mr-4" />}
+						/>
+						<table className="mt-4 w-full table-auto">
+							<thead style={{ backgroundColor: "#0d6dfd10" }}>
+								<th className="p-2 text-primary text-sm text-left">Full Name</th>
 
-							<th className="p-2 text-primary text-sm text-left">Class</th>
+								<th className="p-2 text-primary text-sm text-left">Class</th>
 
-							<th className="p-2 text-primary text-sm text-left">Action</th>
-						</thead>
-						<tbody>
-							{studentData.map((student) => {
-								return (
-									<tr
-										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-										key={student.id}
-									>
-										<td className="flex">
-											<div className="rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
-												{student.firstName[0]} {student.lastName[0]}
-											</div>
-											<div>
-												<p className="text-sm p-3 -mt-1 text-gray5">
-													{student.firstName} {student.middleName}{" "}
-													{student.lastName}
+								<th className="p-2 text-primary text-sm text-left">Action</th>
+							</thead>
+							<tbody>
+								{studentData && studentData.map((student) => {
+									const { classes } = student;
+									return (
+										<tr
+											className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+											key={student.id}
+										>
+											<td className="flex">
+												<div className="rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
+													{student.firstName[0]} {student.lastName[0]}
+												</div>
+												<div>
+													<p className="text-sm p-3 -mt-1 text-gray5">
+														{student.firstName} {student.middleName}{" "}
+														{student.lastName}
+													</p>
+													<p className="text-red text-xs -mt-3 ml-3">
+														{student.nin}
+													</p>
+												</div>
+											</td>
+
+											<td className="text-xs p-3 text-gray5">
+												{classes.length > 0 && classes[0].class}
+											</td>
+
+											<td className="text-sm p-3">
+												<p
+													className="p-2 relative rounded assess bg-primary3 text-primary"
+												>
+													Assess
 												</p>
-												<p className="text-red text-xs -mt-3 ml-3">
-													{student.nin}
-												</p>
-											</div>
-										</td>
-
-										<td className="text-xs p-3 text-gray5">
-											{student.studentClass.class}
-										</td>
-
-										<td className="text-sm p-3">
-											<p
-												className="p-2 relative rounded assess bg-primary3 text-primary"
-											>
-												Assess
-											</p>
-											<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 z-50">
-												
-												{subjects.map((subject) => {
-													return (
-													<div className="p-2 hover:bg-gray1"
-														onClick={() => openAdd({...student, selectedSubject: subject.subject})} 
-													>
-														{subject.subject} 
-													</div>);
-												})}
-											</div>
-										</td>
-									</tr>
-								);
-							})}
-						</tbody>
-					</table>
+												<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 z-50">
+													
+													{subjects.map((subject) => {
+														return (
+														<div className="p-2 hover:bg-gray1"
+															onClick={() => openAdd({...student, selectedSubject: subject.subject})} 
+														>
+															{subject.subject} 
+														</div>);
+													})}
+												</div>
+											</td>
+										</tr>
+									);
+								})}
+							</tbody>
+						</table>
+					</div>
 				</div>
 				<div className="w-8/12 ml-5">
 					
@@ -184,6 +201,8 @@ function Assessment() {
 							subjectsData={subjectsData}
 							assessSubject={selectedSubject}
 							assessAll={assessAll}
+							term={term}
+							stream={stream}
 						/>
 					) : null}
 				</div>
