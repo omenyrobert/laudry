@@ -318,7 +318,7 @@ function AssessmentForm({
 								<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div> <div className="p-1">{gradeObj.grade}</div>
 							</div>
 							<div className="w-1/4 flex  border-gray2 p-2 border">
-								<div className="p-1">Points</div> <div className="p-1">{data.totalPoints}</div>
+								<div className="p-1">Points</div> <div className="p-1">{gradeObj.points}</div>
 							</div>
 						</div>
 					);

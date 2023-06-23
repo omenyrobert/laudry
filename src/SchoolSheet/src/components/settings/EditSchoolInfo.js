@@ -67,7 +67,7 @@ function EditSchoolInfo() {
 		if (photo) {
 			formData.append("logo", photo);
 		}
-
+	
 		axiosInstance
 			.put(`schools`, formData, {
 				headers: {
