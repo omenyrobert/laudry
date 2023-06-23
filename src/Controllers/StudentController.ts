@@ -169,7 +169,7 @@ export const editStudent = async (req: Request, res: Response) => {
     }
   } catch (error) {
     return res
-      .json(customPayloadResponse(false, "An Error Occured"))
+      .json(customPayloadResponse(false, "An Error Occurred"))
       .status(500)
       .end();
   }
