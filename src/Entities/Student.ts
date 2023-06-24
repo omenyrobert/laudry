@@ -446,6 +446,14 @@ export const getStudents = async (page: number = 0, limit: number = 50) => {
 };
 
 
+
+export const updateStudentPhoto = async (id: number, photo: string) => {
+  await Student.update(id, {
+    photo: photo,
+  });
+  return true;
+}
+
 export const createDocument = async (studentId: number, url: string, name: string) => {
   
   const student = await Student.findOne({ where: { id: studentId } });
