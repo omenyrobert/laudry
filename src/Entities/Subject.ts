@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { 
+  Entity, 
+  PrimaryGeneratedColumn, 
+  Column, 
+  BaseEntity,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
+import  {Staff} from "./Staff";
 
 @Entity()
 export class Subject extends BaseEntity {
@@ -7,6 +15,18 @@ export class Subject extends BaseEntity {
 
   @Column()
   subject!: string;
+
+  @ManyToMany(() => Staff, {
+    cascade: true,
+    eager: false,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+    nullable: true,
+  })
+  @JoinTable({ name: "staff_subjects" })
+  staff: Staff[];
+
+
 }
 
 export const getSubjects = async () => {
