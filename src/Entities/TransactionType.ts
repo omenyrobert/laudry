@@ -15,7 +15,7 @@ export class TransactionType extends BaseEntity  {
   id!: number;
 
   @Column()
-  type!: "income" | "expense" | "bill" | "liability" | "asset" | "equity" | "transfer";
+  type!: string;
 
   @Column()
   name!: string;
@@ -43,7 +43,7 @@ export const createTransactionType = async (transactionType: TransactionTypeOBJ)
 }
 
 export const getTransTypesForSelectType = async (
-  type: "income" | "expense" | "bill" | "liability" | "asset" | "equity" | "transfer"
+  type: string
 ) => {
   const transactionTypes = await TransactionType.find({where: {type: type}});
   return transactionTypes;

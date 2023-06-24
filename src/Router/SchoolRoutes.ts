@@ -10,20 +10,21 @@ import {
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./public/images/schools");
-  },
+  destination: "useruploads/",
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
   },
 });
 
 const upload = multer({ storage });
 
+const schoolPictureUpload = upload.single("logo");
+
 export default (router: Router) => {
   const schoolPrefix = "/schools";
   router.get(`${schoolPrefix}`, JWTAuthMiddleWare, fetchSchools);
   router.post(`${schoolPrefix}`, JWTAuthMiddleWare, addSchool);
-  router.put(`${schoolPrefix}`, JWTAuthMiddleWare, upload.any(), modifySchool);
+  router.put(`${schoolPrefix}`, JWTAuthMiddleWare, schoolPictureUpload, modifySchool);
   router.delete(`${schoolPrefix}/:id`, JWTAuthMiddleWare, removeSchool);
 };

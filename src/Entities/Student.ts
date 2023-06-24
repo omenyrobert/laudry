@@ -5,6 +5,8 @@ import {
   Column,
   ManyToMany,
   JoinTable,
+  ManyToOne,
+  OneToMany,
 } from "typeorm";
 import { House, getSelectedHouses } from "./House";
 import { StudentType, selectedType } from "./StudentType";
@@ -125,7 +127,34 @@ export class Student extends BaseEntity {
   })
   @JoinTable({ name: "student_student_types" })
   student_types: StudentType[];
+
+  @OneToMany(() => StudentDocument, (studentDocument) => studentDocument.student,{
+    cascade: true,
+    eager: true,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+    nullable: true
+  })
+  documents: StudentDocument[];
+
 }
+
+
+@Entity()
+export class StudentDocument extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column()
+  url!: string;
+
+  @ManyToOne(() => Student, (student) => student.documents)
+  student: Student;
+
+  @Column()
+  name!: string;
+}
+
 
 const extractArrays = (array: [], key: string, extraData: number) => {
   let newArray = array.map((a: any) => a[key]);
@@ -417,9 +446,49 @@ export const getStudents = async (page: number = 0, limit: number = 50) => {
 };
 
 
+
 export const updateStudentPhoto = async (id: number, photo: string) => {
   await Student.update(id, {
     photo: photo,
   });
   return true;
 }
+
+export const createDocument = async (studentId: number, url: string, name: string) => {
+  
+  const student = await Student.findOne({ where: { id: studentId } });
+
+  if (!student) {
+    throw new Error("Student not found");
+  }
+
+  const document = await StudentDocument.save({
+    url: url,
+    name: name,
+    student: student
+  });
+
+  return document;
+};
+
+export const getStudentDocuments = async (studentId: number) => {
+
+  const student = await Student.findOne({ where: { id: studentId } });
+
+  if (!student) {
+    throw new Error("Student not found");
+  }
+
+  return student.documents;
+};
+
+export const deleteStudentDocument = async (id: number) => {
+  const document = await StudentDocument.delete(id);
+  if (document) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+

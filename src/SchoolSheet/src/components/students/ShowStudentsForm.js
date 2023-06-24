@@ -16,6 +16,7 @@ const ShowStudentsForm = () => {
 	const { toggleFeedback, setLoading } = useFeedback()
 	const fileInput = useRef(null);
 
+
 	const [student, setStudent] = useState({})
 
 	const fetchUserData = () => {
@@ -45,7 +46,7 @@ const ShowStudentsForm = () => {
 		fetchUserData()
 	}, [studentId])
 
-	const onPhotoChange = (e) => {
+const onPhotoChange = (e) => {
 
 		if (e.target.files.length === 0) {
 			toggleFeedback("error", {
@@ -83,6 +84,76 @@ const ShowStudentsForm = () => {
 			})
 		})
 	}
+
+
+	function onFileChange(e) {
+		const file = e.target.files[0];
+		const formData = new FormData();
+		formData.append("document", file);
+		formData.append("student", studentId);
+
+		axiosInstance.post("/students/document", formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		}).then((response) => {
+			const { status, payload } = response.data;
+			console.log('student', payload)
+
+			if (status === false) {
+				toggleFeedback("error", {
+					title: "Oops...",
+					text: payload,
+				})
+				return;
+			}
+      fetchUserData()
+			toggleFeedback("success", {
+				title: "Success",
+				text: "Succefully Uploaded document",
+			})
+		}).catch((error) => {
+			toggleFeedback("error", {
+				title: "Oops...",
+				text: "Something went wrong",
+			})
+			console.log(error)
+		})
+	}
+
+
+
+
+	function deleteDocument(documentID) {
+		axiosInstance.delete(`/students/document/delete/${documentID}`)
+			.then((response) => {
+				const { status, payload } = response.data;
+				console.log('student', payload)
+
+				if (status === false) {
+					toggleFeedback("error", {
+						title: "Oops...",
+						text: payload,
+					})
+					return;
+				}
+
+				toggleFeedback("success", {
+					title: "Success",
+					text: "Succefully Deleted document",
+				})
+			}).catch((error) => {
+				toggleFeedback("error", {
+					title: "Oops...",
+					text: "Something went wrong",
+				})
+				console.log(error)
+			})
+	}
+
+
+
+
 
 	return (
 		<div className=" bg-white h-full">
@@ -166,9 +237,16 @@ const ShowStudentsForm = () => {
 						<div>
 							<p className="text-secondary font-bold text-2xl">Documents</p>
 						</div>
-						<Button2 value={"Doc"} />
+						<input id="documentInput" type="file" onChange={onFileChange} hidden={true} />
+						<Button2 value={"Doc"} onClick={() => {
+							const input = document.getElementById("documentInput")
+							input.click()
+						}} />
 
 					</div>
+					{/* Display documents */}
+
+
 
 				</div>
 				<div className="w-1/2 p-5 h-[85vh] overflow-y-auto">

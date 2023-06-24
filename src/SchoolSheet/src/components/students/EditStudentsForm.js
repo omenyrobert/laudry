@@ -152,7 +152,7 @@ const EditStudentsForm = (props) => {
 				setFatherContact(payload.fatherContact);
 				setMotherName(payload.motherName);
 				setMotherContact(payload.motherContact);
-				setGender({ label: payload.gender, value: payload.gender })
+				setGender({ label: payload.gender?.toUpperCase(), value: payload.gender })
 				setNationality(payload.nationality);
 				setResidence(payload.residence);
 
@@ -255,6 +255,17 @@ const EditStudentsForm = (props) => {
 
 	};
 
+	const genderOptions = [
+		{
+			label: "MALE",
+			value: "male"
+		},
+		{
+			label: "FEMALE",
+			value: "female"
+		}
+	]
+
 	return (
 		<div className="bg-white h-full">
 			<div className="flex bg-gray1 p-3 justify-between">
@@ -283,10 +294,11 @@ const EditStudentsForm = (props) => {
 						<InputSelect
 							type="text"
 							placeholder="Select Gender"
-							label="Gender"
+							label="Genders"
 							name="gender"
 							selectedOption={gender}
 							onChange={setGender}
+							options={genderOptions}
 						/>
 
 						<InputField

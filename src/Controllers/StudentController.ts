@@ -6,6 +6,9 @@ import {
   updateStudent,
   getSingleStudent,
   updateStudentPhoto,
+  createDocument,
+  getStudentDocuments,
+  deleteStudentDocument,
 } from "../Entities/Student";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -238,6 +241,95 @@ export const updateStudentPhotoController = async (req: Request, res: Response) 
         .end();
     }
   } catch (error) {
+    return res
+      .json(customPayloadResponse(false, "An Error Occured"))
+      .status(500)
+      .end();
+  }
+}
+
+
+export const addStudentDocument = async (req: Request, res: Response) => {
+  try {
+    const { student } = req.body;
+
+    if (!req.file) {
+      return res
+        .json(customPayloadResponse(false, "No File Uploaded"))
+        .status(400)
+        .end();
+    }
+
+
+    const file = req.file ? req.file.filename : "";
+    const filename = req.file ? req.file.originalname : "";
+    
+
+    const document = await createDocument(parseInt(student), file, filename);
+    if (document) {
+      return res
+        .json(customPayloadResponse(true, document))
+
+        .status(200)
+        .end();
+    } else {
+      return res
+        .json(customPayloadResponse(false, "Student Not Found"))
+        .status(404)
+        .end();
+    }
+  } catch (error) {
+    console.log(error)
+    return res
+      .json(customPayloadResponse(false, "An Error Occured"))
+      .status(500)
+      .end();
+  }
+}
+
+
+export const fetchStudentDocuments = async (req: Request, res: Response) => {
+  try {
+    const { student } = req.params;
+    const documents = await getStudentDocuments(parseInt(student));
+    if (documents) {
+      return res
+        .json(customPayloadResponse(true, documents))
+        .status(200)
+        .end();
+    } else {
+      return res
+        .json(customPayloadResponse(false, "Student Not Found"))
+        .status(404)
+        .end();
+    }
+  } catch (error) {
+    console.log(error)
+    return res
+      .json(customPayloadResponse(false, "An Error Occured"))
+      .status(500)
+      .end();
+  }
+}
+
+
+export const removeStudentDocument = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const document = await deleteStudentDocument(parseInt(id));
+    if (document) {
+      return res
+        .json(customPayloadResponse(true, "Document Deleted Successfully"))
+        .status(200)
+        .end();
+    } else {
+      return res
+        .json(customPayloadResponse(false, "Document Not Found"))
+        .status(404)
+        .end();
+    }
+  } catch (error) {
+    console.log(error)
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
