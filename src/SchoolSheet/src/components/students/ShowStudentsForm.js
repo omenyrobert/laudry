@@ -46,7 +46,7 @@ const ShowStudentsForm = () => {
 		fetchUserData()
 	}, [studentId])
 
-const onPhotoChange = (e) => {
+	const onPhotoChange = (e) => {
 
 		if (e.target.files.length === 0) {
 			toggleFeedback("error", {
@@ -107,7 +107,7 @@ const onPhotoChange = (e) => {
 				})
 				return;
 			}
-      fetchUserData()
+			fetchUserData()
 			toggleFeedback("success", {
 				title: "Success",
 				text: "Succefully Uploaded document",
@@ -137,6 +137,7 @@ const onPhotoChange = (e) => {
 					})
 					return;
 				}
+				fetchUserData()
 
 				toggleFeedback("success", {
 					title: "Success",
@@ -245,6 +246,25 @@ const onPhotoChange = (e) => {
 
 					</div>
 					{/* Display documents */}
+
+					{
+						student?.documents?.map((document, i) => {
+							return (
+								<div className="flex justify-between mt-5">
+									<div>
+										<p className="text-gray5">{document.name}</p>
+										<p className="text-gray5">{document.type}</p>
+
+										<button onClick={() => {
+											deleteDocument(document.id)
+										}} className="loginBtn px-4 py-2 flex rounded-lg text-center cursor-pointer">Delete</button>
+										<hr className="text-gray3 mt-2" />
+									</div>
+								</div>
+							)
+						})
+					}
+
 
 
 
