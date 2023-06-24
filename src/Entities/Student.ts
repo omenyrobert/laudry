@@ -415,3 +415,11 @@ export const getStudents = async (page: number = 0, limit: number = 50) => {
   });
   return students;
 };
+
+
+export const updateStudentPhoto = async (id: number, photo: string) => {
+  await Student.update(id, {
+    photo: photo,
+  });
+  return true;
+}

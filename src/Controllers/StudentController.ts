@@ -5,6 +5,7 @@ import {
   deleteStudent,
   updateStudent,
   getSingleStudent,
+  updateStudentPhoto,
 } from "../Entities/Student";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -198,10 +199,6 @@ export const fetchSingleStudent = async (req: Request, res: Response) => {
 }
 
 export const fetchStudentsPanginated = async (req: Request, res: Response) => {
-  console.log("=================================")
-  console.log("Fetching paginated Students")
-  console.log(req.query)
-  console.log("=================================")
   try {
     const { page, limit } = req.query;
     if (!page || !limit) {
@@ -214,6 +211,32 @@ export const fetchStudentsPanginated = async (req: Request, res: Response) => {
     const students = await getStudents(parseInt(page as string), parseInt(limit as string));
     console.log(students)
     return res.json(customPayloadResponse(true, students)).status(200).end();
+  } catch (error) {
+    return res
+      .json(customPayloadResponse(false, "An Error Occured"))
+      .status(500)
+      .end();
+  }
+}
+
+
+export const updateStudentPhotoController = async (req: Request, res: Response) => {
+  try {
+    console.log("Uploading Files")
+    const { id } = req.params;
+    const photo = req.file ? req.file.filename : "";
+    const student = await updateStudentPhoto(parseInt(id), photo);
+    if (student) {
+      return res
+        .json(customPayloadResponse(true, "Student Photo Updated Successfully"))
+        .status(200)
+        .end();
+    } else {
+      return res
+        .json(customPayloadResponse(false, "Student Not Found"))
+        .status(404)
+        .end();
+    }
   } catch (error) {
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
