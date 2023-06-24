@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 
 import { Stream, getSelectedStream } from "./Stream";
+import { Staff } from "./Staff";
 
 @Entity()
 export class SchoolClass extends BaseEntity {
@@ -30,6 +31,16 @@ export class SchoolClass extends BaseEntity {
 
   @ManyToMany(() => Student, (student) => student.classes)
   students: [];
+
+  @ManyToMany(() => Staff, {
+    cascade: true,
+    eager: false,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+    nullable: true,
+  })
+  @JoinTable({ name: "staff_classes" })
+  staff: Staff[];
 }
 
 export const getClasses = async () => {

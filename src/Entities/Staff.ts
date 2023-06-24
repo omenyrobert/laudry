@@ -7,11 +7,15 @@ import {
   ManyToOne,
   OneToOne,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { StaffType } from "./StaffType";
 import { SalaryInfo } from "./SalaryInfo";
 import { PaySlip } from "./PaySlip";
 import { StaffProfile } from "./StaffProfile";
+import { Subject } from "./Subject";
+import { SchoolClass } from "./SchoolClass";
 
 @Entity()
 export class Staff extends BaseEntity {
@@ -99,6 +103,24 @@ export class Staff extends BaseEntity {
     })
   @JoinColumn()
   staffProfile!: StaffProfile;
+
+  @ManyToMany(() => Subject, {
+    cascade: true,
+    eager: true,
+    nullable: true,
+  })
+  @JoinTable({ name: "staff_subjects" })
+  subjects: Subject[];
+
+  @ManyToMany(() => SchoolClass, {
+    cascade: true,
+    eager: true,
+    nullable: true,
+  })
+  @JoinTable({ name: "staff_classes" })
+  classes: SchoolClass[];
+
+
 
 
 }
