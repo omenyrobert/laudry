@@ -37,9 +37,7 @@ function ReportCards(props) {
                     <th className='p-2 text-primary text-sm text-left'>
                         Full Name
                     </th>
-                    <th className='p-2 text-primary text-sm text-left'>
-                        Date Of Birth
-                    </th>
+                  
                     <th className='p-2 text-primary text-sm text-left'>
                         Gender
                     </th>
@@ -52,15 +50,11 @@ function ReportCards(props) {
                     <th className='p-2 text-primary text-sm text-left'>
                         Contacts
                     </th>
-                    <th className='p-2 text-primary text-sm text-left'>
-                        Email
-                    </th>
+                   
                     <th className='p-2 text-primary text-sm text-left'>
                         Class
                     </th>
-                    <th className='p-2 text-primary text-sm text-left'>
-                        Place Of Residence
-                    </th>
+                  
                     <th className='p-2 text-primary text-sm text-left'>
                         Action
                     </th>
@@ -78,8 +72,8 @@ function ReportCards(props) {
                             >
                                 <td className='flex mx-4'>
                                     <div className='rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3'>
-                                        {student.firstName}{' '}
-                                        {student.lastName}
+                                        {student.firstName[0]}{' '}
+                                        {student.lastName[0]}
                                     </div>
                                     <div>
                                         <p className='text-sm p-3 -mt-1 text-gray5'>
@@ -92,16 +86,7 @@ function ReportCards(props) {
                                         </p>
                                     </div>
                                 </td>
-                                <td className='text-xs p-3 text-gray5'>
-                                    {student.dateOfBirth} -{' '}
-                                    {Math.abs(
-                                        new Date().getFullYear() -
-                                            new Date(
-                                                student.dateOfBirth
-                                            ).getFullYear()
-                                    )}
-                                    yrs
-                                </td>
+                              
                                 <td className='text-xs p-3 text-gray5'>
                                     {student.gender}
                                 </td>
@@ -114,15 +99,11 @@ function ReportCards(props) {
                                 <td className='text-xs p-3 text-gray5'>
                                     {student.motherContact}
                                 </td>
-                                <td className='text-xs p-3 text-gray5'>
-                                    {student.email}
-                                </td>
+                               
                                 <td className='text-xs p-3 text-gray5'>
                                     {_class?.class}
                                 </td>
-                                <td className='text-xs p-3 text-gray5'>
-                                    {student.residence}
-                                </td>
+                               
                                 <td className='text-xs p-3 text-gray5 flex justify-between'>
                                     <div onClick={() => openCard(student)}>
                                         <p className='p-2 rounded text-primary'>

@@ -197,7 +197,7 @@ function AssessmentForm({
 
 	return (
 		<>
-			<div className="bg-white p-3 h-[75vh] overflow-y-auto">
+			<div className="bg-white p-3 h-[85vh] overflow-y-auto">
 				<div className="bg-gray1 p-2 font-semibold flex justify-between text-primary">
 					<div>
 						{studentData.firstName} {studentData.middleName}

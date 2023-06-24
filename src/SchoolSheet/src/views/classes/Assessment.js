@@ -123,7 +123,7 @@ function Assessment() {
 
 			<div className="w-full flex overflow-y-auto">
 				<div className="w-4/12 bg-white p-3">
-					<div className="bg-white p-3 overflow-y-auto h-[80vh]">
+					<div className="bg-white p-3 overflow-y-auto h-[83vh]">
 						<InputField
 							placeholder="Search student..."
 							icon={<BsSearch className="mt-3 mr-4" />}

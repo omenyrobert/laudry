@@ -61,7 +61,7 @@ function Settings() {
 						<p>Logo</p>
 						<img
 							src={logo ? UPLOADS_URL + logo : "avatar.jpeg"}
-							className="w-full object-cover  rounded-full  border border-gray1 shadow"
+							className="w-36 h-36 object-cover  rounded-full  border border-gray1 shadow"
 							alt="school_logo"
 						/>
 						<p>Name</p>

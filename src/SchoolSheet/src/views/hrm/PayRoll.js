@@ -188,6 +188,7 @@ function PayRoll() {
 
 	const openPay = () => {
 		setPay(true);
+		setCreate(false);
 	};
 	const closePay = () => {
 		setPay(false);
@@ -197,6 +198,7 @@ function PayRoll() {
 	const [create, setCreate] = useState(false);
 	const openCreate = () => {
 		setCreate(true);
+		setPay(false);
 	};
 
 	const closeCreate = () => {
@@ -624,7 +626,7 @@ function PayRoll() {
 					</div>
 				</div>
 				{create ? (
-					<div className="absolute w-[400px] h-[30vh] overflow-y-auto bg-white shadow-lg rounded-md">
+					<div className="absolute w-[400px] h-[30vh] z-50 overflow-y-auto bg-white shadow-lg rounded-md">
 						<div className="text-primary p-3 flex justify-between rounded-md bg-gray1">
 							<div>Create Payslip</div>
 							<div>
@@ -650,7 +652,7 @@ function PayRoll() {
 				) : null}
 
 				{pay ? (
-					<div className="absolute w-1/2  bg-white shadow-lg rounded-md">
+					<div className="absolute w-1/2 z-50  bg-white shadow-lg rounded-md">
 						<div className="text-primary p-3 font-semibold flex justify-between rounded-md bg-gray1">
 							<div>Create Payslip</div>
 							<div>
