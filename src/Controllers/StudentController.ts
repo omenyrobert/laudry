@@ -5,6 +5,7 @@ import {
   deleteStudent,
   updateStudent,
   getSingleStudent,
+  updateStudentPhoto,
   createDocument,
   getStudentDocuments,
   deleteStudentDocument,
@@ -222,6 +223,31 @@ export const fetchStudentsPanginated = async (req: Request, res: Response) => {
 }
 
 
+export const updateStudentPhotoController = async (req: Request, res: Response) => {
+  try {
+    console.log("Uploading Files")
+    const { id } = req.params;
+    const photo = req.file ? req.file.filename : "";
+    const student = await updateStudentPhoto(parseInt(id), photo);
+    if (student) {
+      return res
+        .json(customPayloadResponse(true, "Student Photo Updated Successfully"))
+        .status(200)
+        .end();
+    } else {
+      return res
+        .json(customPayloadResponse(false, "Student Not Found"))
+        .status(404)
+        .end();
+    }
+  } catch (error) {
+    return res
+      .json(customPayloadResponse(false, "An Error Occured"))
+      .status(500)
+      .end();
+  }
+}
+
 
 export const addStudentDocument = async (req: Request, res: Response) => {
   try {
@@ -243,6 +269,7 @@ export const addStudentDocument = async (req: Request, res: Response) => {
     if (document) {
       return res
         .json(customPayloadResponse(true, document))
+
         .status(200)
         .end();
     } else {

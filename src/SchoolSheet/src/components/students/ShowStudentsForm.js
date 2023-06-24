@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import { BsCameraFill } from "react-icons/bs";
 import Button2 from "../Button2";
@@ -13,32 +13,77 @@ const ShowStudentsForm = () => {
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const studentId = searchParams.get("student");
-	const { toggleFeedback } = useFeedback()
+	const { toggleFeedback, setLoading } = useFeedback()
+	const fileInput = useRef(null);
 
 
 	const [student, setStudent] = useState({})
 
-	useEffect(() => {
+	const fetchUserData = () => {
+		setLoading(true)
 		axiosInstance.get(`/students/${studentId}`)
 			.then((response) => {
 				const { status, payload } = response.data;
 				console.log('student', payload)
 
 				if (status === false) {
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "error",
+					setLoading(false)
+					toggleFeedback("error", {
 						title: "Oops...",
 						text: payload,
-					});
+					})
 					return;
 				}
+
+				setLoading(false)
 
 				setStudent(payload)
 
 			})
+	}
+
+	useEffect(() => {
+		fetchUserData()
 	}, [studentId])
 
+	const onPhotoChange = (e) => {
+
+		if (e.target.files.length === 0) {
+			toggleFeedback("error", {
+				title: "Oops...",
+				text: "No file selected",
+			})
+			return;
+		}
+
+		const formData = new FormData();
+		formData.append("photo", e.target.files[0]);
+		axiosInstance.put(`/students/photo/${studentId}`, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		}).then((response) => {
+			const { status, payload } = response.data;
+			if (status === false) {
+				toggleFeedback("error", {
+					title: "Oops...",
+					text: payload,
+				})
+				return;
+			}
+			fetchUserData()
+			toggleFeedback("success", {
+				title: "Success",
+				text: "Successfully uploaded photo",
+			})
+
+		}).catch((error) => {
+			toggleFeedback("error", {
+				title: "Oops...",
+				text: "Something went wrong",
+			})
+		})
+	}
 
 
 	function onFileChange(e) {
@@ -62,7 +107,7 @@ const ShowStudentsForm = () => {
 				})
 				return;
 			}
-
+			fetchUserData()
 			toggleFeedback("success", {
 				title: "Success",
 				text: "Succefully Uploaded document",
@@ -75,6 +120,8 @@ const ShowStudentsForm = () => {
 			console.log(error)
 		})
 	}
+
+
 
 
 	function deleteDocument(documentID) {
@@ -90,6 +137,7 @@ const ShowStudentsForm = () => {
 					})
 					return;
 				}
+				fetchUserData()
 
 				toggleFeedback("success", {
 					title: "Success",
@@ -120,9 +168,14 @@ const ShowStudentsForm = () => {
 			</div>
 			<div className="flex">
 				<div className="w-1/2 p-5">
+					<input ref={fileInput} id="imageUpload" type="file" hidden={true} onChange={onPhotoChange} />
 					<div className="flex justify-between">
 						<div className="w-[250px] relative ">
-							<span className="text-white bg-secondary p-2 ml-[80%] mt-10 cursor-pointer  absolute rounded-full">
+							<span
+								onClick={() => {
+									fileInput.current.click();
+								}}
+								className="text-white bg-secondary p-2 ml-[80%] mt-10 cursor-pointer  absolute rounded-full">
 								<BsCameraFill className="text-2xl" />
 							</span>
 							<img
@@ -193,6 +246,25 @@ const ShowStudentsForm = () => {
 
 					</div>
 					{/* Display documents */}
+
+					{
+						student?.documents?.map((document, i) => {
+							return (
+								<div className="flex justify-between mt-5">
+									<div>
+										<p className="text-gray5">{document.name}</p>
+										<p className="text-gray5">{document.type}</p>
+
+										<button onClick={() => {
+											deleteDocument(document.id)
+										}} className="loginBtn px-4 py-2 flex rounded-lg text-center cursor-pointer">Delete</button>
+										<hr className="text-gray3 mt-2" />
+									</div>
+								</div>
+							)
+						})
+					}
+
 
 
 
