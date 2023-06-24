@@ -105,52 +105,54 @@ function ReportCardTemplate({ closeCard, studentData }) {
 					<div className="flex p-5">
 						<div className="">
 							<img
-								className="w-32 h-32 object-cover rounded"
-								src={studentData.photo}
+								className="w-32 h-32 object-cover rounded-md border border-gray1"
+								src={
+									studentData?.photo
+										? UPLOADS_URL + studentData?.photo
+										: "avata.jpeg"
+								}
 								alt="student_image"
 							/>
 						</div>
-						<div className="ml-5">
+						<div className="ml-5 w-1/4">
 							<h1 className="text-primary font-bold text-2xl">
 								{studentData.firstName} {studentData.middleName}{" "}
 								{studentData.lastName}
 							</h1>
-							<div className="flex mt-5">
+							<div className="flex text-sm">
 								<div className="w-1/2">
-									<h1 className="text-gray5 text-md">Class:</h1>
+									<h1 className="">Class:</h1>
 								</div>
 								<div className="w-1/2">
-									<h1 className="text-gray5 text-md">
+									<h1 className="text-gray5 ">
 										{studentData?.classes[0]?.class}
 									</h1>
 								</div>
 							</div>
-							<div className="flex mt-5">
+							<div className="flex text-sm">
 								<div className="w-1/2">
-									<h1 className="text-gray5 text-md">Section:</h1>
+									<h1 className="text-black">Section:</h1>
 								</div>
 								<div className="w-1/2">
-									<h1 className="text-gray5 text-md">Boarding</h1>
+									<h1 className="text-gray5 ">Boarding</h1>
 								</div>
 							</div>
-						</div>
-						<div className="mt-8 ">
-							<div className="flex ml-14 mt-5">
-								<div className="w-[200px]">
-									<h1 className="text-gray5 text-md">Student Type:</h1>
+							<div className="flex text-sm ">
+								<div className="w-1/2">
+									<h1 className="">Student Type:</h1>
 								</div>
 								<div className="w-1/2">
-									<h1 className="text-gray5 text-md">
+									<h1 className="text-gray5 ">
 										{studentData?.student_types[0]?.type}
 									</h1>
 								</div>
 							</div>
-							<div className="flex ml-14 mt-5">
-								<div className="w-[200px]">
-									<h1 className="text-gray5 text-md">House:</h1>
+							<div className="flex text-sm">
+								<div className="w-1/2">
+									<h1 className="">House:</h1>
 								</div>
 								<div className="w-1/2">
-									<h1 className="text-gray5 text-md">
+									<h1 className="text-gray5 ">
 										{studentData?.houses[0]?.house}
 									</h1>
 								</div>
@@ -171,6 +173,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 							</div>
 						</div>
 					</div>
+					{/* {assessData} */}
 					{assessData.map((data) => {
 						const gradeObj = assignGrade(data.markGrade, grades);
 						return (
@@ -178,6 +181,10 @@ function ReportCardTemplate({ closeCard, studentData }) {
 								<div className="p-2 m-1 w-1/2">{data.subject}</div>
 								<div className="w-3/12">
 									<div className="flex">
+										<div className="w-1/2 ">
+											<div className="p-1">HolidayPackage</div>{" "}
+											<div className="p-1">{data.HolidayPackage}</div>
+										</div>
 										<div className="w-1/2 ">
 											<div className="p-1">BOT</div>{" "}
 											<div className="p-1">{data.BOT}</div>

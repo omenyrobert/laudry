@@ -180,7 +180,7 @@ const ShowStudentsForm = () => {
 							</span>
 							<img
 								src={student?.photo ? UPLOADS_URL + student?.photo : "avata.jpeg"}
-								className="w-full object-cover  rounded-full  border border-gray1 shadow"
+								className="w-60 h-60 object-cover  rounded-full  border border-gray1 shadow"
 								alt="profp"
 							/>
 
