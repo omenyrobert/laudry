@@ -10,14 +10,11 @@ export function assessSubjects(data) {
     if (!result[subject]) {
       result[subject] = {
         subject: subject,
-        BOT: "0/0",
-        MOT: "0/0",
-        EOT: "0/0",
-        HolidayPackage: "0/0",
         totalMark: 0,
         totalPercent: 0,
         markGrade: 0,
         totalPoints: 0,
+        examTypes: [],
       };
     }
 
@@ -27,15 +24,12 @@ export function assessSubjects(data) {
       result[subject].totalPoints += parseFloat(points);
     }
 
-    if (examType === "BOT") {
-      result[subject].BOT = `${finalMark}/${examPercent}`;
-    } else if (examType === "MOT") {
-      result[subject].MOT = `${finalMark}/${examPercent}`;
-    } else if (examType === "EOT") {
-      result[subject].EOT = `${finalMark}/${examPercent}`;
-    } else if (examType === "Holiday Package") {
-      result[subject].HolidayPackage = `${finalMark}/${examPercent}`;
-    }
+    const examTypeData = {
+      type: examType,
+      markPercent: `${finalMark}/${examPercent}`,
+    };
+
+    result[subject].examTypes.push(examTypeData);
 
     result[subject].markGrade =
       (result[subject].totalMark / result[subject].totalPercent) * 100;
