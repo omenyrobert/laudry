@@ -111,7 +111,7 @@ export const updateAssessment = async (
     stream,
     points,
   });
-
+  
   return assessment;
 };
 

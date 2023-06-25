@@ -59,6 +59,7 @@ function Assessment() {
 			value: res.examType,
 			label: res.examType,
 			percent: res.mark,
+			id: res.id
 		}));
 		setExamTypesData(_examTypes);
 
@@ -79,7 +80,18 @@ function Assessment() {
 
 	useEffect(() => {
 		if (assessments) {
-			const data = assessments.filter((assessment) => {
+			const updatedAssessments = assessments.map((assessment) => {
+				const matchingExamType = 
+				examTypes.find((examType) => examType.id === parseFloat(assessment.examType));
+				if (matchingExamType) {
+				  return {
+					...assessment,
+					examType: matchingExamType.examType,
+				  };
+				}
+				return assessment;
+			  });
+			const data = updatedAssessments.filter((assessment) => {
 				return assessment.studentId === studentId.toString()
 			});
 			setAssessAll(assessSubjects(data));
@@ -89,7 +101,7 @@ function Assessment() {
 				});
 			setAssessData(studentAssessment);
 		}
-	}, [assessments, selectedSubject, studentId]);
+	}, [assessments, examTypes, selectedSubject, studentId]);
 
 	const [editData, setEditData] = useState(false);
 	const [editDataId, setEditDataId] = useState(false);

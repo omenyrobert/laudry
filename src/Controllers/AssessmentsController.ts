@@ -228,7 +228,6 @@ export const modifyAssessment = async (req: Request, res: Response) => {
         stream,
         points
       );
-
       return res
         .json(customPayloadResponse(true, "Assessment Modified"))
         .status(200)

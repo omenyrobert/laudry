@@ -73,7 +73,7 @@ function AssessmentForm({
 		try {
 			let body = {
 				studentId: studentId,
-				examType: selectedExam.value,
+				examType: selectedExam.id,
 				subject: assessSubject,
 				mark: formData.mark,
 				finalMark: _finalMark,
@@ -301,19 +301,18 @@ function AssessmentForm({
 
 
 				{assessAll.map((data) => {
+					const { examTypes }  = data;
 					const gradeObj = assignGrade(data.markGrade, grades);
 					return (
 						<div className=" flex text-sm bg-gray1 cursor-pointer">
 							<div className="w-1/4  border-gray2 border p-2">{data.subject}</div>
-							<div className="w-1/4 flex  border-gray2 p-2 border">
-								<div className="p-1">BOT</div> <div className="p-1">{data.BOT}</div>
-							</div>
-							<div className="w-1/4 flex  border-gray2 p-2 border">
-								<div className="p-1">MOT</div> <div className="p-1">{data.MOT}</div>
-							</div>
-							<div className="w-1/4 flex  border-gray2 p-2 border">
-								<div className="p-1">EOT</div> <div className="p-1">{data.EOT}</div>
-							</div>
+							{
+								examTypes.map(examType => (
+									<div className="w-1/4 flex  border-gray2 p-2 border">
+										<div className="p-1">{examType.type}</div> <div className="p-1">{examType.markPercent}</div>
+									</div>
+								))
+							}
 							<div className="w-1/4 flex  border-gray2 p-2 border">
 								<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div> <div className="p-1">{gradeObj.grade}</div>
 							</div>
