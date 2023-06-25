@@ -439,18 +439,6 @@ const Students = () => {
 						</div>
 					</div>
 				</div>
-
-				{search ? (
-					<StudentsTable
-						deleteStudentInfo={deleteStudentInfo}
-						studentData={searchedStudents}
-					/>
-				) : (
-					<StudentsTable
-						deleteStudentInfo={deleteStudentInfo}
-						studentData={studentData}
-					/>
-				)}
 				{hasMore ? (
 					<div className="flex justify-center">
 						<Loader/>
@@ -466,6 +454,18 @@ const Students = () => {
 						<p className="text-gray2">No more students to load</p>
 					</div>
 				)}
+				{search ? (
+					<StudentsTable
+						deleteStudentInfo={deleteStudentInfo}
+						studentData={searchedStudents}
+					/>
+				) : (
+					<StudentsTable
+						deleteStudentInfo={deleteStudentInfo}
+						studentData={studentData}
+					/>
+				)}
+				
 			</div>
 		</div>
 	);
