@@ -9,7 +9,8 @@ import {
   updateTransactionDoubleEntry,
   deleteTransactionDoubleEntry,
   getTransactionsByTransId,
-  getTransactionsByTransactionType
+  getTransactionsByTransactionType,
+  AmountType
 } from "../Entities/Transaction"
 
 export const addTransaction = async (req: Request, res: Response) => {
@@ -26,6 +27,8 @@ export const addTransaction = async (req: Request, res: Response) => {
       contacts,
       receipt,
       transactionTypeID,
+      amountToDebit,
+      amountToCredit,
     } = req.body;
 
     const file = req.file ? req.file.filename : null;
@@ -37,12 +40,6 @@ export const addTransaction = async (req: Request, res: Response) => {
         .end();
     }
 
-    if (!amount) {
-      return res
-        .json(customPayloadResponse(false, "Amount is required"))
-        .status(400)
-        .end();
-    }
 
 
     if (!transactionCategory) {
@@ -66,12 +63,24 @@ export const addTransaction = async (req: Request, res: Response) => {
         .end();
     }
 
-    
+    let amountObj: AmountType
+
+    if(amountToDebit && amountToCredit){
+      amountObj = {
+        debit: parseInt(amountToDebit),
+        credit: parseInt(amountToCredit)
+      }
+    } else {
+      amountObj = {
+        debit: parseInt(amount),
+        credit: parseInt(amount)
+      }
+    }
 
     const transaction = await createTransactionDoubleEntry(
       title,
-      parseInt(amount),
-      description,
+      amountObj,
+      description? description : null,
       transactionCategory,
       accountToDebit,
       accountToCredit,
@@ -121,6 +130,8 @@ export const updateTransaction = async (req: Request, res: Response) => {
       contacts,
       receipt,
       transactionTypeID,
+      amountToDebit,
+      amountToCredit,
     } = req.body
     const file = req.file ? req.file.filename : null;
 
@@ -138,12 +149,6 @@ export const updateTransaction = async (req: Request, res: Response) => {
         .end();
     }
 
-    if (!amount) {
-      return res
-        .json(customPayloadResponse(false, "Amount is required"))
-        .status(400)
-        .end();
-    }
 
 
     if (!transactionCategory) {
@@ -167,10 +172,24 @@ export const updateTransaction = async (req: Request, res: Response) => {
         .end();
     }
 
+    let amountObj: AmountType
+
+    if(amountToDebit && amountToCredit){
+      amountObj = {
+        debit: parseInt(amountToDebit),
+        credit: parseInt(amountToCredit)
+      }
+    } else {
+      amountObj = {
+        debit: parseInt(amount),
+        credit: parseInt(amount)
+      }
+    }
+
     const transaction = await updateTransactionDoubleEntry(
       transactionId,
       title,
-      parseInt(amount),
+      amountObj,
       description,
       transactionCategory,
       accountToDebit,

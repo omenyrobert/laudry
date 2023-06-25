@@ -202,9 +202,15 @@ export const createTransaction = async (
 
 
 
+export type AmountType= {
+  debit: number,
+  credit: number,
+} | number
+
+
 export const createTransactionDoubleEntry = async (
   title: string,
-  amount: number,
+  amount: AmountType,
   description: string,
   transactionCategory: string,
   accountToDebit: number,
@@ -236,13 +242,24 @@ export const createTransactionDoubleEntry = async (
     throw new Error("Account to credit not found");
   }
 
+  let amountToDebit = 0;
+  let amountToCredit = 0;
+
+  if (typeof amount === "number") {
+    amountToDebit = amount;
+    amountToCredit = amount;
+  } else {
+    amountToDebit = amount.debit;
+    amountToCredit = amount.credit;
+  }
+
   const transID = generateTransactionID()
 
   const debitAccountBalance = accountToDebitEntity.amount;
   const creditAccountBalance = accountToCreditEntity.amount;
   
-  const debitAccountBalanceAfterTransaction = debitAccountBalance + amount;
-  const creditAccountBalanceAfterTransaction = creditAccountBalance - amount;
+  const debitAccountBalanceAfterTransaction = debitAccountBalance + amountToDebit;
+  const creditAccountBalanceAfterTransaction = creditAccountBalance - amountToCredit;
 
   // Create Debit Transaction
   const debitTransaction = await createTransaction(
@@ -253,7 +270,7 @@ export const createTransactionDoubleEntry = async (
     transactionCategory,
     accountToDebit,
     debitAccountBalanceAfterTransaction,
-    amount,
+    amountToDebit,
     0,
     receivedBy,
     contacts,
@@ -272,7 +289,7 @@ export const createTransactionDoubleEntry = async (
     accountToCredit,
     creditAccountBalanceAfterTransaction,
     0,
-    amount,
+    amountToCredit,
     receivedBy,
     contacts,
     file,
@@ -383,7 +400,7 @@ export const updateTransaction = async (
 export const updateTransactionDoubleEntry = async (
   transId: string,
   title: string,
-  amount: number,
+  amount: AmountType,
   description: string,
   transactionCategory: string,
   accountToDebit: number,
@@ -472,9 +489,20 @@ export const updateTransactionDoubleEntry = async (
   const debitAccountBalance = accountToDebitEntity.amount;
   const creditAccountBalance = accountToCreditEntity.amount;
 
+  let amountToDebit = 0;
+  let amountToCredit = 0;
+
+  if (typeof amount === "number") {
+    amountToDebit = amount;
+    amountToCredit = amount;
+  } else {
+    amountToDebit = amount.debit;
+    amountToCredit = amount.credit;
+  }
+
   // Update new balances
-  const debitAccountBalanceAfterTransaction = debitAccountBalance + amount;
-  const creditAccountBalanceAfterTransaction = creditAccountBalance - amount;
+  const debitAccountBalanceAfterTransaction = debitAccountBalance + amountToDebit;
+  const creditAccountBalanceAfterTransaction = creditAccountBalance - amountToCredit;
 
   // Update new accounts
   accountToDebitEntity.amount = debitAccountBalanceAfterTransaction;
@@ -493,7 +521,7 @@ export const updateTransactionDoubleEntry = async (
     transactionCategory,
     accountToDebit,
     debitAccountBalanceAfterTransaction,
-    amount,
+    amountToDebit,
     0,
     receivedBy,
     contacts,
@@ -512,7 +540,7 @@ export const updateTransactionDoubleEntry = async (
     accountToCredit,
     creditAccountBalanceAfterTransaction,
     0,
-    amount,
+    amountToCredit,
     receivedBy,
     contacts,
     file,
