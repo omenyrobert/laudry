@@ -327,10 +327,14 @@ const Students = () => {
 
 	return (
 		<div className=" mt-2 w-full">
-			<h1 className="text-secondary font-semibold text-2xl ml-3">Students</h1>
+			
 			<div className="">
 				<div className="p-3 bg-white shadow-md border border-gray2">
+					
 					<div className="flex justify-between">
+					<div>
+						<h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">Students</h1>
+					</div>
 						<div className="w-4/12 ">
 							<form
 								className="w-full"
