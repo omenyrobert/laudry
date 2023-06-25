@@ -54,9 +54,9 @@ function PayRoll() {
 		axiosInstance.get("/pay-slip-categories").then((res) => {
 			const { payload } = res.data;
 			console.log(payload);
-			const newData = payload.map((payslip) => ({
-				value: payslip.category,
-				label: payslip.category,
+			const newData = payload?.map((payslip) => ({
+				value: payslip?.category,
+				label: payslip?.category,
 				...payslip,
 			}));
 			setPayslipTypeData(newData);
@@ -626,7 +626,7 @@ function PayRoll() {
 					</div>
 				</div>
 				{create ? (
-					<div className="absolute w-[400px] h-[30vh] z-50 overflow-y-auto bg-white shadow-lg rounded-md">
+					<div className="absolute w-[300px]  z-50  bg-white shadow-lg rounded-md">
 						<div className="text-primary p-3 flex justify-between rounded-md bg-gray1">
 							<div>Create Payslip</div>
 							<div>
