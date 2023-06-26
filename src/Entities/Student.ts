@@ -26,16 +26,22 @@ export class Student extends BaseEntity {
   @Column()
   firstName!: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   middleName!: string;
 
   @Column()
   lastName!: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   email!: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   phoneNumber!: string;
 
   @Column()

@@ -30,24 +30,9 @@ export const validateStudentRequest = (req: Request, res: Response, next: NextFu
       .json(customPayloadResponse(false, "First Name is required"))
       .status(400)
       .end();
-  } else if (!middleName) {
-    return res
-      .json(customPayloadResponse(false, "Middle Name is required"))
-      .status(400)
-      .end();
   } else if (!lastName) {
     return res
       .json(customPayloadResponse(false, "Last Name is required"))
-      .status(400)
-      .end();
-  } else if (!email) {
-    return res
-      .json(customPayloadResponse(false, "Email is required"))
-      .status(400)
-      .end();
-  } else if (!phoneNumber) {
-    return res
-      .json(customPayloadResponse(false, "Phone Number is required"))
       .status(400)
       .end();
   } else if (!dateOfBirth) {
