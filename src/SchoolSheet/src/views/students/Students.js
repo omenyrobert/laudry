@@ -36,6 +36,7 @@ const Students = () => {
 	const [searchedStudents, setSearchedStudents] = useState([]);
 	const [streams, setStreams] = useState([]);
 	const { sections } = useSelector((state) => state.schoolStore);
+	const [fetching, setFetching] = useState(false)
 
 	const sectionOptions = [];
 
@@ -48,13 +49,15 @@ const Students = () => {
 
 	useEffect(() => {
 		const fetchData = async () => {
+			setFetching(true)
 
 			try {
-				await fetchMoreStudents();
+				await fetchStudentInfo();
 				await fetchStudentType();
 				await fetchSchoolClasses();
 				await fetchSchoolHouses();
 				await fetchStreams();
+				setFetching(false)
 			} catch (error) {
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
@@ -62,6 +65,7 @@ const Students = () => {
 					title: "Oops...",
 					text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
 				});
+				setFetching(false)
 			}
 		}
 		fetchData();
@@ -130,11 +134,12 @@ const Students = () => {
 	};
 
 	// fetch student info
-	const fetchStudentInfo = () => {
-		axiosInstance.get("/students").then((response) => {
-			const { payload } = response.data;
-			setStudentData(payload);
-		});
+	const fetchStudentInfo = async () => {
+		const response = await axiosInstance.get("/students")
+		const { payload } = response.data;
+		setStudentData(payload);
+		console.log("payload", payload)
+
 	};
 
 	//deleting student
@@ -261,24 +266,23 @@ const Students = () => {
 		setShowFilter(!showFilter);
 	};
 
-	// Implement infinite scrolling pagination
-	const [page, setPage] = useState(0)
+	// Pangination
+	const [page, setPage] = useState(1)
 	const [hasMore, setHasMore] = useState(true)
+	const [paginatedData, setPaginatedData] = useState([])
 
-	const fetchMoreStudents = async () => {
-		const offset = 50
-		const response = await axiosInstance.get(`/students/fetch/paginated?limit=${offset}&page=${page}`)
-
-		const { payload } = response.data
-		if (payload.length === 0 || payload.length < offset) {
-			setStudentData([...studentData, ...payload])
+	useEffect(() => {
+		setPaginatedData(studentData.slice(0, page * 30))
+		// check if hasmore
+		if (studentData.length <= page * 30) {
 			setHasMore(false)
 		} else {
-			setStudentData([...studentData, ...payload])
-			setPage(page + 1)
+			setHasMore(true)
 		}
 
-	}
+	}, [page, studentData])
+
+
 
 
 
@@ -327,14 +331,14 @@ const Students = () => {
 
 	return (
 		<div className=" mt-2 w-full">
-			
+
 			<div className="">
 				<div className="p-3 bg-white shadow-md border border-gray2">
-					
+
 					<div className="flex justify-between">
-					<div>
-						<h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">Students</h1>
-					</div>
+						<div>
+							<h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">Students</h1>
+						</div>
 						<div className="w-4/12 ">
 							<form
 								className="w-full"
@@ -439,33 +443,29 @@ const Students = () => {
 						</div>
 					</div>
 				</div>
-				{hasMore ? (
+				{fetching ? (
 					<div className="flex justify-center">
-						<Loader/>
-						<button
-							onClick={fetchMoreStudents}
-							className="bg-secondary text-white p-2 rounded-md mt-2"
-						>
-							Load More
-						</button>
+						<Loader />
 					</div>
-				) : (
-					<div className="flex justify-center">
-						<p className="text-gray2">No more students to load</p>
-					</div>
-				)}
+				) : null}
 				{search ? (
 					<StudentsTable
 						deleteStudentInfo={deleteStudentInfo}
 						studentData={searchedStudents}
+						setPage={setPage}
+						page={page}
 					/>
 				) : (
 					<StudentsTable
 						deleteStudentInfo={deleteStudentInfo}
-						studentData={studentData}
+						studentData={paginatedData}
+						setPage={setPage}
+						page={page}
+						hasMore={hasMore}
+						length={studentData.length}
 					/>
 				)}
-				
+
 			</div>
 		</div>
 	);
