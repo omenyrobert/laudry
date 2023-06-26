@@ -181,7 +181,7 @@ function Assessment() {
 												>
 													Assess
 												</p>
-												<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 z-50">
+												<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 -mt-5 z-50">
 													
 													{subjects && subjects.map((subject) => {
 														return (

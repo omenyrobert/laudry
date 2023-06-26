@@ -5,10 +5,11 @@ import { Bs3SquareFill, BsFillPencilFill } from "react-icons/bs";
 import Button from "../Button";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
+import ButtonLoader from "../ButtonLoader";
 
 function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 	const [nok, setNok] = useState(false);
-	const { toggleFeedback } = useFeedback()
+	const { toggleFeedback } = useFeedback();
 
 	const openNok = () => {
 		setNok(true);
@@ -22,15 +23,16 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 	const [nokname, setNokName] = useState("");
 	const [nokContact, setNokContact] = useState("");
 
+	const [posting, setPosting] = useState(false);
 	const addNok = () => {
 		if (relationship === "" || nokname === "" || nokContact === "") {
 			toggleFeedback("error", {
 				title: "Oops...",
 				text: "Please fill all fields",
-			})
+			});
 			return;
 		}
-
+		setPosting(true);
 		const data = {
 			relationship,
 			name: nokname,
@@ -38,41 +40,43 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 			staff: staffId,
 		};
 
-		axiosInstance.post("/staff-profile/next-of-kin", data)
+		axiosInstance
+			.post("/staff-profile/next-of-kin", data)
 			.then((res) => {
 				const { status, payload } = res.data;
 				if (status === false) {
+					setPosting(false);
 					toggleFeedback("error", {
 						title: "Oops...",
 						text: payload,
-					})
+					});
 					return;
 				}
 				toggleFeedback("success", {
 					title: "Success",
 					text: "Next of kin added successfully",
-				})
+				});
 				fetchStaffInfo();
 				setNok(false);
 				setRelationship("");
 				setNokName("");
 				setNokContact("");
+				setPosting(false);
 			})
 			.catch((err) => {
 				console.log(err);
 				toggleFeedback("error", {
 					title: "Oops...",
 					text: "Something went wrong",
-				})
+				});
+				setPosting(false);
 			});
-
-	}
-
-
+		setPosting(false);
+	};
 
 	return (
 		<>
-			{nok ? (
+			{/* {nok ? (
 				<div className="border absolute z-50 md:-mt-[35vh] sm:-mt-[30vh] 2xl:-mt-[20vh]  lg:-mt-[25vh] xl:-mt-[35vh]  border-gray3 bg-white shadow h-auto rounded w-[40vw] overflow-y-auto">
 					<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
 						<div>
@@ -120,7 +124,7 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 						</div>
 					</div>
 				</div>
-			) : null}
+			) : null} */}
 			<div className="flex justify-between">
 				<div>
 					<p className="text-secondary text-xl font-semibold ml-5">
@@ -132,7 +136,6 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 					className="text-sm  flex text-primary cursor-pointer relative p-2 border border-primary rounded h-10 mt-5"
 				>
 					<BsFillPencilFill className="mr-2 mt-1" /> Next Of Kin
-
 				</div>
 				{nok ? (
 					<div className="border absolute z-50 -mt-[250px] border-gray3 bg-white shadow h-[300px] rounded w-[700px] overflow-y-auto">
@@ -154,7 +157,6 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 									label="Relationship"
 									onChange={(e) => setRelationship(e.target.value)}
 									value={relationship}
-									
 								/>
 								<InputField
 									type="text"
@@ -162,7 +164,6 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 									label="Name"
 									onChange={(e) => setNokName(e.target.value)}
 									value={nokname}
-									
 								/>
 							</div>
 							<div className="w-1/2 p-3 -mt-5">
@@ -173,28 +174,29 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 									name="Contacts"
 									onChange={(e) => setNokContact(e.target.value)}
 									value={nokContact}
-									
 								/>
 
 								<div onClick={addNok} className="mt-14">
-									<Button value={"Add Nok"} />
+									{posting ? <ButtonLoader /> : <Button value={"Add Nok"} />}
 								</div>
 							</div>
 						</div>
 					</div>
 				) : null}
 			</div>
-			{
-				staffProfile?.nextOfKin?.map((nok, index) => (
-					<div key={index} className="flex border-b border-gray1 mt-5">
-						<div className="p-2 w-1/3 text-sm text-gray5 truncate">{nok.relationship}</div>
-						<div className="p-2 w-1/3 text-sm text-gray5 truncate">{nok.name}</div>
-						<div className="p-2 w-1/3 text-sm text-gray5 truncate">{nok.contact}</div>
+			{staffProfile?.nextOfKin?.map((nok, index) => (
+				<div key={index} className="flex border-b border-gray1 mt-5">
+					<div className="p-2 w-1/3 text-sm text-gray5 truncate">
+						{nok.relationship}
 					</div>
-				))
-			}
-
-
+					<div className="p-2 w-1/3 text-sm text-gray5 truncate">
+						{nok.name}
+					</div>
+					<div className="p-2 w-1/3 text-sm text-gray5 truncate">
+						{nok.contact}
+					</div>
+				</div>
+			))}
 		</>
 	);
 }

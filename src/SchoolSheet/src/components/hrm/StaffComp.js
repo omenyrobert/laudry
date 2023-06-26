@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import StaffForm from "./StaffForm";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
-import { getStaffMembers } from '../../store/schoolSheetSlices/schoolStore';
+import { useDispatch, useSelector } from "react-redux";
+import { getStaffMembers } from "../../store/schoolSheetSlices/schoolStore";
 import Loader from "../Loader";
 // import ButtonLoader from "../ButtonLoader";
 
@@ -23,23 +23,25 @@ const StaffComp = () => {
 				<StaffForm />
 
 				{AllStaff ? (
-					<div className="h-[65vh] overflow-y-auto">
+					<div className="h-[70vh] overflow-y-auto">
 						<table className="mt-10 w-[98%]  table-auto">
 							<thead style={{ backgroundColor: "#0d6dfd10" }}>
-								<th className="p-2 text-primary text-sm text-left">Full Name</th>
+								<th className="p-2 text-primary text-sm text-left">
+									Full Name
+								</th>
 
 								<th className="p-2 text-primary text-sm text-left">
 									Place Of Residence
 								</th>
-								<th className="p-2 text-primary text-sm text-left">Staff Type</th>
-
+								<th className="p-2 text-primary text-sm text-left">
+									Staff Type
+								</th>
 
 								<th className="p-2 text-primary text-sm text-left">Classes</th>
-
+								<th className="p-2 text-primary text-sm text-left">Subjects</th>
 								<th className="p-2 text-primary text-sm text-left">Action</th>
 							</thead>
 							<tbody>
-
 								{/* <Loader/> */}
 
 								{staffMembers.map((staff) => {
@@ -54,7 +56,8 @@ const StaffComp = () => {
 												</div>
 												<div>
 													<p className="text-sm p-3 -mt-1 text-gray5">
-														{staff.first_name} {staff.middle_name} {staff.last_name}
+														{staff.first_name} {staff.middle_name}{" "}
+														{staff.last_name}
 													</p>
 												</div>
 											</td>
@@ -66,7 +69,12 @@ const StaffComp = () => {
 												{staff.staff_type.type}
 											</td>
 
-											<td className="text-xs p-3 text-gray5">{staff.classes}</td>
+											<td className="text-xs p-3 text-gray5">
+												{staff.classes}
+											</td>
+											<td className="text-xs p-3 text-gray5">
+												{staff.classes}
+											</td>
 
 											<td className="text-xs p-3 text-gray5 flex justify-between">
 												<Link to={"/staffEditForm?staffId=" + staff.id}>
@@ -80,9 +88,9 @@ const StaffComp = () => {
 						</table>
 					</div>
 				) : null}
-
+				<Loader />
 			</div>
 		</>
 	);
-}
+};
 export default StaffComp;

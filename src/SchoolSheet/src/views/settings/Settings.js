@@ -6,6 +6,7 @@ import Terms from "../../components/settings/Terms";
 import { useDispatch, useSelector } from "react-redux";
 import { getSchools } from "../../store/schoolSheetSlices/schoolStore";
 import { UPLOADS_URL } from "../../axios-instance"
+import Loader from "../../components/Loader";
 
 function Settings() {
 	const dispatch = useDispatch();
@@ -90,6 +91,7 @@ function Settings() {
 						<p className="text-sm text-gray4">
 							{sites}
 						</p>
+						<Loader/>
 					</div>
 					<div className="w-2/3 ml-10">
 						<Terms/>

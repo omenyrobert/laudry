@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { BsFillPencilFill } from "react-icons/bs";
 import InputField from "../InputField";
@@ -6,11 +5,9 @@ import Select from "react-select";
 import { FaPen } from "react-icons/fa";
 import InputSelect from "../InputSelect";
 import Button from "../Button";
-import axiosInstance from "../../axios-instance"
+import axiosInstance from "../../axios-instance";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-
-
 
 function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 	const [staffType, setStaffType] = useState(staffInfo.staffType);
@@ -21,7 +18,9 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 	const [email, setEmail] = useState(staffInfo.email);
 	const [nationality, setNationality] = useState(staffInfo.nationality);
 	const [residence, setResidence] = useState(staffInfo.address);
-	const [dateOfBirth, setDateOfBirth] = useState(new Date(staffInfo.date_of_birth));
+	const [dateOfBirth, setDateOfBirth] = useState(
+		new Date(staffInfo.date_of_birth)
+	);
 	const [maritalStatus, setMaritalStatus] = useState(staffInfo.marital_status);
 	const [gender, setGender] = useState(staffInfo.gender);
 
@@ -41,7 +40,7 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 			setResidence(staffInfo.address);
 			setDateOfBirth(new Date(staffInfo.date_of_birth));
 			setMaritalStatus(staffInfo.marital_status);
-			setGender(staffInfo.gender)
+			setGender(staffInfo.gender);
 		}
 	}, [staffInfo]);
 
@@ -61,8 +60,8 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 
 	const [options, setOptions] = useState();
 	const fetchStaffTypes = () => {
-
-		axiosInstance.get("/staffTypes")
+		axiosInstance
+			.get("/staffTypes")
 			.then((res) => {
 				const { status, payload } = res.data;
 				if (status) {
@@ -73,13 +72,11 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 					}));
 					setOptions(newDatas);
 				}
-			}).catch((err) => {
-				console.log(err);
 			})
-
-
+			.catch((err) => {
+				console.log(err);
+			});
 	};
-
 
 	useEffect(() => {
 		fetchStaffTypes();
@@ -99,7 +96,8 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 			date_of_birth: dateOfBirth,
 			marital_status: maritalStatus?.value,
 		};
-		axiosInstance.put(`/staff/profile/${staffId}`, data)
+		axiosInstance
+			.put(`/staff/profile/${staffId}`, data)
 			.then((res) => {
 				const { status, payload } = res.data;
 				if (status) {
@@ -112,134 +110,138 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 						text: payload,
 					});
 				}
-			}).catch((err) => {
-				console.log(err);
 			})
-	}
+			.catch((err) => {
+				console.log(err);
+			});
+	};
 	return (
 		<>
 			<div className="flex justify-between">
 				<div>
 					<p className="text-2xl text-primary font-bold mt-5">
-						{staffInfo?.first_name} {staffInfo?.middle_name}{" "} {staffInfo?.last_name}
+						{staffInfo?.first_name} {staffInfo?.middle_name}{" "}
+						{staffInfo?.last_name}
 					</p>
 					<p className="text-gray5">{staffInfo?.staff_type?.type}</p>
 				</div>
 				<div
 					onClick={openBasic}
-					className="text-sm  flex text-primary cursor-pointer relative p-2 border border-primary rounded h-10 mt-5"
+					className="text-sm  flex text-primary cursor-pointer  p-2 border border-primary rounded h-10 mt-5"
 				>
 					<BsFillPencilFill className="mr-2 mt-1" /> Edit Basic Info
 				</div>
 				{showBasic ? (
-					<div className="border absolute z-50  border-gray3 bg-white shadow h-auto rounded w-[40vw] -mt-[35vh] overflow-y-auto">
-						<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
-							<div>
-								<p>Edit Basic Info</p>
+					<div className=" bg-black/50 flex absolute h-full right-0 z-50 top-0 left-0">
+						<div onClick={closeBasic} className="w-3/12"></div>
+						<div className=" h-[80vh] overflow-y-auto bg-white w-6/12 rounded-md mt-[2vw]">
+							<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
+								<div>
+									<p>Edit Basic Info</p>
+								</div>
+								<div>
+									<p className="cursor-pointer" onClick={closeBasic}>
+										X
+									</p>
+								</div>
 							</div>
-							<div>
-								<p className="cursor-pointer" onClick={closeBasic}>X</p>
-							</div>
-						</div>
-						<div className="flex">
-							<div className="w-1/2 p-3">
-								<label className="text-gray4">Staff Type</label>
-								<Select
-									placeholder={"Select Staff Type"}
-									defaultValue={staffType}
-									onChange={setStaffType}
-									className="mt-1"
-									options={options}
-								/>
-								<InputField
-									type="text"
-									placeholder="Enter First Name"
-									label="First Name"
-									name="firstName"
-									onChange={(e) => setFirstName(e.target.value)}
-									value={firstName}
-									
-								/>
-								<InputField
-									type="text"
-									placeholder="Enter Middle Name"
-									label="Middle Name"
-									name="middleName"
-									onChange={(e) => setMiddleName(e.target.value)}
-									value={middleName}
-									
-								/>
-								<InputField
-									type="text"
-									placeholder="Enter Last Name"
-									label="Last Name"
-									name="lastName"
-									onChange={(e) => setLastName(e.target.value)}
-									value={lastName}
-									
-								/>
-								<InputField
-									type="text"
-									placeholder="eg 0700000, 0780000000"
-									label="Contacts"
-									name="phoneNumbers"
-									onChange={(e) => setPhoneNumbers(e.target.value)}
-									value={phoneNumbers}
-								/>
-								<InputField
-									type="date"
-									label="Date Of Birth"
-									name="dateOfBirth"
-									onChange={(e) => setDateOfBirth(e.target.value)}
-									value={dateOfBirth}
-								/>
-							</div>
-							<div className="w-1/2 p-3 -mt-5">
-								<InputField
-									type="email"
-									placeholder="Email Address"
-									label="Email Address"
-									name="email"
-									onChange={(e) => setEmail(e.target.value)}
-									value={email}
-								/>
-								<InputField
-									type="text"
-									placeholder="Enter Place of Residence"
-									label="Place of Residence"
-									name="residence"
-									onChange={(e) => setResidence(e.target.value)}
-									value={residence}
-									
-								/>
-								<InputField
-									type="text"
-									placeholder="Enter Nationality"
-									label="Nationality"
-									name="nationality"
-									onChange={(e) => setNationality(e.target.value)}
-									value={nationality}
-								/>
-								<label className="text-gray4">Marital Status</label>
-								<Select
-									placeholder={"Select Marital Status"}
-									defaultValue={maritalStatus}
-									onChange={setMaritalStatus}
-									className="mt-1"
-									options={maritalOptions}
-								/>
-								<br />
+							<div className="flex">
+								<div className="w-1/2 p-3">
+									<label className="text-gray4">Staff Type</label>
+									<Select
+										placeholder={"Select Staff Type"}
+										defaultValue={staffType}
+										onChange={setStaffType}
+										className="mt-1"
+										options={options}
+									/>
+									<InputField
+										type="text"
+										placeholder="Enter First Name"
+										label="First Name"
+										name="firstName"
+										onChange={(e) => setFirstName(e.target.value)}
+										value={firstName}
+									/>
+									<InputField
+										type="text"
+										placeholder="Enter Middle Name"
+										label="Middle Name"
+										name="middleName"
+										onChange={(e) => setMiddleName(e.target.value)}
+										value={middleName}
+									/>
+									<InputField
+										type="text"
+										placeholder="Enter Last Name"
+										label="Last Name"
+										name="lastName"
+										onChange={(e) => setLastName(e.target.value)}
+										value={lastName}
+									/>
+									<InputField
+										type="text"
+										placeholder="eg 0700000, 0780000000"
+										label="Contacts"
+										name="phoneNumbers"
+										onChange={(e) => setPhoneNumbers(e.target.value)}
+										value={phoneNumbers}
+									/>
+									<InputField
+										type="date"
+										label="Date Of Birth"
+										name="dateOfBirth"
+										onChange={(e) => setDateOfBirth(e.target.value)}
+										value={dateOfBirth}
+									/>
+								</div>
+								<div className="w-1/2 p-3 -mt-5">
+									<InputField
+										type="email"
+										placeholder="Email Address"
+										label="Email Address"
+										name="email"
+										onChange={(e) => setEmail(e.target.value)}
+										value={email}
+									/>
+									<InputField
+										type="text"
+										placeholder="Enter Place of Residence"
+										label="Place of Residence"
+										name="residence"
+										onChange={(e) => setResidence(e.target.value)}
+										value={residence}
+									/>
+									<InputField
+										type="text"
+										placeholder="Enter Nationality"
+										label="Nationality"
+										name="nationality"
+										onChange={(e) => setNationality(e.target.value)}
+										value={nationality}
+									/>
+									<label className="text-gray4">Marital Status</label>
+									<Select
+										placeholder={"Select Marital Status"}
+										defaultValue={maritalStatus}
+										onChange={setMaritalStatus}
+										className="mt-1"
+										options={maritalOptions}
+									/>
+									<br />
 
-								<InputSelect
-									selectedOption={gender}
-									onChange={setGender}
-									className="mt-1"
-								/>
-								<div onClick={updateBasicInfo} className="mt-14">
-									<Button value={"Update Basic Info"} />
+									<InputSelect
+										selectedOption={gender}
+										onChange={setGender}
+										className="mt-1"
+									/>
+									<div onClick={updateBasicInfo} className="mt-14">
+										<Button value={"Update Basic Info"} />
+									</div>
 								</div>
 							</div>
 						</div>
+						<div onClick={closeBasic} className="w-3/12"></div>
 					</div>
 				) : null}
 			</div>
@@ -249,21 +251,21 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 				<div>
 					<p className="text-gray5 font-light">{staffInfo?.email}</p>
 					<p className="text-gray5 font-light mt-2">{staffInfo?.gender}</p>
-					<p className="text-gray5 font-light mt-2">{staffInfo?.marital_status}</p>
+					<p className="text-gray5 font-light mt-2">
+						{staffInfo?.marital_status}
+					</p>
 					<p className="text-gray5 font-light mt-2">
 						{new Date(staffInfo?.date_of_birth).toDateString()} -
-						{new Date().getFullYear() - new Date(staffInfo?.date_of_birth).getFullYear()} years
+						{new Date().getFullYear() -
+							new Date(staffInfo?.date_of_birth).getFullYear()}{" "}
+						years
 					</p>
 				</div>
 				<div>
 					<p className="font-light">Location:</p>
 					<p className="text-gray5 font-light">{staffInfo?.address}</p>
-					<p className="mt-2">
-						Contacts
-					</p>
-					<p className="text-gray5 font-light">
-						{staffInfo?.phone_number}
-					</p>
+					<p className="mt-2">Contacts</p>
+					<p className="text-gray5 font-light">{staffInfo?.phone_number}</p>
 					<p className="mt-2">Nationality</p>
 					<p className="text-gray5 font-light">{staffInfo?.nationality}</p>
 				</div>

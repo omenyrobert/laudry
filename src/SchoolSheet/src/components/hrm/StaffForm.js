@@ -126,9 +126,7 @@ const StaffForm = (props) => {
 								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
 							/>
 						</div>
-						<div className="w-4/12 px-2">
-							<InputField placeholder="Filter By Type" />
-						</div>{" "}
+						
 					</div>
 				</div>
 			</div>

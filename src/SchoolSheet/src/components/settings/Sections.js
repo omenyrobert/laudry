@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getSections } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from '../../axios-instance';
 import ButtonLoader from "../ButtonLoader";
+import Loader from "../Loader";
 
 const Sections = () => {
 	const [showUpdate, setShowUpdate] = useState(false);
@@ -204,6 +205,7 @@ const Sections = () => {
 								</div>
 							</div>
 						))}
+						<Loader/>
 				</div>
 			</div>
 		</div>
