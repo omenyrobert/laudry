@@ -5,7 +5,7 @@ import { BsPencilSquare, BsEye } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
 const StudentsTable = (props) => {
-	const { studentData, deleteStudentInfo } = props;
+	const { studentData, deleteStudentInfo, setPage, page, hasMore, length } = props;
 
 	return (
 		<div id="studentTable">
@@ -80,27 +80,102 @@ const StudentsTable = (props) => {
 			</div>
 			<div className="p-1 bg-white flex justify-center">
 				<div className="flex text-primary text-sm">
-				<div className="py-1 px-3 border border-gray2">
+					<div
+						className={"py-1 px-3 border border-gray2  "}
+						aria-disabled={page === 1}
+						style={{
+							cursor: page === 1 ? "not-allowed" : "pointer",
+							color: page === 1 ? "gray" : "inherit",
+						}}
+						onClick={() => {
+							if (page === 1) return;
+							setPage(page - 1);
+						}}
+					>
 						Pre
 					</div>
-					<div className="py-1 px-3 border border-gray2">
+					<div
+						className={`py-1 px-3 border border-gray2 ${page === 1 ? "bg-primary text-white" : ""} `}
+						onClick={() => {
+							if (page === 1) return;
+							setPage(1);
+						}}
+						style={{
+							cursor: length < 30 ? "not-allowed" : "pointer",
+							color: length < 30 ? "gray" : null,
+						}}
+					>
 						30
 					</div>
-					<div className="py-1 px-3 border border-gray2">
+					<div
+						className={`py-1 px-3 border border-gray2 ${page === 2 ? "bg-primary text-white" : ""} `}
+						onClick={() => {
+							if (page === 2) return;
+							setPage(2);
+						}}
+						style={{
+							cursor: length < 60 ? "not-allowed" : "pointer",
+							color: length < 60 ? "gray" : null,
+						}}
+					>
 						60
 					</div>
-					<div className="py-1 px-3 border border-gray2">
+					<div
+						className={`py-1 px-3 border border-gray2 ${page === 3 ? "bg-primary text-white" : ""} `}
+						onClick={() => {
+							if (page === 3) return;
+							setPage(3);
+						}}
+						style={{
+							cursor: length < 90 ? "not-allowed" : "pointer",
+							color: length < 90 ? "gray" : null,
+						}}
+					>
 						90
 					</div>
-					<div className="py-1 px-3 border border-gray2">
+					<div
+						className={`py-1 px-3 border border-gray2 ${page === 4 ? "bg-primary text-white" : ""} `}
+						onClick={() => {
+							if (page === 4) return;
+							setPage(4);
+						}}
+						style={{
+							cursor: length < 120 ? "not-allowed" : "pointer",
+							color: length < 120 ? "gray" : null,
+						}}
+					>
 						120
-					</div><div className="py-1 px-3 border border-gray2">
+					</div>
+					<div
+						className={`py-1 px-3 border border-gray2 ${page === 5 ? "bg-primary text-white" : ""} `}
+						onClick={() => {
+							if (page === 5) return;
+							setPage(5);
+						}}
+						style={{
+							cursor: length < 150 ? "not-allowed" : "pointer",
+							color: length < 150 ? "gray" : null,
+						}}
+					>
 						150
 					</div>
-					<div className="py-1 px-3 border border-gray2">
-					Next
+					<div
+						className={
+							`py-1 px-3 border border-gray2`
+						}
+						aria-disabled={hasMore === false}
+						onClick={() => {
+							if (hasMore === false) return;
+							setPage(page + 1);
+						}}
+						style={{
+							cursor: hasMore === false ? "not-allowed" : "pointer",
+							color: hasMore === false ? "gray" : "inherit",
+						}}
+					>
+						Next
 					</div>
-					
+
 
 				</div>
 
