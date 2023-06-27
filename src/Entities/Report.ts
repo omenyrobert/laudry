@@ -42,6 +42,8 @@ async (
     term: number,
     studentId: number,
 ) => {
+  console.log("term", term);
+  console.log("studentId", studentId);
   const reportToInsert = await Report.insert({ action, stream, comment, classField, term, studentId });
   return reportToInsert;
 };

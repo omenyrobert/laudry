@@ -6,8 +6,14 @@ import {
 	getSchools,
 	getTerms,
 	getAssessmentsByTerm,
+	getDivisions,
+	getExamTypes,
 } from "../../store/schoolSheetSlices/schoolStore";
-import { assessSubjects, assignGrade } from "../../utils/assessment";
+import {
+	assessSubjects,
+	assignGrade,
+	findDivision,
+} from "../../utils/assessment";
 import { UPLOADS_URL } from "../../axios-instance";
 import Button from "../Button";
 import { BsTelephoneFill } from "react-icons/bs";
@@ -16,25 +22,35 @@ import { MdLocationPin } from "react-icons/md";
 
 function ReportCardTemplate({ closeCard, studentData }) {
 	const dispatch = useDispatch();
-	const [name, setName] = useState("");
-	const [motto, setMotto] = useState("");
-	const [location, setLocation] = useState("");
-	const [phones, setPhones] = useState("");
-	const [emails, setEmails] = useState("");
+	// const [name, setName] = useState("");
+	// const [motto, setMotto] = useState("");
+	// const [location, setLocation] = useState("");
+	// const [phones, setPhones] = useState("");
+	// const [emails, setEmails] = useState("");
 	const [term, setTerm] = useState(null);
 	const [assessData, setAssessData] = useState([]);
 	const [report, setReport] = useState(null);
+	const [points, setPoints] = useState(null);
 
-	const { schools, assessments, grades, terms, assessmentsByTerm, reports } =
-		useSelector((state) => state.schoolStore);
+	const {
+		schools,
+		assessments,
+		grades,
+		terms,
+		assessmentsByTerm,
+		reports,
+		divisions,
+		examTypes,
+	} = useSelector((state) => state.schoolStore);
 
 	// get assessments
 	useEffect(() => {
-		// dispatch(getAssessments());
 		dispatch(getGrades());
 		dispatch(getSchools());
 		dispatch(getTerms());
 		dispatch(getReports());
+		dispatch(getDivisions());
+		dispatch(getExamTypes());
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -42,10 +58,18 @@ function ReportCardTemplate({ closeCard, studentData }) {
 			const data = assessmentsByTerm.filter((assessment) => {
 				return assessment.studentId === studentData.id.toString();
 			});
-			setAssessData(assessSubjects(data));
-			console.log('dd',assessData);
+			const _data = assessSubjects(data);
+			const pointsData = _data.map(
+				(dt) => assignGrade(dt.markGrade, grades).points
+			);
+			const sumOfPoints = pointsData.reduce(
+				(accumulator, currentValue) => accumulator + currentValue,
+				0
+			);
+			setPoints(sumOfPoints);
+			setAssessData(_data);
 		}
-	}, [assessments, assessmentsByTerm, studentData.id]);
+	}, [assessments, assessmentsByTerm, grades, studentData.id]);
 
 	// set Term
 	useEffect(() => {
@@ -64,20 +88,14 @@ function ReportCardTemplate({ closeCard, studentData }) {
 	useEffect(() => {
 		const report =
 			reports.length > 0 &&
-			reports.filter(
-				(report) =>
-					report.term === term?.id &&
-					report.studentId === studentData?.id.toString()
-			)[0];
+			reports.filter((report) => {
+				return (
+					report.term === (term?.id ? term.id : "") &&
+					report.studentId === (studentData?.id ? studentData.id : "")
+				);
+			})[0];
 		setReport(report);
-	}, [reports, studentData?.id, term?.id]);
-
-	const examTypes = [
-		{ name: "Hp" },
-		{ name: "BOT" },
-		{ name: "MID" },
-		{ name: "EOT" },
-	];
+	}, [reports, studentData, term]);
 
 	return (
 		<>
@@ -140,8 +158,8 @@ function ReportCardTemplate({ closeCard, studentData }) {
 							<h1 className="font-bold text-3xl text-center">Report Card</h1>
 						</div>
 					</div>
-					<div className="flex p-5">
-						<div className="">
+					<div className="flex p-5 ">
+						<div className="w-2/12">
 							<img
 								className="w-32 h-32 object-cover rounded-md border border-gray1"
 								src={
@@ -152,21 +170,12 @@ function ReportCardTemplate({ closeCard, studentData }) {
 								alt="student_image"
 							/>
 						</div>
-						<div className="ml-5 w-1/4">
+						<div className="w-2/12">
 							<h1 className="text-primary font-bold text-2xl">
 								{studentData.firstName} {studentData.middleName}{" "}
 								{studentData.lastName}
 							</h1>
-							<div className="flex text-sm">
-								<div className="w-1/2">
-									<h1 className="">Class:</h1>
-								</div>
-								<div className="w-1/2">
-									<h1 className="text-gray5 ">
-										{studentData?.classes[0]?.class}
-									</h1>
-								</div>
-							</div>
+							
 							<div className="flex text-sm">
 								<div className="w-1/2">
 									<h1 className="text-black">Section:</h1>
@@ -196,6 +205,13 @@ function ReportCardTemplate({ closeCard, studentData }) {
 								</div>
 							</div>
 						</div>
+						<div className="flex justify-between w-8/12  p-5">
+							<div></div>
+							<div>
+								<p className="text-primary font-bold text-lg">Term 2</p>
+								<p className="text-primary font-semibold "> {studentData?.classes[0]?.class} </p>
+							</div>
+						</div>
 					</div>
 					<div className=" flex text-sm border-b text-white bg-primary border-gray1 mx-2 px-2 cursor-pointer">
 						<div className="w-1/4 p-2">Subjects</div>
@@ -209,10 +225,9 @@ function ReportCardTemplate({ closeCard, studentData }) {
 						<div className="w-1/4 p-2">Total</div>
 						<div className="w-1/4 p-2">Point</div>
 					</div>
-{/* <div>
+					{/* <div>
 {assessData[0].examTypes.type}
 </div> */}
-					
 
 					{assessData.map((data) => {
 						const { examTypes } = data;
@@ -222,7 +237,6 @@ function ReportCardTemplate({ closeCard, studentData }) {
 								<div className="w-1/4 p-2">{data.subject}</div>
 								{examTypes.map((examType) => (
 									<div className="w-1/4 flex  ">
-										{/* <div className="p-1">t{examType.name}</div>{" "} */}
 										<div className="p-1">{examType.markPercent}</div>
 									</div>
 								))}
@@ -238,13 +252,28 @@ function ReportCardTemplate({ closeCard, studentData }) {
 						);
 					})}
 
-					<div className="flex mx-4 text-gray5 bg-gray1 text-sm font-medium mt-5">
-						<div className=" p-2 m-1 w-1/2">Final Grading</div>
-						<div className=" p-2 m-1 w-1/2">First Grade</div>
+					<div className="mx-4 bg-gray1 font-medium mt-5">
+						<div className=" p-2 m-1 w-1/2 font-bold">
+							<p className="text-primary text-lg">
+								Division: {points && findDivision(points, divisions)?.division}
+							</p>
+							<p className="text-sm">total Points</p>
+						</div>
 					</div>
-					<div className="flex mx-4 text-gray5 bg-gray1 text-sm font-medium">
-						<div className=" p-2 m-1 w-1/2">Comments From Class Teacher</div>
-						<div className=" p-2 m-1 w-1/2">{report?.comment}</div>
+					<div className="flex mx-4 bg-gray1 text-sm font-medium">
+						<div className=" p-2 m-1 w-1/2 text-md">
+							Comments From Class Teacher
+							<p className="text-sm text-gray5">{report?.comment}</p>
+						</div>
+						<div className=" p-2 m-1 w-1/2 "></div>
+						<div className=" p-2 m-1 w-1/2">
+							Next Stream:{" "}
+							<span className="text-primary">{report?.stream}</span>
+						</div>
+						<div className=" p-2 m-1 w-1/2">
+							Next Class :{" "}
+							<span className="text-primary">{report?.classField}</span>
+						</div>
 					</div>
 				</div>
 			</div>
