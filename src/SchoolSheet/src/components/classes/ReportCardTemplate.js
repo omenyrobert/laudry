@@ -5,7 +5,7 @@ import {
 	getGrades,
 	getSchools,
 	getTerms,
-	getAssessmentsByTerm
+	getAssessmentsByTerm,
 } from "../../store/schoolSheetSlices/schoolStore";
 import { assessSubjects, assignGrade } from "../../utils/assessment";
 import { UPLOADS_URL } from "../../axios-instance";
@@ -25,9 +25,8 @@ function ReportCardTemplate({ closeCard, studentData }) {
 	const [assessData, setAssessData] = useState([]);
 	const [report, setReport] = useState(null);
 
-	const { schools, assessments, grades, terms, assessmentsByTerm, reports } = useSelector(
-		(state) => state.schoolStore
-	);
+	const { schools, assessments, grades, terms, assessmentsByTerm, reports } =
+		useSelector((state) => state.schoolStore);
 
 	// get assessments
 	useEffect(() => {
@@ -49,8 +48,8 @@ function ReportCardTemplate({ closeCard, studentData }) {
 
 	// set Term
 	useEffect(() => {
-		const _term = terms.length > 0 && 
-			terms.filter(term => term.is_selected === 1)[0];
+		const _term =
+			terms.length > 0 && terms.filter((term) => term.is_selected === 1)[0];
 		setTerm(_term);
 	}, [terms]);
 
@@ -62,11 +61,22 @@ function ReportCardTemplate({ closeCard, studentData }) {
 
 	// set Report
 	useEffect(() => {
-		const report = reports.length > 0 && 
-			reports.filter(report =>
-				report.term === term?.id && report.studentId === studentData?.id.toString())[0];
+		const report =
+			reports.length > 0 &&
+			reports.filter(
+				(report) =>
+					report.term === term?.id &&
+					report.studentId === studentData?.id.toString()
+			)[0];
 		setReport(report);
 	}, [reports, studentData?.id, term?.id]);
+
+	const examTypes = [
+		{ name: "Hp" },
+		{ name: "BOT" },
+		{ name: "MID" },
+		{ name: "EOT" },
+	];
 
 	return (
 		<>
@@ -91,9 +101,9 @@ function ReportCardTemplate({ closeCard, studentData }) {
 								<img
 									src={
 										schools && schools.length > 0 && schools[0]?.logo
-										  ? UPLOADS_URL + schools[0]?.logo
-										  : "avatar.jpeg"
-									}									  
+											? UPLOADS_URL + schools[0]?.logo
+											: "avatar.jpeg"
+									}
 									className="w-28 h-28 object-cover rounded"
 									alt="school_logo"
 								/>
@@ -186,144 +196,44 @@ function ReportCardTemplate({ closeCard, studentData }) {
 							</div>
 						</div>
 					</div>
-					<div className="flex bg-primary mx-4">
-						<div className=" p-2 m-1 w-1/2 text-white">SUBJECT</div>
-						<div className="p-2 m-1 w-1/2 text-white">
-							<div className="flex">
-								<div className="w-3/12">Exam Type</div>
-								<div className="w-4/12 flex">
-									<div className="w-1/2">Marks</div>
-									<div className="w-1/2"></div>
-								</div>
-								<div className="w-2/12">Grade</div>
-								<div className="w-3/12">Comment</div>
-							</div>
-						</div>
+					<div className=" flex text-sm border-b text-white bg-primary border-gray1 mx-2 px-2 cursor-pointer">
+						<div className="w-1/4 p-2">Subjects</div>
+						{examTypes.map((type) => {
+							return (
+								<>
+									<div className="w-1/4 p-2">{type.name}</div>
+								</>
+							);
+						})}
+						<div className="w-1/4 p-2">Total</div>
+						<div className="w-1/4 p-2">Point</div>
 					</div>
+
 					{/* {assessData} */}
 					{assessData.map((data) => {
+						const { examTypes } = data;
 						const gradeObj = assignGrade(data.markGrade, grades);
 						return (
-							<div className="flex mx-4 text-gray5 text-xs">
-								<div className="p-2 m-1 w-1/2">{data.subject}</div>
-								<div className="w-3/12">
-									<div className="flex">
-										<div className="w-1/2 ">
-											<div className="p-1">HolidayPackage</div>{" "}
-											<div className="p-1">{data.HolidayPackage}</div>
-										</div>
-										<div className="w-1/2 ">
-											<div className="p-1">BOT</div>{" "}
-											<div className="p-1">{data.BOT}</div>
-										</div>
-										<div className="w-1/2">
-											<div className="p-1">MOT</div>{" "}
-											<div className="p-1">{data.MOT}</div>
-										</div>
-										<div className="w-1/2">
-											<div className="p-1">EOT</div>{" "}
-											<div className="p-1">{data.EOT}</div>
-										</div>
+							<div className=" flex text-sm border-b text-gray5 border-gray1 mx-2 px-2 cursor-pointer">
+								<div className="w-1/4 p-2">{data.subject}</div>
+								{examTypes.map((examType) => (
+									<div className="w-1/4 flex  ">
+										{/* <div className="p-1">t{examType.name}</div>{" "} */}
+										<div className="p-1">{examType.markPercent}</div>
 									</div>
-								</div>
-								<div className="p-2 m-1 w-1/2">
-									<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div>
-								</div>
-								<div className="w-1/2">
+								))}
+								<div className="w-1/4 flex  ">
+									<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div>{" "}
 									<div className="p-1">{gradeObj.grade}</div>
+								</div>
+								<div className="w-1/4 flex  ">
+									<div className="p-1">Points</div>{" "}
+									<div className="p-1">{gradeObj.points}</div>
 								</div>
 							</div>
 						);
 					})}
 
-					<div className="flex mx-4 text-gray5 bg-primary3 text-sm font-medium">
-						<div className=" p-2 m-1 w-1/2">Total</div>
-						<div className=" p-2 m-1 w-1/2">
-							<div className="flex">
-								<div className="w-3/12">FINAL</div>
-								<div className="w-4/12 flex">
-									<div className="w-1/2">95%</div>
-									<div className="w-1/2">10/15</div>{" "}
-								</div>
-								<div className="w-2/12">D1</div>
-								<div className="w-3/12">Comment</div>
-							</div>
-						</div>
-					</div>
-					<hr className="text-gray4 mx-4 mt-5" />
-					{/* <div className='flex mx-4 text-gray5 text-xs'>
-                    <div className=' p-2 m-1 w-1/2'>SST</div>
-                    <div className=' p-2 m-1 w-1/2'>
-                        <div className='flex'>
-                            <div className='w-3/12'>HOLIDAY PACKAGE</div>
-                            <div className='w-4/12 flex'>
-                                <div className='w-1/2'>95%</div>
-                                <div className='w-1/2'>10/15</div>{' '}
-                            </div>
-                            <div className='w-2/12'>D1</div>
-                            <div className='w-3/12'>Comment</div>
-                        </div>
-                    </div>
-                </div>
-                <hr className='text-gray2 mx-5' />
-                <div className='flex mx-4 text-gray5 text-xs'>
-                    <div className=' p-2 m-1 w-1/2'>SST</div>
-                    <div className=' p-2 m-1 w-1/2'>
-                        <div className='flex'>
-                            <div className='w-3/12'>BOT</div>
-                            <div className='w-4/12 flex'>
-                                <div className='w-1/2'>95%</div>
-                                <div className='w-1/2'>10/15</div>{' '}
-                            </div>
-                            <div className='w-2/12'>D1</div>
-                            <div className='w-3/12'>Comment</div>
-                        </div>
-                    </div>
-                </div>
-                <hr className='text-gray2 mx-5' />
-                <div className='flex mx-4 text-gray5 text-xs'>
-                    <div className=' p-2 m-1 w-1/2'>SST</div>
-                    <div className=' p-2 m-1 w-1/2'>
-                        <div className='flex'>
-                            <div className='w-3/12'>MID</div>
-                            <div className='w-4/12 flex'>
-                                <div className='w-1/2'>95%</div>
-                                <div className='w-1/2'>10/15</div>{' '}
-                            </div>
-                            <div className='w-2/12'>D1</div>
-                            <div className='w-3/12'>Comment</div>
-                        </div>
-                    </div>
-                </div>
-                <hr className='text-gray2 mx-5' />
-                <div className='flex mx-4 text-gray5 text-xs'>
-                    <div className=' p-2 m-1 w-1/2'>SST</div>
-                    <div className=' p-2 m-1 w-1/2'>
-                        <div className='flex'>
-                            <div className='w-3/12'>END</div>
-                            <div className='w-4/12 flex'>
-                                <div className='w-1/2'>95%</div>
-                                <div className='w-1/2'>10/15</div>{' '}
-                            </div>
-                            <div className='w-2/12'>D1</div>
-                            <div className='w-3/12'>Comment</div>
-                        </div>
-                    </div>
-                </div>
-                <div className='flex mx-4 text-gray5 bg-primary3 text-sm font-medium'>
-                    <div className=' p-2 m-1 w-1/2'>Total</div>
-                    <div className=' p-2 m-1 w-1/2'>
-                        <div className='flex'>
-                            <div className='w-3/12'>FINAL</div>
-                            <div className='w-4/12 flex'>
-                                <div className='w-1/2'>95%</div>
-                                <div className='w-1/2'>10/15</div>{' '}
-                            </div>
-                            <div className='w-2/12'>D1</div>
-                            <div className='w-3/12'>Comment</div>
-                        </div>
-                    </div>
-                </div> */}
 					<div className="flex mx-4 text-gray5 bg-gray1 text-sm font-medium mt-5">
 						<div className=" p-2 m-1 w-1/2">Final Grading</div>
 						<div className=" p-2 m-1 w-1/2">First Grade</div>
