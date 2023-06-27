@@ -275,10 +275,10 @@ function AssessmentForm({
 											className="text-red w-4 h-4"
 											onClick={() => deleteAssess(student)}
 										/>
-										<BsPencilSquare
+										{/* <BsPencilSquare
 											className="text-warning h-4 w-4 ml-5"
 											onClick={() => openEditData(student)}
-										/>
+										/> */}
 									</div>
 								</div>
 							</div>
