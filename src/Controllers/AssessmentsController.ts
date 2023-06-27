@@ -5,6 +5,7 @@ import {
   updateAssessment,
   deleteAssessment,
   getSingleAssessment,
+  getAssessmentsByTerm
 } from "../Entities/Assessment";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -278,3 +279,29 @@ export const removeAssessment = async (req: Request, res: Response) => {
       .end();
     }
 }
+
+export const getAssessmentsByTermController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { term } = req.params;
+
+    if (!term || isNaN(Number(term))) {
+      return res
+        .status(400)
+        .json(customPayloadResponse(false, "Invalid term value"));
+    }
+
+    const assessments = await getAssessmentsByTerm(Number(term));
+
+    return res
+      .status(200)
+      .json(customPayloadResponse(true, assessments));
+  } catch (error) {
+    console.error("An error occurred while retrieving assessments:", error);
+    return res
+      .status(500)
+      .json(customPayloadResponse(false, "An error occurred"));
+  }
+};

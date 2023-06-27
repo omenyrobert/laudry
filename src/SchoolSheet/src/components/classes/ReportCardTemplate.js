@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	getAssessments,
+	getReports,
 	getGrades,
 	getSchools,
+	getTerms,
+	getAssessmentsByTerm
 } from "../../store/schoolSheetSlices/schoolStore";
 import { assessSubjects, assignGrade } from "../../utils/assessment";
 import { UPLOADS_URL } from "../../axios-instance";
@@ -19,27 +21,52 @@ function ReportCardTemplate({ closeCard, studentData }) {
 	const [location, setLocation] = useState("");
 	const [phones, setPhones] = useState("");
 	const [emails, setEmails] = useState("");
+	const [term, setTerm] = useState(null);
 	const [assessData, setAssessData] = useState([]);
+	const [report, setReport] = useState(null);
 
-	const { schools, assessments, grades } = useSelector(
+	const { schools, assessments, grades, terms, assessmentsByTerm, reports } = useSelector(
 		(state) => state.schoolStore
 	);
 
 	// get assessments
 	useEffect(() => {
-		dispatch(getAssessments());
+		// dispatch(getAssessments());
 		dispatch(getGrades());
 		dispatch(getSchools());
+		dispatch(getTerms());
+		dispatch(getReports());
 	}, [dispatch]);
 
 	useEffect(() => {
-		if (assessments) {
-			const data = assessments.filter((assessment) => {
+		if (assessmentsByTerm) {
+			const data = assessmentsByTerm.filter((assessment) => {
 				return assessment.studentId === studentData.id.toString();
 			});
 			setAssessData(assessSubjects(data));
 		}
-	}, [assessments, studentData.id]);
+	}, [assessments, assessmentsByTerm, studentData.id]);
+
+	// set Term
+	useEffect(() => {
+		const _term = terms.length > 0 && 
+			terms.filter(term => term.is_selected === 1)[0];
+		setTerm(_term);
+	}, [terms]);
+
+	useEffect(() => {
+		if (term && term.id) {
+			dispatch(getAssessmentsByTerm(term.id));
+		}
+	}, [dispatch, term]);
+
+	// set Report
+	useEffect(() => {
+		const report = reports.length > 0 && 
+			reports.filter(report =>
+				report.term === term?.id && report.studentId === studentData?.id.toString())[0];
+		setReport(report);
+	}, [reports, studentData?.id, term?.id]);
 
 	return (
 		<>
@@ -64,9 +91,9 @@ function ReportCardTemplate({ closeCard, studentData }) {
 								<img
 									src={
 										schools && schools.length > 0 && schools[0]?.logo
-											? UPLOADS_URL + schools[0]?.logo
-											: "avatar.jpeg"
-									}
+										  ? UPLOADS_URL + schools[0]?.logo
+										  : "avatar.jpeg"
+									}									  
 									className="w-28 h-28 object-cover rounded"
 									alt="school_logo"
 								/>
@@ -303,7 +330,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 					</div>
 					<div className="flex mx-4 text-gray5 bg-gray1 text-sm font-medium">
 						<div className=" p-2 m-1 w-1/2">Comments From Class Teacher</div>
-						<div className=" p-2 m-1 w-1/2">commment here</div>
+						<div className=" p-2 m-1 w-1/2">{report?.comment}</div>
 					</div>
 				</div>
 			</div>

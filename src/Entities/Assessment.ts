@@ -136,3 +136,15 @@ export const getSelectedAssessments = async (ids: any) => {
   
   return selectedAssessments;
 };
+
+export const getAssessmentsByTerm = async (term: number) => {
+  const assessments = await Assessment.find({
+    where: {
+      term: term,
+    },
+    order: {
+      id: "DESC",
+    },
+  });
+  return assessments;
+};
