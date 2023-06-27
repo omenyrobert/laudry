@@ -39,3 +39,8 @@ export function assessSubjects(data) {
 
   return Object.values(groupedData);
 }
+
+export const findDivision = (points, divisions) => divisions.find((division, index, arr) => {
+  const nextDivision = arr[index + 1];
+  return points >= division.points && (!nextDivision || points < nextDivision.points);
+});
