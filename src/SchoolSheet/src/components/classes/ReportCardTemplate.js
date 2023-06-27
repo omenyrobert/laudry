@@ -43,6 +43,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 				return assessment.studentId === studentData.id.toString();
 			});
 			setAssessData(assessSubjects(data));
+			console.log('dd',assessData);
 		}
 	}, [assessments, assessmentsByTerm, studentData.id]);
 
@@ -208,8 +209,11 @@ function ReportCardTemplate({ closeCard, studentData }) {
 						<div className="w-1/4 p-2">Total</div>
 						<div className="w-1/4 p-2">Point</div>
 					</div>
+{/* <div>
+{assessData[0].examTypes.type}
+</div> */}
+					
 
-					{/* {assessData} */}
 					{assessData.map((data) => {
 						const { examTypes } = data;
 						const gradeObj = assignGrade(data.markGrade, grades);
