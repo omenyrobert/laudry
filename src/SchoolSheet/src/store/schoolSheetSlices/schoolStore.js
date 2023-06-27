@@ -151,6 +151,23 @@ export const getTransactions = createAsyncThunk("/schoolSheet/transactions", asy
 	if (status) return payload;
 });
 
+export const getAssessmentsByTerm = createAsyncThunk(
+	"/schoolSheet/assessmentsByTerm",
+	async (termId) => {
+	  const assessments = await axiosInstance.get(`/assessments/term/${termId}`);
+	  const { data } = assessments;
+	  const { status, payload } = data;
+	  if (status) return payload;
+	}
+);
+
+
+export const getReports = createAsyncThunk("/schoolSheet/reports", async () => {
+	const reports = await axiosInstance.get("/reports");
+	const { data } = reports;
+	const { status, payload } = data;
+	if (status) return payload;
+});
 
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
@@ -176,6 +193,8 @@ export const schoolSheetSlices = createSlice({
 	  divisions: [],
 	  transactionsByAccountId: [],
 	  transactions: [],
+	  assessmentsByTerm: [],
+	  reports: [],
 	  loading: {
 		streams: false,
 		staffMembers: false,
@@ -198,6 +217,8 @@ export const schoolSheetSlices = createSlice({
 		divisions: false,
 		transactionsByAccountId: false,
 		transactions: false,
+		assessmentsByTerm: false,
+		reports: false,
 	  },
 	},
 	extraReducers: {
@@ -424,6 +445,26 @@ export const schoolSheetSlices = createSlice({
 	  },
 	  [getTransactions.rejected]: (state) => {
 		state.loading.transactions = false;
+	  },
+	  [getAssessmentsByTerm.pending]: (state) => {
+		state.loading.assessmentsByTerm = true;
+	  },
+	  [getAssessmentsByTerm.fulfilled]: (state, action) => {
+		state.loading.assessmentsByTerm = false;
+		state.assessmentsByTerm = action.payload;
+	  },
+	  [getAssessmentsByTerm.rejected]: (state) => {
+		state.loading.assessmentsByTerm = false;
+	  },
+	  [getReports.pending]: (state) => {
+		state.loading.reports = true;
+	  },
+	  [getReports.fulfilled]: (state, action) => {
+		state.loading.reports = false;
+		state.reports = action.payload;
+	  },
+	  [getReports.rejected]: (state) => {
+		state.loading.reports = false;
 	  },
 	},
 });

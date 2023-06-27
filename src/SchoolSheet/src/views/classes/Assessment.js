@@ -7,10 +7,10 @@ import InputField from "../../components/InputField";
 import { BsSearch } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	getAssessments,
 	getSubjects,
 	getStudents,
 	getTerms,
+	getAssessmentsByTerm
 } from "../../store/schoolSheetSlices/schoolStore";
 import { assessSubjects } from "../../utils/assessment";
 
@@ -24,7 +24,7 @@ function Assessment() {
 	const [term, setTerm] = useState(null);
 	const [stream, setStream] = useState("");
 
-	const { examTypes, subjects, students, terms } = useSelector((state) => state.schoolStore);
+	const { examTypes, subjects, students, terms, assessmentsByTerm  } = useSelector((state) => state.schoolStore);
 
 	const openAdd = (student) => {
 		const { streams } = student;
@@ -32,8 +32,9 @@ function Assessment() {
 		setStudentId(student.id);
 		setStudentInfo(student);
 		setSelectedSubject(student.selectedSubject);
-		setStream(streams.length > 0 && streams[0].stream)
+		setStream(streams && streams.length > 0 ? streams[0].stream : "");
 	};
+	  
 	const closeAdd = () => {
 		setAdd(false);
 	};
@@ -75,12 +76,8 @@ function Assessment() {
 	const { assessments } = useSelector((state) => state.schoolStore);
 
 	useEffect(() => {
-		dispatch(getAssessments());
-	}, [dispatch]);
-
-	useEffect(() => {
-		if (assessments) {
-			const updatedAssessments = assessments.map((assessment) => {
+		if (assessmentsByTerm) {
+			const updatedAssessments = assessmentsByTerm.map((assessment) => {
 				const matchingExamType = 
 				examTypes.find((examType) => examType.id === parseFloat(assessment.examType));
 				if (matchingExamType) {
@@ -101,7 +98,7 @@ function Assessment() {
 				});
 			setAssessData(studentAssessment);
 		}
-	}, [assessments, examTypes, selectedSubject, studentId]);
+	}, [assessments, assessmentsByTerm, examTypes, selectedSubject, studentId]);
 
 	const [editData, setEditData] = useState(false);
 	const [editDataId, setEditDataId] = useState(false);
@@ -118,9 +115,15 @@ function Assessment() {
 	// set Term
 	useEffect(() => {
 		const _term = terms.length > 0 && 
-			terms.filter(term => term.is_selected === 0)[0]?.term;
+			terms.filter(term => term.is_selected === 1)[0];
 		setTerm(_term);
-	  }, [terms]);
+	}, [terms]);
+	
+	useEffect(() => {
+		if (term && term.id) {
+			dispatch(getAssessmentsByTerm(term.id));
+		}
+	}, [dispatch, term]);
 
 	return (
 		<div>
@@ -149,7 +152,7 @@ function Assessment() {
 								<th className="p-2 text-primary text-sm text-left">Action</th>
 							</thead>
 							<tbody>
-								{studentData && studentData.map((student) => {
+								{studentData.length > 0 && studentData.map((student) => {
 									const { classes } = student;
 									return (
 										<tr
@@ -183,7 +186,7 @@ function Assessment() {
 												</p>
 												<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 -mt-5 z-50">
 													
-													{subjects && subjects.map((subject) => {
+													{subjects && subjects.length > 0 && subjects.map((subject) => {
 														return (
 														<div className="p-2 hover:bg-gray1"
 															onClick={() => openAdd({...student, selectedSubject: subject.subject})} 
