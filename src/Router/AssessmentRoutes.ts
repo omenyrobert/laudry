@@ -5,6 +5,7 @@ import {
   addAssessment,
   modifyAssessment,
   removeAssessment,
+  getAssessmentsByTermController
 } from "../Controllers/AssessmentsController";
 
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
@@ -15,4 +16,5 @@ export default (router: Router) => {
   router.post(`${assessmentPrefix}`, JWTAuthMiddleWare, addAssessment);
   router.put(`${assessmentPrefix}`, JWTAuthMiddleWare, modifyAssessment);
   router.delete(`${assessmentPrefix}/:id`, JWTAuthMiddleWare, removeAssessment);
+  router.get(`${assessmentPrefix}/term/:term`, JWTAuthMiddleWare, getAssessmentsByTermController);
 };

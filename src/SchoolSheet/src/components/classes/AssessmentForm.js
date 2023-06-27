@@ -5,16 +5,17 @@ import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { useNavigate } from "react-router-dom";
 import "../../assets/styles/main.css";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	getAssessments,
 	getGrades,
 	getClasses,
 	getStreams,
 	getStudents,
-	getDivisions 
+	getDivisions,
+	getAssessmentsByTerm 
 } from "../../store/schoolSheetSlices/schoolStore";
 import ButtonLoader from "../ButtonLoader";
 import axiosInstance from "../../axios-instance";
@@ -42,6 +43,7 @@ function AssessmentForm({
 	stream
 }) {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const [selectedExam, setSelectedExam] = useState(null);
 	const [finalMark, setFinalMark] = useState(null);
 	const [action, setAction] = useState(null);
@@ -51,7 +53,7 @@ function AssessmentForm({
 	const [streamProm, setStreamProm] = useState(null);
 	const [generalComment, setGeneralComment] = useState("");
 	const [isPosting, setIsPosting] = useState(false);
-	const { grades, classes, streams, divisions } = useSelector((state) => state.schoolStore);
+	const { grades, classes, streams, } = useSelector((state) => state.schoolStore);
 
 	const [formData, setFormData] = useState({
 		mark: "",
@@ -79,7 +81,7 @@ function AssessmentForm({
 				finalMark: _finalMark,
 				comment: formData.comment,
 				examPercent: selectedExam.percent,
-				term: term,
+				term: term?.id,
 				stream,
 				grade: gradeObj.grade,
 				points: gradeObj.points,
@@ -91,7 +93,7 @@ function AssessmentForm({
 				const { status } = data;
 
 				if (status) {
-					dispatch(getAssessments());
+					dispatch(getAssessmentsByTerm(term.id));
 					setFormData({
 						mark: "",
 						comment: "",
@@ -127,7 +129,7 @@ function AssessmentForm({
 					const { data } = response;
 					const { status } = data;
 					if (status) {
-						dispatch(getAssessments());
+						dispatch(getAssessmentsByTerm(term.id));
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
@@ -163,37 +165,56 @@ function AssessmentForm({
 
 	// update student on promotion
 	const updateStudent = async () => {
-		if (action.value === "promoted") {
-			try {
-				setIsPosting(true);
-				let formData = {
-					id: studentId,
-					studentClass: _class.value,
-					studentStream: streamProm.value,
-				};
-				const subject = await axiosInstance.put("/students/edit", formData);
-				const { data } = subject;
-				const { status } = data;
-				if (status) {
-					dispatch(getStudents());
-					setStreamOptions(null);
-					setClassOptions(null);
-					setGeneralComment("");
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-					closeAdd();
-					setIsPosting(false);
-				}
-			} catch (error) {
-				console.log(error);
-				setIsPosting(false);
+		try {
+		  setIsPosting(true);	  
+		  let reportData = {
+			action: action.value,
+			stream: streamProm.value,
+			comment: generalComment,
+			classField: _class.value,
+			term: term.id,
+			studentId: parseFloat(studentId),
+		  };
+	  
+		  const report = await axiosInstance.post("/reports", reportData);
+	  
+		  const { data } = report;
+		  const { status } = data;
+	  
+		  if (action.value === "promoted" && status) {
+			// TODO: // Add other student Fields
+			let formData = {
+			  id: studentId,
+			  studentClass: _class.value,
+			  studentStream: streamProm.value
+			};
+			const student = await axiosInstance.put("/students/edit", formData);
+	  
+			const { data: studentData } = student;
+			const { status: studentStatus } = studentData;
+			if (studentStatus) {
+			  dispatch(getStudents());
+			  setStreamOptions(null);
+			  setClassOptions(null);
+			  setGeneralComment("");
+			  const MySwal = withReactContent(Swal);
+			  MySwal.fire({
+				icon: "success",
+				showConfirmButton: false,
+				timer: 500
+			  });
+			  closeAdd();
+			  setIsPosting(false);
+			  navigate("/reportCards");
 			}
+		  }
+		} catch (error) {
+		  console.log(error);
+		  setIsPosting(false);
 		}
-	};
+		setIsPosting(false);
+		navigate("/reportCards");
+	  };
 
 	return (
 		<>
@@ -204,7 +225,7 @@ function AssessmentForm({
 						{studentData.lastName}
 					</div>
 					<div>{assessSubject}</div>
-					<div>{term}</div>
+					<div>{term?.term}</div>
 
 					<div className="cursor-pointer" onClick={closeAdd}>
 						X
