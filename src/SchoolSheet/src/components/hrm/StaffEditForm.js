@@ -27,37 +27,6 @@ function StaffEditForm(props) {
 	const staffId = searchParams.get("staffId");
 	const { closeEditData } = props;
 
-	const staffInfoEdit = {
-		classes: [
-			{
-				id: 1,
-				sclass: "Primary 1",
-			},
-			{
-				id: 2,
-				sclass: "Primary 2",
-			},
-			{
-				id: 3,
-				sclass: "Primary 3",
-			},
-		],
-		subjects: [
-			{
-				id: 1,
-				subjectName: "Math",
-			},
-			{
-				id: 2,
-				sclass: "SST",
-			},
-			{
-				id: 3,
-				sclass: "Nursery",
-			},
-		],
-	};
-
 	const [staffInfo, setStaffInfo] = useState({});
 	const [staffProfile, setStaffProfile] = useState({});
 
@@ -130,7 +99,28 @@ function StaffEditForm(props) {
 				console.log(err);
 			});
 	};
-
+	const roles = [
+		{
+			label: "Admin",
+			value: "admin",
+		},
+		{
+			label: "Fees",
+			value: "fees",
+		},
+		{
+			label: "Assessment",
+			value: "assessment",
+		},
+		{
+			label: "Hrm",
+			value: "hrm",
+		},
+		{
+			label: "Finance",
+			value: "finance",
+		},
+	];
 	return (
 		<>
 			<div className="bg-white h-[90vh] overflow-y-auto  ">
@@ -181,6 +171,34 @@ function StaffEditForm(props) {
 									>
 										<BsCameraFill className="w-4 m-2 text-center text-white h-4" />
 									</div>
+								</div>
+							</div>
+						</div>
+						<div className="bg-gray1 p-2 rounded-md">
+							<div className="w-40">
+								<Select
+									placeholder={"Select roles"}
+									// defaultValue={studentType}
+									name="studentType"
+									// onChange={setStudentType}
+									options={roles}
+								/>
+							</div>
+							<div className="flex overflow-x-auto gap-2 mt-1">
+								<div className="bg-white p-1 rounded-md">
+									Hrm <span className="cursor-pointer ml-2 text-red">X</span>
+								</div>
+								<div className="bg-white p-1 rounded-md">
+									Fees <span className="cursor-pointer ml-2 text-red">X</span>
+								</div>
+								<div className="bg-white p-1 rounded-md">
+									Finance <span className="cursor-pointer ml-2 text-red">X</span>
+								</div>
+								<div className="bg-white p-1 rounded-md">
+									Assessment <span className="cursor-pointer ml-2 text-red">X</span>
+								</div>
+								<div className="bg-white p-1 rounded-md">
+									Admin <span className="cursor-pointer ml-2 text-red">X</span>
 								</div>
 							</div>
 						</div>

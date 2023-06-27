@@ -490,7 +490,7 @@ function AddTransaction() {
 						<label>Description</label>
 						<br />
 						<textarea
-							className="bg-gray1 min-h-[100px] border border-gray2 w-full"
+							className="bg-gray1 min-h-[100px] p-5 border border-gray2 w-full"
 							placeholder="Enter Description"
 							value={description}
 							onChange={(e) => setDescription(e.target.value)}

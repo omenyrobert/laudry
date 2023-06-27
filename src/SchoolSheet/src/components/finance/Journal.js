@@ -180,8 +180,8 @@ function Journal() {
 				</div>
 				<div className="p-2 w-2/12"></div>
 				<div className="p-2 w-2/12">
-					<div className="w-auto" onClick={showJoun}>
-						<Button2 value={"Enter Journal"} />
+					<div className="w-32" onClick={showJoun}>
+						<Button2 value={"Journal"} />
 					</div>
 				</div>
 			</div>

@@ -615,10 +615,10 @@ function PayRoll() {
 				<div className="flex bg-white p-3 justify-between shadow-lg rounded-md">
 					<div className="flex justify-between w-1/2">
 						<div onClick={openCreate}>
-							<Button2 value={"Create Payslip"} />
+							<Button2 value={"Payslip"} />
 						</div>
 						<div onClick={openPay}>
-							<Button2 value={"Create Employee Payslip"} />
+							<Button2 value={"Employee Payslip"} />
 						</div>
 					</div>
 					<div>
