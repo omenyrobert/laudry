@@ -26,6 +26,8 @@ import TransactionTypeRoutes from "./TransactionTypeRoutes";
 import TransactionRoutes from "./TransactionRoutes";
 import DivisionRoutes from "./DivisionRoutes";
 import ReportRoutes from "./ReportRoutes";
+import StockTypeRoutes from "./StockTypeRoutes";
+import StockLevelRoutes from "./StockLevelRoutes";
 
 const router = Router();
 
@@ -57,6 +59,8 @@ export default (): Router => {
   TransactionRoutes(router);
   DivisionRoutes(router);
   ReportRoutes(router);
+  StockTypeRoutes(router);
+  StockLevelRoutes(router);
 
   return router;
 };

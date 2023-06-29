@@ -6,9 +6,9 @@ function SelectComp({ label, placeholder, options, setSelectedOptionObj }) {
 	const [selectedValue, setSelectedValue] = useState("");
 
 	const selectOption = (option) => {
-		setSelectedOption(option.label);
+		setSelectedOption(option.type);
 		setSelectedValue(option);
-		setSelectedOptionObj(option.value);
+		setSelectedOptionObj(option);
 	};
 
 	const [show, setShow] = useState(false);
@@ -46,7 +46,7 @@ function SelectComp({ label, placeholder, options, setSelectedOptionObj }) {
 									onClick={() => selectOption(option)}
 									className="cursor-pointer hover:bg-gray1 p-2 text-gray5 text-sm"
 								>
-									{option.label}
+									{option.type}
 								</div>
 							);
 						})}
