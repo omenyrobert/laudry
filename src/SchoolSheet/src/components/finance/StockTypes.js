@@ -53,7 +53,7 @@ function StockTypes() {
 	};
 	const openEditData = (stockType) => {
 		setEditData(true);
-		setstockTypeEdit(stockType?.stockType);
+		setstockTypeEdit(stockType?.type);
 		setstockTypeId(stockType.id);
 	};
 
@@ -152,7 +152,7 @@ function StockTypes() {
 					<tbody>
 						{/* edit popup start */}
 						{editData ? (
-							<div className="absolute shadow-lg rounded flex w-[500px] p-5 bg-white">
+							<div className="absolute shadow-lg rounded flex w-[25vw] p-5 bg-white">
 								<div className="w-2/3 pr-5">
 									<InputField
 										type="text"

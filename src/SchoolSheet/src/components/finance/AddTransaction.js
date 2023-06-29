@@ -368,6 +368,7 @@ function AddTransaction() {
 						<InputField
 							type="number"
 							label="Amount"
+							placeholder="Enter Amount"
 							value={amount}
 							onChange={(e) => setAmount(parseInt(e.target.value))}
 						/>
@@ -451,7 +452,7 @@ function AddTransaction() {
 					</div>
 
 
-					<div className="w-1/3 p-1">
+					<div className="w-1/3 p-1 mt-5">
 						<br />
 						<label className="text-gray4">Sub Type</label>
 						<Select
@@ -464,11 +465,11 @@ function AddTransaction() {
 
 
 
-					<div className="w-4/12 p-1">
+					<div className="w-4/12 p-1 mt-2">
 						<InputField
 							type="text"
 							placeholder="Enter Receipt"
-							label="Receipt"
+							label="Receipt/Invoice/file"
 							value={receipt}
 							onChange={(e) => setReceipt(e.target.value)}
 						/>

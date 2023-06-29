@@ -76,7 +76,7 @@ function ExpensesComp() {
 		}
 
 		setExpensesData(coupledTransactions);
-
+		setId(coupledTransactions[0].id);
 		let total = coupledTransactions.reduce(
 			(acc, item) => acc + parseInt(item.transactionAmount),
 			0
@@ -131,6 +131,17 @@ function ExpensesComp() {
 
 		fetchData();
 	}, []);
+
+	const [file, setFile] = useState(false);
+
+	const closeFile = () => {
+		setFile(false);
+	};
+	const showFile = () => {
+		setFile(true);
+	};
+
+	const [id, setId] = useState("");
 
 	return (
 		<>
@@ -203,18 +214,46 @@ function ExpensesComp() {
 										{expenseItem.contacts}
 									</td>
 									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deleteExpense(expenseItem)}
-											className="text-red w-4 h-4"
+										{expenseItem.id === id ? (
+											<div className="flex">
+												<MdDeleteOutline
+													onClick={() => deleteExpense(expenseItem)}
+													className="text-red w-4 h-4"
+												/>
+												<BsPencilSquare
+													className="text-warning h-4 w-4 ml-5"
+													onClick={() => {
+														navigate(
+															`/addTransaction?transactionType=expense&action=edit&transactionId=${expenseItem.transactionId}`
+														);
+													}}
+												/>
+											</div>
+										) : null}
+
+										<img
+											onClick={showFile}
+											src="https://templates.invoicehome.com/receipt-template-us-classic-white-750px.png"
+											className="w-10 cursor-pointer h-5 ml-5"
 										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => {
-												navigate(
-													`/addTransaction?transactionType=expense&action=edit&transactionId=${expenseItem.transactionId}`
-												);
-											}}
-										/>
+										{file ? (
+											<div className="top-0 left-0 bg-black/50 p-10 flex justify-center w-full h-full absolute">
+												<div className="w-3/12" onClick={closeFile}></div>
+												<div className="w-6/12 flex">
+													<img
+														src="https://templates.invoicehome.com/receipt-template-us-classic-white-750px.png"
+														className="h-[80vh]"
+													/>
+													<p
+														onClick={closeFile}
+														className="text-white ml-10 text-3xl mt-[30vh]"
+													>
+														X
+													</p>
+												</div>
+												<div className="w-3/12" onClick={closeFile}></div>
+											</div>
+										) : null}
 									</td>
 								</tr>
 							);
