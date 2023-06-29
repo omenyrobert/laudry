@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare, BsEye } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { getStockLevels, getStockTypes } from "../../store/schoolSheetSlices/schoolStore";
+import {
+	getStockLevels,
+	getStockTypes,
+} from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
@@ -33,14 +36,13 @@ function StockComp() {
 			const response = await axiosInstance.post("/stock-levels", formData);
 			const { data } = response;
 			const { status } = data;
-	
+
 			if (status) {
 				dispatch(getStockLevels());
 				setstockTypeId("");
 				setstock("");
 				setqty("");
 				setDate("");
-	
 
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
@@ -49,7 +51,7 @@ function StockComp() {
 					timer: 500,
 				});
 			}
-		} catch(error) {
+		} catch (error) {
 			console.log(error);
 		}
 	};
@@ -121,7 +123,9 @@ function StockComp() {
 		}).then(async (result) => {
 			if (result.isConfirmed) {
 				try {
-					const response = await axiosInstance.delete(`/stock-levels/${stockItem.id}`);
+					const response = await axiosInstance.delete(
+						`/stock-levels/${stockItem.id}`
+					);
 					const { data } = response;
 					const { status } = data;
 					if (status) {
@@ -161,7 +165,7 @@ function StockComp() {
 			if (sqty) {
 				let formData = {
 					id: stockId.id,
-					quantity: parseFloat(sqty),
+					quantity: stockId.quantity,
 					remaining: stockId.quantity - parseFloat(sqty),
 					reducedDate: reducedDate,
 					takenBy: takenBy,
@@ -217,7 +221,6 @@ function StockComp() {
 								label="Stock"
 								value={stock}
 								onChange={(e) => setstock(e.target.value)}
-								
 							/>
 						</div>
 						<div className="w-1/4 p-1">
@@ -227,7 +230,6 @@ function StockComp() {
 								label="Qty"
 								value={qty}
 								onChange={(e) => setqty(e.target.value)}
-								
 							/>
 						</div>
 						<div className="w-1/4 p-1">
@@ -247,7 +249,7 @@ function StockComp() {
 						</div>
 					</div>
 				</div>
-				
+
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
@@ -287,7 +289,6 @@ function StockComp() {
 											label="stock"
 											value={stockEdit}
 											onChange={(e) => setstockEdit(e.target.value)}
-											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -297,7 +298,6 @@ function StockComp() {
 											label="qty"
 											value={qtyEdit}
 											onChange={(e) => setqtyEdit(e.target.value)}
-											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
@@ -379,71 +379,80 @@ function StockComp() {
 								</div>
 								<div className="flex bg-gray1 hover:bg-gray1 border-b border-gray2">
 									<div className="cursor-pointer p-2 w-2/12">Date</div>
-									<div className="cursor-pointer p-2 w-2/12">Stock</div>
+
 									<div className="cursor-pointer p-2 w-1/12">Qty</div>
 									<div className="cursor-pointer p-2 w-2/12">Balance</div>
 									<div className="cursor-pointer p-2 w-2/12">Taken By</div>
 									<div className="cursor-pointer p-2 w-3/12">Contacts</div>
 								</div>
-								{stockLevels && stockLevels.length > 0 && stockLevels.map((reduced) => {
-									return (
-										<div className="flex text-gray5 text-xs hover:bg-gray1 border-b border-gray2">
-											<div className="cursor-pointer p-2 w-2/12">
-												{reduced.reducedDate}
+								{stockLevels &&
+									stockLevels.length > 0 &&
+									stockLevels.map((reduced) => {
+										return (
+											<div className="flex text-gray5 text-xs hover:bg-gray1 border-b border-gray2">
+												<div className="cursor-pointer p-2 w-2/12">
+													{reduced.reducedDate}
+												</div>
+
+												<div className="cursor-pointer p-2 w-1/12">
+													{reduced.quantity}
+												</div>
+												<div className="cursor-pointer p-2 w-2/12">
+													{reduced.remaining}
+												</div>
+												<div className="cursor-pointer p-2 w-2/12">
+													{reduced.takenBy}
+												</div>
+												<div className="cursor-pointer p-2 w-3/12">
+													{reduced.takenByContacts}
+												</div>
 											</div>
-											<div className="cursor-pointer p-2 w-2/12">{reduced.stock}</div>
-											<div className="cursor-pointer p-2 w-1/12">
-												{reduced.quantity}
-											</div>
-											<div className="cursor-pointer p-2 w-2/12">
-												{reduced.remaining}
-											</div>
-											<div className="cursor-pointer p-2 w-2/12">
-												{reduced.takenBy}
-											</div>
-											<div className="cursor-pointer p-2 w-3/12">
-												{reduced.takenByContacts}
-											</div>
-										</div>
-									);
-								})}
+										);
+									})}
 							</div>
 						) : null}
 
-						{stockLevels && stockLevels.length > 0 && stockLevels.map((stockItem) => {
-							const st = stockTypes.find(stockType => stockType.id === stockItem.stockType);
-							return (
-								<tr
-									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={stockItem?.id}
-								>
-									<td className="text-xs p-3 text-gray5">{stockItem.date}</td>
-									<td className="text-xs p-3 text-gray5">{stockItem.stock}</td>
-									<td className="text-xs p-3 text-gray5">{stockItem.stockType.type}</td>
-									<td className="text-xs p-3 text-gray5">
-										{Number(stockItem.quantity).toLocaleString()}
-									</td>
+						{stockLevels &&
+							stockLevels.length > 0 &&
+							stockLevels.map((stockItem) => {
+								// st is the stockType
+								const st = stockTypes.find(
+									(stockType) => stockType.id === stockItem.stockType
+								);
+								return (
+									<tr
+										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={stockItem?.id}
+									>
+										<td className="text-xs p-3 text-gray5">{stockItem.date}</td>
+										<td className="text-xs p-3 text-gray5">
+											{stockItem.stock}
+										</td>
+										<td className="text-xs p-3 text-gray5">{stockItem.type}</td>
+										<td className="text-xs p-3 text-gray5">
+											{Number(stockItem.quantity).toLocaleString()}
+										</td>
 
-									<td className="text-xs p-3 text-gray5">
-										{Number(stockItem.remaining).toLocaleString()}
-									</td>
-									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deletestock(stockItem)}
-											className="text-red w-4 h-4"
-										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => openEditData(stockItem)}
-										/>
-										<BsEye
-											className="text-primary h-4 w-4 ml-5"
-											onClick={() => openShowReduce(stockItem)}
-										/>
-									</td>
-								</tr>
-							);
-						})}
+										<td className="text-xs p-3 text-gray5">
+											{Number(stockItem.remaining).toLocaleString()}
+										</td>
+										<td className="text-xs p-3 text-gray5 flex">
+											<MdDeleteOutline
+												onClick={() => deletestock(stockItem)}
+												className="text-red w-4 h-4"
+											/>
+											<BsPencilSquare
+												className="text-warning h-4 w-4 ml-5"
+												onClick={() => openEditData(stockItem)}
+											/>
+											<BsEye
+												className="text-primary h-4 w-4 ml-5"
+												onClick={() => openShowReduce(stockItem)}
+											/>
+										</td>
+									</tr>
+								);
+							})}
 					</tbody>
 				</table>
 			</div>
