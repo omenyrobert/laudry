@@ -161,7 +161,7 @@ function StockComp() {
 			if (sqty) {
 				let formData = {
 					id: stockId.id,
-					quantity: parseFloat(sqty),
+					quantity: stockId.quantity,
 					remaining: stockId.quantity - parseFloat(sqty),
 					reducedDate: reducedDate,
 					takenBy: takenBy,
@@ -411,6 +411,7 @@ function StockComp() {
 						) : null}
 
 						{stockLevels && stockLevels.length > 0 && stockLevels.map((stockItem) => {
+							// st is the stockType
 							const st = stockTypes.find(stockType => stockType.id === stockItem.stockType);
 							return (
 								<tr
@@ -419,7 +420,7 @@ function StockComp() {
 								>
 									<td className="text-xs p-3 text-gray5">{stockItem.date}</td>
 									<td className="text-xs p-3 text-gray5">{stockItem.stock}</td>
-									<td className="text-xs p-3 text-gray5">{stockItem.type}</td>
+									<td className="text-xs p-3 text-gray5">{st.type}</td>
 									<td className="text-xs p-3 text-gray5">
 										{Number(stockItem.quantity).toLocaleString()}
 									</td>
