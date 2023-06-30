@@ -10,6 +10,7 @@ import Loader from "../Loader";
 const StaffComp = () => {
 	const dispatch = useDispatch();
 	const [AllStaff, setAllStaff] = useState(true);
+	const [searchedStaff, setSearchedStaff] = useState([]);
 
 	const { staffMembers } = useSelector((state) => state.schoolStore);
 
@@ -17,10 +18,19 @@ const StaffComp = () => {
 		dispatch(getStaffMembers());
 	}, [dispatch]);
 
+	useEffect(() => {
+		setSearchedStaff(staffMembers);
+	}, [staffMembers]);
+
 	return (
 		<>
 			<div className="w-full h-full">
-				<StaffForm />
+				<StaffForm
+					searchedStaff={searchedStaff}
+					setSearchedStaff={setSearchedStaff}
+					AllStaff={staffMembers}
+					setAllStaff={setAllStaff}
+				/>
 
 				{AllStaff ? (
 					<div className="h-[70vh] overflow-y-auto">
@@ -44,7 +54,7 @@ const StaffComp = () => {
 							<tbody>
 								{/* <Loader/> */}
 
-								{staffMembers.map((staff) => {
+								{searchedStaff.map((staff) => {
 									return (
 										<tr
 											className="shadow-sm border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"

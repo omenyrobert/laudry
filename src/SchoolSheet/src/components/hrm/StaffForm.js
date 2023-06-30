@@ -30,7 +30,12 @@ const customStyles = {
 	},
 };
 
-const StaffForm = (props) => {
+const StaffForm = ({
+	searchedStaff,
+	setSearchedStaff,
+	AllStaff,
+	setAllStaff,
+}) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const openModal = () => {
@@ -109,6 +114,33 @@ const StaffForm = (props) => {
 		}
 	};
 
+
+	const [search, setSearch] = useState("");
+
+	const handleSearch = (e) => {
+		setSearch(e.target.value);
+	};
+
+	const searchStaff = () => {
+		if (search === "") {
+			setSearchedStaff(AllStaff);
+			return;
+		}
+		const result = AllStaff.filter((staff) => {
+			const fullName = `${staff.first_name} ${staff.middle_name} ${staff.last_name}`;
+			return fullName.toLowerCase().includes(search.toLowerCase());
+		});
+
+		setSearchedStaff(result);
+	};
+
+	useEffect(() => {
+		searchStaff();
+	}, [search])
+
+
+
+
 	return (
 		<>
 			<div className="flex bg-white p-2 mr-2">
@@ -124,9 +156,11 @@ const StaffForm = (props) => {
 								placeholder="Search for Income"
 								type="search"
 								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+								onChange={handleSearch}
+								value={search}
 							/>
 						</div>
-						
+
 					</div>
 				</div>
 			</div>
@@ -169,7 +203,7 @@ const StaffForm = (props) => {
 								label="Middle Name"
 								name="middleName"
 								onChange={onChange}
-								
+
 							/>
 
 							<br />
@@ -188,7 +222,7 @@ const StaffForm = (props) => {
 								label="Last Name"
 								name="lastName"
 								onChange={onChange}
-								
+
 							/>
 						</div>
 						<div className="w-1/3 p-2">
@@ -198,7 +232,7 @@ const StaffForm = (props) => {
 								label="First Name"
 								name="firstName"
 								onChange={onChange}
-								
+
 							/>
 						</div>
 					</div>

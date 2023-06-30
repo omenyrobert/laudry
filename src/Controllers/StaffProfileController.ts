@@ -4,7 +4,11 @@ import  {
   addStaffDocument,
   addStaffEducation,
   addStaffWorkExperience,
-  getStaffProfile
+  getStaffProfile,
+  deleteNextOfKin,
+  deleteWorkExperience,
+  deleteQualification,
+  deleteStaffDocument
 } from "../Entities/StaffProfile";
 import { customPayloadResponse } from "../Helpers/Helpers";
 
@@ -157,7 +161,7 @@ export const addWorkExperience = async (req: Request, res: Response) => {
 
 export const addDocument = async (req: Request, res: Response) => {
   try {
-    const { staff, name, content } = req.body;
+    const { staff, name } = req.body;
     if (!staff) {
       return res
         .json(customPayloadResponse(false, "Staff ID Required"))
@@ -170,12 +174,14 @@ export const addDocument = async (req: Request, res: Response) => {
         .status(200)
         .end();
     }
-    if (!content) {
+    if (!req.file) {
       return res
-        .json(customPayloadResponse(false, "Description Required"))
+        .json(customPayloadResponse(false, "File Required"))
         .status(200)
         .end();
     }
+
+    const content = req.file.filename
 
     const document = await addStaffDocument(
       staff,
@@ -206,6 +212,90 @@ export const getProfile = async (req: Request, res: Response) => {
     const profile = await getStaffProfile(staff);
     return res
       .json(customPayloadResponse(true, profile))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const deleteNextOfKinController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .json(customPayloadResponse(false, "ID Required"))
+        .status(200)
+        .end();
+    }
+
+    const nextOfKin = await deleteNextOfKin(parseInt(id));
+    return res
+      .json(customPayloadResponse(true, nextOfKin))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const deleteWorkExperienceController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .json(customPayloadResponse(false, "ID Required"))
+        .status(200)
+        .end();
+    }
+
+    const workExperience = await deleteWorkExperience(parseInt(id));
+    return res
+      .json(customPayloadResponse(true, workExperience))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const deleteQualificationController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .json(customPayloadResponse(false, "ID Required"))
+        .status(200)
+        .end();
+    }
+
+    const qualification = await deleteQualification(parseInt(id));
+    return res
+      .json(customPayloadResponse(true, qualification))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const removeDocument = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .json(customPayloadResponse(false, "ID Required"))
+        .status(200)
+        .end();
+    }
+
+    const document = await deleteStaffDocument(parseInt(id));
+    return res
+      .json(customPayloadResponse(true, document))
       .status(200)
       .end();
   } catch (error) {
