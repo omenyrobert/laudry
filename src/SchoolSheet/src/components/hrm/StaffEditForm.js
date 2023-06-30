@@ -128,7 +128,7 @@ function StaffEditForm(props) {
 
 	const [photo, setPhoto] = useState(staffInfo?.profile_picture);
 
-	const [postingPhoto, setPostingPhoto] = useState(true);
+	const [postingPhoto, setPostingPhoto] = useState(false);
 
 	const handlePhotoChange = (e) => {
 		setPostingPhoto(true);
