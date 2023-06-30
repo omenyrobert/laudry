@@ -16,6 +16,7 @@ import axiosInstance from "../../axios-instance";
 import ButtonSecondary from "../ButtonSecondary";
 import ButtonLoader from "../ButtonLoader";
 import Modal from "react-modal";
+import StaffTypes from "../hrm/StaffTypes";
 
 const customStyles = {
 	overlay: {
@@ -114,7 +115,6 @@ const StaffForm = ({
 		}
 	};
 
-
 	const [search, setSearch] = useState("");
 
 	const handleSearch = (e) => {
@@ -136,32 +136,27 @@ const StaffForm = ({
 
 	useEffect(() => {
 		searchStaff();
-	}, [search])
-
-
-
+	}, [search]);
 
 	return (
 		<>
-			<div className="flex bg-white p-2 mr-2">
-				<div className="w-10/12">
-					<div className="flex">
-						<div className="w-[210px] mt-5">
-							<div className="w-[210px]" onClick={openModal}>
-								<Button2 value={"Add Staff Member"} />
-							</div>
-						</div>
-						<div className="w-6/12 px-2">
-							<InputField
-								placeholder="Search for Income"
-								type="search"
-								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
-								onChange={handleSearch}
-								value={search}
-							/>
-						</div>
-
+			<div className="flex justify-between bg-white p-2 mr-2">
+				<div className="w-[210px] mt-5">
+					<div className="w-[210px]" onClick={openModal}>
+						<Button2 value={"Add Staff Member"} />
 					</div>
+				</div>
+				<div className="w-6/12 px-2">
+					<InputField
+						placeholder="Search for Income"
+						type="search"
+						icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+						onChange={handleSearch}
+						value={search}
+					/>
+				</div>
+				<div>
+					<StaffTypes />
 				</div>
 			</div>
 
@@ -203,7 +198,6 @@ const StaffForm = ({
 								label="Middle Name"
 								name="middleName"
 								onChange={onChange}
-
 							/>
 
 							<br />
@@ -222,7 +216,6 @@ const StaffForm = ({
 								label="Last Name"
 								name="lastName"
 								onChange={onChange}
-
 							/>
 						</div>
 						<div className="w-1/3 p-2">
@@ -232,7 +225,6 @@ const StaffForm = ({
 								label="First Name"
 								name="firstName"
 								onChange={onChange}
-
 							/>
 						</div>
 					</div>

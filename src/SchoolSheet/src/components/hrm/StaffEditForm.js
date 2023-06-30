@@ -334,7 +334,7 @@ function StaffEditForm(props) {
 				<hr className="text-gray2" />
 
 				<div className="flex p-3">
-					<div className="w-5/12 py-2 pl-2 pr-5">
+					<div className="w-4/12 py-2 pl-2 pr-5">
 						<NOK
 							staffProfile={staffProfile}
 							staffInfo={staffInfo}
@@ -342,7 +342,7 @@ function StaffEditForm(props) {
 							fetchStaffInfo={fetchStaffProfile}
 						/>
 					</div>
-					<div className="w-7/12 p-2">
+					<div className="w-8/12 p-2">
 						<OtherInfo
 							staffProfile={staffProfile}
 							staffInfo={staffInfo}

@@ -161,7 +161,7 @@ const AddStudentForm = (props) => {
 	// post student info
 	const [isPosting, setIsPosting] = useState(false);
 	const postStudentInfo = (e) => {
-		setIsPosting(false);
+		setIsPosting(true);
 		e.preventDefault();
 		let data = {
 			firstName: studentInfo.firstName,

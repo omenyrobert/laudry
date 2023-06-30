@@ -102,6 +102,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 						title: "Success",
 						text: "Salary Info Updated"
 					})
+					closeSalaryInfo();
 				} else {
 					enqueFeedBack("error", {
 						title: "Oops...",

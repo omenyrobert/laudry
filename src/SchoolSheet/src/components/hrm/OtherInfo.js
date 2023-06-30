@@ -10,8 +10,13 @@ import ButtonLoader from "../ButtonLoader";
 import { useFeedback } from "../../hooks/feedback";
 import InputField from "../InputField";
 
-
-function OtherInfo({ staffProfile, staffInfo, staffId, fetchStaffInfo, fetchStaffProfile }) {
+function OtherInfo({
+	staffProfile,
+	staffInfo,
+	staffId,
+	fetchStaffInfo,
+	fetchStaffProfile,
+}) {
 	const dispatch = useDispatch();
 	const [init] = useState(true);
 	const [studentClasses, setStudentClasses] = useState([]);
@@ -37,8 +42,6 @@ function OtherInfo({ staffProfile, staffInfo, staffId, fetchStaffInfo, fetchStaf
 			setSubjects(studentSubjectsArr);
 		});
 	};
-
-
 
 	const fetchSchoolClasses = () => {
 		axiosInstance.get("/class").then((response) => {
@@ -196,7 +199,6 @@ function OtherInfo({ staffProfile, staffInfo, staffId, fetchStaffInfo, fetchStaf
 
 	const addSubject = () => {
 		if (!subject) {
-
 			toggleFeedback("error", {
 				title: "Oops...",
 				text: "Please fill all fields",
@@ -279,10 +281,14 @@ function OtherInfo({ staffProfile, staffInfo, staffId, fetchStaffInfo, fetchStaf
 			});
 	};
 
+	const [file, setFile] = useState(false);
 
-
-
-
+	const closeFile = () => {
+		setFile(false);
+	};
+	const showFile = () => {
+		setFile(true);
+	};
 
 	return (
 		<>
@@ -296,74 +302,72 @@ function OtherInfo({ staffProfile, staffInfo, staffId, fetchStaffInfo, fetchStaf
 			</div>
 			<div className="flex">
 				<div className="w-1/3 p-2">
-					<Select
-						placeholder={"Select Class"}
-						defaultValue={studentClass}
-						name="studentClass"
-						onChange={setStudentClass}
-						options={studentClasses}
-					/>
-					{/* Add button */}
-					<div className="flex justify-end">
-						<div onClick={addClass} >
-							<Button value={"Add Class"} />
+					<div className="flex">
+						<div className="w-[90%]">
+							<Select
+								placeholder={"Select Class"}
+								defaultValue={studentClass}
+								name="studentClass"
+								onChange={setStudentClass}
+								options={studentClasses}
+							/>
+						</div>
 
+						{/* Add button */}
+
+						<div onClick={addClass} className="ml-2">
+							<Button value={"+"} />
 						</div>
 					</div>
 
-
-
 					<br />
 
-					{
-						staffInfo?.classes?.map((item) => (
-							<div className="flex border-b border-gray1 p-2">
-								<div className="text-gray5 text-sm w-2/3">{item.class}</div>
-								<div className="w-1/3">
-									<p
-										onClick={() => removeClass(item.id)}
-										className="text-red text-sm cursor-pointer"
-									>
-										X
-									</p>
-								</div>
+					{staffInfo?.classes?.map((item) => (
+						<div className="flex border-b border-gray1 p-2">
+							<div className="text-gray5 text-sm w-2/3">{item.class}</div>
+							<div className="w-1/3">
+								<p
+									onClick={() => removeClass(item.id)}
+									className="text-red text-sm cursor-pointer"
+								>
+									X
+								</p>
 							</div>
-						))
-					}
+						</div>
+					))}
 				</div>
 				<div className="w-1/3 p-2">
-					<label>Subjects</label>
-					<br />
-					<Select
-						placeholder={"Select Subject"}
-						defaultValue={subject}
-						name="subject"
-						onChange={setSubject}
-						options={subjects}
-					/>
-					{/* Add button */}
-					<div className="flex justify-end">
-						<div onClick={addSubject} >
-							<Button value={"Add Subject"} />
+					<div className="flex">
+						<div className="w-[80%]">
+							<Select
+								placeholder={"Select Subject"}
+								defaultValue={subject}
+								name="subject"
+								onChange={setSubject}
+								options={subjects}
+							/>
+						</div>
+						<div onClick={addSubject} className="ml-2">
+							<Button value={"+"} />
 						</div>
 					</div>
-					<br />
-					{
-						staffInfo?.subjects?.map((item) => (
-							<div className="flex border-b border-gray1 p-2">
-								<div className="text-gray5 text-sm w-2/3">{item.subject}</div>
-								<div className="w-1/3">
-									<p
-										onClick={() => removeSubject(item.id)}
-										className="text-red text-sm cursor-pointer"
-									>
-										X
-									</p>
-								</div>
-							</div>
-						))
-					}
 
+					{/* Add button */}
+
+					<br />
+					{staffInfo?.subjects?.map((item) => (
+						<div className="flex border-b border-gray1 p-2">
+							<div className="text-gray5 text-sm w-2/3">{item.subject}</div>
+							<div className="w-1/3">
+								<p
+									onClick={() => removeSubject(item.id)}
+									className="text-red text-sm cursor-pointer"
+								>
+									X
+								</p>
+							</div>
+						</div>
+					))}
 				</div>
 				<br />
 				<div className="w-1/3 p-2">
@@ -376,39 +380,65 @@ function OtherInfo({ staffProfile, staffInfo, staffId, fetchStaffInfo, fetchStaf
 							onChange={(e) => setDocumentName(e.target.value)}
 						/>
 
-						<input id="documentInput" type="file" hidden={true} onChange={handleFileChange} />
-						<div onClick={(e) => {
-							e.preventDefault();
-							const input = window.document.getElementById("documentInput");
-							input.click();
-						}} >
-							<Button value={
-								document ? document.name : "Select Document"
-							} />
+						<input
+							id="documentInput"
+							type="file"
+							hidden={true}
+							onChange={handleFileChange}
+						/>
+						<div
+							onClick={(e) => {
+								e.preventDefault();
+								const input = window.document.getElementById("documentInput");
+								input.click();
+							}}
+						>
+							<Button value={document ? document.name : "Select Document"} />
 						</div>
 
 						<br />
-						<div onClick={addDocument} >
-							<Button value={"Add Document"} />
+						<div className="w-12 float-right" onClick={addDocument}>
+							<Button value={"+"} />
 						</div>
 					</div>
 					<br />
 
-					{
-						staffProfile?.staffDocument?.map((item) => (
-							<div className="flex border-b border-gray1 p-2">
-								<div className="text-gray5 text-sm w-2/3">{item.name}</div>
-								<div className="w-1/3">
-									<p
-										onClick={() => removeDocument(item.id)}
-										className="text-red text-sm cursor-pointer"
-									>
-										X
-									</p>
+					{staffProfile?.staffDocument?.map((item) => (
+						<div className="flex border-b border-gray1 p-2">
+							<div className="text-gray5 text-sm w-2/3">{item.name}</div>
+							<img
+								onClick={showFile}
+								src="https://templates.invoicehome.com/receipt-template-us-classic-white-750px.png"
+								className="w-16 mr-5 cursor-pointer h-5 ml-5"
+							/>
+							{file ? (
+								<div className="top-0 left-0 bg-black/50 p-10 flex justify-center w-full h-full absolute">
+									<div className="w-3/12" onClick={closeFile}></div>
+									<div className="w-6/12 flex">
+										<img
+											src="https://templates.invoicehome.com/receipt-template-us-classic-white-750px.png"
+											className="h-[80vh]"
+										/>
+										<p
+											onClick={closeFile}
+											className="text-white ml-10 text-3xl mt-[30vh]"
+										>
+											X
+										</p>
+									</div>
+									<div className="w-3/12" onClick={closeFile}></div>
 								</div>
+							) : null}
+							<div className="w-1/3">
+								<p
+									onClick={() => removeDocument(item.id)}
+									className="text-red text-sm cursor-pointer"
+								>
+									X
+								</p>
 							</div>
-						))
-					}
+						</div>
+					))}
 				</div>
 			</div>
 		</>

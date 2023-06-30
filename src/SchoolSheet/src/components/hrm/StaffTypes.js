@@ -140,9 +140,9 @@ const StaffTypes = () => {
 		<div className="w-full ">
 			<div
 				onClick={openModal}
-				className="w-52 bg-white h-24 relative pt-8  float-right"
+				className="w-40 relative pt-8  float-right"
 			>
-				<Button2 value={"Add Staff Type"} />
+				<Button2 value={"Staff Types"} />
 			</div>
 
 			<Modal

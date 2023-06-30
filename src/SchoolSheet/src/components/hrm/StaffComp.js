@@ -16,6 +16,7 @@ const StaffComp = () => {
 
 	useEffect(() => {
 		dispatch(getStaffMembers());
+		console.log("staff", staffMembers);
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -48,7 +49,9 @@ const StaffComp = () => {
 								</th>
 
 								<th className="p-2 text-primary text-sm text-left">Classes</th>
+								<th className="p-2 text-primary text-sm text-left"></th>
 								<th className="p-2 text-primary text-sm text-left">Subjects</th>
+								<th className="p-2 text-primary text-sm text-left"></th>
 								<th className="p-2 text-primary text-sm text-left">Action</th>
 							</thead>
 							<tbody>
@@ -73,18 +76,26 @@ const StaffComp = () => {
 											</td>
 
 											<td className="text-xs p-3 text-gray5">
-												{staff.residence}
+												{staff.address}
 											</td>
 											<td className="text-xs p-3 text-gray5">
-												{staff.staff_type.type}
+												{staff?.staff_type.type}
 											</td>
 
-											<td className="text-xs p-3 text-gray5">
-												{staff.classes}
+											<td colSpan="3" className="text-xs p-3 text-gray5 flex">
+												{staff?.classes.map((item) => (
+													<div className="p-1 rounded bg-white m-1 border border-gray2 w-auto">{item.class}</div>
+												))}
 											</td>
-											<td className="text-xs p-3 text-gray5">
-												{staff.classes}
+											<td>
+
 											</td>
+											<td colSpan="3" className="text-xs p-3 text-gray5 flex">
+											{staff?.subjects.map((item) => (
+													<div className="p-1 rounded bg-white m-1 border border-gray2 w-auto">{item.subject}</div>
+												))}
+											</td>
+											<td></td>
 
 											<td className="text-xs p-3 text-gray5 flex justify-between">
 												<Link to={"/staffEditForm?staffId=" + staff.id}>
