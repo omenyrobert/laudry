@@ -59,3 +59,28 @@ export const getSingleSubject = async (id: number) => {
   const subject = await Subject.findOne({ where: { id: id } });
   return Subject;
 };
+
+
+// add subject to staff
+export const addSubjectToStaff = async (subjectId: number, staffId: number) => {
+  const subject = await Subject.findOne({ where: { id: subjectId } });
+  const staff = await Staff.findOne({ where: { id: staffId } });
+  if (subject && staff) {
+    staff.subjects.push(subject);
+    await staff.save();
+    return "Subject Added to Staff";
+  }
+};
+
+
+// remove subject from staff
+
+export const removeSubjectFromStaff = async ( subjectId: number, staffId: number) => {
+  const subject = await Subject.findOne({ where: { id: subjectId } });
+  const staff = await Staff.findOne({ where: { id: staffId } });
+  if (subject && staff) {
+    staff.subjects = staff.subjects.filter((subject) => subject.id !== subjectId);
+    await staff.save();
+    return "Subject Removed from Staff";
+  }
+};

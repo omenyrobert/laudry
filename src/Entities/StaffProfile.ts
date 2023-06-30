@@ -297,13 +297,8 @@ export const addStaffDocument = async (
     throw new Error("Staff not found");
   }
 
-  
-  let staffProfile = await StaffProfile.findOne({
-    where: { id: staffOBJ.staffProfile.id },
-  })
-  
-  if (!staffProfile) {
-    staffProfile = await createStaffProfile(staff);
+  if (!staffOBJ.staffProfile) {
+    let staffProfile = await createStaffProfile(staff);
     staffOBJ.staffProfile = staffProfile;
     await staffOBJ.save();
   }
@@ -311,7 +306,7 @@ export const addStaffDocument = async (
   const staffDocument = new StaffDocument();
   staffDocument.name = name;
   staffDocument.content = content;
-  staffDocument.staffProfile = staffProfile;
+  staffDocument.staffProfile = staffOBJ.staffProfile;
 
   await staffDocument.save();
   return staffDocument;
@@ -369,4 +364,16 @@ export const deleteQualification = async (id: number) => {
 
   await education.remove();
   return education;
+}
+
+
+// remove staff document
+export const deleteStaffDocument = async (id: number) => {
+  const staffDocument = await StaffDocument.findOne({ where: { id } });
+  if (!staffDocument) {
+    throw new Error("Staff Document not found");
+  }
+
+  await staffDocument.remove();
+  return staffDocument;
 }

@@ -263,7 +263,13 @@ function StaffEditForm(props) {
 						/>
 					</div>
 					<div className="w-7/12 p-2">
-						<OtherInfo />
+						<OtherInfo
+							staffProfile={staffProfile}
+							staffInfo={staffInfo}
+							staffId={staffId}
+							fetchStaffInfo={fetchStaffInfo}
+							fetchStaffProfile={fetchStaffProfile}
+						/>
 					</div>
 				</div>
 			</div>

@@ -96,3 +96,30 @@ export const getSelectedClasses = async (ids: any) => {
   const classes = await SchoolClass.find({ where: { id: In(ids) } });
   return classes;
 };
+
+
+// add class to staff
+
+export const addClassToStaff = async (classId: number, staffId: number) => {
+  const classToAdd = await getClassById(classId);
+  const staffToAdd = await Staff.findOne({ where: { id: staffId } });
+  if (classToAdd && staffToAdd) {
+    staffToAdd.classes.push(classToAdd);
+    await Staff.save(staffToAdd);
+    return staffToAdd;
+  }
+}
+
+
+// remove class from staff
+
+export const removeClassFromStaff = async (classId: number, staffId: number) => {
+  const classToRemove = await getClassById(classId);
+  const staffToRemove = await Staff.findOne({ where: { id: staffId } });
+  if (classToRemove && staffToRemove) {
+    staffToRemove.classes = staffToRemove.classes.filter((item: any) => item.id !== classToRemove.id);
+    await Staff.save(staffToRemove);
+    return staffToRemove;
+  }
+}
+
