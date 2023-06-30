@@ -42,7 +42,7 @@ const Students = () => {
 
 	sections.forEach((section) => {
 		let newSection = {};
-		newSection.value = section.id;
+		newSection.value = section.section;
 		newSection.label = section.section;
 		sectionOptions.push(newSection);
 	})
@@ -173,6 +173,7 @@ const Students = () => {
 			setSearch(true);
 		}
 		const searchResults = studentData.filter((student) => {
+
 			const studentName =
 				student.firstName + " " + student.middleName + " " + student.lastName;
 			console.log(student)
@@ -180,24 +181,50 @@ const Students = () => {
 			const searchName = studentName
 				.toLowerCase()
 				.includes(filters.query.toLowerCase());
-			const searchType = student.studentType.type
-				.toLowerCase()
-				.includes(filters.type.toLowerCase());
-			const searchHouse = student.studentHouse.house
-				.toLowerCase()
-				.includes(filters.house.toLowerCase());
-			const searchClass = student.studentClass.class
-				.toLowerCase()
-				.includes(filters.studentClass.toLowerCase());
-			const searchSection = student.studentSection
-				.toLowerCase()
-				.includes(filters.section.toLowerCase());
-			// console.log("===================")
-			// console.log("Filters:", filters)
-			// console.log("Student: ", student)
-			const searchStream = student.studentStream.stream
-				.toLowerCase()
-				.includes(filters.stream.toLowerCase());
+			console.log("searchName", searchName)
+
+			let searchType = false;
+			if (student.student_types.length > 0) {
+				searchType = student.student_types[0].type
+					.toLowerCase()
+					.includes(filters.type.toLowerCase());
+			}
+			console.log("searchType", searchType)
+
+			let searchHouse = false;
+			if (student.houses.length > 0) {
+				searchHouse = student.houses[0].house
+					.toLowerCase()
+					.includes(filters.house.toLowerCase());
+			}
+			console.log("searchHouse", searchHouse)
+
+			let searchClass = false;
+			if (student.classes.length > 0) {
+				searchClass = student.classes[0].class
+					.toLowerCase()
+					.includes(filters.studentClass.toLowerCase());
+			}
+			console.log("searchClass", searchClass)
+
+			let searchSection = false;
+			if (student.sections.length > 0) {
+				searchSection = student.sections[0].section
+					.toLowerCase()
+					.includes(filters.section.toLowerCase());
+			}
+
+			console.log("searchSection", searchSection)
+
+			let searchStream = false;
+			if (student.streams.length > 0) {
+				searchStream = student.streams[0].stream
+					.toLowerCase()
+					.includes(filters.stream.toLowerCase());
+			}
+			console.log("searchStream", searchStream)
+
+
 
 			return (
 				searchName &&
