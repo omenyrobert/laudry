@@ -49,6 +49,9 @@ export class Staff extends BaseEntity {
   @Column({ select: false })
   password!: string;
 
+  @Column("simple-array", { nullable: true })
+  roles: string[];
+
   @OneToMany(
     () => SalaryInfo,
     (salaryInfo) => salaryInfo.staff,
@@ -143,7 +146,8 @@ export const addStaffMember = async (
   first_name: string,
   middle_name: string,
   password: any,
-  staffType: any
+  staffType: any,
+  roles: string[]
 ) => {
   const staffToAdd = await Staff.insert({
     email: email,
@@ -152,6 +156,7 @@ export const addStaffMember = async (
     middle_name: middle_name,
     password: password,
     staff_type: staffType,
+    roles: roles,
   });
   return staffToAdd;
 };
@@ -189,7 +194,8 @@ export const updateMember = async (
   last_name: string,
   first_name: string,
   middle_name: string,
-  staffType: any
+  staffType: any,
+  roles: string[]
 ) => {
   const staffToUpdate = await Staff.update(id, {
     email: email,
@@ -197,6 +203,7 @@ export const updateMember = async (
     first_name: first_name,
     middle_name: middle_name,
     staff_type: staffType,
+    roles: roles
   });
   return staffToUpdate;
 };

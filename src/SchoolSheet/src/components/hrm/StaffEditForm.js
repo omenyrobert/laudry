@@ -20,6 +20,29 @@ import { useLocation } from "react-router-dom";
 
 let db = new Localbase("db");
 
+const roles = [
+	{
+		label: "Admin",
+		value: "admin",
+	},
+	{
+		label: "Fees",
+		value: "fees",
+	},
+	{
+		label: "Assessment",
+		value: "assessment",
+	},
+	{
+		label: "Hrm",
+		value: "hrm",
+	},
+	{
+		label: "Finance",
+		value: "finance",
+	},
+];
+
 function StaffEditForm(props) {
 	const location = useLocation();
 	const [salaryInfo, setSalaryInfo] = useState([]);
@@ -30,6 +53,10 @@ function StaffEditForm(props) {
 	const [staffInfo, setStaffInfo] = useState({});
 	const [staffProfile, setStaffProfile] = useState({});
 
+	const [staffRoles, setStaffRoles] = useState(null);
+	const [matchingRoles, setMatchingRoles] = useState(null);
+	
+	
 	const fetchStaffInfo = async () => {
 		try {
 			const response = await axiosInstance.get(`/staff/${staffId}`);
@@ -44,6 +71,9 @@ function StaffEditForm(props) {
 			} else {
 				setStaffInfo(payload);
 				setSalaryInfo(payload.salaryInfo);
+				if (payload.roles && payload.roles.length > 0) {
+					setStaffRoles(payload.roles);
+				}
 			}
 		} catch (error) {
 			console.log(error);
@@ -99,28 +129,84 @@ function StaffEditForm(props) {
 				console.log(err);
 			});
 	};
-	const roles = [
-		{
-			label: "Admin",
-			value: "admin",
-		},
-		{
-			label: "Fees",
-			value: "fees",
-		},
-		{
-			label: "Assessment",
-			value: "assessment",
-		},
-		{
-			label: "Hrm",
-			value: "hrm",
-		},
-		{
-			label: "Finance",
-			value: "finance",
-		},
-	];
+
+	const addRole = async (role) => {
+	
+		let formData = {
+			staffId,
+			firstName: staffInfo.first_name,
+			lastName: staffInfo.last_name,
+			email: staffInfo.email,
+			roles: role.value,
+			isRemove: false
+		}
+		try {
+			const response = await axiosInstance.put(`/staff`, formData);
+			const { status, payload } = response.data;
+			if (status === false) {
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: payload,
+				});
+			} else {
+				fetchStaffProfile();
+				updateMatchingRoles(role, false)
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	useEffect(() => {
+		if (staffRoles) {
+			const matchingRoles = roles.filter((role) => staffRoles.includes(role.value));
+			setMatchingRoles(matchingRoles);
+		}
+	}, [staffRoles, staffInfo])
+
+	const removeRole = async (role) => {
+		let formData = {
+			staffId,
+			firstName: staffInfo.first_name,
+			lastName: staffInfo.last_name,
+			email: staffInfo.email,
+			roles: role.value,
+			isRemove: true
+		}
+		try {
+			const response = await axiosInstance.put(`/staff`, formData);
+			const { status, payload } = response.data;
+			if (status === false) {
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: payload,
+				});
+			} else {
+				fetchStaffProfile();
+				updateMatchingRoles(role, true)
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	const updateMatchingRoles = (role, isRemove) => {
+		if (isRemove) {
+			const updatedRoles = (matchingRoles || []).filter(
+				(r) => r.value !== role.value
+			  );
+			  setMatchingRoles(updatedRoles);
+		} else {
+			const updatedRoles = [...(matchingRoles || []), role];
+			setMatchingRoles(updatedRoles);
+		}
+	  };
+	
+	
 	return (
 		<>
 			<div className="bg-white h-[90vh] overflow-y-auto  ">
@@ -180,26 +266,20 @@ function StaffEditForm(props) {
 									placeholder={"Select roles"}
 									// defaultValue={studentType}
 									name="studentType"
-									// onChange={setStudentType}
+									onChange={addRole}
 									options={roles}
 								/>
 							</div>
 							<div className="flex overflow-x-auto gap-2 mt-1">
-								<div className="bg-white p-1 rounded-md">
-									Hrm <span className="cursor-pointer ml-2 text-red">X</span>
-								</div>
-								<div className="bg-white p-1 rounded-md">
-									Fees <span className="cursor-pointer ml-2 text-red">X</span>
-								</div>
-								<div className="bg-white p-1 rounded-md">
-									Finance <span className="cursor-pointer ml-2 text-red">X</span>
-								</div>
-								<div className="bg-white p-1 rounded-md">
-									Assessment <span className="cursor-pointer ml-2 text-red">X</span>
-								</div>
-								<div className="bg-white p-1 rounded-md">
-									Admin <span className="cursor-pointer ml-2 text-red">X</span>
-								</div>
+								{
+									matchingRoles && matchingRoles.map(role => {
+										return (
+										<div className="bg-white p-1 rounded-md">
+											{role.label} <span className="cursor-pointer ml-2 text-red" onClick={() => removeRole(role)}>X</span>
+										</div>
+										)
+									})
+								}
 							</div>
 						</div>
 
