@@ -195,7 +195,7 @@ function PaymentTypes() {
 
 								<div className="ml-2 mt-14" onClick={postpaymentType}>
 									{
-										loading ? <ButtonLoader /> : <Button value={"Add Payment Type"} />
+										loading ? <ButtonLoader /> : <Button value={"Add"} />
 									}
 								</div>
 							</div>

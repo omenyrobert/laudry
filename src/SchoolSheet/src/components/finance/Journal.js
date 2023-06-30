@@ -12,6 +12,7 @@ import { getAccounts } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
+import ButtonLoader from "../ButtonLoader";
 
 function Journal() {
 	const dispatch = useDispatch();
@@ -24,48 +25,61 @@ function Journal() {
 	const [date, setDate] = useState("");
 	const [accountOptions, setAccountOptions] = useState([]);
 	const { accounts } = useSelector((state) => state.schoolStore);
-	const { setLoading, toggleFeedback } = useFeedback()
-	const navigate = useNavigate()
+	const { setLoading, toggleFeedback } = useFeedback();
+	const navigate = useNavigate();
 	const [journalTotal, setjournalTotal] = useState("");
 	const [journalsData, setjournalsData] = useState([]);
 
-
 	const fetchjournals = async () => {
+		const res = await axiosInstance.get("/transactions/type/journal");
 
-		const res = await axiosInstance.get("/transactions/type/journal")
-
-		const { status, payload } = res.data
+		const { status, payload } = res.data;
 
 		if (status === false) {
-			setLoading(false)
-			toggleFeedback("error", payload)
-			return
+			setLoading(false);
+			toggleFeedback("error", payload);
+			return;
 		}
 
-		const coupledTransactions = []
+		const coupledTransactions = [];
 
 		for (let i = 0; i < payload.length; i++) {
-			const transaction = payload[i]
+			const transaction = payload[i];
 
-			if (coupledTransactions.find(t => t.transactionId === transaction.transactionId)) continue;
+			if (
+				coupledTransactions.find(
+					(t) => t.transactionId === transaction.transactionId
+				)
+			)
+				continue;
 
 			// find corresponding transaction with same id
-			const correspondingTransaction = payload.find(t => {
-				return t.transactionId === transaction.transactionId && t.id !== transaction.id
-			})
+			const correspondingTransaction = payload.find((t) => {
+				return (
+					t.transactionId === transaction.transactionId &&
+					t.id !== transaction.id
+				);
+			});
 
 			if (correspondingTransaction) {
 				coupledTransactions.push({
 					transactionId: transaction.transactionId,
 					...transaction,
-					transactionAmount: transaction.debit === 0 ? transaction.credit : transaction.debit,
-					debitAccount: transaction.debit === 0 ? correspondingTransaction.account : transaction.account,
-					creditAccount: transaction.credit === 0 ? correspondingTransaction.account : transaction.account,
-				})
+					transactionAmount:
+						transaction.debit === 0 ? transaction.credit : transaction.debit,
+					debitAccount:
+						transaction.debit === 0
+							? correspondingTransaction.account
+							: transaction.account,
+					creditAccount:
+						transaction.credit === 0
+							? correspondingTransaction.account
+							: transaction.account,
+				});
 			}
 		}
 
-		setjournalsData(coupledTransactions)
+		setjournalsData(coupledTransactions);
 
 		console.log(coupledTransactions);
 
@@ -75,8 +89,6 @@ function Journal() {
 		);
 
 		setjournalTotal(total);
-
-
 	};
 
 	const showJoun = () => {
@@ -101,17 +113,16 @@ function Journal() {
 
 	useEffect(() => {
 		async function fetchData() {
-			setLoading(true)
+			setLoading(true);
 			try {
 				await fetchjournals();
-				setLoading(false)
+				setLoading(false);
 			} catch (error) {
 				setLoading(false);
 				toggleFeedback("error", { title: "Error", text: error.message });
 			}
 		}
-		fetchData()
-
+		fetchData();
 	}, []);
 
 	useEffect(() => {
@@ -124,10 +135,13 @@ function Journal() {
 		setAccountOptions(data);
 	}, [accounts]);
 
+	const [posting, setPosting] = useState(false);
 
 	// createJournal
 	const createJournal = async () => {
+		// if (transactionType !== null && debit !== null && credit !== null && debitAccount !== null && creditAccount !== null) {
 		try {
+			setPosting(true);
 			const formData = {
 				title: transactionType,
 				transactionCategory: "journal",
@@ -135,7 +149,7 @@ function Journal() {
 				accountToCredit: creditAccount && creditAccount.id,
 				amountToDebit: parseFloat(debit),
 				amountToCredit: parseFloat(debit),
-			}
+			};
 
 			console.log("formData", formData);
 
@@ -155,10 +169,13 @@ function Journal() {
 					timer: 500,
 				});
 				closeJoun();
+				setPosting(false);
 			}
 		} catch (error) {
 			console.log(error);
+			setPosting(false);
 		}
+		// }
 	};
 
 	return (
@@ -198,7 +215,7 @@ function Journal() {
 							</p>
 						</div>
 					</div>
-					<div className="p-3 h-[35vh] overflow-y-auto flex">
+					<div className="p-3 h-auto flex">
 						<div className="w-1/2 pr-2">
 							<InputField
 								type="date"
@@ -248,36 +265,54 @@ function Journal() {
 						</div>
 					</div>
 
+					<label className="text-gray5 ml-5">Description</label>
+					<br />
+					<textarea
+						className="bg-gray1 min-h-[100px] ml-5 p-5 border border-gray2 w-[95%]"
+						placeholder="Enter Description"
+					></textarea>
+
 					<div className="flex justify-between text-primary text-lg font-semibold p-3 bg-gray1">
 						<div onClick={closeJoun}>
 							<ButtonSecondary value={"Close"} />
 						</div>
 						<div onClick={createJournal}>
-							<Button value={"Add Journal"} />
+							{posting ? (
+								<div className="w-40">
+									{" "}
+									<ButtonLoader />
+								</div>
+							) : (
+								<div>
+									{" "}
+									<Button value={"Add Journal"} />{" "}
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
 			) : null}
-
-
-			{
-				journalsData.map((journal) => (
-					<div key={journal.id} className="p-2 border border-gray1 rounded-md my-2">
+			<div className="h-[80vh] overflow-y-auto">
+				{journalsData.map((journal) => (
+					<div
+						key={journal.id}
+						className="p-2 bg-gray1 text-sm hover:bg-white cursor-pointer rounded-md my-2"
+					>
 						<div className="flex text-gray5 ">
 							<div className="w-1/3">
-								<p>Date: {
-									new Date(journal.date).toLocaleDateString()
-								}</p>
+								<p>Date: {new Date(journal.date).toLocaleDateString()}</p>
 							</div>
 							<div className="w-1/3">
 								<p>Journal number: {journal.transactionId}</p>
 							</div>
 							<div className="w-1/3 flex justify-between">
 								<p>Transaction Type: {journal.title}</p>
-								<p className="text-primary border border-primary rounded-md py-1 px-3 cursor-pointer">Print</p>
+								<p className="text-primary border border-primary rounded-md py-1 px-3 cursor-pointer">
+									Print
+								</p>
 							</div>
 						</div>
-						<div className="flex text-gray5 bg-gray1 py-2 mt-4">
+						<div className="flex text-gray5 bg-gray2 py-2 mt-4">
 							<div className="w-1/3">
 								<p>Debit Account: {journal.debitAccount.accountName}</p>
 							</div>
@@ -298,11 +333,9 @@ function Journal() {
 							<div className="w-1/3"></div>
 						</div>
 					</div>
-				))
-
-			}
-
-
+				))}
+				<br/>
+			</div>
 		</div>
 	);
 }

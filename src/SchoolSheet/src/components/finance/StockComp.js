@@ -433,7 +433,7 @@ function StockComp() {
 										<td className="text-xs p-3 text-gray5">
 											{stockItem.stock}
 										</td>
-										<td className="text-xs p-3 text-gray5">{st.type}</td>
+										<td className="text-xs p-3 text-gray5">{stockItem.type}</td>
 										<td className="text-xs p-3 text-gray5">
 											{Number(stockItem.quantity).toLocaleString()}
 										</td>

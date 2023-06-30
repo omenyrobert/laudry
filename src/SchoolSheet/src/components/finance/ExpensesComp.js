@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MdDeleteOutline } from "react-icons/md";
-import { BsPencilSquare } from "react-icons/bs";
+import { BsPencilSquare, BsPrinterFill } from "react-icons/bs";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
 import Button from "../Button";
@@ -254,6 +254,7 @@ function ExpensesComp() {
 												<div className="w-3/12" onClick={closeFile}></div>
 											</div>
 										) : null}
+										<BsPrinterFill className="text-primary ml-5" />
 									</td>
 								</tr>
 							);
