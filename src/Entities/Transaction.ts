@@ -670,9 +670,13 @@ export const getTransactionsByTransId = async (
 export const getTransactionsByTransactionType = async (
   transactionType: string
 ) => {
+  // order from latest to oldest
   const transactions = await Transaction.find({
     where: {
       transactionType: transactionType,
+    },
+    order: {
+      id: "DESC",
     },
   });
   return transactions;
