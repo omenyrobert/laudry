@@ -32,6 +32,7 @@ function StockComp() {
 				stock: stock,
 				quantity: parseFloat(qty),
 				date: date,
+				remaining: parseFloat(qty),
 			};
 
 			const response = await axiosInstance.post("/stock-levels", formData);
@@ -149,6 +150,8 @@ function StockComp() {
 	const openShowReduce = (stockItem) => {
 		setShowReduce(true);
 		setStockId(stockItem);
+		const _reductions = reductions.filter(r => r.stockId === stockItem.id);
+		setFilterStocks(_reductions);
 	};
 
 	const closeShowReduce = () => {
@@ -160,12 +163,13 @@ function StockComp() {
 	const [takenBy, setTakenBy] = useState("");
 	const [takenByContacts, setTakenByContacts] = useState("");
 	const [stockId, setStockId] = useState("");
+	const [filterStocks, setFilterStocks] = useState([]);
 
 	const reduceStock = async () => {
 		try {
 			if (sqty) {
 
-				const balance = stockId.quantity - parseFloat(sqty);
+				const balance = stockId.remaining - parseFloat(sqty);
 		
 				let formData = {
 					id: stockId.id,
@@ -219,6 +223,13 @@ function StockComp() {
 	}, [dispatch]);
 
 	const { stockLevels, stockTypes, reductions } = useSelector((state) => state.schoolStore);
+
+	useEffect(() => {
+		if (reductions && reductions.length > 0) {
+			const _reductions = reductions.filter(r => r.stockId === stockId.id);
+			setFilterStocks(_reductions);
+		}
+	}, [reductions, stockId.id])
 
 	return (
 		<>
@@ -406,9 +417,9 @@ function StockComp() {
 									<div className="cursor-pointer p-2 w-3/12">Contacts</div>
 									<div className="cursor-pointer p-2 w-3/12">Reductions</div>
 								</div>
-								{reductions &&
-									reductions.length > 0 &&
-									reductions.map((reduced) => {
+								{filterStocks &&
+									filterStocks.length > 0 &&
+									filterStocks.map((reduced) => {
 										return (
 											<div className="flex text-gray5 text-xs hover:bg-gray1 border-b border-gray2">
 												<div className="cursor-pointer p-2 w-2/12">
@@ -452,7 +463,7 @@ function StockComp() {
 										<td className="text-xs p-3 text-gray5">
 											{stockItem.stock}
 										</td>
-										<td className="text-xs p-3 text-gray5">{stockItem.type}</td>
+										<td className="text-xs p-3 text-gray5">{st.type}</td>
 										<td className="text-xs p-3 text-gray5">
 											{Number(stockItem.quantity).toLocaleString()}
 										</td>
