@@ -9,15 +9,13 @@ import ButtonSecondary from "../ButtonSecondary";
 import Button2 from "../Button2";
 import SelectComp from "../SelectComp";
 import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 
-let db = new Localbase("db");
 
 function IncomeComp() {
 	const { setLoading, toggleFeedback } = useFeedback();
@@ -26,31 +24,31 @@ function IncomeComp() {
 	// fetch income typess
 	const [incomeTypesData, setIncomeTypesData] = useState([]);
 	const [incomeTotal, setIncomeTotal] = useState("");
+	const [incomeType, setIncomeType] = useState(null);
 
 	const fetchIncomeTypes = async () => {
 		const response = await axiosInstance.get("/transaction-types/income");
+		const { status, payload } = response.data;
 
-		setIncomeTypesData(response.data.payload);
+		if (status === false) {
+			toggleFeedback("error", payload);
+			return;
+		}
+
+		const incomeTypes = payload.map((item) => {
+			return {
+				label: item.name,
+				value: item.name,
+				...item,
+			};
+		}
+		);
+		setIncomeTypesData(incomeTypes);
+
 	};
 
 	// fetch incomes
 	const [incomesData, setIncomesData] = useState([]);
-	const [filteredIncome, setFilteredIncome] = useState([]);
-	const [searchInput, setSearchInput] = useState("");
-	const searchItems = (searchValue) => {
-		setSearchInput(searchValue);
-		if (searchInput !== "") {
-			const filteredData = incomesData.filter((item) => {
-				return Object.values(item)
-					.join("")
-					.toLowerCase()
-					.includes(searchInput.toLowerCase());
-			});
-			setFilteredIncome(filteredData);
-		} else {
-			setIncomesData(incomesData);
-		}
-	};
 
 	const [id, setId] = useState("");
 	const fetchIncomes = async () => {
@@ -149,6 +147,59 @@ function IncomeComp() {
 		fetchData();
 	}, []);
 
+
+	// implement search
+	const [query, setQuery] = useState({
+		search: "",
+		filter: "",
+		startDate: NaN,
+		endDate: NaN,
+	});
+	const [searchedIncomes, setSearchedIncomes] = useState([]);
+
+	useEffect(() => {
+		if (query.search === "" && query.filter === "" && isNaN(query.startDate) && isNaN(query.endDate)) {
+			setSearchedIncomes(incomesData);
+			return;
+		}
+		const filteredIncomes = incomesData.filter((income) => {
+			const incomeDate = new Date(income.date);
+			const isStartDateValid = isNaN(query.startDate) ? true : incomeDate.getTime() >= query.startDate;
+			const isEndDateValid = isNaN(query.endDate) ? true : incomeDate.getTime() <= query.endDate;
+			const isSearchValid = income.title.toLowerCase().includes(query.search.toLowerCase());
+			const isFilterValid = query.filter ? income.subType.name === query.filter : true;
+			return isStartDateValid && isEndDateValid && isSearchValid && isFilterValid;
+		});
+		setSearchedIncomes(filteredIncomes);
+	}, [query, incomesData]);
+
+
+
+	const printTable = () => {
+		const table = document.getElementById("income-table");
+		const myWindow = window.open("", "", "width=900,height=700");
+		myWindow.document.write(table.outerHTML);
+
+		const stylesheets = Array.from(document.styleSheets);
+
+		stylesheets.forEach((stylesheet) => {
+			myWindow.document.head.appendChild(stylesheet.ownerNode.cloneNode(true));
+		});
+
+		const links = Array.from(document.getElementsByTagName("link"));
+
+		links.forEach((link) => {
+			myWindow.document.head.appendChild(link.cloneNode(true));
+		});
+
+
+		setTimeout(() => {
+			myWindow.print();
+		}, 1000);
+
+	}
+
+
 	return (
 		<>
 			<div className="flex bg-white">
@@ -158,20 +209,47 @@ function IncomeComp() {
 							<InputField
 								placeholder="Search for Income"
 								type="search"
-								onChange={(e) => searchItems(e.target.value)}
 								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+								onChange={(e) => {
+									setQuery({ ...query, search: e.target.value });
+								}}
 							/>
 						</div>
 						<div className="w-3/12 px-2">
-							<InputField placeholder="Filter By Type" />
+							<Select
+								placeholder={"Filter By Type"}
+								name="filter"
+								onChange={(e) => {
+									setQuery({ ...query, filter: e.value });
+								}}
+								options={incomeTypesData}
+							/>
 						</div>{" "}
 						<div className="w-2/12 px-2">
-							<InputField type="date" />
+							<InputField
+								type="date"
+								onChange={(e) => {
+									setQuery({ ...query, startDate: e.target.valueAsNumber });
+								}}
+							/>
 						</div>
 						<div className="w-2/12">
-							<InputField type="date" />
+							<InputField
+								type="date"
+								onChange={(e) => {
+									setQuery({ ...query, endDate: e.target.valueAsNumber });
+								}}
+
+							/>
 						</div>
 					</div>
+				</div>
+				<div
+					onClick={() => {
+						setQuery({ search: "", filter: "", startDate: NaN, endDate: NaN });
+					}}
+					className="mt-5">
+					<Button value={"Clear"} />
 				</div>
 				<Link
 					to="/addTransaction?transactionType=income&action=create"
@@ -179,13 +257,17 @@ function IncomeComp() {
 				>
 					<Button2 value={"Income "} />
 				</Link>
-				<div className="mt-5">
+				<div
+					onClick={() => {
+						printTable();
+					}}
+					className="mt-5">
 					<Button value={"Print"} />
 				</div>
 			</div>
 
 			<div className="w-full h-[80vh] relative">
-				<table className="mt-10 w-[98%] table-auto">
+				<table id="income-table" className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
 						<th className="p-2 text-primary text-sm text-left">Name</th>
@@ -196,32 +278,33 @@ function IncomeComp() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-						{searchInput.length > 1
-							? filteredIncome.map((incomeItem) => {
-									return (
-										<tr
-											className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
-											key={incomeItem?.id}
-										>
-											<td className="text-xs p-3 text-gray5">
-												{new Date(incomeItem.date).toLocaleDateString()}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem?.title}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem?.subType?.name}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{Number(incomeItem.transactionAmount).toLocaleString()}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.receivedBy}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.contacts}
-											</td>
-											<td className="text-xs p-3 text-gray5 flex">
+						{searchedIncomes.map((incomeItem) => {
+							return (
+								<tr
+									className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
+									key={incomeItem?.id}
+								>
+									<td className="text-xs p-3 text-gray5">
+										{new Date(incomeItem.date).toLocaleDateString()}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{incomeItem?.title}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{incomeItem?.subType?.name}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{Number(incomeItem.transactionAmount).toLocaleString()}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{incomeItem.receivedBy}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{incomeItem.contacts}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{incomeItem.id === id ? (
+											<div className="flex">
 												<MdDeleteOutline
 													onClick={() => deleteIncome(incomeItem)}
 													className="text-red w-4 h-4"
@@ -234,55 +317,12 @@ function IncomeComp() {
 														);
 													}}
 												/>
-											</td>
-										</tr>
-									);
-							  })
-							: incomesData.map((incomeItem) => {
-									return (
-										<tr
-											className="shadow-sm hover:border-l-primary hover:border-l-2 border-b border-gray1 cursor-pointer hover:shadow-md"
-											key={incomeItem?.id}
-										>
-											<td className="text-xs p-3 text-gray5">
-												{new Date(incomeItem.date).toLocaleDateString()}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem?.title}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem?.subType?.name}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{Number(incomeItem.transactionAmount).toLocaleString()}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.receivedBy}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.contacts}
-											</td>
-											<td className="text-xs p-3 text-gray5">
-												{incomeItem.id === id ? (
-													<div className="flex">
-														<MdDeleteOutline
-															onClick={() => deleteIncome(incomeItem)}
-															className="text-red w-4 h-4"
-														/>
-														<BsPencilSquare
-															className="text-warning h-4 w-4 ml-5"
-															onClick={() => {
-																navigate(
-																	`/addTransaction?transactionType=income&action=edit&transactionId=${incomeItem.transactionId}`
-																);
-															}}
-														/>
-													</div>
-												) : null}
-											</td>
-										</tr>
-									);
-							  })}
+											</div>
+										) : null}
+									</td>
+								</tr>
+							);
+						})}
 
 						<tr className="bg-white p-5 text-lg font-semibold">
 							<td colSpan="3">Total</td>
