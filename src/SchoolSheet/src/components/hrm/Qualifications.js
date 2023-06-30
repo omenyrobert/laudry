@@ -188,7 +188,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 
 			{
 				staffProfile?.education?.map((qualification, index) => (
-					<div className="flex border-b border-gray1">
+					<div key={index} className="flex border-b border-gray1">
 						<div className="p-2 w-1/4 text-sm text-gray5 truncate">
 							{qualification.qualification}
 						</div>

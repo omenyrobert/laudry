@@ -309,20 +309,15 @@ function StaffEditForm(props) {
 								)}
 							</div>
 							<div className="flex overflow-x-auto gap-2 mt-1">
-								{matchingRoles &&
-									matchingRoles.map((role) => {
+								{
+									matchingRoles && matchingRoles.map((role, id) => {
 										return (
-											<div className="bg-white p-1 rounded-md">
-												{role.label}{" "}
-												<span
-													className="cursor-pointer ml-2 text-red"
-													onClick={() => removeRole(role)}
-												>
-													X
-												</span>
+											<div key={id} className="bg-white p-1 rounded-md">
+												{role.label} <span className="cursor-pointer ml-2 text-red" onClick={() => removeRole(role)}>X</span>
 											</div>
-										);
-									})}
+										)
+									})
+								}
 							</div>
 						</div>
 

@@ -323,7 +323,7 @@ function OtherInfo({
 					<br />
 
 					{staffInfo?.classes?.map((item) => (
-						<div className="flex border-b border-gray1 p-2">
+						<div key={item.id} className="flex border-b border-gray1 p-2">
 							<div className="text-gray5 text-sm w-2/3">{item.class}</div>
 							<div className="w-1/3">
 								<p
@@ -356,7 +356,7 @@ function OtherInfo({
 
 					<br />
 					{staffInfo?.subjects?.map((item) => (
-						<div className="flex border-b border-gray1 p-2">
+						<div key={item.id} className="flex border-b border-gray1 p-2">
 							<div className="text-gray5 text-sm w-2/3">{item.subject}</div>
 							<div className="w-1/3">
 								<p
@@ -404,7 +404,7 @@ function OtherInfo({
 					<br />
 
 					{staffProfile?.staffDocument?.map((item) => (
-						<div className="flex border-b border-gray1 p-2">
+						<div key={item.id} className="flex border-b border-gray1 p-2">
 							<div className="text-gray5 text-sm w-2/3">{item.name}</div>
 							<img
 								onClick={showFile}
