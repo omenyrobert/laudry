@@ -17,6 +17,7 @@ import SalaryInfo from "./SalaryInfo";
 import axiosInstance, { UPLOADS_URL } from "../../axios-instance";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { useFeedback } from "../../hooks/feedback";
 
 let db = new Localbase("db");
 
@@ -26,6 +27,7 @@ function StaffEditForm(props) {
 	const searchParams = new URLSearchParams(location.search);
 	const staffId = searchParams.get("staffId");
 	const { closeEditData } = props;
+	const { setLoading, toggleFeedback } = useFeedback();
 
 	const [staffInfo, setStaffInfo] = useState({});
 	const [staffProfile, setStaffProfile] = useState({});
@@ -73,8 +75,21 @@ function StaffEditForm(props) {
 	};
 
 	useEffect(() => {
-		fetchStaffInfo();
-		fetchStaffProfile();
+		async function fetchData() {
+			setLoading(true);
+			try {
+				await fetchStaffInfo();
+				await fetchStaffProfile();
+				setLoading(false);
+			} catch (error) {
+				toggleFeedback("error", {
+					title: "Oops...",
+					text: "Something went wrong",
+				});
+				setLoading(false);
+			}
+		}
+		fetchData();
 	}, []);
 
 	// fetch stypes

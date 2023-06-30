@@ -170,7 +170,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 									label="Gross Salary"
 									onChange={(e) => setGrossSalary(e.target.value)}
 									value={gross_salary}
-									
+
 								/>
 								<InputField
 									type="text"
@@ -178,7 +178,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 									label="Bank"
 									onChange={(e) => setBankName(e.target.value)}
 									value={bank_name}
-									
+
 								/>
 								<InputField
 									type="text"
@@ -186,7 +186,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 									label="Account Name"
 									onChange={(e) => setAccountName(e.target.value)}
 									value={account_name}
-									
+
 								/>
 							</div>
 							<div className="w-1/2 p-3 -mt-5">
@@ -197,7 +197,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 
 									onChange={(e) => setAccountNumber(e.target.value)}
 									value={account_number}
-									
+
 								/>
 
 								<InputField
@@ -225,7 +225,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 			{/** Salary Info Display */}
 			{salaryInfo?.length === 0 ? <>No Salary Info</> : (
 				salaryInfo?.map((salary) => (
-					<>
+					<div key={salary.id}>
 						<div className="flex border-b border-gray1">
 							<div className="p-2 w-1/3  truncate">
 								Gross Salary
@@ -258,8 +258,9 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 								<p className="text-sm text-gray5">{salary.bank_branch}</p>
 							</div>
 						</div>
-					</>
-				)))}
+					</div >
+				)))
+			}
 
 		</>
 	);
