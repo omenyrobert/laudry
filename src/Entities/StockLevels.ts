@@ -28,6 +28,9 @@ export class StockLevels extends BaseEntity {
 
   @Column({nullable: true})
   takenByContacts!: string;
+
+  @Column({nullable: true})
+  reductions!: string;
 }
 
 export const getStockLevels = async () => {
@@ -72,9 +75,20 @@ export const updateStockLevel = async (
     reducedDate: string,
     takenBy: string,
     takenByContacts: string,
+    reductions: string,
 ) => {
     const stockLevelToUpdate =
-      await StockLevels.update(id, { date, stock, quantity, remaining, stockType, reducedDate, takenBy, takenByContacts });
+      await StockLevels.update(id, { 
+        date,
+        stock,
+        quantity,
+        remaining,
+        stockType,
+        reducedDate,
+        takenBy,
+        takenByContacts,
+        reductions 
+      });
     return stockLevelToUpdate;
 };
   

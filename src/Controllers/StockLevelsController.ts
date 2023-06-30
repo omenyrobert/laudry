@@ -41,7 +41,7 @@ export const createStockLevel = async (req: Request, res: Response) => {
 
 export const modifyStockLevel = async (req: Request, res: Response) => {
   try {
-    const { id, date, stock, quantity, remaining, stockType, reducedDate, takenBy, takenByContacts } = req.body;
+    const { id, date, stock, quantity, remaining, stockType, reducedDate, takenBy, takenByContacts, reductions } = req.body;
     if (!id) {
       return res
         .json(customPayloadResponse(false, "Stock Level Id Required"))
@@ -49,6 +49,10 @@ export const modifyStockLevel = async (req: Request, res: Response) => {
         .end();
     }
     const stockLevelToUpdate = await getStockLevelById(id);
+
+    const stockReductions = stockLevelToUpdate?.reductions ? 
+      `${reductions},${stockLevelToUpdate?.reductions}`  :  `${reductions}`;
+
     if (stockLevelToUpdate) {
       await updateStockLevel(
         id,
@@ -59,7 +63,8 @@ export const modifyStockLevel = async (req: Request, res: Response) => {
         stockType,
         reducedDate,
         takenBy,
-        takenByContacts
+        takenByContacts,
+        stockReductions
       );
       return res
         .json(customPayloadResponse(true, "Stock Level Updated"))

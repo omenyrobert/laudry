@@ -170,6 +170,7 @@ function StockComp() {
 					reducedDate: reducedDate,
 					takenBy: takenBy,
 					takenByContacts: takenByContacts,
+					reductions: sqty
 				};
 				const stockLevel = await axiosInstance.put("/stock-levels", formData);
 				const { data } = stockLevel;
@@ -384,6 +385,7 @@ function StockComp() {
 									<div className="cursor-pointer p-2 w-2/12">Balance</div>
 									<div className="cursor-pointer p-2 w-2/12">Taken By</div>
 									<div className="cursor-pointer p-2 w-3/12">Contacts</div>
+									<div className="cursor-pointer p-2 w-3/12">Reductions</div>
 								</div>
 								{stockLevels &&
 									stockLevels.length > 0 &&
@@ -405,6 +407,9 @@ function StockComp() {
 												</div>
 												<div className="cursor-pointer p-2 w-3/12">
 													{reduced.takenByContacts}
+												</div>
+												<div className="cursor-pointer p-2 w-3/12">
+													{reduced.reductions}
 												</div>
 											</div>
 										);
@@ -428,7 +433,7 @@ function StockComp() {
 										<td className="text-xs p-3 text-gray5">
 											{stockItem.stock}
 										</td>
-										<td className="text-xs p-3 text-gray5">{stockItem.type}</td>
+										<td className="text-xs p-3 text-gray5">{st.type}</td>
 										<td className="text-xs p-3 text-gray5">
 											{Number(stockItem.quantity).toLocaleString()}
 										</td>
