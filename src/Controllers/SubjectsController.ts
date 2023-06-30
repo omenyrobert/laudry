@@ -5,6 +5,8 @@ import {
 	updateSubject,
 	getSingleSubject,
 	deleteSubject,
+	addSubjectToStaff,
+	removeSubjectFromStaff
 } from "../Entities/Subject";
 import { customPayloadResponse } from "../Helpers/Helpers";
 
@@ -87,3 +89,58 @@ export const removeSubject = async (req: Request, res: Response) => {
 		console.log(error);
 	}
 };
+
+
+// add subject to staff
+export const addSubjectToStaffMember = async (req: Request, res: Response) => {
+	try {
+		const { subjectId, staffId } = req.body;
+		if (!subjectId) {
+			return res
+				.json(customPayloadResponse(false, "Subject Required"))
+				.status(200)
+				.end();
+		}
+		if (!staffId) {
+			return res
+				.json(customPayloadResponse(false, "Staff Id Required"))
+				.status(200)
+				.end();
+		}
+		await addSubjectToStaff(subjectId, staffId);
+		return res
+			.json(customPayloadResponse(true, "Subject Added to Staff"))
+			.status(200)
+			.end();
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+
+// remove subject from staff
+
+export const removeSubjectFromStaffMember = async (req: Request, res: Response) => {
+	try {
+		const { subjectId, staffId } = req.body;
+		if (!subjectId) {
+			return res
+				.json(customPayloadResponse(false, "Subject Required"))
+				.status(200)
+				.end();
+		}
+		if (!staffId) {
+			return res
+				.json(customPayloadResponse(false, "Staff Id Required"))
+				.status(200)
+				.end();
+		}
+		await removeSubjectFromStaff(subjectId, staffId);
+		return res
+			.json(customPayloadResponse(true, "Subject Removed from Staff"))
+			.status(200)
+			.end();
+	} catch (error) {
+		console.log(error);
+	}
+}

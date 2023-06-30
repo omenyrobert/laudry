@@ -5,11 +5,13 @@ import { Bs3SquareFill, BsFillPencilFill } from "react-icons/bs";
 import Button from "../Button";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
+import ButtonLoader from "../ButtonLoader";
 
 
 function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 	const [experience, setExperience] = useState(false);
 	const { toggleFeedback } = useFeedback()
+	const [loading, setLoading] = useState(false);
 
 	const openExperience = () => {
 		setExperience(true);
@@ -39,6 +41,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 			start_date: from,
 			end_date: to
 		}
+		setLoading(true)
 
 		try {
 			const res = await axiosInstance.post("/staff-profile/work-experience", experienceData)
@@ -56,6 +59,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 					text: payload
 				})
 			}
+			setLoading(false)
 		} catch (error) {
 			console.log(error)
 			toggleFeedback("error", {
@@ -63,7 +67,34 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 				text: error.message
 			})
 			closeExperience()
+			setLoading(false)
 		}
+	}
+
+
+	function deleteWorkExperience(id) {
+		axiosInstance.delete(`/staff-profile/work-experience/${id}`)
+			.then((res) => {
+				const { status, payload } = res.data
+				if (status) {
+					toggleFeedback("success", {
+						title: "Success",
+						text: "Experience deleted successfully"
+					})
+					fetchStaffInfo()
+				} else {
+					toggleFeedback("error", {
+						title: "Error",
+						text: payload
+					})
+				}
+			})
+			.catch((err) => {
+				toggleFeedback("error", {
+					title: "Error",
+					text: err.message
+				})
+			})
 	}
 
 	return (
@@ -100,7 +131,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									label="School"
 									onChange={(e) => setSchool(e.target.value)}
 									value={school}
-									
+
 								/>
 								<InputField
 									type="date"
@@ -108,7 +139,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									label="From Date"
 									onChange={(e) => setFrom(e.target.value)}
 									value={from}
-									
+
 								/>
 							</div>
 							<div className="w-1/2 p-3 -mt-5">
@@ -116,9 +147,11 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									type="date"
 									placeholder="To"
 									label="To Date"
-									onChange={(e) => setTo(e.target.value)}
+									onChange={(e) => {
+										setTo(e.target.value)
+									}}
 									value={to}
-									
+
 								/>
 								<InputField
 									type="text"
@@ -127,7 +160,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									name="position"
 									onChange={(e) => setPosition(e.target.value)}
 									value={position}
-									
+
 								/>
 
 								<div onClick={addExperience} className="mt-14">
@@ -148,6 +181,15 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 						</div>
 						<div className="p-2 w-1/3 text-sm text-gray5 truncate">
 							{experience.position}
+						</div>
+						<div className="p-2 w-1/5 text-sm text-gray5 truncate">
+							<div className="flex justify-end">
+								<div onClick={() => {
+									deleteWorkExperience(experience.id)
+								}} className="text-red cursor-pointer">
+									Delete
+								</div>
+							</div>
 						</div>
 					</div>
 				))

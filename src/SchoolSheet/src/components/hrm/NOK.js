@@ -25,6 +25,7 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 
 	const [posting, setPosting] = useState(false);
 	const addNok = () => {
+		console.log("Clicked")
 		if (relationship === "" || nokname === "" || nokContact === "") {
 			toggleFeedback("error", {
 				title: "Oops...",
@@ -71,60 +72,40 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 				});
 				setPosting(false);
 			});
-		setPosting(false);
 	};
+
+	function deleteNok(id) {
+		axiosInstance
+			.delete(`/staff-profile/next-of-kin/${id}`)
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					toggleFeedback("error", {
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
+				toggleFeedback("success", {
+					title: "Success",
+					text: "Next of kin deleted successfully",
+				});
+				fetchStaffInfo();
+			})
+			.catch((err) => {
+				console.log(err);
+				toggleFeedback("error", {
+					title: "Oops...",
+					text: "Something went wrong",
+				});
+			});
+	}
+
+
 
 	return (
 		<>
-			{/* {nok ? (
-				<div className="border absolute z-50 md:-mt-[35vh] sm:-mt-[30vh] 2xl:-mt-[20vh]  lg:-mt-[25vh] xl:-mt-[35vh]  border-gray3 bg-white shadow h-auto rounded w-[40vw] overflow-y-auto">
-					<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
-						<div>
-							<p>Add Next Of Kin</p>
-						</div>
-						<div>
-							<p className="cursor-pointer" onClick={closeNok}>
-								X
-							</p>
-						</div>
-					</div>
-					<div className="flex">
-						<div className="w-1/2 p-3">
-							<InputField
-								type="text"
-								placeholder="ext Of Kin Type"
-								label="Next Of Kin Type"
-								onChange={(e) => setRelationship(e.target.value)}
-								value={relationship}
-								
-							/>
-							<InputField
-								type="text"
-								placeholder="ext Of Kin Type"
-								label="Next Of Kin Type"
-								onChange={(e) => setNokName(e.target.value)}
-								value={nokname}
-								
-							/>
-						</div>
-						<div className="w-1/2 p-3 -mt-5">
-							<InputField
-								type="text"
-								placeholder="Enter Contacts"
-								label="Contacts"
-								name="Contacts"
-								onChange={(e) => setNokContact(e.target.value)}
-								value={nokContact}
-								
-							/>
 
-							<div className="mt-14">
-								<Button value={"Add Nok"} />
-							</div>
-						</div>
-					</div>
-				</div>
-			) : null} */}
 			<div className="flex justify-between">
 				<div>
 					<p className="text-secondary text-xl font-semibold ml-5">
@@ -177,7 +158,7 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 								/>
 
 								<div onClick={addNok} className="mt-14">
-									{posting ? <ButtonLoader /> : <Button value={"Add Nok"} />}
+									{posting ? <ButtonLoader /> : <Button value={"Add Next Of Kin"} />}
 								</div>
 							</div>
 						</div>
@@ -195,6 +176,16 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 					<div className="p-2 w-1/3 text-sm text-gray5 truncate">
 						{nok.contact}
 					</div>
+					{/* Delete button */}
+					<div className="p-2 w-1/3 text-sm text-gray5 truncate">
+						<div className="flex justify-end">
+							<div onClick={() => {
+								deleteNok(nok.id)
+							}} className="text-red cursor-pointer">
+								Delete
+							</div>
+						</div>
+					</div>
 				</div>
 			))}
 		</>
@@ -202,3 +193,53 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 }
 
 export default NOK;
+
+/* {nok ? (
+				<div className="border absolute z-50 md:-mt-[35vh] sm:-mt-[30vh] 2xl:-mt-[20vh]  lg:-mt-[25vh] xl:-mt-[35vh]  border-gray3 bg-white shadow h-auto rounded w-[40vw] overflow-y-auto">
+					<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
+						<div>
+							<p>Add Next Of Kin</p>
+						</div>
+						<div>
+							<p className="cursor-pointer" onClick={closeNok}>
+								X
+							</p>
+						</div>
+					</div>
+					<div className="flex">
+						<div className="w-1/2 p-3">
+							<InputField
+								type="text"
+								placeholder="ext Of Kin Type"
+								label="Next Of Kin Type"
+								onChange={(e) => setRelationship(e.target.value)}
+								value={relationship}
+								
+							/>
+							<InputField
+								type="text"
+								placeholder="ext Of Kin Type"
+								label="Next Of Kin Type"
+								onChange={(e) => setNokName(e.target.value)}
+								value={nokname}
+								
+							/>
+						</div>
+						<div className="w-1/2 p-3 -mt-5">
+							<InputField
+								type="text"
+								placeholder="Enter Contacts"
+								label="Contacts"
+								name="Contacts"
+								onChange={(e) => setNokContact(e.target.value)}
+								value={nokContact}
+								
+							/>
+
+							<div className="mt-14">
+								<Button value={"Add Nok"} />
+							</div>
+						</div>
+					</div>
+				</div>
+			) : null} */

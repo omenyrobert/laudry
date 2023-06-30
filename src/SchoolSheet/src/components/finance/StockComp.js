@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	getStockLevels,
 	getStockTypes,
+	getReductions
 } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import InputField from "../InputField";
@@ -163,20 +164,37 @@ function StockComp() {
 	const reduceStock = async () => {
 		try {
 			if (sqty) {
+
+				const balance = stockId.quantity - parseFloat(sqty);
+		
 				let formData = {
 					id: stockId.id,
 					quantity: stockId.quantity,
-					remaining: stockId.quantity - parseFloat(sqty),
+					remaining: balance,
 					reducedDate: reducedDate,
 					takenBy: takenBy,
 					takenByContacts: takenByContacts,
 					reductions: sqty
 				};
+				let reductionData = {
+					date: reducedDate,
+					stock: stockId.stock,
+					stockId: stockId.id,
+					quantity: stockId.quantity,
+					quantityTaken: sqty,
+					takenBy,
+					takenByContacts,
+					balance
+				}
+				const reductions = await axiosInstance.post("/reductions", reductionData);
 				const stockLevel = await axiosInstance.put("/stock-levels", formData);
-				const { data } = stockLevel;
-				const { status } = data;
-				if (status) {
+				const stockLevelData = stockLevel.data;
+				const stockLevelStatus = stockLevelData.status;
+				const reductionsData = reductions.data;
+				const reductionsStatus = reductionsData.status;
+				if (reductionsStatus && stockLevelStatus) {
 					dispatch(getStockLevels());
+					dispatch(getReductions());
 					setReducedDate("");
 					setTakenBy("");
 					setTakenByContacts("");
@@ -197,9 +215,10 @@ function StockComp() {
 	useEffect(() => {
 		dispatch(getStockTypes());
 		dispatch(getStockLevels());
+		dispatch(getReductions());
 	}, [dispatch]);
 
-	const { stockLevels, stockTypes } = useSelector((state) => state.schoolStore);
+	const { stockLevels, stockTypes, reductions } = useSelector((state) => state.schoolStore);
 
 	return (
 		<>
@@ -387,20 +406,20 @@ function StockComp() {
 									<div className="cursor-pointer p-2 w-3/12">Contacts</div>
 									<div className="cursor-pointer p-2 w-3/12">Reductions</div>
 								</div>
-								{stockLevels &&
-									stockLevels.length > 0 &&
-									stockLevels.map((reduced) => {
+								{reductions &&
+									reductions.length > 0 &&
+									reductions.map((reduced) => {
 										return (
 											<div className="flex text-gray5 text-xs hover:bg-gray1 border-b border-gray2">
 												<div className="cursor-pointer p-2 w-2/12">
-													{reduced.reducedDate}
+													{reduced.date}
 												</div>
 
 												<div className="cursor-pointer p-2 w-1/12">
 													{reduced.quantity}
 												</div>
 												<div className="cursor-pointer p-2 w-2/12">
-													{reduced.remaining}
+													{reduced.balance}
 												</div>
 												<div className="cursor-pointer p-2 w-2/12">
 													{reduced.takenBy}
@@ -409,7 +428,7 @@ function StockComp() {
 													{reduced.takenByContacts}
 												</div>
 												<div className="cursor-pointer p-2 w-3/12">
-													{reduced.reductions}
+													{reduced.quantityTaken}
 												</div>
 											</div>
 										);

@@ -28,6 +28,7 @@ import DivisionRoutes from "./DivisionRoutes";
 import ReportRoutes from "./ReportRoutes";
 import StockTypeRoutes from "./StockTypeRoutes";
 import StockLevelRoutes from "./StockLevelRoutes";
+import ReductionRoutes from "./ReductionRoutes";
 
 const router = Router();
 
@@ -61,6 +62,7 @@ export default (): Router => {
   ReportRoutes(router);
   StockTypeRoutes(router);
   StockLevelRoutes(router);
+  ReductionRoutes(router);
 
   return router;
 };
