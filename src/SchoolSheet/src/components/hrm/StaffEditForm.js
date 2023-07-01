@@ -57,8 +57,8 @@ function StaffEditForm(props) {
 
 	const [staffRoles, setStaffRoles] = useState(null);
 	const [matchingRoles, setMatchingRoles] = useState(null);
-	
-	
+
+
 	const fetchStaffInfo = async () => {
 		try {
 			const response = await axiosInstance.get(`/staff/${staffId}`);
@@ -146,7 +146,7 @@ function StaffEditForm(props) {
 	};
 
 	const addRole = async (role) => {
-	
+
 		let formData = {
 			staffId,
 			firstName: staffInfo.first_name,
@@ -213,15 +213,15 @@ function StaffEditForm(props) {
 		if (isRemove) {
 			const updatedRoles = (matchingRoles || []).filter(
 				(r) => r.value !== role.value
-			  );
-			  setMatchingRoles(updatedRoles);
+			);
+			setMatchingRoles(updatedRoles);
 		} else {
 			const updatedRoles = [...(matchingRoles || []), role];
 			setMatchingRoles(updatedRoles);
 		}
-	  };
-	
-	
+	};
+
+
 	return (
 		<>
 			<div className="bg-white h-[90vh] overflow-y-auto  ">
@@ -287,11 +287,11 @@ function StaffEditForm(props) {
 							</div>
 							<div className="flex overflow-x-auto gap-2 mt-1">
 								{
-									matchingRoles && matchingRoles.map(role => {
+									matchingRoles && matchingRoles.map((role, id) => {
 										return (
-										<div className="bg-white p-1 rounded-md">
-											{role.label} <span className="cursor-pointer ml-2 text-red" onClick={() => removeRole(role)}>X</span>
-										</div>
+											<div key={id} className="bg-white p-1 rounded-md">
+												{role.label} <span className="cursor-pointer ml-2 text-red" onClick={() => removeRole(role)}>X</span>
+											</div>
 										)
 									})
 								}
