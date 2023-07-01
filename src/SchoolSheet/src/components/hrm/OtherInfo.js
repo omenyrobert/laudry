@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getSections } from "../../store/schoolSheetSlices/schoolStore";
 import Select from "react-select";
-import axiosInstance from "../../axios-instance";
+import axiosInstance, { UPLOADS_URL } from "../../axios-instance";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import Button from "../Button";
@@ -186,7 +186,7 @@ function OtherInfo({
 					title: "Success",
 					text: "Document removed successfully",
 				});
-				fetchStaffInfo();
+				fetchStaffProfile();
 			})
 			.catch((err) => {
 				console.log(err);
@@ -408,16 +408,18 @@ function OtherInfo({
 							<div className="text-gray5 text-sm w-2/3">{item.name}</div>
 							<img
 								onClick={showFile}
-								src="https://templates.invoicehome.com/receipt-template-us-classic-white-750px.png"
+								src={UPLOADS_URL + item.content}
 								className="w-16 mr-5 cursor-pointer h-5 ml-5"
+								alt={item.name}
 							/>
 							{file ? (
 								<div className="top-0 left-0 bg-black/50 p-10 flex justify-center w-full h-full absolute">
 									<div className="w-3/12" onClick={closeFile}></div>
 									<div className="w-6/12 flex">
 										<img
-											src="https://templates.invoicehome.com/receipt-template-us-classic-white-750px.png"
+											src={UPLOADS_URL + item.content}
 											className="h-[80vh]"
+											alt={item.name}
 										/>
 										<p
 											onClick={closeFile}
