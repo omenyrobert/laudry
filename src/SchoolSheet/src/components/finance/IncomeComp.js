@@ -16,7 +16,6 @@ import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
-
 function IncomeComp() {
 	const { setLoading, toggleFeedback } = useFeedback();
 	const navigate = useNavigate();
@@ -41,10 +40,8 @@ function IncomeComp() {
 				value: item.name,
 				...item,
 			};
-		}
-		);
+		});
 		setIncomeTypesData(incomeTypes);
-
 	};
 
 	// fetch incomes
@@ -147,7 +144,6 @@ function IncomeComp() {
 		fetchData();
 	}, []);
 
-
 	// implement search
 	const [query, setQuery] = useState({
 		search: "",
@@ -158,22 +154,35 @@ function IncomeComp() {
 	const [searchedIncomes, setSearchedIncomes] = useState([]);
 
 	useEffect(() => {
-		if (query.search === "" && query.filter === "" && isNaN(query.startDate) && isNaN(query.endDate)) {
+		if (
+			query.search === "" &&
+			query.filter === "" &&
+			isNaN(query.startDate) &&
+			isNaN(query.endDate)
+		) {
 			setSearchedIncomes(incomesData);
 			return;
 		}
 		const filteredIncomes = incomesData.filter((income) => {
 			const incomeDate = new Date(income.date);
-			const isStartDateValid = isNaN(query.startDate) ? true : incomeDate.getTime() >= query.startDate;
-			const isEndDateValid = isNaN(query.endDate) ? true : incomeDate.getTime() <= query.endDate;
-			const isSearchValid = income.title.toLowerCase().includes(query.search.toLowerCase());
-			const isFilterValid = query.filter ? income.subType.name === query.filter : true;
-			return isStartDateValid && isEndDateValid && isSearchValid && isFilterValid;
+			const isStartDateValid = isNaN(query.startDate)
+				? true
+				: incomeDate.getTime() >= query.startDate;
+			const isEndDateValid = isNaN(query.endDate)
+				? true
+				: incomeDate.getTime() <= query.endDate;
+			const isSearchValid = income.title
+				.toLowerCase()
+				.includes(query.search.toLowerCase());
+			const isFilterValid = query.filter
+				? income.subType.name === query.filter
+				: true;
+			return (
+				isStartDateValid && isEndDateValid && isSearchValid && isFilterValid
+			);
 		});
 		setSearchedIncomes(filteredIncomes);
 	}, [query, incomesData]);
-
-
 
 	const printTable = () => {
 		const table = document.getElementById("income-table");
@@ -192,68 +201,61 @@ function IncomeComp() {
 			myWindow.document.head.appendChild(link.cloneNode(true));
 		});
 
-
 		setTimeout(() => {
 			myWindow.print();
 		}, 1000);
-
-	}
-
+	};
 
 	return (
 		<>
 			<div className="flex bg-white">
-				<div className="w-10/12 ">
-					<div className="flex">
-						<div className="w-6/12 px-2">
-							<InputField
-								placeholder="Search for Income"
-								type="search"
-								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
-								onChange={(e) => {
-									setQuery({ ...query, search: e.target.value });
-								}}
-							/>
-						</div>
-						<div className="w-3/12 px-2">
-							<Select
-								placeholder={"Filter By Type"}
-								name="filter"
-								onChange={(e) => {
-									setQuery({ ...query, filter: e.value });
-								}}
-								options={incomeTypesData}
-							/>
-						</div>{" "}
-						<div className="w-2/12 px-2">
-							<InputField
-								type="date"
-								onChange={(e) => {
-									setQuery({ ...query, startDate: e.target.valueAsNumber });
-								}}
-							/>
-						</div>
-						<div className="w-2/12">
-							<InputField
-								type="date"
-								onChange={(e) => {
-									setQuery({ ...query, endDate: e.target.valueAsNumber });
-								}}
-
-							/>
-						</div>
-					</div>
+				<div className="w-6/12 px-2">
+					<InputField
+						placeholder="Search for Income"
+						type="search"
+						icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+						onChange={(e) => {
+							setQuery({ ...query, search: e.target.value });
+						}}
+					/>
+				</div>
+				<div className="w-3/12 px-2 mt-5">
+					<Select
+						placeholder={"Filter By Type"}
+						name="filter"
+						onChange={(e) => {
+							setQuery({ ...query, filter: e.value });
+						}}
+						options={incomeTypesData}
+					/>
+				</div>{" "}
+				<div className="w-2/12 px-2">
+					<InputField
+						type="date"
+						onChange={(e) => {
+							setQuery({ ...query, startDate: e.target.valueAsNumber });
+						}}
+					/>
+				</div>
+				<div className="w-2/12">
+					<InputField
+						type="date"
+						onChange={(e) => {
+							setQuery({ ...query, endDate: e.target.valueAsNumber });
+						}}
+					/>
 				</div>
 				<div
 					onClick={() => {
 						setQuery({ search: "", filter: "", startDate: NaN, endDate: NaN });
 					}}
-					className="mt-5">
+					className="mt-5 ml-5"
+				>
 					<Button value={"Clear"} />
 				</div>
 				<Link
 					to="/addTransaction?transactionType=income&action=create"
-					className="w-auto ml-5 px-3 mt-5"
+					className="w-auto px-3 mt-5"
 				>
 					<Button2 value={"Income "} />
 				</Link>
@@ -261,7 +263,8 @@ function IncomeComp() {
 					onClick={() => {
 						printTable();
 					}}
-					className="mt-5">
+					className="mt-5 mr-5"
+				>
 					<Button value={"Print"} />
 				</div>
 			</div>

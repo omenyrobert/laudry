@@ -18,6 +18,7 @@ import axiosInstance, { UPLOADS_URL } from "../../axios-instance";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useFeedback } from "../../hooks/feedback";
+import Loader from "../Loader";
 
 let db = new Localbase("db");
 
@@ -57,8 +58,7 @@ function StaffEditForm(props) {
 
 	const [staffRoles, setStaffRoles] = useState(null);
 	const [matchingRoles, setMatchingRoles] = useState(null);
-	
-	
+
 	const fetchStaffInfo = async () => {
 		try {
 			const response = await axiosInstance.get(`/staff/${staffId}`);
@@ -83,6 +83,7 @@ function StaffEditForm(props) {
 	};
 
 	const fetchStaffProfile = async () => {
+	
 		try {
 			const response = await axiosInstance.post(`/staff-profile/get-profile`, {
 				staff: staffId,
@@ -102,6 +103,7 @@ function StaffEditForm(props) {
 		} catch (error) {
 			console.log(error);
 		}
+		
 	};
 
 	useEffect(() => {
@@ -126,7 +128,11 @@ function StaffEditForm(props) {
 
 	const [photo, setPhoto] = useState(staffInfo?.profile_picture);
 
+	const [postingPhoto, setPostingPhoto] = useState(false);
+
 	const handlePhotoChange = (e) => {
+		setPostingPhoto(true);
+		console.log('posting', postingPhoto);
 		const file = e.target.files[0];
 		const formData = new FormData();
 		formData.append("profile_picture", file);
@@ -143,18 +149,22 @@ function StaffEditForm(props) {
 			.catch((err) => {
 				console.log(err);
 			});
+		setPostingPhoto(false);
+		console.log('posting2', postingPhoto);
 	};
 
+	const [posting, setPosting] = useState(false);
+
 	const addRole = async (role) => {
-	
+		setPosting(true);
 		let formData = {
 			staffId,
 			firstName: staffInfo.first_name,
 			lastName: staffInfo.last_name,
 			email: staffInfo.email,
 			roles: role.value,
-			isRemove: false
-		}
+			isRemove: false,
+		};
 		try {
 			const response = await axiosInstance.put(`/staff`, formData);
 			const { status, payload } = response.data;
@@ -167,29 +177,33 @@ function StaffEditForm(props) {
 				});
 			} else {
 				fetchStaffProfile();
-				updateMatchingRoles(role, false)
+				updateMatchingRoles(role, false);
 			}
 		} catch (error) {
 			console.log(error);
 		}
-	}
+		setPosting(false);
+	};
 
 	useEffect(() => {
 		if (staffRoles) {
-			const matchingRoles = roles.filter((role) => staffRoles.includes(role.value));
+			const matchingRoles = roles.filter((role) =>
+				staffRoles.includes(role.value)
+			);
 			setMatchingRoles(matchingRoles);
 		}
-	}, [staffRoles, staffInfo])
+	}, [staffRoles, staffInfo]);
 
 	const removeRole = async (role) => {
+		setPosting(true);
 		let formData = {
 			staffId,
 			firstName: staffInfo.first_name,
 			lastName: staffInfo.last_name,
 			email: staffInfo.email,
 			roles: role.value,
-			isRemove: true
-		}
+			isRemove: true,
+		};
 		try {
 			const response = await axiosInstance.put(`/staff`, formData);
 			const { status, payload } = response.data;
@@ -202,26 +216,26 @@ function StaffEditForm(props) {
 				});
 			} else {
 				fetchStaffProfile();
-				updateMatchingRoles(role, true)
+				updateMatchingRoles(role, true);
 			}
 		} catch (error) {
 			console.log(error);
 		}
-	}
+		setPosting(false);
+	};
 
 	const updateMatchingRoles = (role, isRemove) => {
 		if (isRemove) {
 			const updatedRoles = (matchingRoles || []).filter(
 				(r) => r.value !== role.value
-			  );
-			  setMatchingRoles(updatedRoles);
+			);
+			setMatchingRoles(updatedRoles);
 		} else {
 			const updatedRoles = [...(matchingRoles || []), role];
 			setMatchingRoles(updatedRoles);
 		}
-	  };
-	
-	
+	};
+
 	return (
 		<>
 			<div className="bg-white h-[90vh] overflow-y-auto  ">
@@ -243,55 +257,64 @@ function StaffEditForm(props) {
 				<div className="flex p-3">
 					<div className="w-5/12 py-3 pl-3 pr-10">
 						<div className="flex justify-center">
-							<div className="flex">
-								<div>
-									<img
-										src={
-											staffInfo?.profile_picture
-												? UPLOADS_URL + staffInfo?.profile_picture
-												: "avata.jpeg"
-										}
-										className="w-60 h-60 object-cover rounded-full  border border-gray1 shadow"
-										alt={staffInfo?.firstName}
-									/>
-									<input
-										onChange={handlePhotoChange}
-										id="ppImage"
-										type="file"
-										hidden
-										accept="image/*"
-									/>
-								</div>
-								<div className="relative">
-									<div
-										onClick={(e) => {
-											const imgInput = document.getElementById("ppImage");
-											imgInput.click();
-										}}
-										className="bg-primary w-8 rounded-full h-8  absolute -ml-10 mt-10"
-									>
-										<BsCameraFill className="w-4 m-2 text-center text-white h-4" />
+							
+							{postingPhoto ? (
+								<Loader />
+							) : (
+								<div className="flex">
+									<div>
+										<img
+											src={
+												staffInfo?.profile_picture
+													? UPLOADS_URL + staffInfo?.profile_picture
+													: "avata.jpeg"
+											}
+											className="w-60 h-60 object-cover rounded-full  border border-gray1 shadow"
+											alt={staffInfo?.firstName}
+										/>
+										<input
+											onChange={handlePhotoChange}
+											id="ppImage"
+											type="file"
+											hidden
+											accept="image/*"
+										/>
+									</div>
+									<div className="relative">
+										<div
+											onClick={(e) => {
+												const imgInput = document.getElementById("ppImage");
+												imgInput.click();
+											}}
+											className="bg-primary w-8 rounded-full h-8  absolute -ml-10 mt-10"
+										>
+											<BsCameraFill className="w-4 m-2 text-center text-white h-4" />
+										</div>
 									</div>
 								</div>
-							</div>
+							)}
 						</div>
 						<div className="bg-gray1 p-2 rounded-md">
 							<div className="w-40">
-								<Select
-									placeholder={"Select roles"}
-									// defaultValue={studentType}
-									name="studentType"
-									onChange={addRole}
-									options={roles}
-								/>
+								{posting ? (
+									<Loader />
+								) : (
+									<Select
+										placeholder={"Select roles"}
+										// defaultValue={studentType}
+										name="studentType"
+										onChange={addRole}
+										options={roles}
+									/>
+								)}
 							</div>
 							<div className="flex overflow-x-auto gap-2 mt-1">
 								{
-									matchingRoles && matchingRoles.map(role => {
+									matchingRoles && matchingRoles.map((role, id) => {
 										return (
-										<div className="bg-white p-1 rounded-md">
-											{role.label} <span className="cursor-pointer ml-2 text-red" onClick={() => removeRole(role)}>X</span>
-										</div>
+											<div key={id} className="bg-white p-1 rounded-md">
+												{role.label} <span className="cursor-pointer ml-2 text-red" onClick={() => removeRole(role)}>X</span>
+											</div>
 										)
 									})
 								}

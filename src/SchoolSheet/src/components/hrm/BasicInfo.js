@@ -8,6 +8,8 @@ import Button from "../Button";
 import axiosInstance from "../../axios-instance";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import Loader from "../Loader";
+import ButtonLoader from "../ButtonLoader";
 
 function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 	const [staffType, setStaffType] = useState(staffInfo.staffType);
@@ -82,7 +84,10 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 		fetchStaffTypes();
 	}, []);
 
+	const [updating, setUpdating] = useState(false);
+
 	const updateBasicInfo = () => {
+		setUpdating(true);
 		const data = {
 			id: staffId,
 			staff_type: staffType?.id,
@@ -114,6 +119,7 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 			.catch((err) => {
 				console.log(err);
 			});
+		setUpdating(false);
 	};
 	return (
 		<>
@@ -235,8 +241,14 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 										onChange={setGender}
 										className="mt-1"
 									/>
-									<div onClick={updateBasicInfo} className="mt-14">
-										<Button value={"Update Basic Info"} />
+									<div className="w-32 float-right">
+										{updating ? (
+											<ButtonLoader />
+										) : (
+											<div onClick={updateBasicInfo} className="mt-14 w-auto">
+												<Button value={"Update "} />
+											</div>
+										)}
 									</div>
 								</div>
 							</div>

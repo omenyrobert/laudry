@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	getStockLevels,
 	getStockTypes,
-	getReductions
+	getReductions,
 } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import InputField from "../InputField";
@@ -16,6 +16,8 @@ import SelectComp from "../SelectComp";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import "../../assets/styles/main.css";
+import Loader from "../Loader";
+import ButtonLoader from "../ButtonLoader";
 
 function StockComp() {
 	const dispatch = useDispatch();
@@ -25,13 +27,17 @@ function StockComp() {
 	const [qty, setqty] = useState("");
 	const [date, setDate] = useState("");
 
+	const [posting, setPosting] = useState(false);
+
 	const poststock = async () => {
+		setPosting(true);
 		try {
 			let formData = {
 				stockType: stockTypeId,
 				stock: stock,
 				quantity: parseFloat(qty),
 				date: date,
+				remaining: parseFloat(qty),
 			};
 
 			const response = await axiosInstance.post("/stock-levels", formData);
@@ -55,6 +61,7 @@ function StockComp() {
 		} catch (error) {
 			console.log(error);
 		}
+		setPosting(false);
 	};
 
 	// update
@@ -149,6 +156,8 @@ function StockComp() {
 	const openShowReduce = (stockItem) => {
 		setShowReduce(true);
 		setStockId(stockItem);
+		const _reductions = reductions.filter((r) => r.stockId === stockItem.id);
+		setFilterStocks(_reductions);
 	};
 
 	const closeShowReduce = () => {
@@ -160,13 +169,16 @@ function StockComp() {
 	const [takenBy, setTakenBy] = useState("");
 	const [takenByContacts, setTakenByContacts] = useState("");
 	const [stockId, setStockId] = useState("");
+	const [filterStocks, setFilterStocks] = useState([]);
+
+	const [reducing, setReducing] = useState(false);
 
 	const reduceStock = async () => {
 		try {
+			setReducing(true);
 			if (sqty) {
+				const balance = stockId.remaining - parseFloat(sqty);
 
-				const balance = stockId.quantity - parseFloat(sqty);
-		
 				let formData = {
 					id: stockId.id,
 					quantity: stockId.quantity,
@@ -174,7 +186,7 @@ function StockComp() {
 					reducedDate: reducedDate,
 					takenBy: takenBy,
 					takenByContacts: takenByContacts,
-					reductions: sqty
+					reductions: sqty,
 				};
 				let reductionData = {
 					date: reducedDate,
@@ -184,9 +196,12 @@ function StockComp() {
 					quantityTaken: sqty,
 					takenBy,
 					takenByContacts,
-					balance
-				}
-				const reductions = await axiosInstance.post("/reductions", reductionData);
+					balance,
+				};
+				const reductions = await axiosInstance.post(
+					"/reductions",
+					reductionData
+				);
 				const stockLevel = await axiosInstance.put("/stock-levels", formData);
 				const stockLevelData = stockLevel.data;
 				const stockLevelStatus = stockLevelData.status;
@@ -205,11 +220,14 @@ function StockComp() {
 						showConfirmButton: false,
 						timer: 500,
 					});
+					setReducing(false);
 				}
 			}
 		} catch (error) {
 			console.log(error);
+			setReducing(false);
 		}
+		setReducing(false);
 	};
 
 	useEffect(() => {
@@ -218,7 +236,16 @@ function StockComp() {
 		dispatch(getReductions());
 	}, [dispatch]);
 
-	const { stockLevels, stockTypes, reductions } = useSelector((state) => state.schoolStore);
+	const { stockLevels, stockTypes, reductions } = useSelector(
+		(state) => state.schoolStore
+	);
+
+	useEffect(() => {
+		if (reductions && reductions.length > 0) {
+			const _reductions = reductions.filter((r) => r.stockId === stockId.id);
+			setFilterStocks(_reductions);
+		}
+	}, [reductions, stockId.id]);
 
 	return (
 		<>
@@ -226,7 +253,7 @@ function StockComp() {
 			<div className="w-full h-[80vh] mt-5">
 				<div className="bg-white p-3 shadow-lg rounded-md mr-2">
 					<div className="flex justify-between">
-						<div className="w-1/4 p-1">
+						<div className="w-3/12 p-1">
 							<InputField
 								type="date"
 								label="Date"
@@ -234,7 +261,7 @@ function StockComp() {
 								onChange={(e) => setDate(e.target.value)}
 							/>
 						</div>
-						<div className="w-1/4 p-1">
+						<div className="w-3/12 p-1">
 							<InputField
 								type="text"
 								placeholder="Enter Stock"
@@ -243,7 +270,7 @@ function StockComp() {
 								onChange={(e) => setstock(e.target.value)}
 							/>
 						</div>
-						<div className="w-1/4 p-1">
+						<div className="w-3/12 p-1">
 							<InputField
 								type="number"
 								placeholder="Enter Quantity"
@@ -252,7 +279,7 @@ function StockComp() {
 								onChange={(e) => setqty(e.target.value)}
 							/>
 						</div>
-						<div className="w-1/4 p-1">
+						<div className="w-3/12 p-1">
 							<SelectComp
 								options={stockTypes}
 								placeholder="Select stock Type"
@@ -262,10 +289,16 @@ function StockComp() {
 								}}
 							/>
 						</div>
-						<div className="p-1 w-1/4 mt-14">
-							<div onClick={poststock}>
-								<Button value={"Add stock"} />
-							</div>
+						<div className="p-1 w-1/12 mt-14">
+							{posting ? (
+								<div>
+									<ButtonLoader />
+								</div>
+							) : (
+								<div onClick={poststock}>
+									<Button value={"Add"} />
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
@@ -390,10 +423,14 @@ function StockComp() {
 											placeholder="Taken By Contacts"
 										/>
 									</div>
-									<div className="w-1/3 p-1 mt-14">
-										<div onClick={reduceStock}>
-											<Button value={"Add"} />
-										</div>
+									<div className="w-auto p-1 mt-14">
+										{reducing ? (
+											<ButtonLoader />
+										) : (
+											<div onClick={reduceStock}>
+												<Button value={"Add"} />
+											</div>
+										)}
 									</div>
 									<div className="w-1/3 p-1"></div>
 								</div>
@@ -406,9 +443,9 @@ function StockComp() {
 									<div className="cursor-pointer p-2 w-3/12">Contacts</div>
 									<div className="cursor-pointer p-2 w-3/12">Reductions</div>
 								</div>
-								{reductions &&
-									reductions.length > 0 &&
-									reductions.map((reduced) => {
+								{filterStocks &&
+									filterStocks.length > 0 &&
+									filterStocks.map((reduced) => {
 										return (
 											<div className="flex text-gray5 text-xs hover:bg-gray1 border-b border-gray2">
 												<div className="cursor-pointer p-2 w-2/12">
@@ -452,7 +489,7 @@ function StockComp() {
 										<td className="text-xs p-3 text-gray5">
 											{stockItem.stock}
 										</td>
-										<td className="text-xs p-3 text-gray5">{stockItem.type}</td>
+										<td className="text-xs p-3 text-gray5">{st.type}</td>
 										<td className="text-xs p-3 text-gray5">
 											{Number(stockItem.quantity).toLocaleString()}
 										</td>
