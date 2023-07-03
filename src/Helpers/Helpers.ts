@@ -92,3 +92,13 @@ export const mailTransporter = (email: any, password: any) => {
   });
   return transporter;
 };
+
+export const extraLatestArrayIndex = (array: any) => {
+  let lastIndexItem = null;
+  for (let i = 0; i < array.length; i++) {
+    if (array.length - 1 === i) {
+      lastIndexItem = array[i];
+    }
+  }
+  return lastIndexItem;
+};

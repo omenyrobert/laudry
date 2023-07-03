@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import Localbase from 'localbase';
-import { v4 as uuid } from 'uuid';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import InputField from '../InputField';
 import Button from '../Button';
-let db = new Localbase('db');
+import axiosInstance from '../../axios-instance';
+import { useNavigate } from 'react-router-dom'
 
-function FeesTable(props) {
+const FeesTable = (props) => {
     const { studentData } = props;
     const [cash, setCash] = useState(false);
     const [bankslip, setBankslip] = useState(false);
@@ -16,7 +15,7 @@ function FeesTable(props) {
     const [mobile, setMobile] = useState(false);
     const [payments, setPayments] = useState(false);
     const [studentId, setStudentId] = useState();
-    // const [paidAmount, setPaidAmount] = useState();
+    const navigate = useNavigate();
 
     // toggle cash
     const openCash = (student) => {
@@ -27,53 +26,62 @@ function FeesTable(props) {
         setMobile(false);
         setStudentId(student.id);
     };
-    const closeCash = () => {
-        setCash(false);
-    };
+
     const [cashForm, setCashForm] = useState({
         date: '',
         amount: '',
         paidBy: '',
         contact: '',
     });
+    const closeCash = () => {
+        setCash(false);
+        setCashForm({ ...cashForm, date: '', amount: '', paidBy: '', contact: '' });
+    };
     const onChangeCash = (e) => {
         setCashForm({ ...cashForm, [e.target.name]: e.target.value });
     };
-    const postCashPayment = (e) => {
+    const postPayment = async (e, formData, method) => {
         e.preventDefault();
-        let stId = uuid();
-        let data = {
-            id: stId,
-            studentId: studentId,
-            date: cashForm.date,
-            amount: cashForm.amount,
-            paidBy: cashForm.paidBy,
-            contact: cashForm.contact,
-            bank: '',
-            branch: '',
-            bankSlipNo: '',
-            accountNo: '',
-            accountName: '',
-            mobileNo: '',
-            mobileName: '',
-            method: 'cash',
-        };
-        if (cashForm) {
-            db.collection('paymentsTbl')
-                .add(data)
-                .then((response) => {
-                    setCashForm('');
-                    fetchPayments();
-                    // show alert
-                    const MySwal = withReactContent(Swal);
+        try {
+            formData.studentId = studentId;
+            formData.method = method;
+            if (formData) {
+                const response = await axiosInstance.post('fee-payment/add', formData);
+                const { status, payload } = response.data;
+                const MySwal = withReactContent(Swal);
+                if (status) {
                     MySwal.fire({
                         icon: 'success',
                         showConfirmButton: false,
                         timer: 500,
                     });
-                    closeCash();
-                })
-                .catch(console.error());
+                    if (method === 'Cash') {
+                        closeCash();
+                    }
+                    if (method === 'Bank Slip') {
+                        closeBankSlip();
+                    }
+                    if (method === 'Cheque') {
+                        closeCheque();
+                    }
+                    if (method === 'Bank Transfer') {
+                        closeBank();
+                    }
+                    if (method === 'Mobile Money') {
+                        closeMobile();
+                    }
+                    navigate(0);
+                } else {
+                    MySwal.fire({
+                        icon: 'error',
+                        showConfirmButton: true,
+                        timer: 500,
+                        text: payload
+                    });
+                }
+            }
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -86,9 +94,7 @@ function FeesTable(props) {
         setMobile(false);
         setStudentId(student.id);
     };
-    const closeBankSlip = () => {
-        setBankslip(false);
-    };
+
     const [bankSlipForm, setBankSlipForm] = useState({
         date: '',
         amount: '',
@@ -101,42 +107,9 @@ function FeesTable(props) {
     const onChangeBankSlip = (e) => {
         setBankSlipForm({ ...bankSlipForm, [e.target.name]: e.target.value });
     };
-    const postBankSlipPayment = (e) => {
-        e.preventDefault();
-        let stId = uuid();
-        let data = {
-            id: stId,
-            studentId: studentId,
-            date: bankSlipForm.date,
-            amount: bankSlipForm.amount,
-            bank: bankSlipForm.bank,
-            branch: bankSlipForm.branch,
-            bankSlipNo: bankSlipForm.bankSlipNo,
-            paidBy: bankSlipForm.paidBy,
-            contact: bankSlipForm.contact,
-            accountNo: '',
-            accountName: '',
-            mobileNo: '',
-            mobileName: '',
-            method: 'Bank Slip',
-        };
-        if (bankSlipForm) {
-            db.collection('paymentsTbl')
-                .add(data)
-                .then((response) => {
-                    setBankSlipForm('');
-                    fetchPayments();
-                    // show alert
-                    const MySwal = withReactContent(Swal);
-                    MySwal.fire({
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 500,
-                    });
-                    closeBankSlip();
-                })
-                .catch(console.error());
-        }
+    const closeBankSlip = () => {
+        setBankslip(false);
+        setBankSlipForm({ ...bankSlipForm, date: '', amount: '', bank: '', paidBy: '', contact: '', branch: '', bankSlipNo: '' })
     };
 
     // toggle checkque
@@ -148,9 +121,7 @@ function FeesTable(props) {
         setMobile(false);
         setStudentId(student.id);
     };
-    const closeChecque = () => {
-        setCheque(false);
-    };
+
     const [chequeForm, setChequeForm] = useState({
         date: '',
         amount: '',
@@ -160,45 +131,12 @@ function FeesTable(props) {
         paidBy: '',
         contact: '',
     });
+    const closeCheque = () => {
+        setCheque(false);
+        setCashForm({ ...chequeForm, date: '', amount: '', accountName: '', bank: '', paidBy: '', contact: '', accountNo: '' })
+    };
     const onChangeCheque = (e) => {
         setChequeForm({ ...chequeForm, [e.target.name]: e.target.value });
-    };
-    const postChequePayment = (e) => {
-        e.preventDefault();
-        let stId = uuid();
-        let data = {
-            id: stId,
-            studentId: studentId,
-            date: chequeForm.date,
-            amount: chequeForm.amount,
-            bank: chequeForm.bank,
-            accountNo: chequeForm.accountNo,
-            accountName: chequeForm.accountName,
-            paidBy: chequeForm.paidBy,
-            contact: chequeForm.contact,
-            branch: '',
-            bankSlipNo: '',
-            mobileNo: '',
-            mobileName: '',
-            method: 'Checque',
-        };
-        if (chequeForm) {
-            db.collection('paymentsTbl')
-                .add(data)
-                .then((response) => {
-                    setChequeForm('');
-                    fetchPayments();
-                    // show alert
-                    const MySwal = withReactContent(Swal);
-                    MySwal.fire({
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 500,
-                    });
-                    closeChecque();
-                })
-                .catch(console.error());
-        }
     };
 
     // toggle bank transfer
@@ -210,9 +148,7 @@ function FeesTable(props) {
         setMobile(false);
         setStudentId(student.id);
     };
-    const closeBank = () => {
-        setBank(false);
-    };
+
     const [bankForm, setBankForm] = useState({
         date: '',
         amount: '',
@@ -221,46 +157,14 @@ function FeesTable(props) {
         accountName: '',
         paidBy: '',
         contact: '',
+        fromAccountNo: ''
     });
+    const closeBank = () => {
+        setBank(false);
+        setBankForm({ ...bankForm, date: '', amount: '', bank: '', accountNo: '', accountName: '', paidBy: '', contact: '', fromAccountNo: '' })
+    };
     const onChangeBank = (e) => {
         setBankForm({ ...bankForm, [e.target.name]: e.target.value });
-    };
-    const postBankPayment = (e) => {
-        e.preventDefault();
-        let stId = uuid();
-        let data = {
-            id: stId,
-            studentId: studentId,
-            date: bankForm.date,
-            amount: bankForm.amount,
-            bank: bankForm.bank,
-            accountNo: bankForm.accountNo,
-            accountName: bankForm.accountName,
-            paidBy: bankForm.paidBy,
-            contact: bankForm.contact,
-            branch: '',
-            bankSlipNo: '',
-            mobileNo: '',
-            mobileName: '',
-            method: 'Bank Transfer',
-        };
-        if (bankForm) {
-            db.collection('paymentsTbl')
-                .add(data)
-                .then((response) => {
-                    setBankForm('');
-                    fetchPayments();
-                    // show alert
-                    const MySwal = withReactContent(Swal);
-                    MySwal.fire({
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 500,
-                    });
-                    closeBank();
-                })
-                .catch(console.error());
-        }
     };
 
     // toggle Mobile
@@ -272,9 +176,7 @@ function FeesTable(props) {
         setBank(false);
         setStudentId(student.id);
     };
-    const closeMobile = () => {
-        setMobile(false);
-    };
+
     const [mobileForm, setMobileForm] = useState({
         date: '',
         amount: '',
@@ -283,74 +185,47 @@ function FeesTable(props) {
         paidBy: '',
         contact: '',
     });
+
+    const closeMobile = () => {
+        setMobile(false);
+        setMobileForm({ ...mobileForm, date: '', mobileNo: '', mobileName: '', paidBy: '', contact: '', amount: '' })
+    };
     const onChangeMobile = (e) => {
         setMobileForm({ ...mobileForm, [e.target.name]: e.target.value });
     };
-    const postMobilePayment = (e) => {
-        e.preventDefault();
-        let stId = uuid();
-        let data = {
-            id: stId,
-            studentId: studentId,
-            date: mobileForm.date,
-            amount: mobileForm.amount,
-            mobileNo: mobileForm.mobileNo,
-            mobileName: mobileForm.mobileName,
-            paidBy: mobileForm.paidBy,
-            contact: mobileForm.contact,
-            bank: '',
-            branch: '',
-            bankSlipNo: '',
-            accountNo: '',
-            accountName: '',
-            method: 'Mobile Money',
-        };
-        if (bankForm) {
-            db.collection('paymentsTbl')
-                .add(data)
-                .then((response) => {
-                    setMobileForm('');
-                    fetchPayments();
-                    // show alert
-                    const MySwal = withReactContent(Swal);
-                    MySwal.fire({
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 500,
-                    });
-                    closeMobile();
-                })
-                .catch(console.error());
-        }
-    };
 
     //payments
-    const openPayments = (student) => {
-        setPayments(true);
+    const openPayments = async (student) => {
         setMobile(false);
         setBankslip(false);
         setCash(false);
         setCheque(false);
         setBank(false);
+        setPayments(true);
         setStudentId(student.id);
+        fetchStudentPayments(student.id);
     };
+
+
+    const [paymentsForm, setPaymentsForm] = useState([]);
 
     const closePayments = () => {
         setPayments(false);
+        setPaymentsForm([]);
     };
-    const [paymentsForm, setPaymentsForm] = useState();
+    const fetchStudentPayments = async (id) => {
+        try {
+            const payments = await axiosInstance.post(`/fee-payment/student`, { studentId: id });
+            const { data } = payments;
+            const { status, payload } = data;
+            if (status) {
+                setPaymentsForm(payload)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-    const fetchPayments = () => {
-        db.collection('paymentsTbl')
-            .get()
-            .then((student) => {
-                const newData = student;
-                setPaymentsForm(newData);
-            });
-    };
-    useEffect(() => {
-        fetchPayments();
-    }, []);
 
     return (
         <table className='mt-4 w-full table-auto'>
@@ -419,10 +294,9 @@ function FeesTable(props) {
                                 onChange={onChangeCash}
                                 value={cashForm.contact}
                             />
-                            <div onClick={postCashPayment}>
+                            <div onClick={(event) => postPayment(event, cashForm, 'Cash')}>
                                 <Button value={'Add Payment'} />
                             </div>
-
                             <br />
                         </div>
                     </div>
@@ -499,7 +373,7 @@ function FeesTable(props) {
                                     onChange={onChangeBankSlip}
                                     value={bankSlipForm.contact}
                                 />
-                                <div onClick={postBankSlipPayment}>
+                                <div onClick={(event) => postPayment(event, bankSlipForm, 'Bank Slip')}>
                                     <Button value={'Add Payment'} />
                                 </div>
                             </div>
@@ -555,16 +429,16 @@ function FeesTable(props) {
                                 <InputField
                                     type='text'
                                     label='From Account No'
-                                    name='accountNo'
+                                    name='fromAccountNo'
                                     onChange={onChangeBank}
-                                    value={bankForm.accountNo}
+                                    value={bankForm.fromAccountNo}
                                 />
                                 <InputField
                                     type='text'
                                     label='Account Name'
                                     name='accountName'
                                     onChange={onChangeBank}
-                                    value={bankForm.accountNo}
+                                    value={bankForm.accountName}
                                 />
                                 <InputField
                                     type='text'
@@ -580,7 +454,7 @@ function FeesTable(props) {
                                     onChange={onChangeBank}
                                     value={bankForm.contact}
                                 />
-                                <div onClick={postBankPayment}>
+                                <div onClick={(event) => postPayment(event, bankForm, 'Bank Transfer')}>
                                     <Button value={'Add Payment'} />
                                 </div>
                             </div>
@@ -650,7 +524,7 @@ function FeesTable(props) {
                                 onChange={onChangeMobile}
                                 value={mobileForm.contact}
                             />
-                            <div onClick={postMobilePayment}>
+                            <div onClick={(event) => postPayment(event, mobileForm, 'Mobile Money')}>
                                 <Button value={'Add Payment'} />
                             </div>
 
@@ -670,7 +544,7 @@ function FeesTable(props) {
                             <div>
                                 <p
                                     className='cursor-pointer'
-                                    onClick={closeChecque}
+                                    onClick={closeCheque}
                                 >
                                     X
                                 </p>
@@ -730,7 +604,7 @@ function FeesTable(props) {
                                     onChange={onChangeCheque}
                                     value={chequeForm.contact}
                                 />
-                                <div onClick={postChequePayment}>
+                                <div onClick={(event) => postPayment(event, chequeForm, 'Cheque')}>
                                     <Button value={'Add Payment'} />
                                 </div>
                             </div>
@@ -757,45 +631,42 @@ function FeesTable(props) {
                         </div>
                         <div className='px-5 flex bg-gray2 p-2 text-xs mt-2 cursor-pointer w-full'>
                             <div className='w-1/4 p-2'>Date</div>
-                            <div className='w-1/4 p-2'>Fees</div>
+                            {/* <div className='w-1/4 p-2'>Fees</div> */}
                             <div className='w-1/4 p-2'>Amount</div>
-                            <div className='w-1/4 p-2'>Balance</div>
+                            {/* <div className='w-1/4 p-2'>Balance</div> */}
                             <div className='w-1/4 p-2'>Method</div>
                             <div className='w-1/4 p-2'>Paid By</div>
                             <div className='w-1/4 p-2'>Contact</div>
                         </div>
                         {paymentsForm.map((student) => {
-                            if (student.studentId === studentId) {
-                                return (
-                                    <div
-                                        className='px-5 flex border-b text-gray5 border-gray2 hover:border-b-2 cursor-pointer text-xs w-full'
-                                        key={student.id}
-                                    >
-                                        <div className='w-1/4 truncate p-2'>
-                                            {student.date}
-                                        </div>
-                                        <div className='w-1/4 truncate p-2'>
-                                            790,000
-                                        </div>
-                                        <div className='w-1/4 truncate p-2'>
-                                            {student.amount}
-                                        </div>
-                                        <div className='w-1/4 truncate p-2'>
-                                            550,000
-                                        </div>
-                                        <div className='w-1/4 truncate p-2'>
-                                            {student.method}
-                                        </div>
-                                        <div className='w-1/4 truncate p-2'>
-                                            {student.paidBy}
-                                        </div>
-                                        <div className='w-1/4 truncate p-2'>
-                                            {student.contact}
-                                        </div>
+                            return (
+                                <div
+                                    className='px-5 flex border-b text-gray5 border-gray2 hover:border-b-2 cursor-pointer text-xs w-full'
+                                    key={student.id}
+                                >
+                                    <div className='w-1/4 truncate p-2'>
+                                        {student.date}
                                     </div>
-                                );
-                            }
-                            return null;
+                                    {/* <div className='w-1/4 truncate p-2'>
+                                            790,000
+                                        </div> */}
+                                    <div className='w-1/4 truncate p-2'>
+                                        {student.amount_paid}
+                                    </div>
+                                    {/* <div className='w-1/4 truncate p-2'>
+                                            550,000
+                                        </div> */}
+                                    <div className='w-1/4 truncate p-2'>
+                                        {student.method}
+                                    </div>
+                                    <div className='w-1/4 truncate p-2'>
+                                        {student.paid_by}
+                                    </div>
+                                    <div className='w-1/4 truncate p-2'>
+                                        {student.contact}
+                                    </div>
+                                </div>
+                            );
                         })}
                         <br />
                     </div>
@@ -834,17 +705,23 @@ function FeesTable(props) {
                                 </p>
                             </td>
                             <td className='text-xs p-3 text-gray5'>
-                                {/* {student.studentType.value} */}
+                                {student.student_types?.map((t, i) => {
+                                    return i === student.student_types.length - 1 ? <span>{t.type}</span> : null
+                                })}
                             </td>
                             <td className='text-xs p-3 text-gray5'>
-                                {/* {student.studentClass.value} */}
+                                {student.classes?.map((c, i) => {
+                                    return i === student.classes.length - 1 ? <span>{c.class}</span> : null
+                                })}
                             </td>
                             <td className='text-xs p-3 text-gray5'>
-                                1,040,000{/* fetch fees */}
+                                {student.fees?.map((f, i) => {
+                                    return i === student.fees.length - 1 ? <span>{f.amount}</span> : null
+                                })}
                             </td>
-                            <td className='text-xs p-3 text-gray5'>520,000</td>
+                            <td className='text-xs p-3 text-gray5'>{JSON.parse(student.feesBalance).amount}</td>
                             <td className='text-xs p-3 text-gray5'>
-                                {Math.abs()} {/* balance */}
+                                {JSON.parse(student.feesBalance).balance}
                             </td>
                             <td className='text-xs p-3  flex'>
                                 <p className='bg-primary3 p-2 rounded-md text-primary2 hoverbtn'>

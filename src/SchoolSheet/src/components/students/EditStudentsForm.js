@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import axiosInstance from "../../axios-instance"
 import { useNavigate } from 'react-router-dom';
 import ButtonLoader from "../ButtonLoader";
+import { extraLatestArrayIndex } from '../../utils/global';
 
 
 const EditStudentsForm = (props) => {
@@ -113,17 +114,6 @@ const EditStudentsForm = (props) => {
 				}
 				setStudentHouses(studentHousesArr)
 			})
-	}
-
-	const extraLatestArrayIndex = (array) => {
-		let lastIndexItem = null;
-		for (let i = 0; i < array.length; i++) {
-			if (array.length - 1 === i) {
-				lastIndexItem = array[i];
-			}
-		}
-		console.log('lastIndexItem', lastIndexItem);
-		return lastIndexItem
 	}
 
 	// fetch student info

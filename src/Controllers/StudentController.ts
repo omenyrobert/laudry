@@ -6,20 +6,42 @@ import {
   updateStudent,
   getSingleStudent,
 } from "../Entities/Student";
+import { getTermBySelect } from "../Entities/Term";
 
-import { customPayloadResponse } from "../Helpers/Helpers";
+import {
+  customPayloadResponse,
+  extraLatestArrayIndex,
+} from "../Helpers/Helpers";
+import { getStudentTermPayments } from "../Entities/StudentPaidBalance";
 
 export const fetchStudents = async (req: Request, res: Response) => {
   try {
-    const students = await getStudents();
+    const activeTerm = await getTermBySelect();
+    const termId = activeTerm !== null ? activeTerm.id : null;
+    const studentsToFetch = await getStudents();
+    const students = await Promise.all(
+      studentsToFetch.map(async (student) => {
+        const studentPaymentsPerTerm = await getStudentTermPayments(
+          student.id,
+          termId
+        );
+        const feesType = extraLatestArrayIndex(student.fees);
+        const balanceToReturn =
+          studentPaymentsPerTerm !== null
+            ? studentPaymentsPerTerm
+            : { balance: feesType.amount, amount: 0 };
+        return { ...student, feesBalance: JSON.stringify(balanceToReturn) };
+      })
+    );
     return res.json(customPayloadResponse(true, students)).status(200).end();
   } catch (error) {
+    console.log(error);
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
       .end();
   }
-}
+};
 
 export const addStudent = async (req: Request, res: Response) => {
   try {
@@ -42,7 +64,7 @@ export const addStudent = async (req: Request, res: Response) => {
       studentHouse,
       studentClass,
       feesCategory,
-      studentStream
+      studentStream,
     } = req.body;
 
     const student = await createStudent(
@@ -68,17 +90,14 @@ export const addStudent = async (req: Request, res: Response) => {
     );
 
     return res.json(customPayloadResponse(true, student)).status(200).end();
-
-
-
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
       .end();
   }
-}
+};
 
 export const removeStudent = async (req: Request, res: Response) => {
   try {
@@ -96,13 +115,13 @@ export const removeStudent = async (req: Request, res: Response) => {
         .end();
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
       .end();
   }
-}
+};
 
 export const editStudent = async (req: Request, res: Response) => {
   try {
@@ -160,8 +179,7 @@ export const editStudent = async (req: Request, res: Response) => {
         .json(customPayloadResponse(true, "Student Updated Successfully"))
         .status(200)
         .end();
-    }
-    else {
+    } else {
       return res
         .json(customPayloadResponse(false, "Student Not Found"))
         .status(404)
@@ -173,12 +191,12 @@ export const editStudent = async (req: Request, res: Response) => {
       .status(500)
       .end();
   }
-}
+};
 
 export const fetchSingleStudent = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    
+
     const student = await getSingleStudent(parseInt(id));
     if (student) {
       return res.json(customPayloadResponse(true, student)).status(200).end();
@@ -189,19 +207,19 @@ export const fetchSingleStudent = async (req: Request, res: Response) => {
         .end();
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
       .end();
   }
-}
+};
 
-export const fetchStudentsPanginated = async (req: Request, res: Response) => {
-  console.log("=================================")
-  console.log("Fetching paginated Students")
-  console.log(req.query)
-  console.log("=================================")
+export const fetchStudentsPaginated = async (req: Request, res: Response) => {
+  // console.log("=================================");
+  // console.log("Fetching paginated Students");
+  // console.log(req.query);
+  // console.log("=================================");
   try {
     const { page, limit } = req.query;
     if (!page || !limit) {
@@ -210,9 +228,12 @@ export const fetchStudentsPanginated = async (req: Request, res: Response) => {
         .status(400)
         .end();
     }
-    console.log(page, limit)
-    const students = await getStudents(parseInt(page as string), parseInt(limit as string));
-    console.log(students)
+    // console.log(page, limit);
+    const students = await getStudents(
+      parseInt(page as string),
+      parseInt(limit as string)
+    );
+    // console.log(students);
     return res.json(customPayloadResponse(true, students)).status(200).end();
   } catch (error) {
     return res
@@ -220,4 +241,4 @@ export const fetchStudentsPanginated = async (req: Request, res: Response) => {
       .status(500)
       .end();
   }
-}
+};

@@ -63,6 +63,9 @@ export class Student extends BaseEntity {
   @Column()
   motherContact!: string;
 
+  @Column({ nullable: true })
+  feesBalance!: string;
+
   @ManyToMany(() => House, {
     cascade: true,
     eager: true,
@@ -405,7 +408,6 @@ export const getSingleStudent = async (id: number) => {
 };
 
 export const getStudents = async (page: number = 0, limit: number = 50) => {
-  console.log(page, limit);
   const students = await Student.find({
     order: {
       id: "DESC",
