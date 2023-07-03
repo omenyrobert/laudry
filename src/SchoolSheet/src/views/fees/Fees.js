@@ -53,8 +53,8 @@ const Fees = () => {
     const [checkInput, setCheckInput] = useState('');
 
     const handleFilter = (balance, fees) => {
-        let amountPaid = parseFloat(JSON.parse(balance).amount);
-        let amountToPay = extraLatestArrayIndex(fees).amount;
+        let amountPaid = parseFloat(JSON.parse(balance)?.amount);
+        let amountToPay = extraLatestArrayIndex(fees)?.amount;
         let percentage = (amountPaid / amountToPay) * 100;
         return percentage;
     }
@@ -64,14 +64,14 @@ const Fees = () => {
         if (checkInput === 'below') {
             setPercentResults(
                 students?.filter((student) => {
-                    return handleFilter(student.feesBalance, student.fees) < parseFloat(percent) ? student : null
+                    return handleFilter(student?.feesBalance, student?.fees) < parseFloat(percent) ? student : null
                 })
             );
             setPercent();
         } else if (checkInput === 'above') {
             setPercentResults(
                 students?.filter((student) => {
-                    return handleFilter(student.feesBalance, student.fees) > parseFloat(percent) ? student : null
+                    return handleFilter(student?.feesBalance, student?.fees) > parseFloat(percent) ? student : null
                 })
             );
             setPercent();

@@ -33,7 +33,7 @@ export const fetchStudents = async (req: Request, res: Response) => {
         const balanceToReturn =
           studentPaymentsPerTerm !== null
             ? studentPaymentsPerTerm
-            : { balance: feesType.amount, amount: 0 };
+            : { balance: feesType?.amount, amount: 0 };
         return { ...student, feesBalance: JSON.stringify(balanceToReturn) };
       })
     );
@@ -41,7 +41,7 @@ export const fetchStudents = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     return res
-      .json(customPayloadResponse(false, "An Error Occured"))
+      .json(customPayloadResponse(false, "Error Occured"))
       .status(500)
       .end();
   }

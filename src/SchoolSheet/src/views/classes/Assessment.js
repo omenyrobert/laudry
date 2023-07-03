@@ -152,7 +152,7 @@ function Assessment() {
 								<th className="p-2 text-primary text-sm text-left">Action</th>
 							</thead>
 							<tbody>
-								{studentData.length > 0 && studentData.map((student) => {
+								{studentData?.length > 0 && studentData?.map((student) => {
 									const { classes } = student;
 									return (
 										<tr

@@ -638,32 +638,32 @@ const FeesTable = (props) => {
                             <div className='w-1/4 p-2'>Paid By</div>
                             <div className='w-1/4 p-2'>Contact</div>
                         </div>
-                        {paymentsForm.map((student) => {
+                        {paymentsForm?.map((student) => {
                             return (
                                 <div
                                     className='px-5 flex border-b text-gray5 border-gray2 hover:border-b-2 cursor-pointer text-xs w-full'
                                     key={student.id}
                                 >
                                     <div className='w-1/4 truncate p-2'>
-                                        {student.date}
+                                        {student?.date}
                                     </div>
                                     {/* <div className='w-1/4 truncate p-2'>
                                             790,000
                                         </div> */}
                                     <div className='w-1/4 truncate p-2'>
-                                        {student.amount_paid}
+                                        {student?.amount_paid}
                                     </div>
                                     {/* <div className='w-1/4 truncate p-2'>
                                             550,000
                                         </div> */}
                                     <div className='w-1/4 truncate p-2'>
-                                        {student.method}
+                                        {student?.method}
                                     </div>
                                     <div className='w-1/4 truncate p-2'>
-                                        {student.paid_by}
+                                        {student?.paid_by}
                                     </div>
                                     <div className='w-1/4 truncate p-2'>
-                                        {student.contact}
+                                        {student?.contact}
                                     </div>
                                 </div>
                             );
@@ -672,7 +672,7 @@ const FeesTable = (props) => {
                     </div>
                 ) : null}
 
-                {studentData.map((student) => {
+                {studentData?.map((student) => {
                     return (
                         <tr
                             className='shadow-sm border-b hover:border-l-2 hover:border-l-primary border-gray1 cursor-pointer hover:shadow-md'
@@ -688,40 +688,40 @@ const FeesTable = (props) => {
                                         {student.lastName}
                                     </p>
                                     <p className='text-secondary text-xs -mt-3 ml-3'>
-                                        {student.nin}
+                                        {student?.nin}
                                     </p>
                                 </div>
                             </td>
 
                             <td className='text-xs p-3 text-gray5'>
-                                {student.residence}
+                                {student?.residence}
                             </td>
                             <td className='flex flex-col'>
                                 <p className='text-xs p-3 text-gray5'>
-                                    {student.fatherContact}
+                                    {student?.fatherContact}
                                 </p>
                                 <p className='text-xs text-gray5 -mt-3 ml-3'>
-                                    {student.motherContact}
+                                    {student?.motherContact}
                                 </p>
                             </td>
                             <td className='text-xs p-3 text-gray5'>
-                                {student.student_types?.map((t, i) => {
-                                    return i === student.student_types.length - 1 ? <span>{t.type}</span> : null
+                                {student?.student_types?.map((t, i) => {
+                                    return i === student?.student_types?.length - 1 ? <span>{t.type}</span> : null
                                 })}
                             </td>
                             <td className='text-xs p-3 text-gray5'>
                                 {student.classes?.map((c, i) => {
-                                    return i === student.classes.length - 1 ? <span>{c.class}</span> : null
+                                    return i === student?.classes.length - 1 ? <span>{c.class}</span> : null
                                 })}
                             </td>
                             <td className='text-xs p-3 text-gray5'>
                                 {student.fees?.map((f, i) => {
-                                    return i === student.fees.length - 1 ? <span>{f.amount}</span> : null
+                                    return i === student?.fees.length - 1 ? <span>{f.amount}</span> : null
                                 })}
                             </td>
                             <td className='text-xs p-3 text-gray5'>{JSON.parse(student.feesBalance).amount}</td>
                             <td className='text-xs p-3 text-gray5'>
-                                {JSON.parse(student.feesBalance).balance}
+                                {JSON.parse(student?.feesBalance).balance}
                             </td>
                             <td className='text-xs p-3  flex'>
                                 <p className='bg-primary3 p-2 rounded-md text-primary2 hoverbtn'>
