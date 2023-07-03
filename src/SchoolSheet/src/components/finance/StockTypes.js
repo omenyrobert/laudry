@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import { getStockTypes } from "../../store/schoolSheetSlices/schoolStore";
+import axiosInstance from "../../axios-instance";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
 import Button2 from "../Button2";
@@ -9,46 +11,37 @@ import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
 
-let db = new Localbase("db");
 
 function StockTypes() {
+	const dispatch = useDispatch();
 	// post stock Type
 	const [stockType, setstockType] = useState("");
-	const poststockType = () => {
-		let clId = uuid();
-		let formData = {
-			id: clId,
-			stockType: stockType,
-		};
-		if (stockType) {
-			db.collection("stockTypesTbl")
-				.add(formData)
-				.then((response) => {
-					setstockType("");
-					fetchInomeTypes();
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
-				.catch(console.error());
-		}
-	};
 
-	// fetch stock typess
-	const [stockTypesData, setstockTypesData] = useState([]);
-	const fetchInomeTypes = () => {
-		db.collection("stockTypesTbl")
-			.get()
-			.then((stockTypes) => {
-				const newData = stockTypes;
-				setstockTypesData(newData);
-			});
+	const postStockType = async () => {
+		try {
+			let formData = {
+				type: stockType,
+			};
+	
+			const response = await axiosInstance.post("/stockTypes", formData);
+			const { data } = response;
+			const { status } = data;
+	
+			if (status) {
+				dispatch(getStockTypes());
+				setstockType("");
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
+				});
+			}
+		} catch(error) {
+			console.log(error);
+		}
 	};
 
 	// update
@@ -60,19 +53,22 @@ function StockTypes() {
 	};
 	const openEditData = (stockType) => {
 		setEditData(true);
-		setstockTypeEdit(stockType?.stockType);
+		setstockTypeEdit(stockType?.type);
 		setstockTypeId(stockType.id);
 	};
-	const updatestockType = () => {
-		db.collection("stockTypesTbl")
-			.doc({ id: stockTypeId })
-			.update({
-				stockType: stockTypeEdit,
-			})
-			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchInomeTypes();
+
+	const updatestockType = async () => {
+		try {
+			let formData = {
+				type: stockTypeEdit,
+				id: stockTypeId,
+			};
+			const subject = await axiosInstance.put("/stockTypes", formData);
+			const { data } = subject;
+			const { status } = data;
+			if (status) {
+				dispatch(getStockTypes());
+				setstockTypeEdit("");
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -80,7 +76,10 @@ function StockTypes() {
 					timer: 500,
 				});
 				closeEditData();
-			});
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	// delete
@@ -95,32 +94,34 @@ function StockTypes() {
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("stockTypesTbl")
-					.doc({ id: stockTypeItem.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchInomeTypes();
-
+				try {
+					const response = await axiosInstance.delete(`/stockTypes/${stockTypeItem.id}`);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
+						dispatch(getStockTypes());
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
+					}
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 	};
 
 	// fetching stock types
 	useEffect(() => {
-		fetchInomeTypes();
-	}, []);
+		dispatch(getStockTypes());
+	}, [dispatch]);
+
+
+	const { stockTypes } = useSelector((state) => state.schoolStore);
 
 	return (
 		<>
@@ -138,7 +139,7 @@ function StockTypes() {
 						/>
 					</div>
 
-					<div onClick={poststockType} className="mt-14 ml-3">
+					<div onClick={postStockType} className="mt-14 ml-3">
 						<Button value={"Save"} />
 					</div>
 				</div>
@@ -151,7 +152,7 @@ function StockTypes() {
 					<tbody>
 						{/* edit popup start */}
 						{editData ? (
-							<div className="absolute shadow-lg rounded flex w-[500px] p-5 bg-white">
+							<div className="absolute shadow-lg rounded flex w-[25vw] p-5 bg-white">
 								<div className="w-2/3 pr-5">
 									<InputField
 										type="text"
@@ -179,14 +180,14 @@ function StockTypes() {
 						) : null}
 						{/* edit popup end */}
 
-						{stockTypesData.map((stockTypeItem) => {
+						{stockTypes.map((stockTypeItem) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={stockType.id}
+									key={stockTypeItem.id}
 								>
 									<td className="text-xs p-3 text-gray5">
-										{stockTypeItem.stockType}
+										{stockTypeItem.type}
 									</td>
 									<td className="text-xs p-3 text-gray5">
 										<div className="flex">

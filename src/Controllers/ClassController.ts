@@ -5,6 +5,8 @@ import {
   updateClass,
   deleteClassById,
   createClass,
+  addClassToStaff,
+  removeClassFromStaff,
 } from "../Entities/SchoolClass";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -90,3 +92,46 @@ export const removeClass = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
+
+
+export const addClassToStaffController = async (req: Request, res: Response) => {
+  try {
+    const { classId, staffId } = req.body;
+    if (!classId) {
+      return res
+        .json(customPayloadResponse(false, "Class Id Required"))
+        .status(200)
+        .end();
+    }
+    if (!staffId) {
+      return res
+        .json(customPayloadResponse(false, "Staff Id Required"))
+        .status(200)
+        .end();
+    }
+    await addClassToStaff(classId, staffId);
+    return res
+      .json(customPayloadResponse(true, "Class Added to Staff"))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const removeClassFromStaffController = async (req: Request, res: Response) => {
+  try {
+    const { classId, staffId } = req.body;
+    if (!classId) {
+      return res.json(customPayloadResponse(false, "Class Id Required")).status(200).end();
+    }
+    if (!staffId) {
+      return res.json(customPayloadResponse(false, "Staff Id Required")).status(200).end();
+    }
+    await removeClassFromStaff(classId, staffId);
+    return res.json(customPayloadResponse(true, "Class Removed from Staff")).status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+}

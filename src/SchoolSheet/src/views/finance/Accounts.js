@@ -4,7 +4,7 @@ import Button from "../../components/Button";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { BsPencilSquare } from "react-icons/bs";
+import { BsPencilSquare, BsSearch } from "react-icons/bs";
 import { MdDeleteOutline } from "react-icons/md";
 import axiosInstance from "../../axios-instance";
 import { useDispatch, useSelector } from "react-redux";
@@ -460,7 +460,24 @@ function Accounts() {
 				) : null}
 
 				<div className="p-1">
-					<p className="font-bold text-secondary text-xl">Charts Of Accounts</p>
+					<p className="font-medium mt-5 text-secondary text-xl">
+						Charts Of Accounts
+					</p>
+				</div>
+				<div className="w-1/3">
+					<InputField
+						type="search"
+						placeholder="Search for Account"
+						icon={<BsSearch className="w-3 -ml-7 mt-3" />}
+					/>
+				</div>
+				<div className="mt-5">
+					<Select
+						placeholder="Select Account Type"
+						defaultValue={accountType}
+						onChange={setAccountType}
+						options={accountTypes}
+					/>
 				</div>
 				<div onClick={openModal}>
 					<Button2 value={"Account"} />
@@ -475,48 +492,51 @@ function Accounts() {
 				<div className="border border-gray1 p-3 w-1/4">Amount</div>
 				<div className="border border-gray1 p-3 w-1/4">Action</div>
 			</div>
-			{accounts && accounts.length > 0 &&
-				accounts.map((account) => (
-					<div className="flex text-gray5 font-light text-sm border-b border-gray2 cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-						<div className="border border-gray1 p-3  w-1/4">
-							{account.accountName}
-						</div>
-						<div className="border border-gray1 p-3 w-1/4">
-							{account.accountType}
-						</div>
-						<div className="border border-gray1 p-3 w-1/4">
-							{account.subType}
-						</div>
-						<div className="border border-gray1 p-3 w-1/4">
-							{account.subType}
-						</div>
-						<div className="border border-gray1 p-3 w-1/4">
-							{account.amount}
-						</div>
-						<div className="border border-gray1 p-3 w-1/4">
-							<div className="flex justify-between w-32">
-								<div className="mt-3">
-									<MdDeleteOutline
-										onClick={() => deleteAccount(account)}
-										className="text-red "
-									/>
+			<div className="h-[70vh] overflow-y-auto">
+				{accounts &&
+					accounts.length > 0 &&
+					accounts.map((account) => (
+						<div className="flex text-gray5 font-light text-sm border-b border-gray2 cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+							<div className="border border-gray1 p-3  w-1/4">
+								{account.accountName}
+							</div>
+							<div className="border border-gray1 p-3 w-1/4">
+								{account.accountType}
+							</div>
+							<div className="border border-gray1 p-3 w-1/4">
+								{account.subType}
+							</div>
+							<div className="border border-gray1 p-3 w-1/4">
+								{account.subType}
+							</div>
+							<div className="border border-gray1 p-3 w-1/4">
+								{Number(account.amount).toLocaleString()}
+							</div>
+							<div className="border border-gray1 p-3 w-1/4">
+								<div className="flex justify-between w-32">
+									<div className="mt-3">
+										<MdDeleteOutline
+											onClick={() => deleteAccount(account)}
+											className="text-red "
+										/>
+									</div>
+									<div className="mt-3">
+										<BsPencilSquare
+											onClick={() => openShowUpdate(account)}
+											className="text-warning "
+										/>
+									</div>
+									<Link to={`/ledger/${account.id}`}>
+										<p className="text-primary p-2 bg-primary3 rounded-md">
+											Ledger
+										</p>
+									</Link>
 								</div>
-								<div className="mt-3">
-									<BsPencilSquare
-										onClick={() => openShowUpdate(account)}
-										className="text-warning "
-									/>
-								</div>
-								<Link to={`/ledger/${account.id}`}>
-									<p className="text-primary p-2 bg-primary3 rounded-md">
-										Ledger
-									</p>
-								</Link>
 							</div>
 						</div>
-					</div>
-				))}
-			{loading.accounts && <Loader />}
+					))}
+				{loading.accounts && <Loader />}
+			</div>
 		</>
 	);
 }

@@ -6,7 +6,7 @@ import withReactContent from 'sweetalert2-react-content';
 import '../../assets/styles/main.css';
 import Select from 'react-select';
 import { useDispatch } from "react-redux";
-import { getAssessments } from "../../store/schoolSheetSlices/schoolStore";
+import { getAssessmentsByTerm } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import { assignGrade } from "../../utils/assessment";
 import {  useSelector } from "react-redux";
@@ -28,39 +28,43 @@ function EditAssessmentForm({
     const [finalMarkEdit, setFinalMarkEdit] = useState(studentData.finalMark);
     const [commentEdit, setCommentEdit] = useState(studentData.comment);
     const [percent, setPercent] = useState(null);
-    const { grades } = useSelector((state) => state.schoolStore);
+    const [term, setTerm] = useState(null);
+    const { grades, terms } = useSelector((state) => state.schoolStore);
 
 
     useEffect(() => {
-        const examType = 
-        examTypesData.filter((examType) => examType.value === examEdit.value)[0];
-
-        setPercent(examType.percent);
-        
-        setFinalMarkEdit((markEdit / 100) *  examType.percent);
-    }, [markEdit, examTypesData, examEdit.value, percent]);
+        const examType = examTypesData.find((examType) => examType.value === examEdit.value);
+      
+        if (examType && examType.percent) {
+          setPercent(examType.percent);
+          setFinalMarkEdit((markEdit / 100) * examType.percent);
+        }
+      }, [markEdit, examTypesData, examEdit.value, percent]);
 
     const updateAssement = async (e) => {
         e.preventDefault();
 
+        const gradeObj = assignGrade(markEdit, grades);
+        
         try {
 			let formData = {
                 id: editDataId,
-                examType: examEdit.value,
+                examType: `${examEdit.id}`,
                 subject: subjectEdit.value,
                 mark: markEdit,
                 finalMark: finalMarkEdit,
                 comment: commentEdit,
                 studentId: studentId,
-                term: 1,
-                grade: assignGrade(markEdit, grades),
+                term: term.id,
+                grade: gradeObj.grade,
+                points: gradeObj.points,
                 examPercent: percent
 			};
 			const assessment = await axiosInstance.put("/assessments", formData);
 			const { data } = assessment;
 			const { status } = data;
 			if (status) {
-				dispatch(getAssessments());
+				dispatch(getAssessmentsByTerm(term.id));
 				setCommentEdit("");
 				setMarkEdit("");
 				const MySwal = withReactContent(Swal);
@@ -75,6 +79,14 @@ function EditAssessmentForm({
 			console.log(error);
 		}
     };
+
+
+	// set Term
+	useEffect(() => {
+		const _term = terms.length > 0 && 
+			terms.filter(term => term.is_selected === 1)[0];
+		setTerm(_term);
+	}, [terms]);
 
     return (
         <>

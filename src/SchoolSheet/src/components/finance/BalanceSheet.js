@@ -110,7 +110,7 @@ function BalanceSheet() {
 						<p className="text-secondary text-xl font-bold">Balance Sheet </p>
 					</div>
 					<div className="flex">
-						<div className="mr-3">
+						{/* <div className="mr-3">
 							<InputField type="date" label="From" />
 						</div>
 						<div className="mr-3">
@@ -118,7 +118,7 @@ function BalanceSheet() {
 						</div>
 						<div>
 							<InputField type="month" label="By Month" />
-						</div>
+						</div> */}
 						<div className="ml-5 mt-12" onClick={handleGeneratePDF}>
 							<Button value={"Pdf"} />
 						</div>
@@ -139,7 +139,7 @@ function BalanceSheet() {
 								<div className="w-10/12 p-3 text-gray5">{asset.accountName}</div>
 								<div className="w-2/12 border border-gray1 p-3 text-gray5">
 									{" "}
-									{asset.amount}
+									{asset.amount?.toLocaleString()}
 								</div>
 							</div>
 						))
@@ -147,7 +147,7 @@ function BalanceSheet() {
 		
 					<div className="flex bg-primary3 text-primary border border-primary3">
 						<div className="w-10/12 p-3">Total Current Assets</div>
-						<div className="w-2/12 border border-primary3 p-3">{currentAssetsSum}</div>
+						<div className="w-2/12 border border-primary3 p-3">{currentAssetsSum?.toLocaleString()}</div>
 					</div>
 
 					<br />
@@ -158,7 +158,7 @@ function BalanceSheet() {
 								<div className="w-10/12 p-3 text-gray5">{asset.accountName}</div>
 								<div className="w-2/12 border border-gray1 p-3 text-gray5">
 									{" "}
-									{asset.amount}
+									{asset.amount?.toLocaleString()}
 								</div>
 							</div>
 						))
@@ -166,14 +166,14 @@ function BalanceSheet() {
 
 					<div className="flex bg-primary3 text-primary border border-primary3">
 						<div className="w-10/12 p-3">Total Non Current Assets</div>
-						<div className="w-2/12 border border-primary3 p-3">{nonCurrentAssetsSum}</div>
+						<div className="w-2/12 border border-primary3 p-3">{nonCurrentAssetsSum?.toLocaleString()}</div>
 					</div>
 
 					<br />
 					<p className="mt-5 text-primary font-medium text-xl">Liabilities</p>
 					<div className="mt-3 flex bg-primary3 text-primary border border-gray2">
 						<div className="w-10/12 p-3">Total Liabilities</div>
-						<div className="w-2/12 border border-gray2 p-3">{currentLiabilitiesSum + nonCurrentLiabilitiesSum}</div>
+						<div className="w-2/12 border border-gray2 p-3">{(currentLiabilitiesSum + nonCurrentLiabilitiesSum)?.toLocaleString()}</div>
 					</div>
 					<p className="mt-5  font-medium">Current Liabilities</p>
 					{
@@ -182,7 +182,7 @@ function BalanceSheet() {
 								<div className="w-10/12 p-3 text-gray5">{liability.accountName}</div>
 								<div className="w-2/12 border border-gray1 p-3 text-gray5">
 									{" "}
-									{liability.amount}
+									{liability.amount?.toLocaleString()}
 								</div>
 							</div>
 						))
@@ -190,7 +190,7 @@ function BalanceSheet() {
 
 					<div className="flex bg-primary3 text-primary border border-primary3">
 						<div className="w-10/12 p-3">Total Current Liabilities</div>
-						<div className="w-2/12 border border-primary3 p-3">{currentLiabilitiesSum}</div>
+						<div className="w-2/12 border border-primary3 p-3">{currentLiabilitiesSum?.toLocaleString()}</div>
 					</div>
 
 					<br />
@@ -201,21 +201,21 @@ function BalanceSheet() {
 								<div className="w-10/12 p-3 text-gray5">{liability.accountName}</div>
 								<div className="w-2/12 border border-gray1 p-3 text-gray5">
 									{" "}
-									{liability.amount}
+									{liability.amount?.toLocaleString()}
 								</div>
 							</div>
 						))
 					}
 					<div className="flex bg-primary3 text-primary border border-primary3">
 						<div className="w-10/12 p-3">Total Non Current Liabilities</div>
-						<div className="w-2/12 border border-primary3 p-3">{nonCurrentLiabilitiesSum}</div>
+						<div className="w-2/12 border border-primary3 p-3">{nonCurrentLiabilitiesSum?.toLocaleString()}</div>
 					</div>
 
 					<br />
 					<p className="mt-5  font-medium">Equity</p>
 					<div className="mt-3 flex bg-primary text-white border border-gray2">
 						<div className="w-10/12 p-3">Total Equity</div>
-						<div className="w-2/12 border border-gray2 p-3">{currentEquitySum + nonCurrentEquitySum}</div>
+						<div className="w-2/12 border border-gray2 p-3">{(currentEquitySum + nonCurrentEquitySum)?.toLocaleString()}</div>
 					</div>
 
 					<p className="mt-5  font-medium">Current Equity</p>
@@ -225,7 +225,7 @@ function BalanceSheet() {
 								<div className="w-10/12 p-3 text-gray5">{equity.accountName}</div>
 								<div className="w-2/12 border border-gray1 p-3 text-gray5">
 									{" "}
-									{equity.amount}
+									{equity.amount?.toLocaleString()}
 								</div>
 							</div>
 						))
@@ -233,7 +233,7 @@ function BalanceSheet() {
 
 					<div className="flex bg-primary3 text-primary border border-primary3">
 						<div className="w-10/12 p-3">Total Current Equity</div>
-						<div className="w-2/12 border border-primary3 p-3">{currentEquitySum}</div>
+						<div className="w-2/12 border border-primary3 p-3">{currentEquitySum?.toLocaleString()}</div>
 					</div>
 
 					<br />
@@ -244,7 +244,7 @@ function BalanceSheet() {
 								<div className="w-10/12 p-3 text-gray5">{equity.accountName}</div>
 								<div className="w-2/12 border border-gray1 p-3 text-gray5">
 									{" "}
-									{equity.amount}
+									{equity.amount?.toLocaleString()}
 								</div>
 							</div>
 						))
@@ -252,14 +252,14 @@ function BalanceSheet() {
 
 					<div className="flex bg-primary3 text-primary border border-primary3">
 						<div className="w-10/12 p-3">Total Non Current Equity</div>
-						<div className="w-2/12 border border-primary3 p-3">{nonCurrentEquitySum}</div>
+						<div className="w-2/12 border border-primary3 p-3">{nonCurrentEquitySum?.toLocaleString()}</div>
 					</div>
 					<br />
 
 					<div className="mt-3 flex bg-primary text-white border border-gray2">
 						<div className="w-10/12 p-3">Total </div>
 						<div className="w-2/12 border border-gray2 p-3">{
-							currentLiabilitiesSum + nonCurrentLiabilitiesSum + currentEquitySum + nonCurrentEquitySum
+							(currentLiabilitiesSum + nonCurrentLiabilitiesSum + currentEquitySum + nonCurrentEquitySum)?.toLocaleString()
 						}</div>
 					</div>
 					<br />

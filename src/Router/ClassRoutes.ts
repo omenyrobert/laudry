@@ -4,6 +4,8 @@ import {
   addClass,
   modifyClass,
   removeClass,
+  addClassToStaffController,
+  removeClassFromStaffController
 } from "../Controllers/ClassController";
 
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
@@ -14,4 +16,14 @@ export default (router: Router) => {
   router.post(`${classPrefix}`, JWTAuthMiddleWare, addClass);
   router.put(`${classPrefix}`, JWTAuthMiddleWare, modifyClass);
   router.delete(`${classPrefix}/:id`, JWTAuthMiddleWare, removeClass);
+  router.post(
+    `${classPrefix}/add-class-to-staff`,
+    JWTAuthMiddleWare,
+    addClassToStaffController
+  );
+  router.post( 
+    `${classPrefix}/remove-class-from-staff`,
+    JWTAuthMiddleWare,
+    removeClassFromStaffController
+  );
 };

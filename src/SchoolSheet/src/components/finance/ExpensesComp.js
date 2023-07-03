@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { MdDeleteOutline } from "react-icons/md";
-import { BsPencilSquare } from "react-icons/bs";
+import { BsPencilSquare, BsPrinterFill } from "react-icons/bs";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
 import Button from "../Button";
@@ -20,68 +19,71 @@ import { useNavigate } from "react-router-dom";
 //let db = new Localbase("db");
 
 function ExpensesComp() {
-	const { setLoading, toggleFeedback } = useFeedback()
-	const navigate = useNavigate()
+	const { setLoading, toggleFeedback } = useFeedback();
+	const navigate = useNavigate();
 
 	// fetch expense typess
 	const [expenseTypesData, setExpenseTypesData] = useState([]);
 
 	const fetchExpenseTypes = async () => {
-		const response = await axiosInstance.get("/transaction-types/expense")
+		const response = await axiosInstance.get("/transaction-types/expense");
 
 		setExpenseTypesData(response.data.payload);
-
 	};
 
 	// fetch expenses
 	const [expensesData, setExpensesData] = useState([]);
 	const [expenseTotal, setexpenseTotal] = useState("");
 	const fetchExpense = async () => {
+		const res = await axiosInstance.get("/transactions/type/expense");
 
-		const res = await axiosInstance.get("/transactions/type/expense")
-
-		const { status, payload } = res.data
+		const { status, payload } = res.data;
 
 		if (status === false) {
-			setLoading(false)
-			toggleFeedback("error", payload)
-			return
+			setLoading(false);
+			toggleFeedback("error", payload);
+			return;
 		}
 
-		const coupledTransactions = []
+		const coupledTransactions = [];
 
 		for (let i = 0; i < payload.length; i++) {
-			const transaction = payload[i]
+			const transaction = payload[i];
 
-			if (coupledTransactions.find(t => t.transactionId === transaction.transactionId)) continue;
+			if (
+				coupledTransactions.find(
+					(t) => t.transactionId === transaction.transactionId
+				)
+			)
+				continue;
 
 			// find corresponding transaction with same id
-			const correspondingTransaction = payload.find(t => {
-				return t.transactionId === transaction.transactionId && t.id !== transaction.id
-			})
+			const correspondingTransaction = payload.find((t) => {
+				return (
+					t.transactionId === transaction.transactionId &&
+					t.id !== transaction.id
+				);
+			});
 
 			if (correspondingTransaction) {
 				coupledTransactions.push({
 					transactionId: transaction.transactionId,
 					...transaction,
-					transactionAmount: transaction.debit === 0 ? transaction.credit : transaction.debit,
-				})
+					transactionAmount:
+						transaction.debit === 0 ? transaction.credit : transaction.debit,
+				});
 			}
 		}
 
-		setExpensesData(coupledTransactions)
-
+		setExpensesData(coupledTransactions);
+		setId(coupledTransactions[0].id);
 		let total = coupledTransactions.reduce(
 			(acc, item) => acc + parseInt(item.transactionAmount),
 			0
 		);
 
 		setexpenseTotal(total);
-
-
 	};
-
-
 
 	//deleting expense types
 	const deleteExpense = (expenseItem) => {
@@ -95,21 +97,20 @@ function ExpensesComp() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-
-				axiosInstance.delete(`/transactions/${expenseItem.transactionId}`)
+				axiosInstance
+					.delete(`/transactions/${expenseItem.transactionId}`)
 					.then((response) => {
-						console.log(response)
-						const { status, payload } = response.data
+						console.log(response);
+						const { status, payload } = response.data;
 						toggleFeedback(status ? "success" : "error", {
-							title: payload
-						})
-						fetchExpense()
+							title: payload,
+						});
+						fetchExpense();
 					})
 					.catch((error) => {
-						console.log(error)
-						toggleFeedback("error", error.message)
-					}
-					);
+						console.log(error);
+						toggleFeedback("error", error.message);
+					});
 			}
 		});
 	};
@@ -117,11 +118,11 @@ function ExpensesComp() {
 	// fetching expense types
 	useEffect(() => {
 		async function fetchData() {
-			setLoading(true)
+			setLoading(true);
 			try {
 				await fetchExpenseTypes();
 				await fetchExpense();
-				setLoading(false)
+				setLoading(false);
 			} catch (error) {
 				setLoading(false);
 				toggleFeedback("error", { title: "Error", text: error.message });
@@ -129,16 +130,21 @@ function ExpensesComp() {
 		}
 
 		fetchData();
-
 	}, []);
 
+	const [file, setFile] = useState(false);
 
+	const closeFile = () => {
+		setFile(false);
+	};
+	const showFile = () => {
+		setFile(true);
+	};
+
+	const [id, setId] = useState("");
 
 	return (
 		<>
-
-			<Sample />
-
 			<div className="flex bg-white">
 				<div className="w-10/12 ">
 					<div className="flex">
@@ -160,15 +166,18 @@ function ExpensesComp() {
 						</div>
 					</div>
 				</div>
-				<div className="w-2/12 px-3 mt-4" >
-					<Link to="/addTransaction?transactionType=expense&action=create">
-						<Button2 value={"Add Expense"} />
-					</Link>
 
+				<Link
+					className="mt-5 ml-5"
+					to="/addTransaction?transactionType=expense&action=create"
+				>
+					<Button2 value={"Expense"} />
+				</Link>
+				<div className="mt-5 ml-5">
+					<Button value={"Print"} />
 				</div>
 			</div>
 			<div className="w-full h-[80vh]">
-
 				<table className="mt-5 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
@@ -180,7 +189,6 @@ function ExpensesComp() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-
 						{expensesData.map((expenseItem) => {
 							return (
 								<tr
@@ -188,9 +196,7 @@ function ExpensesComp() {
 									key={expenseItem.id}
 								>
 									<td className="text-xs p-3 text-gray5">
-										{
-											new Date(expenseItem.date).toLocaleDateString()
-										}
+										{new Date(expenseItem.date).toLocaleDateString()}
 									</td>
 									<td className="text-xs p-3 text-gray5">
 										{expenseItem.title}
@@ -201,21 +207,54 @@ function ExpensesComp() {
 									<td className="text-xs p-3 text-gray5">
 										{Number(expenseItem.transactionAmount).toLocaleString()}
 									</td>
-									<td className="text-xs p-3 text-gray5">{expenseItem.receivedBy}</td>
+									<td className="text-xs p-3 text-gray5">
+										{expenseItem.receivedBy}
+									</td>
 									<td className="text-xs p-3 text-gray5">
 										{expenseItem.contacts}
 									</td>
 									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deleteExpense(expenseItem)}
-											className="text-red w-4 h-4"
+										{expenseItem.id === id ? (
+											<div className="flex">
+												<MdDeleteOutline
+													onClick={() => deleteExpense(expenseItem)}
+													className="text-red w-4 h-4"
+												/>
+												<BsPencilSquare
+													className="text-warning h-4 w-4 ml-5"
+													onClick={() => {
+														navigate(
+															`/addTransaction?transactionType=expense&action=edit&transactionId=${expenseItem.transactionId}`
+														);
+													}}
+												/>
+											</div>
+										) : null}
+
+										<img
+											onClick={showFile}
+											src="https://templates.invoicehome.com/receipt-template-us-classic-white-750px.png"
+											className="w-10 cursor-pointer h-5 ml-5"
 										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => {
-												navigate(`/addTransaction?transactionType=expense&action=edit&transactionId=${expenseItem.transactionId}`)
-											}}
-										/>
+										{file ? (
+											<div className="top-0 left-0 bg-black/50 p-10 flex justify-center w-full h-full absolute">
+												<div className="w-3/12" onClick={closeFile}></div>
+												<div className="w-6/12 flex">
+													<img
+														src="https://templates.invoicehome.com/receipt-template-us-classic-white-750px.png"
+														className="h-[80vh]"
+													/>
+													<p
+														onClick={closeFile}
+														className="text-white ml-10 text-3xl mt-[30vh]"
+													>
+														X
+													</p>
+												</div>
+												<div className="w-3/12" onClick={closeFile}></div>
+											</div>
+										) : null}
+										<BsPrinterFill className="text-primary ml-5" />
 									</td>
 								</tr>
 							);

@@ -17,6 +17,7 @@ import {
 	getStreams,
 } from "../../store/schoolSheetSlices/schoolStore";
 import ButtonLoader from "../ButtonLoader";
+import Loader from "../Loader";
 
 const ClassesComp = () => {
 	const dispatch = useDispatch();
@@ -342,6 +343,7 @@ const ClassesComp = () => {
 						})}
 					</tbody>
 				</table>
+				<Loader/>
 			</div>
 		</>
 	);

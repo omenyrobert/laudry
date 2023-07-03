@@ -151,6 +151,44 @@ export const getTransactions = createAsyncThunk("/schoolSheet/transactions", asy
 	if (status) return payload;
 });
 
+export const getAssessmentsByTerm = createAsyncThunk(
+	"/schoolSheet/assessmentsByTerm",
+	async (termId) => {
+	  const assessments = await axiosInstance.get(`/assessments/term/${termId}`);
+	  const { data } = assessments;
+	  const { status, payload } = data;
+	  if (status) return payload;
+	}
+);
+
+
+export const getReports = createAsyncThunk("/schoolSheet/reports", async () => {
+	const reports = await axiosInstance.get("/reports");
+	const { data } = reports;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+export const getStockTypes = createAsyncThunk('schoolSheet/stockTypes', async () => {
+	const stockTypes = await axiosInstance.get('/stockTypes');
+	const { data } = stockTypes;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+export const getStockLevels = createAsyncThunk('schoolSheet/stockLevels', async () => {
+	const stockLevels = await axiosInstance.get('/stock-levels');
+	const { data } = stockLevels;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+export const getReductions = createAsyncThunk("/schoolSheet/reductions", async () => {
+	const reductions = await axiosInstance.get("/reductions");
+	const { data } = reductions;
+	const { status, payload } = data;
+	if (status) return payload;
+});
 
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
@@ -176,6 +214,11 @@ export const schoolSheetSlices = createSlice({
 	  divisions: [],
 	  transactionsByAccountId: [],
 	  transactions: [],
+	  assessmentsByTerm: [],
+	  reports: [],
+	  stockTypes: [],
+	  stockLevels: [],
+	  reductions: [],
 	  loading: {
 		streams: false,
 		staffMembers: false,
@@ -198,6 +241,11 @@ export const schoolSheetSlices = createSlice({
 		divisions: false,
 		transactionsByAccountId: false,
 		transactions: false,
+		assessmentsByTerm: false,
+		reports: false,
+		stockTypes: false,
+		stockLevels: false,
+		reductions: false,
 	  },
 	},
 	extraReducers: {
@@ -425,6 +473,56 @@ export const schoolSheetSlices = createSlice({
 	  [getTransactions.rejected]: (state) => {
 		state.loading.transactions = false;
 	  },
+	  [getAssessmentsByTerm.pending]: (state) => {
+		state.loading.assessmentsByTerm = true;
+	  },
+	  [getAssessmentsByTerm.fulfilled]: (state, action) => {
+		state.loading.assessmentsByTerm = false;
+		state.assessmentsByTerm = action.payload;
+	  },
+	  [getAssessmentsByTerm.rejected]: (state) => {
+		state.loading.assessmentsByTerm = false;
+	  },
+	  [getReports.pending]: (state) => {
+		state.loading.reports = true;
+	  },
+	  [getReports.fulfilled]: (state, action) => {
+		state.loading.reports = false;
+		state.reports = action.payload;
+	  },
+	  [getReports.rejected]: (state) => {
+		state.loading.reports = false;
+	  },
+	  [getStockTypes.pending]: (state) => {
+		state.loading.stockTypes = true;
+	  },
+	  [getStockTypes.fulfilled]: (state, action) => {
+		state.loading.stockTypes = false;
+		state.stockTypes = action.payload;
+	  },
+	  [getStockTypes.rejected]: (state) => {
+		state.loading.stockTypes = false;
+	  },
+	  [getStockLevels.pending]: (state) => {
+		state.loading.stockLevels = true;
+	  },
+	  [getStockLevels.fulfilled]: (state, action) => {
+		state.loading.stockLevels = false;
+		state.stockLevels = action.payload;
+	  },
+	  [getStockTypes.rejected]: (state) => {
+		state.loading.stockLevels = false;
+	  }, 
+	  [getReductions.pending]: (state) => {
+		state.loading.reductions = true;
+	  },
+	  [getReductions.fulfilled]: (state, action) => {
+		state.loading.reductions = false;
+		state.reductions = action.payload;
+	  },
+	  [getReductions.rejected]: (state) => {
+		state.loading.reductions = false;
+	  },   
 	},
 });
     

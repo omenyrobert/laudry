@@ -67,7 +67,7 @@ function IncomesTypeComp() {
 	};
 	const openEditData = (incomeType) => {
 		setEditData(true);
-		setincomeTypeEdit(incomeType?.incomeType);
+		setincomeTypeEdit(incomeType?.name);
 		setincomeTypeId(incomeType.id);
 	};
 
@@ -192,7 +192,7 @@ function IncomesTypeComp() {
 
 							<div onClick={postIncomeType} className="mt-14 ml-5">
 								{
-									loading ? <ButtonLoader /> : <Button value={"Add Income Type"} />
+									loading ? <ButtonLoader /> : <Button value={"Add"} />
 								}
 							</div>
 						</div>
@@ -205,7 +205,7 @@ function IncomesTypeComp() {
 							<tbody>
 								{/* edit popup start */}
 								{editData ? (
-									<div className="absolute shadow-lg rounded flex w-[500px] p-5 bg-white">
+									<div className="absolute shadow-lg rounded flex w-auto p-5 bg-white">
 										<div className="w-2/3 pr-5">
 											<InputField
 												type="text"
@@ -222,9 +222,9 @@ function IncomesTypeComp() {
 													editLoading ? <ButtonLoader /> : <ButtonSecondary value={"Update"} />
 												}
 											</div>
-											<div>
+											<div className="ml-5 mr-5">
 												<p
-													className="text-black text-lg cursor-pointer"
+													className="text-black  text-lg cursor-pointer"
 													onClick={closeEditData}
 												>
 													X

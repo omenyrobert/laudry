@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare, BsEye } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import {
+	getStockLevels,
+	getStockTypes,
+	getReductions,
+} from "../../store/schoolSheetSlices/schoolStore";
+import axiosInstance from "../../axios-instance";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
 import Button from "../Button";
@@ -9,101 +15,53 @@ import ButtonSecondary from "../ButtonSecondary";
 import SelectComp from "../SelectComp";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
-
-let db = new Localbase("db");
+import Loader from "../Loader";
+import ButtonLoader from "../ButtonLoader";
 
 function StockComp() {
-	// useEffect(()=>{
-	// 	console.log('useEffect')
-	// },[])
-
+	const dispatch = useDispatch();
 	// post stock Type
 	const [stockTypeId, setstockTypeId] = useState("");
 	const [stock, setstock] = useState("");
 	const [qty, setqty] = useState("");
-	const [from, setFrom] = useState("");
 	const [date, setDate] = useState("");
-	const [comment, setComment] = useState("");
-	const poststock = () => {
-		let clId = uuid();
-		let formData = {
-			id: clId,
-			stockTypeId: stockTypeId,
-			stock: stock,
-			qty: qty,
-			date: date,
-		};
-		if (stockTypeId || stock || qty || from || date || comment) {
-			db.collection("stocksTbl")
-				.add(formData)
-				.then((response) => {
-					setstockTypeId("");
-					setstock("");
-					setqty("");
-					setFrom("");
-					setDate("");
-					setComment("");
 
-					fetchStocks();
+	const [posting, setPosting] = useState(false);
 
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
-				.catch(console.error());
-		}
-	};
+	const poststock = async () => {
+		setPosting(true);
+		try {
+			let formData = {
+				stockType: stockTypeId,
+				stock: stock,
+				quantity: parseFloat(qty),
+				date: date,
+				remaining: parseFloat(qty),
+			};
 
-	// fetch stock typess
-	const [stockTypesData, setstockTypesData] = useState([]);
-	const [stockReduced, setstockReduced] = useState([]);
-	const fetchStockReduced = () => {
-		return db
-			.collection("stocksReducedTbl")
-			.get()
-			.then((stocks2) => {
-				let newData = stocks2;
-				setstockReduced(newData);
-			});
-	};
+			const response = await axiosInstance.post("/stock-levels", formData);
+			const { data } = response;
+			const { status } = data;
 
-	const fetchStocksTypes = () => {
-		return db
-			.collection("stockTypesTbl")
-			.get()
-			.then((stockTypes) => {
-				//  stockTypesData.push(stockTypes);
-				// setstockTypesData2(newData);
-				console.log("stockTypesData", stockTypesData);
-				stockTypes.forEach((element) => {
-					let Obj = {
-						label: element.stockType,
-						value: element,
-					};
-					stockTypesData.push(Obj);
+			if (status) {
+				dispatch(getStockLevels());
+				setstockTypeId("");
+				setstock("");
+				setqty("");
+				setDate("");
+
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "success",
+					showConfirmButton: false,
+					timer: 500,
 				});
-				// console.log("stock types array", stockTypesData);
-			});
-	};
-
-	// fetch stocks
-	const [stocksData, setstocksData] = useState([]);
-	const fetchStocks = () => {
-		db.collection("stocksTbl")
-			.get()
-			.then((stocks) => {
-				// const newData = stocks;
-				// setstocksData(newData);
-
-				const newData = stocks;
-				setstocksData(newData);
-				// console.log('new array', newData)
-			});
+			}
+		} catch (error) {
+			console.log(error);
+		}
+		setPosting(false);
 	};
 
 	// update
@@ -120,26 +78,31 @@ function StockComp() {
 	};
 	const openEditData = (stockItem) => {
 		setEditData(true);
-		setstockTypeIdEdit(stockItem?.stockTypeId);
+		setstockTypeIdEdit(stockItem?.stockType);
 		setstockIdEdit(stockItem.id);
 		setstockEdit(stockItem.stock);
-		setqtyEdit(stockItem.qty);
+		setqtyEdit(stockItem.quantity);
 		setDateEdit(stockItem.date);
 	};
 
-	const updatestock = () => {
-		db.collection("stocksTbl")
-			.doc({ id: stockIdEdit })
-			.update({
-				stockTypeId: stockTypeIdEdit,
+	const updatestock = async () => {
+		try {
+			let formData = {
+				id: stockIdEdit,
+				stockType: stockTypeIdEdit,
 				stock: stockEdit,
+				quantity: qtyEdit,
 				date: dateEdit,
-				qty: qtyEdit,
-			})
-			.then((response) => {
-				console.log(response);
-				// fetch after
-				fetchStocks();
+			};
+			const stockLevel = await axiosInstance.put("/stock-levels", formData);
+			const { data } = stockLevel;
+			const { status } = data;
+			if (status) {
+				dispatch(getStockLevels());
+				setstockTypeIdEdit("");
+				setstockEdit("");
+				setqtyEdit("");
+				setDateEdit("");
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
@@ -147,7 +110,10 @@ function StockComp() {
 					timer: 500,
 				});
 				closeEditData();
-			});
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	// delete
@@ -162,24 +128,25 @@ function StockComp() {
 			confirmButtonColor: "#3085d6",
 			cancelButtonColor: "#d33",
 			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				db.collection("stocksTbl")
-					.doc({ id: stockItem.id })
-					.delete()
-					.then((response) => {
-						// fetch after
-						fetchStocks();
-
+				try {
+					const response = await axiosInstance.delete(
+						`/stock-levels/${stockItem.id}`
+					);
+					const { data } = response;
+					const { status } = data;
+					if (status) {
+						dispatch(getStockLevels());
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
 							timer: 500,
 						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
+					}
+				} catch (error) {
+					console.log(error);
+				}
 			}
 		});
 	};
@@ -188,7 +155,9 @@ function StockComp() {
 
 	const openShowReduce = (stockItem) => {
 		setShowReduce(true);
-		setStockId(stockItem.id);
+		setStockId(stockItem);
+		const _reductions = reductions.filter((r) => r.stockId === stockItem.id);
+		setFilterStocks(_reductions);
 	};
 
 	const closeShowReduce = () => {
@@ -200,61 +169,83 @@ function StockComp() {
 	const [takenBy, setTakenBy] = useState("");
 	const [takenByContacts, setTakenByContacts] = useState("");
 	const [stockId, setStockId] = useState("");
+	const [filterStocks, setFilterStocks] = useState([]);
 
-	const reduceStock = () => {
-		let levelId = uuid();
-		let formData = {
-			id: levelId,
-			stockId: stockId,
-			sqty: sqty,
-			reducedDate: reducedDate,
-			takenBy: takenBy,
-			takenByContacts: takenByContacts,
-		};
-		if (sqty) {
-			db.collection("stocksReducedTbl")
-				.add(formData)
-				.then((response) => {
-					setstockTypeId("");
-					setSqty("");
+	const [reducing, setReducing] = useState(false);
+
+	const reduceStock = async () => {
+		try {
+			setReducing(true);
+			if (sqty) {
+				const balance = stockId.remaining - parseFloat(sqty);
+
+				let formData = {
+					id: stockId.id,
+					quantity: stockId.quantity,
+					remaining: balance,
+					reducedDate: reducedDate,
+					takenBy: takenBy,
+					takenByContacts: takenByContacts,
+					reductions: sqty,
+				};
+				let reductionData = {
+					date: reducedDate,
+					stock: stockId.stock,
+					stockId: stockId.id,
+					quantity: stockId.quantity,
+					quantityTaken: sqty,
+					takenBy,
+					takenByContacts,
+					balance,
+				};
+				const reductions = await axiosInstance.post(
+					"/reductions",
+					reductionData
+				);
+				const stockLevel = await axiosInstance.put("/stock-levels", formData);
+				const stockLevelData = stockLevel.data;
+				const stockLevelStatus = stockLevelData.status;
+				const reductionsData = reductions.data;
+				const reductionsStatus = reductionsData.status;
+				if (reductionsStatus && stockLevelStatus) {
+					dispatch(getStockLevels());
+					dispatch(getReductions());
 					setReducedDate("");
 					setTakenBy("");
 					setTakenByContacts("");
-					fetchStocks();
+					setSqty("");
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "success",
 						showConfirmButton: false,
 						timer: 500,
 					});
-				})
-				.catch(console.error());
+					setReducing(false);
+				}
+			}
+		} catch (error) {
+			console.log(error);
+			setReducing(false);
 		}
+		setReducing(false);
 	};
-	const [stocksReducedData, setstocksReducedData] = useState([]);
-	const fetchStocksReduced = () => {
-		db.collection("stocksReducedTbl")
-			.get()
-			.then((stocks) => {
-				// const newData = stocks;
-				// setstocksData(newData);
 
-				const newData = stocks;
-				setstocksReducedData(newData);
-				// console.log('new array', newData)
-			});
-	};
 	useEffect(() => {
-		fetchStocksReduced();
-	},[]);
-	// fetching stock types
+		dispatch(getStockTypes());
+		dispatch(getStockLevels());
+		dispatch(getReductions());
+	}, [dispatch]);
+
+	const { stockLevels, stockTypes, reductions } = useSelector(
+		(state) => state.schoolStore
+	);
+
 	useEffect(() => {
-		fetchStocksTypes().then(() => {
-			// console.log("fetchStocks");
-			fetchStockReduced();
-			fetchStocks();
-		});
-	}, []);
+		if (reductions && reductions.length > 0) {
+			const _reductions = reductions.filter((r) => r.stockId === stockId.id);
+			setFilterStocks(_reductions);
+		}
+	}, [reductions, stockId.id]);
 
 	return (
 		<>
@@ -262,7 +253,7 @@ function StockComp() {
 			<div className="w-full h-[80vh] mt-5">
 				<div className="bg-white p-3 shadow-lg rounded-md mr-2">
 					<div className="flex justify-between">
-						<div className="w-1/4 p-1">
+						<div className="w-3/12 p-1">
 							<InputField
 								type="date"
 								label="Date"
@@ -270,44 +261,48 @@ function StockComp() {
 								onChange={(e) => setDate(e.target.value)}
 							/>
 						</div>
-						<div className="w-1/4 p-1">
+						<div className="w-3/12 p-1">
 							<InputField
 								type="text"
 								placeholder="Enter Stock"
 								label="Stock"
 								value={stock}
 								onChange={(e) => setstock(e.target.value)}
-								
 							/>
 						</div>
-						<div className="w-1/4 p-1">
+						<div className="w-3/12 p-1">
 							<InputField
 								type="number"
-								placeholder="Enter Amounnt"
+								placeholder="Enter Quantity"
 								label="Qty"
 								value={qty}
 								onChange={(e) => setqty(e.target.value)}
-								
 							/>
 						</div>
-						<div className="w-1/4 p-1">
+						<div className="w-3/12 p-1">
 							<SelectComp
-								options={stockTypesData}
+								options={stockTypes}
 								placeholder="Select stock Type"
-								label="stock Type"
+								label="Stock Type"
 								setSelectedOptionObj={(value) => {
 									setstockTypeId(value.id);
 								}}
 							/>
 						</div>
-						<div className="p-1 w-1/4 mt-14">
-							<div onClick={poststock}>
-								<Button value={"Add stock"} />
-							</div>
+						<div className="p-1 w-1/12 mt-14">
+							{posting ? (
+								<div>
+									<ButtonLoader />
+								</div>
+							) : (
+								<div onClick={poststock}>
+									<Button value={"Add"} />
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
-				
+
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
@@ -347,22 +342,20 @@ function StockComp() {
 											label="stock"
 											value={stockEdit}
 											onChange={(e) => setstockEdit(e.target.value)}
-											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
 										<InputField
 											type="number"
-											placeholder="Enter Amounnt"
+											placeholder="Enter Quantity"
 											label="qty"
 											value={qtyEdit}
 											onChange={(e) => setqtyEdit(e.target.value)}
-											
 										/>
 									</div>
 									<div className="w-1/4 p-1">
 										<SelectComp
-											options={stockTypesData}
+											options={stockTypes}
 											placeholder="Select stock Type"
 											label="stock Type"
 											setSelectedOptionObj={(value) => {
@@ -430,79 +423,97 @@ function StockComp() {
 											placeholder="Taken By Contacts"
 										/>
 									</div>
-									<div className="w-1/3 p-1 mt-14">
-										<div onClick={reduceStock}>
-											<Button value={"Add"} />
-										</div>
+									<div className="w-auto p-1 mt-14">
+										{reducing ? (
+											<ButtonLoader />
+										) : (
+											<div onClick={reduceStock}>
+												<Button value={"Add"} />
+											</div>
+										)}
 									</div>
 									<div className="w-1/3 p-1"></div>
 								</div>
 								<div className="flex bg-gray1 hover:bg-gray1 border-b border-gray2">
 									<div className="cursor-pointer p-2 w-2/12">Date</div>
-									<div className="cursor-pointer p-2 w-2/12">Stock</div>
+
 									<div className="cursor-pointer p-2 w-1/12">Qty</div>
 									<div className="cursor-pointer p-2 w-2/12">Balance</div>
 									<div className="cursor-pointer p-2 w-2/12">Taken By</div>
 									<div className="cursor-pointer p-2 w-3/12">Contacts</div>
+									<div className="cursor-pointer p-2 w-3/12">Reductions</div>
 								</div>
-								{stocksReducedData.map((reduced) => {
-									return (
-										<div className="flex text-gray5 text-xs hover:bg-gray1 border-b border-gray2">
-											<div className="cursor-pointer p-2 w-2/12">
-												{reduced.reducedDate}
+								{filterStocks &&
+									filterStocks.length > 0 &&
+									filterStocks.map((reduced) => {
+										return (
+											<div className="flex text-gray5 text-xs hover:bg-gray1 border-b border-gray2">
+												<div className="cursor-pointer p-2 w-2/12">
+													{reduced.date}
+												</div>
+
+												<div className="cursor-pointer p-2 w-1/12">
+													{reduced.quantity}
+												</div>
+												<div className="cursor-pointer p-2 w-2/12">
+													{reduced.balance}
+												</div>
+												<div className="cursor-pointer p-2 w-2/12">
+													{reduced.takenBy}
+												</div>
+												<div className="cursor-pointer p-2 w-3/12">
+													{reduced.takenByContacts}
+												</div>
+												<div className="cursor-pointer p-2 w-3/12">
+													{reduced.quantityTaken}
+												</div>
 											</div>
-											<div className="cursor-pointer p-2 w-2/12">Posho</div>
-											<div className="cursor-pointer p-2 w-1/12">
-												{reduced.sqty}
-											</div>
-											<div className="cursor-pointer p-2 w-2/12">
-												200
-											</div>
-											<div className="cursor-pointer p-2 w-2/12">
-												{reduced.takenBy}
-											</div>
-											<div className="cursor-pointer p-2 w-3/12">
-												{reduced.takenByContacts}
-											</div>
-										</div>
-									);
-								})}
+										);
+									})}
 							</div>
 						) : null}
 
-						{stocksData.map((stockItem) => {
-							return (
-								<tr
-									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={stockItem?.id}
-								>
-									<td className="text-xs p-3 text-gray5">{stockItem.date}</td>
-									<td className="text-xs p-3 text-gray5">{stockItem.stock}</td>
-									<td className="text-xs p-3 text-gray5">1</td>
-									<td className="text-xs p-3 text-gray5">
-										{Number(stockItem.qty).toLocaleString()}
-									</td>
+						{stockLevels &&
+							stockLevels.length > 0 &&
+							stockLevels.map((stockItem) => {
+								// st is the stockType
+								const st = stockTypes.find(
+									(stockType) => stockType.id === stockItem.stockType
+								);
+								return (
+									<tr
+										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={stockItem?.id}
+									>
+										<td className="text-xs p-3 text-gray5">{stockItem.date}</td>
+										<td className="text-xs p-3 text-gray5">
+											{stockItem.stock}
+										</td>
+										<td className="text-xs p-3 text-gray5">{st.type}</td>
+										<td className="text-xs p-3 text-gray5">
+											{Number(stockItem.quantity).toLocaleString()}
+										</td>
 
-									<td className="text-xs p-3 text-gray5">
-										{Number(stockItem.qty).toLocaleString()}
-									</td>
-									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deletestock(stockItem)}
-											className="text-red w-4 h-4"
-										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => openEditData(stockItem)}
-										/>
-										<BsEye
-											className="text-primary h-4 w-4 ml-5"
-											onClick={() => openShowReduce(stockItem)}
-										/>
-									</td>
-								</tr>
-							);
-						})}
+										<td className="text-xs p-3 text-gray5">
+											{Number(stockItem.remaining).toLocaleString()}
+										</td>
+										<td className="text-xs p-3 text-gray5 flex">
+											<MdDeleteOutline
+												onClick={() => deletestock(stockItem)}
+												className="text-red w-4 h-4"
+											/>
+											<BsPencilSquare
+												className="text-warning h-4 w-4 ml-5"
+												onClick={() => openEditData(stockItem)}
+											/>
+											<BsEye
+												className="text-primary h-4 w-4 ml-5"
+												onClick={() => openShowReduce(stockItem)}
+											/>
+										</td>
+									</tr>
+								);
+							})}
 					</tbody>
 				</table>
 			</div>

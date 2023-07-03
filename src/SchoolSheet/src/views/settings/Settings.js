@@ -5,6 +5,8 @@ import Sections from "../../components/settings/Sections";
 import Terms from "../../components/settings/Terms";
 import { useDispatch, useSelector } from "react-redux";
 import { getSchools } from "../../store/schoolSheetSlices/schoolStore";
+import { UPLOADS_URL } from "../../axios-instance"
+import Loader from "../../components/Loader";
 
 function Settings() {
 	const dispatch = useDispatch();
@@ -15,6 +17,7 @@ function Settings() {
 	const [emails, setEmails] = useState("");
 	const [description, setDescription] = useState("");
 	const [sites, setSites] = useState("");
+	const [logo, setLogo] = useState("");
 	const [school, setSchool] = useState(null);
 	const { schools } = useSelector((state) => state.schoolStore);
 	
@@ -34,6 +37,7 @@ function Settings() {
 			emails,
 			description,
 			sites,
+			logo,
 		  } = schools[0];
 		  setName(name);
 		  setMotto(motto);
@@ -42,9 +46,11 @@ function Settings() {
 		  setEmails(emails);
 		  setDescription(description);
 		  setSites(sites);
+		  setLogo(logo)
 		}
 	  }, [schools]);
 
+	console.log("school", school);
 	return (
 		<div className="w-full">
 			<div className=" p-2 h-[92vh] overflow-y-auto mt-2 w-full">
@@ -54,6 +60,11 @@ function Settings() {
 					<div className="w-1/3">
 					<EditSchoolInfo/>
 						<p>Logo</p>
+						<img
+							src={logo ? UPLOADS_URL + logo : "avatar.jpeg"}
+							className="w-36 h-36 object-cover  rounded-full  border border-gray1 shadow"
+							alt="school_logo"
+						/>
 						<p>Name</p>
 						<p className="text-sm text-gray4">{name}</p>
 						<br />
@@ -80,6 +91,7 @@ function Settings() {
 						<p className="text-sm text-gray4">
 							{sites}
 						</p>
+						<Loader/>
 					</div>
 					<div className="w-2/3 ml-10">
 						<Terms/>

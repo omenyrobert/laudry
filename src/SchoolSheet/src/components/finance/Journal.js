@@ -10,6 +10,9 @@ import ButtonSecondary from "../ButtonSecondary";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccounts } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
+import { useFeedback } from "../../hooks/feedback";
+import { useNavigate } from "react-router-dom";
+import ButtonLoader from "../ButtonLoader";
 
 function Journal() {
 	const dispatch = useDispatch();
@@ -22,6 +25,71 @@ function Journal() {
 	const [date, setDate] = useState("");
 	const [accountOptions, setAccountOptions] = useState([]);
 	const { accounts } = useSelector((state) => state.schoolStore);
+	const { setLoading, toggleFeedback } = useFeedback();
+	const navigate = useNavigate();
+	const [journalTotal, setjournalTotal] = useState("");
+	const [journalsData, setjournalsData] = useState([]);
+
+	const fetchjournals = async () => {
+		const res = await axiosInstance.get("/transactions/type/journal");
+
+		const { status, payload } = res.data;
+
+		if (status === false) {
+			setLoading(false);
+			toggleFeedback("error", payload);
+			return;
+		}
+
+		const coupledTransactions = [];
+
+		for (let i = 0; i < payload.length; i++) {
+			const transaction = payload[i];
+
+			if (
+				coupledTransactions.find(
+					(t) => t.transactionId === transaction.transactionId
+				)
+			)
+				continue;
+
+			// find corresponding transaction with same id
+			const correspondingTransaction = payload.find((t) => {
+				return (
+					t.transactionId === transaction.transactionId &&
+					t.id !== transaction.id
+				);
+			});
+
+			if (correspondingTransaction) {
+				coupledTransactions.push({
+					transactionId: transaction.transactionId,
+					...transaction,
+					transactionAmount:
+						transaction.debit === 0 ? transaction.credit : transaction.debit,
+					debitAccount:
+						transaction.debit === 0
+							? correspondingTransaction.account
+							: transaction.account,
+					creditAccount:
+						transaction.credit === 0
+							? correspondingTransaction.account
+							: transaction.account,
+				});
+			}
+		}
+
+		setjournalsData(coupledTransactions);
+
+		console.log(coupledTransactions);
+
+		let total = coupledTransactions.reduce(
+			(acc, item) => acc + parseInt(item.transactionAmount),
+			0
+		);
+
+		setjournalTotal(total);
+	};
 
 	const showJoun = () => {
 		setJoun(true);
@@ -36,12 +104,26 @@ function Journal() {
 		const years = Array(now - (now - 20))
 			.fill("")
 			.map((v, idx) => now - idx);
-	},[]);
+	}, []);
 
 	// getAccounts
 	useEffect(() => {
 		dispatch(getAccounts());
 	}, [dispatch]);
+
+	useEffect(() => {
+		async function fetchData() {
+			setLoading(true);
+			try {
+				await fetchjournals();
+				setLoading(false);
+			} catch (error) {
+				setLoading(false);
+				toggleFeedback("error", { title: "Error", text: error.message });
+			}
+		}
+		fetchData();
+	}, []);
 
 	useEffect(() => {
 		const data = accounts.map((acc) => ({
@@ -53,25 +135,25 @@ function Journal() {
 		setAccountOptions(data);
 	}, [accounts]);
 
-	console.log("debitAccount", debitAccount);
+	const [posting, setPosting] = useState(false);
 
 	// createJournal
 	const createJournal = async () => {
+		// if (transactionType !== null && debit !== null && credit !== null && debitAccount !== null && creditAccount !== null) {
 		try {
-			let formData = {
-				date,
-				debit: parseFloat(debit),
-				credit: parseFloat(debit),
-				transactionType,
-				debitAccount: debitAccount && debitAccount.value,
-				debitAccountId: debitAccount && debitAccount.id,
-				creditAccount: creditAccount && creditAccount.value,
-				creditAccountId: creditAccount && creditAccount.id,
+			setPosting(true);
+			const formData = {
+				title: transactionType,
+				transactionCategory: "journal",
+				accountToDebit: debitAccount && debitAccount.id,
+				accountToCredit: creditAccount && creditAccount.id,
+				amountToDebit: parseFloat(debit),
+				amountToCredit: parseFloat(debit),
 			};
 
 			console.log("formData", formData);
 
-			const response = await axiosInstance.post("/journals", formData);
+			const response = await axiosInstance.post("/transactions", formData);
 			const { data } = response;
 			const { status } = data;
 
@@ -87,10 +169,13 @@ function Journal() {
 					timer: 500,
 				});
 				closeJoun();
+				setPosting(false);
 			}
 		} catch (error) {
 			console.log(error);
+			setPosting(false);
 		}
+		// }
 	};
 
 	return (
@@ -112,8 +197,8 @@ function Journal() {
 				</div>
 				<div className="p-2 w-2/12"></div>
 				<div className="p-2 w-2/12">
-					<div className="w-auto" onClick={showJoun}>
-						<Button2 value={"Enter Journal"} />
+					<div className="w-32" onClick={showJoun}>
+						<Button2 value={"Journal"} />
 					</div>
 				</div>
 			</div>
@@ -130,7 +215,7 @@ function Journal() {
 							</p>
 						</div>
 					</div>
-					<div className="p-3 h-[35vh] overflow-y-auto flex">
+					<div className="p-3 h-auto flex">
 						<div className="w-1/2 pr-2">
 							<InputField
 								type="date"
@@ -180,50 +265,76 @@ function Journal() {
 						</div>
 					</div>
 
+					<label className="text-gray5 ml-5">Description</label>
+					<br />
+					<textarea
+						className="bg-gray1 min-h-[100px] ml-5 p-5 border border-gray2 w-[95%]"
+						placeholder="Enter Description"
+					></textarea>
+
 					<div className="flex justify-between text-primary text-lg font-semibold p-3 bg-gray1">
 						<div onClick={closeJoun}>
 							<ButtonSecondary value={"Close"} />
 						</div>
 						<div onClick={createJournal}>
-							<Button value={"Add Journal"} />
+							{posting ? (
+								<div className="w-40">
+									{" "}
+									<ButtonLoader />
+								</div>
+							) : (
+								<div>
+									{" "}
+									<Button value={"Add Journal"} />{" "}
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
 			) : null}
-
-			<div className="p-2 border border-gray1 rounded-md my-2">
-				<div className="flex text-gray5 ">
-					<div className="w-1/3">
-						<p>Date: 23673</p>
+			<div className="h-[80vh] overflow-y-auto">
+				{journalsData.map((journal) => (
+					<div
+						key={journal.id}
+						className="p-2 bg-gray1 text-sm hover:bg-white cursor-pointer rounded-md my-2"
+					>
+						<div className="flex text-gray5 ">
+							<div className="w-1/3">
+								<p>Date: {new Date(journal.date).toLocaleDateString()}</p>
+							</div>
+							<div className="w-1/3">
+								<p>Journal number: {journal.transactionId}</p>
+							</div>
+							<div className="w-1/3 flex justify-between">
+								<p>Transaction Type: {journal.title}</p>
+								<p className="text-primary border border-primary rounded-md py-1 px-3 cursor-pointer">
+									Print
+								</p>
+							</div>
+						</div>
+						<div className="flex text-gray5 bg-gray2 py-2 mt-4">
+							<div className="w-1/3">
+								<p>Debit Account: {journal.debitAccount.accountName}</p>
+							</div>
+							<div className="w-1/3">
+								<p>Amount Debited: {journal.transactionAmount} </p>
+							</div>
+							<div className="w-1/3">
+								<p>Description: fhhhhfdf</p>
+							</div>
+						</div>
+						<div className="flex text-gray5  mt-4">
+							<div className="w-1/3">
+								<p>Credit Account: {journal.creditAccount.accountName}</p>
+							</div>
+							<div className="w-1/3">
+								<p>Amount Credit: {journal.transactionAmount} </p>
+							</div>
+							<div className="w-1/3"></div>
+						</div>
 					</div>
-					<div className="w-1/3">
-						<p>Journal number: Jn082</p>
-					</div>
-					<div className="w-1/3 flex justify-between">
-						<p>Transaction Type: Bills</p>
-						<p className="text-primary border border-primary rounded-md py-1 px-3 cursor-pointer">Print</p>
-					</div>
-				</div>
-				<div className="flex text-gray5 bg-gray1 py-2 mt-4">
-					<div className="w-1/3">
-						<p>Debit Account: Meals</p>
-					</div>
-					<div className="w-1/3">
-						<p>Amount Debited:300,000 </p>
-					</div>
-					<div className="w-1/3">
-						<p>Description: fhhhhfdf</p>
-					</div>
-				</div>
-				<div className="flex text-gray5  mt-4">
-					<div className="w-1/3">
-						<p>Credit Account: Meals</p>
-					</div>
-					<div className="w-1/3">
-						<p>Amount Credit:300,000 </p>
-					</div>
-					<div className="w-1/3"></div>
-				</div>
+				))}
+				<br/>
 			</div>
 		</div>
 	);

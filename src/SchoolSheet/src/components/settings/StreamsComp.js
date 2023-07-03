@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import withReactContent from "sweetalert2-react-content";
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../ButtonLoader";
+import Loader from "../Loader";
 
 const StreamsComp = () => {
 	const dispatch = useDispatch();
@@ -206,6 +207,7 @@ const StreamsComp = () => {
 						})}
 					</tbody>
 				</table>
+				<Loader/>
 			</div>
 		</>
 	);

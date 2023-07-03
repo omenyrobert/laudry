@@ -59,8 +59,8 @@ function CashFlow() {
 
   useEffect(() => {
     if (filteredTransactions.length > 0) {
-      setFirstTransactionAmount(filteredTransactions[0].amount);
-      setLastTransactionAmount(filteredTransactions[filteredTransactions.length - 1].amount);
+      setFirstTransactionAmount(filteredTransactions[0].balance);
+      setLastTransactionAmount(filteredTransactions[filteredTransactions.length - 1].balance);
 
       let totalCredit = 0;
       let totalDebit = 0;
@@ -132,9 +132,9 @@ function CashFlow() {
                 onChange={(e) => setToDate(e.target.value)}
               />
             </div>
-            <div>
+            {/* <div>
               <InputField type="month" label="By Month" />
-            </div>
+            </div> */}
             <div className="ml-5 mt-12">
               <Button value={"Pdf"} onClick={handleGeneratePDF} />
             </div>
@@ -163,23 +163,23 @@ function CashFlow() {
               <div className="w-1/4 p-2">{transaction.transactionId}</div>
               <div className="w-1/4 p-2 truncate">{transaction.description}</div>
               <div className="w-1/4 p-2">{transaction.account.accountName}</div>
-              <div className="w-1/4 p-2">{transaction.credit}</div>
-              <div className="w-1/4 p-2">{transaction.debit}</div>
-              <div className="w-1/4 p-2">{transaction.amount}</div>
-              <div className="w-1/4 p-2">{transaction.balance}</div>
+              <div className="w-1/4 p-2">{Number(transaction.credit).toLocaleString()}</div>
+              <div className="w-1/4 p-2">{Number(transaction.debit).toLocaleString()}</div>
+              <div className="w-1/4 p-2">{Number(transaction.amount).toLocaleString()}</div>
+              <div className="w-1/4 p-2">{Number(transaction.balance).toLocaleString()}</div>
             </div>
           ))}
           <div className="bg-primary3 text-primary flex mt-1">
             <div className="w-10/12 p-2">Net Increase/Decrease</div>
-            <div className="w-2/12 p-2">{netIncreaseDecrease}</div>
+            <div className="w-2/12 p-2">{Number(netIncreaseDecrease).toLocaleString()}</div>
           </div>
           <div className="bg-primary3 text-primary flex mt-1">
             <div className="w-10/12 p-2">Cash At the Beginning</div>
-            <div className="w-2/12 p-2">{firstTransactionAmount}</div>
+            <div className="w-2/12 p-2">{Number(firstTransactionAmount).toLocaleString()}</div>
           </div>
           <div className="bg-primary3 text-primary flex mt-1">
             <div className="w-10/12 p-2">Cash At the End</div>
-            <div className="w-2/12 p-2">{lastTransactionAmount}</div>
+            <div className="w-2/12 p-2">{Number(lastTransactionAmount).toLocaleString()}</div>
           </div>
         </div>
       </div>

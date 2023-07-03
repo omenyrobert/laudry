@@ -92,9 +92,9 @@ function GeneralLedger() {
 								onChange={(e) => setToDate(e.target.value)}
 							/>
 						</div>
-						<div>
+						{/* <div>
 							<InputField type="month" label="By Month" />
-						</div>
+						</div> */}
 						<div className="ml-5 mt-12" onClick={handleGeneratePDF}>
 							<Button value={"Pdf"} />
 						</div>
@@ -123,10 +123,10 @@ function GeneralLedger() {
 								<div className="w-1/4 p-2">{transaction.transactionId}</div>
 								<div className="w-1/4 p-2 truncate">{transaction.description}</div>
 								<div className="w-1/4 p-2">{transaction.account.accountName}</div>
-								<div className="w-1/4 p-2">{transaction.credit}</div>
-								<div className="w-1/4 p-2">{transaction.debit}</div>
-								<div className="w-1/4 p-2">{transaction.amount}</div>
-								<div className="w-1/4 p-2">{transaction.balance}</div>
+								<div className="w-1/4 p-2">{Number(transaction.credit).toLocaleString()}</div>
+								<div className="w-1/4 p-2">{Number(transaction.debit).toLocaleString()}</div>
+								<div className="w-1/4 p-2">{Number(transaction.amount).toLocaleString()}</div>
+								<div className="w-1/4 p-2">{Number(transaction.balance).toLocaleString()}</div>
 							</div>
 						))
 					}

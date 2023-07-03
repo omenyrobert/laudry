@@ -31,6 +31,7 @@ const AddStudentForm = (props) => {
 	const [studentHouses, setStudentHouses] = useState([])
 	const [streams, setStreams] = useState([])
 	const [studentStream, setStudentStream] = useState("")
+	const [feesData, setFeesData] = useState([])
 
 	const { sections } = useSelector((state) => state.schoolStore);
 
@@ -43,6 +44,30 @@ const AddStudentForm = (props) => {
 		sectionOptions.push(newSection);
 	})
 
+	const fetchFeesInfo = () => {
+		axiosInstance
+			.get("/fees")
+			.then((response) => {
+				const { data } = response;
+				const { status, payload } = data;
+				if (status) {
+					const feesFormOptions = payload.map((fee) => {
+						return {
+							label: fee.name,
+							value: fee.id,
+							...fee
+						}
+					}
+					)
+					console.log(payload)
+					setFeesData(feesFormOptions)
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
 
 	useEffect(() => {
 		dispatch(getSections());
@@ -51,6 +76,7 @@ const AddStudentForm = (props) => {
 			fetchSchoolClasses();
 			fetchSchoolHouses();
 			fetchStreams();
+			fetchFeesInfo()
 		} catch (error) {
 			const MySwal = withReactContent(Swal);
 			MySwal.fire({
@@ -161,7 +187,7 @@ const AddStudentForm = (props) => {
 	// post student info
 	const [isPosting, setIsPosting] = useState(false);
 	const postStudentInfo = (e) => {
-		setIsPosting(false);
+		setIsPosting(true);
 		e.preventDefault();
 		let data = {
 			firstName: studentInfo.firstName,
@@ -389,7 +415,7 @@ const AddStudentForm = (props) => {
 							defaultValue={feesCategory}
 							name="feesCategory"
 							onChange={setFeesCategory}
-							options={studentTypes}
+							options={feesData}
 						/>
 					</div>
 					<div className="w-1/4 p-2">

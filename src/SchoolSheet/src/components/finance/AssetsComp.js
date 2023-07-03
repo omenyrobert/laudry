@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
-import { BsPencilSquare, BsSearch } from "react-icons/bs";
+import { BsPencilSquare, BsSearch, BsPrinterFill } from "react-icons/bs";
 import InputField from "../InputField";
 import { FaPen } from "react-icons/fa";
 import Button from "../Button";
@@ -16,59 +15,61 @@ import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
 
 function AssetsComp() {
-	const { setLoading, toggleFeedback } = useFeedback()
-	const navigate = useNavigate()
+	const { setLoading, toggleFeedback } = useFeedback();
+	const navigate = useNavigate();
 	const [assetTotal, setAssetTotal] = useState("");
 	const [assetsData, setAssetsData] = useState([]);
 
-
 	const fetchAssets = async () => {
+		const res = await axiosInstance.get("/transactions/type/asset");
 
-		const res = await axiosInstance.get("/transactions/type/asset")
-
-		const { status, payload } = res.data
+		const { status, payload } = res.data;
 
 		if (status === false) {
-			setLoading(false)
-			toggleFeedback("error", payload)
-			return
+			setLoading(false);
+			toggleFeedback("error", payload);
+			return;
 		}
 
-		const coupledTransactions = []
+		const coupledTransactions = [];
 
 		for (let i = 0; i < payload.length; i++) {
-			const transaction = payload[i]
+			const transaction = payload[i];
 
-			if (coupledTransactions.find(t => t.transactionId === transaction.transactionId)) continue;
+			if (
+				coupledTransactions.find(
+					(t) => t.transactionId === transaction.transactionId
+				)
+			)
+				continue;
 
 			// find corresponding transaction with same id
-			const correspondingTransaction = payload.find(t => {
-				return t.transactionId === transaction.transactionId && t.id !== transaction.id
-			})
+			const correspondingTransaction = payload.find((t) => {
+				return (
+					t.transactionId === transaction.transactionId &&
+					t.id !== transaction.id
+				);
+			});
 
 			if (correspondingTransaction) {
 				coupledTransactions.push({
 					transactionId: transaction.transactionId,
 					...transaction,
-					transactionAmount: transaction.debit === 0 ? transaction.credit : transaction.debit,
-				})
+					transactionAmount:
+						transaction.debit === 0 ? transaction.credit : transaction.debit,
+				});
 			}
 		}
 
-		setAssetsData(coupledTransactions)
-
+		setAssetsData(coupledTransactions);
+		setId(coupledTransactions[0].id);
 		let total = coupledTransactions.reduce(
 			(acc, item) => acc + parseInt(item.transactionAmount),
 			0
 		);
 
 		setAssetTotal(total);
-
-
 	};
-
-
-
 
 	//deleting asset types
 	const deleteasset = (assetItem) => {
@@ -82,20 +83,20 @@ function AssetsComp() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				axiosInstance.delete(`/transactions/${assetItem.transactionId}`)
+				axiosInstance
+					.delete(`/transactions/${assetItem.transactionId}`)
 					.then((response) => {
-						console.log(response)
-						const { status, payload } = response.data
+						console.log(response);
+						const { status, payload } = response.data;
 						toggleFeedback(status ? "success" : "error", {
-							title: payload
-						})
-						fetchAssets()
+							title: payload,
+						});
+						fetchAssets();
 					})
 					.catch((error) => {
-						console.log(error)
-						toggleFeedback("error", error.message)
-					}
-					);
+						console.log(error);
+						toggleFeedback("error", error.message);
+					});
 			}
 		});
 	};
@@ -103,10 +104,10 @@ function AssetsComp() {
 	// fetching asset types
 	useEffect(() => {
 		async function fetchData() {
-			setLoading(true)
+			setLoading(true);
 			try {
 				await fetchAssets();
-				setLoading(false)
+				setLoading(false);
 			} catch (error) {
 				setLoading(false);
 				toggleFeedback("error", { title: "Error", text: error.message });
@@ -116,29 +117,41 @@ function AssetsComp() {
 		fetchData();
 	}, []);
 
+	const [id, setId] = useState("");
+
 	return (
 		<>
-			<div className="flex justify-between mt-2 bg-white px-3 border border-gray2 rounded-md">
-				<div>
+			<div className="flex  mt-2 bg-white px-3 border border-gray2 rounded-md">
+				<div className="w-1/12">
 					<h5 className="text-lg font-medium text-secondary mt-5">Assets</h5>
 				</div>
-				<div className="w-1/2">
-					<InputField type="search" placeholder="Search for Asset" icon={<BsSearch className="w-3 -ml-7 mt-3" />} />
+				<div className="w-4/12">
+					<InputField
+						type="search"
+						placeholder="Search for Asset"
+						icon={<BsSearch className="w-3 -ml-7 mt-3" />}
+					/>
 				</div>
-				<div>
-					<div className="w-[200px] mt-5">
-						<Link to="/addTransaction?transactionType=asset&action=create">
-							<Button2 value={"Add Asset"} />
-						</Link>
+				<div className="w-2/12 px-2">
+					<InputField placeholder="Filter By Type" />
+				</div>{" "}
+				<div className="w-2/12 px-2">
+					<InputField type="date" />
+				</div>
+				<div className="w-2/12">
+					<InputField type="date" />
+				</div>
+				<div className="w-2/12 ml-5 mt-5 flex">
+					<Link to="/addTransaction?transactionType=asset&action=create">
+						<Button2 value={"Asset"} />
+					</Link>
+					<div className="ml-5">
+						<Button value={"Print"} />
 					</div>
 				</div>
-
 			</div>
 
-
-
 			<div className="w-full h-[80vh]">
-
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
@@ -150,8 +163,6 @@ function AssetsComp() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-
-
 						{assetsData.map((assetItem) => {
 							return (
 								<tr
@@ -159,12 +170,12 @@ function AssetsComp() {
 									key={assetItem?.id}
 								>
 									<td className="text-xs p-3 text-gray5">
-										{
-											new Date(assetItem.date).toLocaleDateString()
-										}
+										{new Date(assetItem.date).toLocaleDateString()}
 									</td>
 									<td className="text-xs p-3 text-gray5">{assetItem.title}</td>
-									<td className="text-xs p-3 text-gray5">{assetItem?.subType?.name}</td>
+									<td className="text-xs p-3 text-gray5">
+										{assetItem?.subType?.name}
+									</td>
 									<td className="text-xs p-3 text-gray5">
 										{Number(assetItem.transactionAmount).toLocaleString()}
 									</td>
@@ -175,27 +186,31 @@ function AssetsComp() {
 										{assetItem.receivedBy}
 									</td>
 									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deleteasset(assetItem)}
-											className="text-red w-4 h-4"
-										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => {
-												navigate(`/addTransaction?transactionType=asset&action=edit&transactionId=${assetItem.transactionId}`)
-											}}
-										/>
+										{assetItem.id === id ? (
+											<div className="flex">
+												<MdDeleteOutline
+													onClick={() => deleteasset(assetItem)}
+													className="text-red w-4 h-4"
+												/>
+												<BsPencilSquare
+													className="text-warning h-4 w-4 ml-5"
+													onClick={() => {
+														navigate(
+															`/addTransaction?transactionType=asset&action=edit&transactionId=${assetItem.transactionId}`
+														);
+													}}
+												/>
+											</div>
+										) : null}
+
+										<BsPrinterFill className="text-primary ml-5" />
 									</td>
 								</tr>
 							);
 						})}
-						<tr className="bg-white p-5 text-lg font-semibold">
-							<td colSpan="3">Total</td>
+						<tr className="bg-white p-5 text-lg text-primary font-semibold">
+							<td colSpan="6 p-1">Total</td>
 							<td>{Number(assetTotal).toLocaleString()}</td>
-							<td></td>
-							<td>
-								<td></td>
-							</td>
 						</tr>
 					</tbody>
 				</table>

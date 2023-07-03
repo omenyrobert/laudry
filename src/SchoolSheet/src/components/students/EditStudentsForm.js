@@ -7,11 +7,10 @@ import Select from "react-select";
 import { FaRegUserCircle, FaPhone } from "react-icons/fa";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import axiosInstance from "../../axios-instance"
-import { useNavigate } from 'react-router-dom';
+import axiosInstance from "../../axios-instance";
+import { useNavigate } from "react-router-dom";
 import ButtonLoader from "../ButtonLoader";
 import { extraLatestArrayIndex } from '../../utils/global';
-
 
 const EditStudentsForm = (props) => {
 	const location = useLocation();
@@ -19,7 +18,6 @@ const EditStudentsForm = (props) => {
 	const studentId = searchParams.get("student");
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
-
 
 	const [firstName, setFirstName] = useState("");
 	const [middleName, setMiddleName] = useState("");
@@ -41,19 +39,19 @@ const EditStudentsForm = (props) => {
 	const [studentHouse, setStudentHouse] = useState("");
 	const [studentSection, setStudentSection] = useState("");
 	const [feesCategory, setFeesCategory] = useState("");
-	const [studentTypes, setStudentTypes] = useState([])
-	const [sections, setSections] = useState([])
-	const [classes, setStudentClasses] = useState([])
-	const [houses, setStudentHouses] = useState([])
-	const [init] = useState(true)
+	const [studentTypes, setStudentTypes] = useState([]);
+	const [sections, setSections] = useState([]);
+	const [classes, setStudentClasses] = useState([]);
+	const [houses, setStudentHouses] = useState([]);
+	const [init] = useState(true);
 
 	useEffect(() => {
 		try {
-			fetchSingleStudent()
-			fetchStudentType()
-			fetchSchoolClasses()
-			fetchSchoolHouses()
-			fetchSections()
+			fetchSingleStudent();
+			fetchStudentType();
+			fetchSchoolClasses();
+			fetchSchoolHouses();
+			fetchSections();
 		} catch (error) {
 			const MySwal = withReactContent(Swal);
 			MySwal.fire({
@@ -62,119 +60,135 @@ const EditStudentsForm = (props) => {
 				text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
 			});
 		}
-	}, [init])
-
-
-
+	}, [init]);
 
 	const fetchStudentType = () => {
-		axiosInstance.get("/student-types")
-			.then((response) => {
-				const { payload } = response.data;
+		axiosInstance.get("/student-types").then((response) => {
+			const { payload } = response.data;
 
-				const studenttypesArr = []
-				for (let i = 0; i < payload.length; i++) {
-					studenttypesArr.push({ label: payload[i].type, value: payload[i].type, ...payload[i] })
-				}
-				setStudentTypes(studenttypesArr)
-			})
-	}
-
+			const studenttypesArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studenttypesArr.push({
+					label: payload[i].type,
+					value: payload[i].type,
+					...payload[i],
+				});
+			}
+			setStudentTypes(studenttypesArr);
+		});
+	};
 
 	const fetchSchoolClasses = () => {
-		axiosInstance.get("/class")
-			.then((response) => {
-				const { payload } = response.data;
-				const studentClassesArr = []
-				for (let i = 0; i < payload.length; i++) {
-					studentClassesArr.push({ label: payload[i].class, value: payload[i].class, ...payload[i] })
-				}
-				setStudentClasses(studentClassesArr)
-			})
-	}
+		axiosInstance.get("/class").then((response) => {
+			const { payload } = response.data;
+			const studentClassesArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studentClassesArr.push({
+					label: payload[i].class,
+					value: payload[i].class,
+					...payload[i],
+				});
+			}
+			setStudentClasses(studentClassesArr);
+		});
+	};
 
 	const fetchSections = () => {
-		axiosInstance.get('/sections').then((response) => {
+		axiosInstance.get("/sections").then((response) => {
 			const { payload } = response.data;
 			const sectionsArr = [];
 			for (let i = 0; i < payload.length; i++) {
-				sectionsArr.push({ label: payload[i].section, value: payload[i].section, ...payload[i] })
+				sectionsArr.push({
+					label: payload[i].section,
+					value: payload[i].section,
+					...payload[i],
+				});
 			}
 			setSections(sectionsArr);
 		});
-	}
+	};
 
 	const fetchSchoolHouses = () => {
-		axiosInstance.get("/houses")
-			.then((response) => {
-				const { payload } = response.data;
-				const studentHousesArr = []
-				for (let i = 0; i < payload.length; i++) {
-					studentHousesArr.push({ label: payload[i].house, value: payload[i].house, ...payload[i] })
-				}
-				setStudentHouses(studentHousesArr)
-			})
-	}
+		axiosInstance.get("/houses").then((response) => {
+			const { payload } = response.data;
+			const studentHousesArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studentHousesArr.push({
+					label: payload[i].house,
+					value: payload[i].house,
+					...payload[i],
+				});
+			}
+			setStudentHouses(studentHousesArr);
+		});
+	};
 
 	// fetch student info
 	const fetchSingleStudent = () => {
-		axiosInstance.get(`/students/${studentId}`)
-			.then((response) => {
-				const { status, payload } = response.data;
+		axiosInstance.get(`/students/${studentId}`).then((response) => {
+			const { status, payload } = response.data;
 
-				if (status === false) {
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "error",
-						title: "Oops...",
-						text: payload,
-					});
-					return;
-				}
+			if (status === false) {
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: payload,
+				});
+				return;
+			}
 
-				setFirstName(payload.firstName);
-				setMiddleName(payload.middleName);
-				setLastName(payload.lastName);
-				setEmail(payload.email);
-				setPhoneNumber(payload.phoneNumber);
-				setDateOfBirth(payload.dateOfBirth);
-				setFatherName(payload.fatherName);
-				setFatherContact(payload.fatherContact);
-				setMotherName(payload.motherName);
-				setMotherContact(payload.motherContact);
-				setGender({ label: payload.gender, value: payload.gender })
-				setNationality(payload.nationality);
-				setResidence(payload.residence);
+			setFirstName(payload.firstName);
+			setMiddleName(payload.middleName);
+			setLastName(payload.lastName);
+			setEmail(payload.email);
+			setPhoneNumber(payload.phoneNumber);
+			setDateOfBirth(payload.dateOfBirth);
+			setFatherName(payload.fatherName);
+			setFatherContact(payload.fatherContact);
+			setMotherName(payload.motherName);
+			setMotherContact(payload.motherContact);
+			setGender({
+				label: payload.gender?.toUpperCase(),
+				value: payload.gender,
+			});
+			setNationality(payload.nationality);
+			setResidence(payload.residence);
 
-				let type = extraLatestArrayIndex(payload.student_types);
-				setStudentType({ label: type?.type, value: type?.type, ...type });
+			let type = extraLatestArrayIndex(payload.student_types);
+			setStudentType({ label: type?.type, value: type?.type, ...type });
 
-				let studentClass = extraLatestArrayIndex(payload.classes);
-				setStudentClass({ label: studentClass?.class, value: studentClass?.class, ...studentClass });
+			let studentClass = extraLatestArrayIndex(payload.classes);
+			setStudentClass({
+				label: studentClass?.class,
+				value: studentClass?.class,
+				...studentClass,
+			});
 
-				let house = extraLatestArrayIndex(payload.houses);
-				setStudentHouse({ label: house?.house, value: house?.house, ...house });
+			let house = extraLatestArrayIndex(payload.houses);
+			setStudentHouse({ label: house?.house, value: house?.house, ...house });
 
-				let fee = extraLatestArrayIndex(payload.fees);
-				setFeesCategory({ label: fee?.name, value: fee?.name, ...fee });
+			let fee = extraLatestArrayIndex(payload.fees);
+			setFeesCategory({ label: fee?.name, value: fee?.name, ...fee });
 
-				let section = extraLatestArrayIndex(payload.sections);
-				setStudentSection({ label: section?.section, value: section?.section, ...section });
-
-			})
-	}
-
+			let section = extraLatestArrayIndex(payload.sections);
+			setStudentSection({
+				label: section?.section,
+				value: section?.section,
+				...section,
+			});
+		});
+	};
 
 	const selectPhoto = (e) => {
-
 		const { files } = e.target;
 		if (files && files[0]) {
 			setPhoto(files[0]);
 		}
-	}
+	};
 
 	const updateStudentInfo = () => {
-		setLoading(true)
+		setLoading(true);
 		let data = {
 			id: studentId,
 			firstName: firstName,
@@ -207,16 +221,16 @@ const EditStudentsForm = (props) => {
 			formdata.append("photo", photo);
 		}
 
-
-		axiosInstance.put(`students/edit`, formdata, {
-			headers: {
-				"Content-Type": "multipart/form-data",
-			}
-		})
+		axiosInstance
+			.put(`students/edit`, formdata, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			})
 			.then((response) => {
 				const { status, payload } = response.data;
 				if (status === false) {
-					setLoading(false)
+					setLoading(false);
 					const MySwal = withReactContent(Swal);
 					MySwal.fire({
 						icon: "error",
@@ -231,19 +245,31 @@ const EditStudentsForm = (props) => {
 					showConfirmButton: false,
 					timer: 500,
 				});
-				navigate("/students")
+				navigate("/students");
 			})
 			.catch((error) => {
-				setLoading(false)
+				setLoading(false);
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "error",
 					title: "Oops...",
 					text: "An Error Occured while trying to update student. Please try again",
 				});
-			})
-
+			});
 	};
+
+	const genderOptions = [
+		{
+			label: "MALE",
+			value: "male",
+		},
+		{
+			label: "FEMALE",
+			value: "female",
+		},
+	];
+
+	
 
 	return (
 		<div className="bg-white h-full">
@@ -273,10 +299,11 @@ const EditStudentsForm = (props) => {
 						<InputSelect
 							type="text"
 							placeholder="Select Gender"
-							label="Gender"
+							label="Genders"
 							name="gender"
 							selectedOption={gender}
 							onChange={setGender}
+							options={genderOptions}
 						/>
 
 						<InputField
@@ -299,11 +326,7 @@ const EditStudentsForm = (props) => {
 							value={middleName}
 							icon={<FaRegUserCircle className="w-3 -ml-7 mt-3" />}
 						/>
-						<InputField
-							type="file"
-							label="Photo"
-							onChange={selectPhoto}
-						/>
+						<InputField type="file" label="Photo" onChange={selectPhoto} />
 						<InputField
 							type="text"
 							placeholder="Enter Place Of Residence"
@@ -453,19 +476,18 @@ const EditStudentsForm = (props) => {
 			</div>
 			<div className="flex justify-between p-2">
 				<div></div>
-				{
-					loading ? (
-						<div>
-							<ButtonLoader />
-						</div>) : (
-						<div onClick={updateStudentInfo}>
-							<Button value={"Update Student"} />
-						</div>
-					)
-				}
+				{loading ? (
+					<div>
+						<ButtonLoader />
+					</div>
+				) : (
+					<div onClick={updateStudentInfo}>
+						<Button value={"Update Student"} />
+					</div>
+				)}
 			</div>
 		</div>
 	);
-}
+};
 
 export default EditStudentsForm;

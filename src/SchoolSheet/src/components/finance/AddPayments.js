@@ -2,27 +2,22 @@ import React, { useEffect, useState } from "react";
 import Button from "../Button";
 import Button2 from "../Button2";
 import InputField from "../InputField";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
-import { BsPencilSquare } from "react-icons/bs";
-import { FaPen } from "react-icons/fa";
+import { BsPencilSquare, BsPrinterFill } from "react-icons/bs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { BsSearch } from "react-icons/bs";
 import SelectComp from "../SelectComp";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
-import ButtonSecondary from "../ButtonSecondary";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
 
-let db = new Localbase("db");
 
 function AddPayments() {
-	const { setLoading, toggleFeedback } = useFeedback()
-	const navigate = useNavigate()
+	const { setLoading, toggleFeedback } = useFeedback();
+	const navigate = useNavigate();
 	//deleting payment types
 	const deletepayment = (paymentItem) => {
 		Swal.fire({
@@ -35,66 +30,71 @@ function AddPayments() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				axiosInstance.delete(`/transactions/${paymentItem.transactionId}`)
+				axiosInstance
+					.delete(`/transactions/${paymentItem.transactionId}`)
 					.then((response) => {
-						console.log(response)
-						const { status, payload } = response.data
+						console.log(response);
+						const { status, payload } = response.data;
 						toggleFeedback(status ? "success" : "error", {
-							title: payload
-						})
-						fetchpayment()
+							title: payload,
+						});
+						fetchpayment();
 					})
 					.catch((error) => {
-						console.log(error)
-						toggleFeedback("error", error.message)
-					}
-					);
+						console.log(error);
+						toggleFeedback("error", error.message);
+					});
 			}
 		});
 	};
-
-
-
 
 	// fetch payments
 	const [paymentsData, setpaymentsData] = useState([]);
 	const [paymentTotal, setpaymentTotal] = useState("");
 
-
 	const fetchpayment = async () => {
+		const res = await axiosInstance.get("/transactions/type/payment");
 
-		const res = await axiosInstance.get("/transactions/type/payment")
-
-		const { status, payload } = res.data
+		const { status, payload } = res.data;
 
 		if (status === false) {
-			setLoading(false)
-			toggleFeedback("error", payload)
-			return
+			setLoading(false);
+			toggleFeedback("error", payload);
+			return;
 		}
 
-		const coupledTransactions = []
+		const coupledTransactions = [];
 
 		for (let i = 0; i < payload.length; i++) {
-			const transaction = payload[i]
+			const transaction = payload[i];
 
-			if (coupledTransactions.find(t => t.transactionId === transaction.transactionId)) continue;
+			if (
+				coupledTransactions.find(
+					(t) => t.transactionId === transaction.transactionId
+				)
+			)
+				continue;
 
 			// find corresponding transaction with same id
-			const correspondingTransaction = payload.find(t => {
-				return t.transactionId === transaction.transactionId && t.id !== transaction.id
-			})
+			const correspondingTransaction = payload.find((t) => {
+				return (
+					t.transactionId === transaction.transactionId &&
+					t.id !== transaction.id
+				);
+			});
 
 			if (correspondingTransaction) {
 				coupledTransactions.push({
 					transactionId: transaction.transactionId,
 					...transaction,
-					transactionAmount: transaction.debit === 0 ? transaction.credit : transaction.debit,
-				})
+					transactionAmount:
+						transaction.debit === 0 ? transaction.credit : transaction.debit,
+				});
 			}
 		}
 
-		setpaymentsData(coupledTransactions)
+		setpaymentsData(coupledTransactions);
+		setId(coupledTransactions[0].id);
 
 		let total = coupledTransactions.reduce(
 			(acc, item) => acc + parseInt(item.transactionAmount),
@@ -102,20 +102,17 @@ function AddPayments() {
 		);
 
 		setpaymentTotal(total);
-
-
 	};
 
-
+	const [id, setId] = useState("");
 
 	// fetch payment typess
 	const [paymentTypesData, setpaymentTypesData] = useState([]);
 
 	const fetchpaymentTypes = async () => {
-		const response = await axiosInstance.get("/transaction-types/payment")
+		const response = await axiosInstance.get("/transaction-types/payment");
 
 		setpaymentTypesData(response.data.payload);
-
 	};
 
 	// delete
@@ -123,11 +120,11 @@ function AddPayments() {
 	// fetching payment types
 	useEffect(() => {
 		async function fetchData() {
-			setLoading(true)
+			setLoading(true);
 			try {
 				await fetchpaymentTypes();
 				await fetchpayment();
-				setLoading(false)
+				setLoading(false);
 			} catch (error) {
 				setLoading(false);
 				toggleFeedback("error", { title: "Error", text: error.message });
@@ -147,7 +144,6 @@ function AddPayments() {
 								<InputField
 									placeholder="Search for Income"
 									type="search"
-
 									icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
 								/>
 							</div>
@@ -163,16 +159,16 @@ function AddPayments() {
 						</div>
 					</div>
 					<div className="w-2/12">
-
-						<div className="relative w-[200px] pl-5 mt-5">
+						<div className="relative w-[200px] pl-5 mt-5 flex">
 							<Link to="/addTransaction?transactionType=payment&action=create">
-								<Button2 value={"Add Expense"} />
+								<Button2 value={"Payment"} />
 							</Link>
+							<div className="ml-5">
+								<Button value={"Print"} />
+							</div>
 						</div>
 					</div>
-
 				</div>
-
 
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
@@ -185,7 +181,6 @@ function AddPayments() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-
 						{paymentsData.map((paymentItem) => {
 							return (
 								<tr
@@ -193,9 +188,7 @@ function AddPayments() {
 									key={paymentItem.id}
 								>
 									<td className="text-xs p-3 text-gray5">
-										{
-											new Date(paymentItem.date).toLocaleDateString()
-										}
+										{new Date(paymentItem.date).toLocaleDateString()}
 									</td>
 									<td className="text-xs p-3 text-gray5">
 										{paymentItem.title}
@@ -206,21 +199,30 @@ function AddPayments() {
 									<td className="text-xs p-3 text-gray5">
 										{Number(paymentItem.transactionAmount).toLocaleString()}
 									</td>
-									<td className="text-xs p-3 text-gray5">{paymentItem.receivedBy}</td>
+									<td className="text-xs p-3 text-gray5">
+										{paymentItem.receivedBy}
+									</td>
 									<td className="text-xs p-3 text-gray5">
 										{paymentItem.contacts}
 									</td>
 									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deletepayment(paymentItem)}
-											className="text-red w-4 h-4"
-										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => {
-												navigate(`/addTransaction?transactionType=payment&action=edit&transactionId=${paymentItem.transactionId}`)
-											}}
-										/>
+										{paymentItem.id === id ? (
+											<div className="flex">
+												<MdDeleteOutline
+													onClick={() => deletepayment(paymentItem)}
+													className="text-red w-4 h-4"
+												/>
+												<BsPencilSquare
+													className="text-warning h-4 w-4 ml-5"
+													onClick={() => {
+														navigate(
+															`/addTransaction?transactionType=payment&action=edit&transactionId=${paymentItem.transactionId}`
+														);
+													}}
+												/>
+											</div>
+										) : null}
+										<BsPrinterFill className="text-primary ml-5" />
 									</td>
 								</tr>
 							);

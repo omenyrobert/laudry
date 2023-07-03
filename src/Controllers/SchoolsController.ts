@@ -68,8 +68,10 @@ export const modifySchool = async (req: Request, res: Response) => {
       emails,
       description,
       sites,
-      logo
     } = req.body;
+
+    const logo = req.file ? req.file.filename : "";
+
     if (!name || !motto || !location || !phoneNumbers || !emails || !description || !sites) {
       return res
         .json(customPayloadResponse(false, "All fields are required"))

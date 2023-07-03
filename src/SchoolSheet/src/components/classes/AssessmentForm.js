@@ -5,10 +5,19 @@ import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { useNavigate } from "react-router-dom";
 import "../../assets/styles/main.css";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
-import { getAssessments, getGrades, getClasses } from "../../store/schoolSheetSlices/schoolStore";
+import {
+	getGrades,
+	getClasses,
+	getStreams,
+	getStudents,
+	getDivisions,
+	getAssessmentsByTerm 
+} from "../../store/schoolSheetSlices/schoolStore";
+import ButtonLoader from "../ButtonLoader";
 import axiosInstance from "../../axios-instance";
 import Button from "../Button";
 import { assignGrade } from "../../utils/assessment";
@@ -29,20 +38,26 @@ function AssessmentForm({
 	examTypesData,
 	assessSubject,
 	subjectsData,
-	assessAll
+	assessAll,
+	term,
+	stream
 }) {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const [selectedExam, setSelectedExam] = useState(null);
 	const [finalMark, setFinalMark] = useState(null);
 	const [action, setAction] = useState(null);
 	const [_class, setClass] = useState(null);
 	const [classOptions, setClassOptions] = useState([]);
-	const { grades, classes } = useSelector((state) => state.schoolStore);
+	const [streamOptions, setStreamOptions] = useState([]);
+	const [streamProm, setStreamProm] = useState(null);
+	const [generalComment, setGeneralComment] = useState("");
+	const [isPosting, setIsPosting] = useState(false);
+	const { grades, classes, streams, } = useSelector((state) => state.schoolStore);
 
 	const [formData, setFormData] = useState({
 		mark: "",
 		comment: "",
-		generalComment: "",
 	});
 	const onChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -55,17 +70,21 @@ function AssessmentForm({
 		e.preventDefault();
 		const _finalMark = (formData.mark / 100) * selectedExam.percent;
 
+		const gradeObj = assignGrade(formData.mark, grades);
+
 		try {
 			let body = {
 				studentId: studentId,
-				examType: selectedExam.value,
+				examType: selectedExam.id,
 				subject: assessSubject,
 				mark: formData.mark,
 				finalMark: _finalMark,
 				comment: formData.comment,
 				examPercent: selectedExam.percent,
-				term: 1,
-				grade: assignGrade(formData.mark, grades),
+				term: term?.id,
+				stream,
+				grade: gradeObj.grade,
+				points: gradeObj.points,
 			};
 
 			if (formData) {
@@ -74,7 +93,7 @@ function AssessmentForm({
 				const { status } = data;
 
 				if (status) {
-					dispatch(getAssessments());
+					dispatch(getAssessmentsByTerm(term.id));
 					setFormData({
 						mark: "",
 						comment: "",
@@ -110,7 +129,7 @@ function AssessmentForm({
 					const { data } = response;
 					const { status } = data;
 					if (status) {
-						dispatch(getAssessments());
+						dispatch(getAssessmentsByTerm(term.id));
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
@@ -128,6 +147,8 @@ function AssessmentForm({
 	useEffect(() => {
 		dispatch(getGrades());
 		dispatch(getClasses());
+		dispatch(getStreams());
+		dispatch(getDivisions());
 	}, [dispatch]);
 
 	// get classes
@@ -136,16 +157,75 @@ function AssessmentForm({
 		setClassOptions(data);
 	}, [classes])
 
+	// get Stream options
+	useEffect(() => {
+		const data = streams.map(_stream => ({label: _stream.stream, value: _stream.stream, id: _stream.id}));
+		setStreamOptions(data);
+	}, [streams])
+
+	// update student on promotion
+	const updateStudent = async () => {
+		try {
+		  setIsPosting(true);	  
+		  let reportData = {
+			action: action.value,
+			stream: streamProm.value,
+			comment: generalComment,
+			classField: _class.value,
+			term: term.id,
+			studentId: parseFloat(studentId),
+		  };
+	  
+		  const report = await axiosInstance.post("/reports", reportData);
+	  
+		  const { data } = report;
+		  const { status } = data;
+	  
+		  if (action.value === "promoted" && status) {
+			// TODO: // Add other student Fields
+			let formData = {
+			  id: studentId,
+			  studentClass: _class.value,
+			  studentStream: streamProm.value
+			};
+			const student = await axiosInstance.put("/students/edit", formData);
+	  
+			const { data: studentData } = student;
+			const { status: studentStatus } = studentData;
+			if (studentStatus) {
+			  dispatch(getStudents());
+			  setStreamOptions(null);
+			  setClassOptions(null);
+			  setGeneralComment("");
+			  const MySwal = withReactContent(Swal);
+			  MySwal.fire({
+				icon: "success",
+				showConfirmButton: false,
+				timer: 500
+			  });
+			  closeAdd();
+			  setIsPosting(false);
+			  navigate("/reportCards");
+			}
+		  }
+		} catch (error) {
+		  console.log(error);
+		  setIsPosting(false);
+		}
+		setIsPosting(false);
+		navigate("/reportCards");
+	  };
+
 	return (
 		<>
-			<div className="bg-white p-3 h-[75vh] overflow-y-auto">
+			<div className="bg-white p-3 h-[85vh] overflow-y-auto">
 				<div className="bg-gray1 p-2 font-semibold flex justify-between text-primary">
 					<div>
 						{studentData.firstName} {studentData.middleName}
 						{studentData.lastName}
 					</div>
 					<div>{assessSubject}</div>
-					<div>Term here</div>
+					<div>{term?.term}</div>
 
 					<div className="cursor-pointer" onClick={closeAdd}>
 						X
@@ -192,6 +272,7 @@ function AssessmentForm({
 					<div className="w-1/4">Marks %</div>
 					<div className="w-1/4">Final Mark </div>
 					<div className="w-1/4">Grade</div>
+					<div className="w-1/4">Points</div>
 					<div className="w-1/4">Comment</div>
 					<div className="w-1/4">Action</div>
 				</div>
@@ -207,6 +288,7 @@ function AssessmentForm({
 								<div className="w-1/4"> {student.mark} </div>
 								<div className="w-1/4">{student.finalMark}</div>
 								<div className="w-1/4">{student.grade ?? "No Grade"}</div>
+								<div className="w-1/4">{student.points}</div>
 								<div className="w-1/4"> {student.comment} </div>
 								<div className="w-1/4">
 									<div className="flex">
@@ -214,10 +296,10 @@ function AssessmentForm({
 											className="text-red w-4 h-4"
 											onClick={() => deleteAssess(student)}
 										/>
-										<BsPencilSquare
+										{/* <BsPencilSquare
 											className="text-warning h-4 w-4 ml-5"
 											onClick={() => openEditData(student)}
-										/>
+										/> */}
 									</div>
 								</div>
 							</div>
@@ -226,27 +308,37 @@ function AssessmentForm({
 					return null;
 				})}
 				<div className="w-20 float-right">
-					<Button value={"Assess"} />
+					{isPosting ? (
+						<ButtonLoader />
+					) : (
+						<div onClick={updateStudent}>
+							{" "}
+							<Button value={"Assess"}  />
+						</div>
+					)}
 				</div>
 				<br />
 				<br />
 
 
 				{assessAll.map((data) => {
+					const { examTypes }  = data;
+					const gradeObj = assignGrade(data.markGrade, grades);
 					return (
 						<div className=" flex text-sm bg-gray1 cursor-pointer">
 							<div className="w-1/4  border-gray2 border p-2">{data.subject}</div>
+							{
+								examTypes.map(examType => (
+									<div className="w-1/4 flex  border-gray2 p-2 border">
+										<div className="p-1">{examType.type}</div> <div className="p-1">{examType.markPercent}</div>
+									</div>
+								))
+							}
 							<div className="w-1/4 flex  border-gray2 p-2 border">
-								<div className="p-1">BOT</div> <div className="p-1">{data.BOT}</div>
+								<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div> <div className="p-1">{gradeObj.grade}</div>
 							</div>
 							<div className="w-1/4 flex  border-gray2 p-2 border">
-								<div className="p-1">MOT</div> <div className="p-1">{data.MOT}</div>
-							</div>
-							<div className="w-1/4 flex  border-gray2 p-2 border">
-								<div className="p-1">EOT</div> <div className="p-1">{data.EOT}</div>
-							</div>
-							<div className="w-1/4 flex  border-gray2 p-2 border">
-								<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div> <div className="p-1">{assignGrade(data.markGrade, grades)}</div>
+								<div className="p-1">Points</div> <div className="p-1">{gradeObj.points}</div>
 							</div>
 						</div>
 					);
@@ -261,12 +353,21 @@ function AssessmentForm({
 							options={actions}
 						/>
 					</div>
+					<div className="p-2 w-1/3 mt-5">
+						<Select
+							placeholder="Select Stream"
+							label="streams"
+							defaultValue={streamProm}
+							onChange={setStreamProm}
+							options={streamOptions}
+						/>
+					</div>
 					<div className="p-2 w-1/3">
 						<InputField
 							placeholder="General Comment"
 							name="comment"
-							value={formData.generalComment}
-							onChange={onChange} 
+							value={generalComment}
+							onChange={(e) => setGeneralComment(e.target.value)} 
 						/>
 					</div>
 					<div className="p-2 w-1/3 mt-5">

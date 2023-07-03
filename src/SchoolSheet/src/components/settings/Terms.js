@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getTerms } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../ButtonLoader";
+import Loader from "../Loader"
 
 const Terms = () => {
 	const dispatch = useDispatch();
@@ -36,6 +37,7 @@ const Terms = () => {
 		setTermId(termItem.id);
 	};
 	const { terms } = useSelector((state) => state.schoolStore);
+
 
 	// update terms
 	const updateTerm = async () => {
@@ -268,6 +270,7 @@ const Terms = () => {
 								</div>
 							</div>
 						))}
+						<Loader/>
 				</div>
 			</div>
 		</div>

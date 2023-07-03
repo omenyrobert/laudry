@@ -31,7 +31,7 @@ export const fetchMembers = async (req: Request, res: Response) => {
 
 export const createStaffMember = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, email, middleName, staffType } = req.body;
+    const { firstName, lastName, email, middleName, staffType, roles } = req.body;
     if (!firstName) {
       return res
         .json(customPayloadResponse(false, "First Name Required"))
@@ -70,7 +70,8 @@ export const createStaffMember = async (req: Request, res: Response) => {
       firstName,
       middleName,
       hashPwd,
-      staffType
+      staffType,
+      roles
     );
 
     if (insertMember) {
@@ -123,8 +124,17 @@ export const removeStaffMember = async (req: Request, res: Response) => {
 
 export const modifyStaffMember = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, email, middleName, staffType, staffId } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      middleName,
+      staffType,
+      staffId,
+      roles,
+      isRemove,
+    } = req.body;
+
     if (!firstName) {
       return res
         .json(customPayloadResponse(false, "First Name Required"))
@@ -153,13 +163,24 @@ export const modifyStaffMember = async (req: Request, res: Response) => {
     const staff = await getMemberById(staffId);
 
     if (staff) {
+      const staffRoles = staff.roles || [];
+
+      let updatedRoles: string[];
+
+      if (isRemove) {
+        updatedRoles = staffRoles.filter((role) => role !== roles);
+      } else {
+        updatedRoles = [...staffRoles, roles];
+      }
+
       const staffMember = await updateMember(
         staffId,
         email,
         lastName,
         firstName,
         middleName,
-        staffType
+        staffType,
+        updatedRoles
       );
 
       if (staffMember) {

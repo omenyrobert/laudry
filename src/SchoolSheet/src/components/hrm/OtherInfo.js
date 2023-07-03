@@ -1,34 +1,295 @@
 import React, { useState, useEffect } from "react";
-import InputField from "../InputField";
-import { FaPen } from "react-icons/fa";
-import { Bs3SquareFill, BsFillPencilFill } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import { getSections } from "../../store/schoolSheetSlices/schoolStore";
+import Select from "react-select";
+import axiosInstance, { UPLOADS_URL } from "../../axios-instance";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 import Button from "../Button";
-import Localbase from "localbase";
+import ButtonLoader from "../ButtonLoader";
+import { useFeedback } from "../../hooks/feedback";
+import InputField from "../InputField";
 
-let db = new Localbase("db");
+function OtherInfo({
+	staffProfile,
+	staffInfo,
+	staffId,
+	fetchStaffInfo,
+	fetchStaffProfile,
+}) {
+	const dispatch = useDispatch();
+	const [init] = useState(true);
+	const [studentClasses, setStudentClasses] = useState([]);
+	const [studentClass, setStudentClass] = useState(null);
+	const { toggleFeedback } = useFeedback();
+	const [subjects, setSubjects] = useState([]);
+	const [subject, setSubject] = useState(null);
+	const [documentName, setDocumentName] = useState("");
+	const [document, setDocument] = useState(null);
 
-function OtherInfo() {
-	const [classesData, setClassesData] = useState([]);
-	const fetchClasses = () => {
-		db.collection("classes")
-			.get()
-			.then((classes) => {
-				setClassesData(classes);
-			});
+	const fetchSubjects = () => {
+		axiosInstance.get("/subjects").then((response) => {
+			console.log("response", response);
+			const { payload } = response.data;
+			const studentSubjectsArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studentSubjectsArr.push({
+					label: payload[i].subject,
+					value: payload[i].subject,
+					...payload[i],
+				});
+			}
+			setSubjects(studentSubjectsArr);
+		});
 	};
-	const [subjectData, setSubjectData] = useState();
-	const fetchSubject = () => {
-		db.collection("subjects")
-			.get()
-			.then((subject) => {
-				setSubjectData(subject);
-			});
+
+	const fetchSchoolClasses = () => {
+		axiosInstance.get("/class").then((response) => {
+			console.log("response", response);
+			const { payload } = response.data;
+			const studentClassesArr = [];
+			for (let i = 0; i < payload.length; i++) {
+				studentClassesArr.push({
+					label: payload[i].class,
+					value: payload[i].class,
+					...payload[i],
+				});
+			}
+			setStudentClasses(studentClassesArr);
+		});
 	};
-	// fetching
+
 	useEffect(() => {
-		fetchClasses();
-		fetchSubject();
-	}, []);
+		dispatch(getSections());
+		try {
+			fetchSchoolClasses();
+			fetchSubjects();
+		} catch (error) {
+			const MySwal = withReactContent(Swal);
+			MySwal.fire({
+				icon: "error",
+				title: "Oops...",
+				text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
+			});
+		}
+	}, [init, dispatch]);
+
+	const addClass = () => {
+		if (!studentClass) {
+			toggleFeedback("error", {
+				title: "Oops...",
+				text: "Please fill all fields",
+			});
+			return;
+		}
+		const data = {
+			classId: studentClass.id,
+			staffId: staffId,
+		};
+
+		axiosInstance
+			.post("/class/add-class-to-staff", data)
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					toggleFeedback("error", {
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
+				toggleFeedback("success", {
+					title: "Success",
+					text: "Class added successfully",
+				});
+				fetchStaffInfo();
+				setStudentClass("");
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	const removeClass = (id) => {
+		axiosInstance
+			.post(`/class/remove-class-from-staff`, {
+				classId: id,
+				staffId: staffId,
+			})
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					toggleFeedback("error", {
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
+				toggleFeedback("success", {
+					title: "Success",
+					text: "Class removed successfully",
+				});
+				fetchStaffInfo();
+			})
+			.catch((err) => {
+				console.log(err);
+				toggleFeedback("error", {
+					title: "Oops...",
+					text: "An Error Occured while trying to remove class",
+				});
+			});
+	};
+
+	const removeSubject = (id) => {
+		axiosInstance
+			.post(`/subjects/remove-subject-from-staff`, {
+				subjectId: id,
+				staffId: staffId,
+			})
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					toggleFeedback("error", {
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
+				toggleFeedback("success", {
+					title: "Success",
+					text: "Subject removed successfully",
+				});
+				fetchStaffInfo();
+			})
+			.catch((err) => {
+				console.log(err);
+				toggleFeedback("error", {
+					title: "Oops...",
+					text: "An Error Occured while trying to remove subject",
+				});
+			});
+	};
+
+	const removeDocument = (id) => {
+		axiosInstance
+			.delete(`/staff-profile/document/${id}`)
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					toggleFeedback("error", {
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
+				toggleFeedback("success", {
+					title: "Success",
+					text: "Document removed successfully",
+				});
+				fetchStaffProfile();
+			})
+			.catch((err) => {
+				console.log(err);
+				toggleFeedback("error", {
+					title: "Oops...",
+					text: "An Error Occured while trying to remove document",
+				});
+			});
+	};
+
+	const addSubject = () => {
+		if (!subject) {
+			toggleFeedback("error", {
+				title: "Oops...",
+				text: "Please fill all fields",
+			});
+			return;
+		}
+		const data = {
+			subjectId: subject.id,
+			staffId: staffId,
+		};
+
+		axiosInstance
+			.post("/subjects/add-subject-to-staff", data)
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					toggleFeedback("error", {
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
+				toggleFeedback("success", {
+					title: "Success",
+					text: "Subject added successfully",
+				});
+				fetchStaffInfo();
+				setStudentClass("");
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	function handleFileChange(e) {
+		setDocument(e.target.files[0]);
+	}
+
+	const addDocument = () => {
+		if (!documentName || documentName === "") {
+			toggleFeedback("error", {
+				title: "Oops...",
+				text: "Please fill all fields",
+			});
+			return;
+		}
+		if (!document) {
+			toggleFeedback("error", {
+				title: "Oops...",
+				text: "Please select a document",
+			});
+			return;
+		}
+
+		const formData = new FormData();
+		formData.append("document", document);
+		formData.append("name", documentName);
+		formData.append("staff", staffId);
+
+		axiosInstance
+			.post("/staff-profile/document", formData)
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					toggleFeedback("error", {
+						title: "Oops...",
+						text: payload,
+					});
+					return;
+				}
+				toggleFeedback("success", {
+					title: "Success",
+					text: "Document added successfully",
+				});
+				fetchStaffProfile();
+				setStudentClass("");
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	const [file, setFile] = useState(false);
+
+	const closeFile = () => {
+		setFile(false);
+	};
+	const showFile = () => {
+		setFile(true);
+	};
+
 	return (
 		<>
 			<div className="flex justify-between">
@@ -40,29 +301,146 @@ function OtherInfo() {
 				<div></div>
 			</div>
 			<div className="flex">
-				<div className="w-1/4 p-2">
-					<label>Classes</label>
+				<div className="w-1/3 p-2">
+					<div className="flex">
+						<div className="w-[90%]">
+							<Select
+								placeholder={"Select Class"}
+								defaultValue={studentClass}
+								name="studentClass"
+								onChange={setStudentClass}
+								options={studentClasses}
+							/>
+						</div>
+
+						{/* Add button */}
+
+						<div onClick={addClass} className="ml-2">
+							<Button value={"+"} />
+						</div>
+					</div>
+
 					<br />
-					<p className="text-gray5 text-sm mt-1">Primary 1</p>
-					<p className="text-gray5 text-sm mt-1">Primary 2</p>
-					<p className="text-gray5 text-sm mt-1">Primary 3</p>
+
+					{staffInfo?.classes?.map((item) => (
+						<div key={item.id} className="flex border-b border-gray1 p-2">
+							<div className="text-gray5 text-sm w-2/3">{item.class}</div>
+							<div className="w-1/3">
+								<p
+									onClick={() => removeClass(item.id)}
+									className="text-red text-sm cursor-pointer"
+								>
+									X
+								</p>
+							</div>
+						</div>
+					))}
 				</div>
-				<div className="w-1/4 p-2">
-					<label>Subjects</label>
-                    <br />
-					<p className="text-gray5 text-sm mt-1">Math</p>
-					<p className="text-gray5 text-sm mt-1">English</p>
-					<p className="text-gray5 text-sm mt-1">SST</p>
+				<div className="w-1/3 p-2">
+					<div className="flex">
+						<div className="w-[80%]">
+							<Select
+								placeholder={"Select Subject"}
+								defaultValue={subject}
+								name="subject"
+								onChange={setSubject}
+								options={subjects}
+							/>
+						</div>
+						<div onClick={addSubject} className="ml-2">
+							<Button value={"+"} />
+						</div>
+					</div>
+
+					{/* Add button */}
+
+					<br />
+					{staffInfo?.subjects?.map((item) => (
+						<div key={item.id} className="flex border-b border-gray1 p-2">
+							<div className="text-gray5 text-sm w-2/3">{item.subject}</div>
+							<div className="w-1/3">
+								<p
+									onClick={() => removeSubject(item.id)}
+									className="text-red text-sm cursor-pointer"
+								>
+									X
+								</p>
+							</div>
+						</div>
+					))}
 				</div>
-				<div className="w-1/4 p-2">
+				<br />
+				<div className="w-1/3 p-2">
 					<label>Recomendation & Other Documents</label>
-                    <p className="text-gray5 text-sm">National ID</p>
-                    <p className="text-gray5 text-sm">Recomendation</p>
-				</div>
-				<div className="w-1/4 p-2">
-					<label>Special Skills</label>
-					<p className="text-gray5 text-sm">Attedance Times</p>
-					<p className="text-gray5 text-sm">Salary</p>
+					<br />
+					<div className="">
+						<InputField
+							placeholder={"Document Name"}
+							value={documentName}
+							onChange={(e) => setDocumentName(e.target.value)}
+						/>
+
+						<input
+							id="documentInput"
+							type="file"
+							hidden={true}
+							onChange={handleFileChange}
+						/>
+						<div
+							onClick={(e) => {
+								e.preventDefault();
+								const input = window.document.getElementById("documentInput");
+								input.click();
+							}}
+						>
+							<Button value={document ? document.name : "Select Document"} />
+						</div>
+
+						<br />
+						<div className="w-12 float-right" onClick={addDocument}>
+							<Button value={"+"} />
+						</div>
+					</div>
+					<br />
+
+					{staffProfile?.staffDocument?.map((item) => (
+						<div key={item.id} className="flex border-b border-gray1 p-2">
+							<div className="text-gray5 text-sm w-2/3">{item.name}</div>
+							<img
+								onClick={showFile}
+								src={UPLOADS_URL + item.content}
+								className="w-16 mr-5 cursor-pointer h-5 ml-5"
+								alt={item.name}
+							/>
+							{file ? (
+								<div className="top-0 left-0 bg-black/50 p-10 flex justify-center w-full h-full absolute">
+									<div className="w-3/12" onClick={closeFile}></div>
+									<div className="w-6/12 flex">
+										<img
+											src={UPLOADS_URL + item.content}
+											className="h-[80vh]"
+											alt={item.name}
+										/>
+										<p
+											onClick={closeFile}
+											className="text-white ml-10 text-3xl mt-[30vh]"
+										>
+											X
+										</p>
+									</div>
+									<div className="w-3/12" onClick={closeFile}></div>
+								</div>
+							) : null}
+							<div className="w-1/3">
+								<p
+									onClick={() => removeDocument(item.id)}
+									className="text-red text-sm cursor-pointer"
+								>
+									X
+								</p>
+							</div>
+						</div>
+					))}
 				</div>
 			</div>
 		</>

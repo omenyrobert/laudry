@@ -36,25 +36,28 @@ const Students = () => {
 	const [searchedStudents, setSearchedStudents] = useState([]);
 	const [streams, setStreams] = useState([]);
 	const { sections } = useSelector((state) => state.schoolStore);
+	const [fetching, setFetching] = useState(false)
 
 	const sectionOptions = [];
 
 	sections.forEach((section) => {
 		let newSection = {};
-		newSection.value = section.id;
+		newSection.value = section.section;
 		newSection.label = section.section;
 		sectionOptions.push(newSection);
 	})
 
 	useEffect(() => {
 		const fetchData = async () => {
+			setFetching(true)
 
 			try {
-				await fetchMoreStudents();
+				await fetchStudentInfo();
 				await fetchStudentType();
 				await fetchSchoolClasses();
 				await fetchSchoolHouses();
 				await fetchStreams();
+				setFetching(false)
 			} catch (error) {
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
@@ -62,6 +65,7 @@ const Students = () => {
 					title: "Oops...",
 					text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
 				});
+				setFetching(false)
 			}
 		}
 		fetchData();
@@ -130,11 +134,12 @@ const Students = () => {
 	};
 
 	// fetch student info
-	const fetchStudentInfo = () => {
-		axiosInstance.get("/students").then((response) => {
-			const { payload } = response.data;
-			setStudentData(payload);
-		});
+	const fetchStudentInfo = async () => {
+		const response = await axiosInstance.get("/students")
+		const { payload } = response.data;
+		setStudentData(payload);
+		console.log("payload", payload)
+
 	};
 
 	//deleting student
@@ -168,6 +173,7 @@ const Students = () => {
 			setSearch(true);
 		}
 		const searchResults = studentData.filter((student) => {
+
 			const studentName =
 				student.firstName + " " + student.middleName + " " + student.lastName;
 			console.log(student)
@@ -175,24 +181,50 @@ const Students = () => {
 			const searchName = studentName
 				.toLowerCase()
 				.includes(filters.query.toLowerCase());
-			const searchType = student.studentType.type
-				.toLowerCase()
-				.includes(filters.type.toLowerCase());
-			const searchHouse = student.studentHouse.house
-				.toLowerCase()
-				.includes(filters.house.toLowerCase());
-			const searchClass = student.studentClass.class
-				.toLowerCase()
-				.includes(filters.studentClass.toLowerCase());
-			const searchSection = student.studentSection
-				.toLowerCase()
-				.includes(filters.section.toLowerCase());
-			// console.log("===================")
-			// console.log("Filters:", filters)
-			// console.log("Student: ", student)
-			const searchStream = student.studentStream.stream
-				.toLowerCase()
-				.includes(filters.stream.toLowerCase());
+			console.log("searchName", searchName)
+
+			let searchType = false;
+			if (student.student_types.length > 0) {
+				searchType = student.student_types[0].type
+					.toLowerCase()
+					.includes(filters.type.toLowerCase());
+			}
+			console.log("searchType", searchType)
+
+			let searchHouse = false;
+			if (student.houses.length > 0) {
+				searchHouse = student.houses[0].house
+					.toLowerCase()
+					.includes(filters.house.toLowerCase());
+			}
+			console.log("searchHouse", searchHouse)
+
+			let searchClass = false;
+			if (student.classes.length > 0) {
+				searchClass = student.classes[0].class
+					.toLowerCase()
+					.includes(filters.studentClass.toLowerCase());
+			}
+			console.log("searchClass", searchClass)
+
+			let searchSection = false;
+			if (student.sections.length > 0) {
+				searchSection = student.sections[0].section
+					.toLowerCase()
+					.includes(filters.section.toLowerCase());
+			}
+
+			console.log("searchSection", searchSection)
+
+			let searchStream = false;
+			if (student.streams.length > 0) {
+				searchStream = student.streams[0].stream
+					.toLowerCase()
+					.includes(filters.stream.toLowerCase());
+			}
+			console.log("searchStream", searchStream)
+
+
 
 			return (
 				searchName &&
@@ -261,24 +293,23 @@ const Students = () => {
 		setShowFilter(!showFilter);
 	};
 
-	// Implement infinite scrolling pagination
-	const [page, setPage] = useState(0)
+	// Pangination
+	const [page, setPage] = useState(1)
 	const [hasMore, setHasMore] = useState(true)
+	const [paginatedData, setPaginatedData] = useState([])
 
-	const fetchMoreStudents = async () => {
-		const offset = 50
-		const response = await axiosInstance.get(`/students/fetch/paginated?limit=${offset}&page=${page}`)
-
-		const { payload } = response.data
-		if (payload.length === 0 || payload.length < offset) {
-			setStudentData([...studentData, ...payload])
+	useEffect(() => {
+		setPaginatedData(studentData.slice(0, page * 30))
+		// check if hasmore
+		if (studentData.length <= page * 30) {
 			setHasMore(false)
 		} else {
-			setStudentData([...studentData, ...payload])
-			setPage(page + 1)
+			setHasMore(true)
 		}
 
-	}
+	}, [page, studentData])
+
+
 
 
 
@@ -327,10 +358,14 @@ const Students = () => {
 
 	return (
 		<div className=" mt-2 w-full">
-			<h1 className="text-secondary font-semibold text-2xl ml-3">Students</h1>
+
 			<div className="">
 				<div className="p-3 bg-white shadow-md border border-gray2">
+
 					<div className="flex justify-between">
+						<div>
+							<h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">Students</h1>
+						</div>
 						<div className="w-4/12 ">
 							<form
 								className="w-full"
@@ -435,33 +470,29 @@ const Students = () => {
 						</div>
 					</div>
 				</div>
-
+				{fetching ? (
+					<div className="flex justify-center">
+						<Loader />
+					</div>
+				) : null}
 				{search ? (
 					<StudentsTable
 						deleteStudentInfo={deleteStudentInfo}
 						studentData={searchedStudents}
+						setPage={setPage}
+						page={page}
 					/>
 				) : (
 					<StudentsTable
 						deleteStudentInfo={deleteStudentInfo}
-						studentData={studentData}
+						studentData={paginatedData}
+						setPage={setPage}
+						page={page}
+						hasMore={hasMore}
+						length={studentData.length}
 					/>
 				)}
-				{hasMore ? (
-					<div className="flex justify-center">
-						<Loader/>
-						<button
-							onClick={fetchMoreStudents}
-							className="bg-secondary text-white p-2 rounded-md mt-2"
-						>
-							Load More
-						</button>
-					</div>
-				) : (
-					<div className="flex justify-center">
-						<p className="text-gray2">No more students to load</p>
-					</div>
-				)}
+
 			</div>
 		</div>
 	);

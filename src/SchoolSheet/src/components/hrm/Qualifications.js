@@ -72,6 +72,34 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 	};
 
 
+	function deleteQualification(id) {
+		axiosInstance.delete(`/staff-profile/education/${id}`)
+			.then((res) => {
+				const { status, payload } = res.data;
+				if (status === false) {
+					toggleFeedback("error", {
+						title: "Oops...",
+						text: payload,
+					})
+					return;
+				}
+				toggleFeedback("success", {
+					title: "Success",
+					text: "Qualifications deleted successfully",
+				})
+				fetchStaffInfo();
+			})
+			.catch((err) => {
+				console.log(err)
+				toggleFeedback("error", {
+					title: "Oops...",
+					text: "Something went wrong",
+				})
+			})
+	}
+
+
+
 
 
 
@@ -110,7 +138,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 									label="Award"
 									onChange={(e) => setAward(e.target.value)}
 									value={award}
-									
+
 								/>
 								<InputField
 									type="date"
@@ -118,7 +146,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 									label="From Date"
 									onChange={(e) => setFrom(e.target.value)}
 									value={from}
-									
+
 								/>
 								<InputField
 									type="date"
@@ -126,7 +154,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 									label="To Date"
 									onChange={(e) => setTo(e.target.value)}
 									value={to}
-									
+
 								/>
 							</div>
 							<div className="w-1/2 p-3 -mt-5">
@@ -137,7 +165,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 									name="Institution"
 									onChange={(e) => setSchool(e.target.value)}
 									value={school}
-									
+
 								/>
 
 								<InputField
@@ -160,7 +188,7 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 
 			{
 				staffProfile?.education?.map((qualification, index) => (
-					<div className="flex border-b border-gray1">
+					<div key={index} className="flex border-b border-gray1">
 						<div className="p-2 w-1/4 text-sm text-gray5 truncate">
 							{qualification.qualification}
 						</div>
@@ -172,6 +200,15 @@ function Qualifications({ staffProfile, staffId, fetchStaffInfo }) {
 						</div>
 						<div className="p-2 w-1/4 text-sm text-gray5 truncate">
 							{qualification.document}
+						</div>
+						<div className="p-2 w-1/6 text-sm text-gray5 truncate">
+							<div className="flex justify-end">
+								<div onClick={() => {
+									deleteQualification(qualification.id)
+								}} className="text-red cursor-pointer">
+									Delete
+								</div>
+							</div>
 						</div>
 					</div>
 				))

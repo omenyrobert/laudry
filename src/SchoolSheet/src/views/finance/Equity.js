@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import InputField from "../../components/InputField";
 import Button2 from "../../components/Button2";
-import { BsSearch } from "react-icons/bs";
+import { BsSearch, BsPrinterFill } from "react-icons/bs";
 import Button from "../../components/Button";
 import ButtonSecondary from "../../components/ButtonSecondary";
 import axiosInstance from "../../axios-instance";
@@ -13,59 +13,61 @@ import { BsPencilSquare } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
 function Equity() {
-	const { setLoading, toggleFeedback } = useFeedback()
-	const navigate = useNavigate()
+	const { setLoading, toggleFeedback } = useFeedback();
+	const navigate = useNavigate();
 	const [equityTotal, setequityTotal] = useState("");
 	const [equitysData, setequitysData] = useState([]);
 
-
 	const fetchequitys = async () => {
+		const res = await axiosInstance.get("/transactions/type/equity");
 
-		const res = await axiosInstance.get("/transactions/type/equity")
-
-		const { status, payload } = res.data
+		const { status, payload } = res.data;
 
 		if (status === false) {
-			setLoading(false)
-			toggleFeedback("error", payload)
-			return
+			setLoading(false);
+			toggleFeedback("error", payload);
+			return;
 		}
 
-		const coupledTransactions = []
+		const coupledTransactions = [];
 
 		for (let i = 0; i < payload.length; i++) {
-			const transaction = payload[i]
+			const transaction = payload[i];
 
-			if (coupledTransactions.find(t => t.transactionId === transaction.transactionId)) continue;
+			if (
+				coupledTransactions.find(
+					(t) => t.transactionId === transaction.transactionId
+				)
+			)
+				continue;
 
 			// find corresponding transaction with same id
-			const correspondingTransaction = payload.find(t => {
-				return t.transactionId === transaction.transactionId && t.id !== transaction.id
-			})
+			const correspondingTransaction = payload.find((t) => {
+				return (
+					t.transactionId === transaction.transactionId &&
+					t.id !== transaction.id
+				);
+			});
 
 			if (correspondingTransaction) {
 				coupledTransactions.push({
 					transactionId: transaction.transactionId,
 					...transaction,
-					transactionAmount: transaction.debit === 0 ? transaction.credit : transaction.debit,
-				})
+					transactionAmount:
+						transaction.debit === 0 ? transaction.credit : transaction.debit,
+				});
 			}
 		}
 
-		setequitysData(coupledTransactions)
-
+		setequitysData(coupledTransactions);
+		setId(coupledTransactions[0].id);
 		let total = coupledTransactions.reduce(
 			(acc, item) => acc + parseInt(item.transactionAmount),
 			0
 		);
 
 		setequityTotal(total);
-
-
 	};
-
-
-
 
 	//deleting equity types
 	const deleteequity = (equityItem) => {
@@ -79,20 +81,20 @@ function Equity() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				axiosInstance.delete(`/transactions/${equityItem.transactionId}`)
+				axiosInstance
+					.delete(`/transactions/${equityItem.transactionId}`)
 					.then((response) => {
-						console.log(response)
-						const { status, payload } = response.data
+						console.log(response);
+						const { status, payload } = response.data;
 						toggleFeedback(status ? "success" : "error", {
-							title: payload
-						})
-						fetchequitys()
+							title: payload,
+						});
+						fetchequitys();
 					})
 					.catch((error) => {
-						console.log(error)
-						toggleFeedback("error", error.message)
-					}
-					);
+						console.log(error);
+						toggleFeedback("error", error.message);
+					});
 			}
 		});
 	};
@@ -100,10 +102,10 @@ function Equity() {
 	// fetching equity types
 	useEffect(() => {
 		async function fetchData() {
-			setLoading(true)
+			setLoading(true);
 			try {
 				await fetchequitys();
-				setLoading(false)
+				setLoading(false);
 			} catch (error) {
 				setLoading(false);
 				toggleFeedback("error", { title: "Error", text: error.message });
@@ -113,42 +115,51 @@ function Equity() {
 		fetchData();
 	}, []);
 
+	const [id, setId] = useState("");
+
 	return (
 		<>
-			<div className="flex justify-between mt-2 bg-white px-3 border border-gray2 rounded-md">
-				<div>
-					<h5 className="text-lg font-medium text-secondary mt-5">equitys</h5>
+			<div className="flex mt-2 bg-white px-3 border border-gray2 rounded-md">
+				<div className="w-2/12">
+					<h5 className="text-lg font-medium text-secondary mt-5">Equities</h5>
 				</div>
-				<div className="w-1/2">
-					<InputField type="search" placeholder="Search for equity" icon={<BsSearch className="w-3 -ml-7 mt-3" />} />
+				<div className="w-4/12">
+					<InputField
+						type="search"
+						placeholder="Search for equity"
+						icon={<BsSearch className="w-3 -ml-7 mt-3" />}
+					/>
 				</div>
-				<div>
-					<div className="w-[200px] mt-5">
-						<Link to="/addTransaction?transactionType=equity&action=create">
-							<Button2 value={"Add equity"} />
-						</Link>
+				<div className="w-2/12 ml-5">
+					<InputField type="date" />
+				</div>
+				<div className="w-2/12 ml-5">
+					<InputField type="date" />
+				</div>
+
+				<div className="w-2/12 mt-5 ml-5 flex">
+					<Link to="/addTransaction?transactionType=equity&action=create">
+						<Button2 value={"Equity"} />
+					</Link>
+					<div className="ml-2">
+						<Button value={"Print"} />
 					</div>
 				</div>
-
 			</div>
 
-
-
 			<div className="w-full h-[80vh]">
-
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
 						<th className="p-2 text-primary text-sm text-left">equity</th>
-						<th className="p-2 text-primary text-sm text-left">Sub Type</th>
-						<th className="p-2 text-primary text-sm text-left">cost</th>
+						<th className="p-2 text-primary text-sm text-left">Amount</th>
+						<th className="p-2 text-primary text-sm text-left">Source</th>
+						<th className="p-2 text-primary text-sm text-left">Contacts</th>
 						<th className="p-2 text-primary text-sm text-left">Description</th>
-						<th className="p-2 text-primary text-sm text-left">Seller</th>
+
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-
-
 						{equitysData.map((equityItem) => {
 							return (
 								<tr
@@ -156,12 +167,12 @@ function Equity() {
 									key={equityItem?.id}
 								>
 									<td className="text-xs p-3 text-gray5">
-										{
-											new Date(equityItem.date).toLocaleDateString()
-										}
+										{new Date(equityItem.date).toLocaleDateString()}
 									</td>
 									<td className="text-xs p-3 text-gray5">{equityItem.title}</td>
-									<td className="text-xs p-3 text-gray5">{equityItem?.subType?.name}</td>
+									<td className="text-xs p-3 text-gray5">
+										{equityItem?.subType?.name}
+									</td>
 									<td className="text-xs p-3 text-gray5">
 										{Number(equityItem.transactionAmount).toLocaleString()}
 									</td>
@@ -172,27 +183,32 @@ function Equity() {
 										{equityItem.receivedBy}
 									</td>
 									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deleteequity(equityItem)}
-											className="text-red w-4 h-4"
-										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => {
-												navigate(`/addTransaction?transactionType=equity&action=edit&transactionId=${equityItem.transactionId}`)
-											}}
-										/>
+										{equityItem.id === id ? (
+											<div className="flex">
+												<MdDeleteOutline
+													onClick={() => deleteequity(equityItem)}
+													className="text-red w-4 h-4"
+												/>
+												<BsPencilSquare
+													className="text-warning h-4 w-4 ml-5"
+													onClick={() => {
+														navigate(
+															`/addTransaction?transactionType=equity&action=edit&transactionId=${equityItem.transactionId}`
+														);
+													}}
+												/>
+											</div>
+										) : null}
+										<BsPrinterFill className="ml-5 text-primary" />
 									</td>
 								</tr>
 							);
 						})}
-						<tr className="bg-white p-5 text-lg font-semibold">
-							<td colSpan="3">Total</td>
-							<td>{Number(equityTotal).toLocaleString()}</td>
-							<td></td>
-							<td>
-								<td></td>
+						<tr className="bg-white p-5 text-lg text-primary font-semibold">
+							<td colSpan="6" className="p-1">
+								Total
 							</td>
+							<td>{Number(equityTotal).toLocaleString()}</td>
 						</tr>
 					</tbody>
 				</table>

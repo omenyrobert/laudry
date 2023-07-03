@@ -26,6 +26,10 @@ import TransactionTypeRoutes from "./TransactionTypeRoutes";
 import TransactionRoutes from "./TransactionRoutes";
 import DivisionRoutes from "./DivisionRoutes";
 import StudentFeePaymentRoutes from "./StudentFeePaymentRoutes";
+import ReportRoutes from "./ReportRoutes";
+import StockTypeRoutes from "./StockTypeRoutes";
+import StockLevelRoutes from "./StockLevelRoutes";
+import ReductionRoutes from "./ReductionRoutes";
 
 const router = Router();
 
@@ -57,6 +61,10 @@ export default (): Router => {
   TransactionRoutes(router);
   DivisionRoutes(router);
   StudentFeePaymentRoutes(router);
+  ReportRoutes(router);
+  StockTypeRoutes(router);
+  StockLevelRoutes(router);
+  ReductionRoutes(router);
 
   return router;
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import InputField from "../../components/InputField";
 import Button2 from "../../components/Button2";
-import { BsSearch } from "react-icons/bs";
+import { BsSearch, BsPrinterFill } from "react-icons/bs";
 import Button from "../../components/Button";
 import ButtonSecondary from "../../components/ButtonSecondary";
 import { Link } from "react-router-dom";
@@ -13,46 +13,54 @@ import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 
 function Liabilities() {
-	const { setLoading, toggleFeedback } = useFeedback()
-	const navigate = useNavigate()
+	const { setLoading, toggleFeedback } = useFeedback();
+	const navigate = useNavigate();
 	const [liabilityTotal, setliabilityTotal] = useState("");
 	const [liabilitysData, setliabilitysData] = useState([]);
 
-
 	const fetchliabilitys = async () => {
+		const res = await axiosInstance.get("/transactions/type/liability");
 
-		const res = await axiosInstance.get("/transactions/type/liability")
-
-		const { status, payload } = res.data
+		const { status, payload } = res.data;
 
 		if (status === false) {
-			setLoading(false)
-			toggleFeedback("error", payload)
-			return
+			setLoading(false);
+			toggleFeedback("error", payload);
+			return;
 		}
 
-		const coupledTransactions = []
+		const coupledTransactions = [];
 
 		for (let i = 0; i < payload.length; i++) {
-			const transaction = payload[i]
+			const transaction = payload[i];
 
-			if (coupledTransactions.find(t => t.transactionId === transaction.transactionId)) continue;
+			if (
+				coupledTransactions.find(
+					(t) => t.transactionId === transaction.transactionId
+				)
+			)
+				continue;
 
 			// find corresponding transaction with same id
-			const correspondingTransaction = payload.find(t => {
-				return t.transactionId === transaction.transactionId && t.id !== transaction.id
-			})
+			const correspondingTransaction = payload.find((t) => {
+				return (
+					t.transactionId === transaction.transactionId &&
+					t.id !== transaction.id
+				);
+			});
 
 			if (correspondingTransaction) {
 				coupledTransactions.push({
 					transactionId: transaction.transactionId,
 					...transaction,
-					transactionAmount: transaction.debit === 0 ? transaction.credit : transaction.debit,
-				})
+					transactionAmount:
+						transaction.debit === 0 ? transaction.credit : transaction.debit,
+				});
 			}
 		}
 
-		setliabilitysData(coupledTransactions)
+		setliabilitysData(coupledTransactions);
+		setId(coupledTransactions[0].id);
 
 		let total = coupledTransactions.reduce(
 			(acc, item) => acc + parseInt(item.transactionAmount),
@@ -60,12 +68,7 @@ function Liabilities() {
 		);
 
 		setliabilityTotal(total);
-
-
 	};
-
-
-
 
 	//deleting liability types
 	const deleteliability = (liabilityItem) => {
@@ -79,20 +82,20 @@ function Liabilities() {
 			confirmButtonText: "Yes, delete it!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				axiosInstance.delete(`/transactions/${liabilityItem.transactionId}`)
+				axiosInstance
+					.delete(`/transactions/${liabilityItem.transactionId}`)
 					.then((response) => {
-						console.log(response)
-						const { status, payload } = response.data
+						console.log(response);
+						const { status, payload } = response.data;
 						toggleFeedback(status ? "success" : "error", {
-							title: payload
-						})
-						fetchliabilitys()
+							title: payload,
+						});
+						fetchliabilitys();
 					})
 					.catch((error) => {
-						console.log(error)
-						toggleFeedback("error", error.message)
-					}
-					);
+						console.log(error);
+						toggleFeedback("error", error.message);
+					});
 			}
 		});
 	};
@@ -100,10 +103,10 @@ function Liabilities() {
 	// fetching liability types
 	useEffect(() => {
 		async function fetchData() {
-			setLoading(true)
+			setLoading(true);
 			try {
 				await fetchliabilitys();
-				setLoading(false)
+				setLoading(false);
 			} catch (error) {
 				setLoading(false);
 				toggleFeedback("error", { title: "Error", text: error.message });
@@ -113,29 +116,42 @@ function Liabilities() {
 		fetchData();
 	}, []);
 
+	const [id, setId] = useState("");
+
 	return (
 		<>
-			<div className="flex justify-between mt-2 bg-white px-3 border border-gray2 rounded-md">
-				<div>
-					<h5 className="text-lg font-medium text-secondary mt-5">liabilitys</h5>
+			<div className="flex mt-2 bg-white px-3 border border-gray2 rounded-md">
+				<div className="w-2/12">
+					<h5 className="text-lg font-medium text-secondary mt-5">
+						Liabilities
+					</h5>
 				</div>
-				<div className="w-1/2">
-					<InputField type="search" placeholder="Search for liability" icon={<BsSearch className="w-3 -ml-7 mt-3" />} />
+				<div className="w-4/12">
+					<InputField
+						type="search"
+						placeholder="Search for Liability"
+						icon={<BsSearch className="w-3 -ml-7 mt-3" />}
+					/>
 				</div>
-				<div>
-					<div className="w-[200px] mt-5">
-						<Link to="/addTransaction?transactionType=liability&action=create">
-							<Button2 value={"Add liability"} />
-						</Link>
+
+				<div className="w-2/12 px-2">
+					<InputField type="date" />
+				</div>
+				<div className="w-2/12">
+					<InputField type="date" />
+				</div>
+
+				<div className="w-2/12 mt-5 ml-5 flex">
+					<Link to="/addTransaction?transactionType=liability&action=create">
+						<Button2 value={"liability"} />
+					</Link>
+					<div className="ml-5">
+						<Button value={"Print"} />
 					</div>
 				</div>
-
 			</div>
 
-
-
 			<div className="w-full h-[80vh]">
-
 				<table className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
@@ -147,8 +163,6 @@ function Liabilities() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-
-
 						{liabilitysData.map((liabilityItem) => {
 							return (
 								<tr
@@ -156,12 +170,14 @@ function Liabilities() {
 									key={liabilityItem?.id}
 								>
 									<td className="text-xs p-3 text-gray5">
-										{
-											new Date(liabilityItem.date).toLocaleDateString()
-										}
+										{new Date(liabilityItem.date).toLocaleDateString()}
 									</td>
-									<td className="text-xs p-3 text-gray5">{liabilityItem.title}</td>
-									<td className="text-xs p-3 text-gray5">{liabilityItem?.subType?.name}</td>
+									<td className="text-xs p-3 text-gray5">
+										{liabilityItem.title}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{liabilityItem?.subType?.name}
+									</td>
 									<td className="text-xs p-3 text-gray5">
 										{Number(liabilityItem.transactionAmount).toLocaleString()}
 									</td>
@@ -172,27 +188,32 @@ function Liabilities() {
 										{liabilityItem.receivedBy}
 									</td>
 									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deleteliability(liabilityItem)}
-											className="text-red w-4 h-4"
-										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => {
-												navigate(`/addTransaction?transactionType=liability&action=edit&transactionId=${liabilityItem.transactionId}`)
-											}}
-										/>
+										{liabilityItem.id === id ? (
+											<div className="flex">
+												<MdDeleteOutline
+													onClick={() => deleteliability(liabilityItem)}
+													className="text-red w-4 h-4"
+												/>
+												<BsPencilSquare
+													className="text-warning h-4 w-4 ml-5"
+													onClick={() => {
+														navigate(
+															`/addTransaction?transactionType=liability&action=edit&transactionId=${liabilityItem.transactionId}`
+														);
+													}}
+												/>
+											</div>
+										) : null}
+
+										<BsPrinterFill className="ml-5 text-primary" />
 									</td>
 								</tr>
 							);
 						})}
-						<tr className="bg-white p-5 text-lg font-semibold">
-							<td colSpan="3">Total</td>
+						<tr className="bg-white text-lg text-primary font-semibold">
+							<td colSpan="6" className="p-1">Total</td>
 							<td>{Number(liabilityTotal).toLocaleString()}</td>
-							<td></td>
-							<td>
-								<td></td>
-							</td>
+							
 						</tr>
 					</tbody>
 				</table>

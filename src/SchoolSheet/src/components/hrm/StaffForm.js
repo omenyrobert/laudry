@@ -16,6 +16,7 @@ import axiosInstance from "../../axios-instance";
 import ButtonSecondary from "../ButtonSecondary";
 import ButtonLoader from "../ButtonLoader";
 import Modal from "react-modal";
+import StaffTypes from "../hrm/StaffTypes";
 
 const customStyles = {
 	overlay: {
@@ -30,7 +31,12 @@ const customStyles = {
 	},
 };
 
-const StaffForm = (props) => {
+const StaffForm = ({
+	searchedStaff,
+	setSearchedStaff,
+	AllStaff,
+	setAllStaff,
+}) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const openModal = () => {
@@ -109,27 +115,48 @@ const StaffForm = (props) => {
 		}
 	};
 
+	const [search, setSearch] = useState("");
+
+	const handleSearch = (e) => {
+		setSearch(e.target.value);
+	};
+
+	const searchStaff = () => {
+		if (search === "") {
+			setSearchedStaff(AllStaff);
+			return;
+		}
+		const result = AllStaff.filter((staff) => {
+			const fullName = `${staff.first_name} ${staff.middle_name} ${staff.last_name}`;
+			return fullName.toLowerCase().includes(search.toLowerCase());
+		});
+
+		setSearchedStaff(result);
+	};
+
+	useEffect(() => {
+		searchStaff();
+	}, [search]);
+
 	return (
 		<>
-			<div className="flex bg-white p-2 mr-2">
-				<div className="w-10/12">
-					<div className="flex">
-						<div className="w-[210px] mt-5">
-							<div className="w-[210px]" onClick={openModal}>
-								<Button2 value={"Add Staff Member"} />
-							</div>
-						</div>
-						<div className="w-6/12 px-2">
-							<InputField
-								placeholder="Search for Income"
-								type="search"
-								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
-							/>
-						</div>
-						<div className="w-4/12 px-2">
-							<InputField placeholder="Filter By Type" />
-						</div>{" "}
+			<div className="flex justify-between bg-white p-2 mr-2">
+				<div className="w-[210px] mt-5">
+					<div className="w-[210px]" onClick={openModal}>
+						<Button2 value={"Add Staff Member"} />
 					</div>
+				</div>
+				<div className="w-6/12 px-2">
+					<InputField
+						placeholder="Search for Income"
+						type="search"
+						icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+						onChange={handleSearch}
+						value={search}
+					/>
+				</div>
+				<div>
+					<StaffTypes />
 				</div>
 			</div>
 
@@ -171,7 +198,6 @@ const StaffForm = (props) => {
 								label="Middle Name"
 								name="middleName"
 								onChange={onChange}
-								
 							/>
 
 							<br />
@@ -190,7 +216,6 @@ const StaffForm = (props) => {
 								label="Last Name"
 								name="lastName"
 								onChange={onChange}
-								
 							/>
 						</div>
 						<div className="w-1/3 p-2">
@@ -200,7 +225,6 @@ const StaffForm = (props) => {
 								label="First Name"
 								name="firstName"
 								onChange={onChange}
-								
 							/>
 						</div>
 					</div>

@@ -198,12 +198,8 @@ export const addStaffNextOfKin = async (
   }
 
   
-  let staffProfile = await StaffProfile.findOne({
-    where: { id: staffOBJ.staffProfile.id },
-  })
-  
-  if (!staffProfile) {
-    staffProfile = await createStaffProfile(staff);
+  if (!staffOBJ.staffProfile) {
+    let staffProfile = await createStaffProfile(staff);
     staffOBJ.staffProfile = staffProfile;
     await staffOBJ.save();
   }
@@ -213,7 +209,7 @@ export const addStaffNextOfKin = async (
   nextOfKin.name = name;
   nextOfKin.relationship = relationship;
   nextOfKin.contact = contact;
-  nextOfKin.staffProfile = staffProfile;
+  nextOfKin.staffProfile = staffOBJ.staffProfile;
 
   await nextOfKin.save();
   return nextOfKin;
@@ -301,13 +297,8 @@ export const addStaffDocument = async (
     throw new Error("Staff not found");
   }
 
-  
-  let staffProfile = await StaffProfile.findOne({
-    where: { id: staffOBJ.staffProfile.id },
-  })
-  
-  if (!staffProfile) {
-    staffProfile = await createStaffProfile(staff);
+  if (!staffOBJ.staffProfile) {
+    let staffProfile = await createStaffProfile(staff);
     staffOBJ.staffProfile = staffProfile;
     await staffOBJ.save();
   }
@@ -315,7 +306,7 @@ export const addStaffDocument = async (
   const staffDocument = new StaffDocument();
   staffDocument.name = name;
   staffDocument.content = content;
-  staffDocument.staffProfile = staffProfile;
+  staffDocument.staffProfile = staffOBJ.staffProfile;
 
   await staffDocument.save();
   return staffDocument;
@@ -328,6 +319,12 @@ export const getStaffProfile = async (staff: number) => {
     throw new Error("Staff not found");
   }
 
+  if (staffOBJ.staffProfile === null) {
+    const staffProfile = await createStaffProfile(staff);
+    staffOBJ.staffProfile = staffProfile;
+    await staffOBJ.save();
+  }
+
   const staffProfile = await StaffProfile.findOne({
     where: { id: staffOBJ.staffProfile.id },
     relations: ["staffDocument", "education", "workExperience", "nextOfKin"],
@@ -337,3 +334,46 @@ export const getStaffProfile = async (staff: number) => {
   return staffProfile;
 }
 
+
+export const deleteNextOfKin = async (id: number) => {
+  const nextOfKin = await NextOfKin.findOne({ where: { id } });
+  if (!nextOfKin) {
+    throw new Error("Next of Kin not found");
+  }
+
+  await nextOfKin.remove();
+  return nextOfKin;
+}
+
+export const deleteWorkExperience = async (id: number) => {
+  const workExperience = await WorkExperience.findOne({ where: { id } });
+  if (!workExperience) {
+    throw new Error("Work Experience not found");
+  }
+
+  await workExperience.remove();
+  return workExperience;
+}
+
+
+export const deleteQualification = async (id: number) => {
+  const education = await Education.findOne({ where: { id } });
+  if (!education) {
+    throw new Error("Qualification not found");
+  }
+
+  await education.remove();
+  return education;
+}
+
+
+// remove staff document
+export const deleteStaffDocument = async (id: number) => {
+  const staffDocument = await StaffDocument.findOne({ where: { id } });
+  if (!staffDocument) {
+    throw new Error("Staff Document not found");
+  }
+
+  await staffDocument.remove();
+  return staffDocument;
+}

@@ -37,7 +37,7 @@ export class SalaryInfo extends BaseEntity {
   account_name!: string;
 
   @Column({nullable: true})
-  bank_branch!: number;
+  bank_branch!: string;
 }
 
 export const getSalaryInfo = async () => {
@@ -69,7 +69,7 @@ export const createSalaryInfo = async (
   bank_name: string,
   account_number: string,
   account_name: string,
-  bank_branch: number,
+  bank_branch: string,
   staff: number
 ) => {
   const staffMember = await Staff.findOne({
@@ -97,7 +97,7 @@ export const updateSalaryInfo = async (
   bank_name: string,
   account_number: string,
   account_name: string,
-  bank_branch: number,
+  bank_branch: string,
   staff: number
 ) => {
   const salaryInfo = await SalaryInfo.findOne({

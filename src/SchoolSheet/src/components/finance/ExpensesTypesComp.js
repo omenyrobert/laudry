@@ -193,7 +193,7 @@ function ExpensesTypesComp() {
 
 								<div className="mt-14 ml-2" onClick={postExpenseType}>
 									{
-										loading ? <ButtonLoader /> : <Button value={"Add Expense Type"} />
+										loading ? <ButtonLoader /> : <Button value={"Add"} />
 									}
 								</div>
 							</div>

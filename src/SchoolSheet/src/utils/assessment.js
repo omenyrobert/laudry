@@ -1,36 +1,35 @@
 export function assignGrade(finalMark, gradesArray) {
 	const gradeObj = gradesArray.find(obj => finalMark >= obj.from && finalMark <= obj.to);
-	return gradeObj ? gradeObj.grade : "No Grade Found";
+	return gradeObj ? gradeObj : "No Grade Found";
 }
 
 export function assessSubjects(data) {
   const groupedData = data.reduce((result, entry) => {
-    const { subject, examType, finalMark, examPercent } = entry;
+    const { subject, examType, finalMark, examPercent, points } = entry;
 
     if (!result[subject]) {
       result[subject] = {
         subject: subject,
-        BOT: "0/0",
-        MOT: "0/0",
-        EOT: "0/0",
         totalMark: 0,
         totalPercent: 0,
         markGrade: 0,
+        totalPoints: 0,
+        examTypes: [],
       };
     }
 
     if (examPercent > 0) {
       result[subject].totalMark += finalMark;
       result[subject].totalPercent += examPercent;
+      result[subject].totalPoints += parseFloat(points);
     }
 
-    if (examType === "BOT") {
-      result[subject].BOT = `${finalMark}/${examPercent}`;
-    } else if (examType === "MOT") {
-      result[subject].MOT = `${finalMark}/${examPercent}`;
-    } else if (examType === "EOT") {
-      result[subject].EOT = `${finalMark}/${examPercent}`;
-    }
+    const examTypeData = {
+      type: examType,
+      markPercent: `${finalMark}/${examPercent}`,
+    };
+
+    result[subject].examTypes.push(examTypeData);
 
     result[subject].markGrade =
       (result[subject].totalMark / result[subject].totalPercent) * 100;
@@ -40,3 +39,8 @@ export function assessSubjects(data) {
 
   return Object.values(groupedData);
 }
+
+export const findDivision = (points, divisions) => divisions.find((division, index, arr) => {
+  const nextDivision = arr[index + 1];
+  return points >= division.points && (!nextDivision || points < nextDivision.points);
+});

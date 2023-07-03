@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import InputField from "../InputField";
-import { FaPen } from "react-icons/fa";
 import Button2 from "../Button2";
 import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
 import "../../assets/styles/main.css";
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../ButtonLoader";
 
-let db = new Localbase("db");
 
 function AssetsTypes() {
 	// post asset Type
@@ -31,7 +27,7 @@ function AssetsTypes() {
 			setLoading(true)
 			axiosInstance.post("/transaction-types", formData)
 				.then((response) => {
-					setAssetType(null);
+					setAssetType("");
 					fetchAssetTypes();
 					setLoading(false)
 					const MySwal = withReactContent(Swal);
@@ -191,7 +187,7 @@ function AssetsTypes() {
 									/>
 								</div>
 								<div className="ml-2 mt-14" onClick={postAssetType}>
-									<Button value={"Add asset Type"} />
+									<Button value={"Add"} />
 								</div>
 							</div>
 
