@@ -492,49 +492,51 @@ function Accounts() {
 				<div className="border border-gray1 p-3 w-1/4">Amount</div>
 				<div className="border border-gray1 p-3 w-1/4">Action</div>
 			</div>
-			{accounts &&
-				accounts.length > 0 &&
-				accounts.map((account) => (
-					<div className="flex text-gray5 font-light text-sm border-b border-gray2 cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-						<div className="border border-gray1 p-3  w-1/4">
-							{account.accountName}
-						</div>
-						<div className="border border-gray1 p-3 w-1/4">
-							{account.accountType}
-						</div>
-						<div className="border border-gray1 p-3 w-1/4">
-							{account.subType}
-						</div>
-						<div className="border border-gray1 p-3 w-1/4">
-							{account.subType}
-						</div>
-						<div className="border border-gray1 p-3 w-1/4">
-							{Number(account.amount).toLocaleString()}
-						</div>
-						<div className="border border-gray1 p-3 w-1/4">
-							<div className="flex justify-between w-32">
-								<div className="mt-3">
-									<MdDeleteOutline
-										onClick={() => deleteAccount(account)}
-										className="text-red "
-									/>
+			<div className="h-[70vh] overflow-y-auto">
+				{accounts &&
+					accounts.length > 0 &&
+					accounts.map((account) => (
+						<div className="flex text-gray5 font-light text-sm border-b border-gray2 cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+							<div className="border border-gray1 p-3  w-1/4">
+								{account.accountName}
+							</div>
+							<div className="border border-gray1 p-3 w-1/4">
+								{account.accountType}
+							</div>
+							<div className="border border-gray1 p-3 w-1/4">
+								{account.subType}
+							</div>
+							<div className="border border-gray1 p-3 w-1/4">
+								{account.subType}
+							</div>
+							<div className="border border-gray1 p-3 w-1/4">
+								{Number(account.amount).toLocaleString()}
+							</div>
+							<div className="border border-gray1 p-3 w-1/4">
+								<div className="flex justify-between w-32">
+									<div className="mt-3">
+										<MdDeleteOutline
+											onClick={() => deleteAccount(account)}
+											className="text-red "
+										/>
+									</div>
+									<div className="mt-3">
+										<BsPencilSquare
+											onClick={() => openShowUpdate(account)}
+											className="text-warning "
+										/>
+									</div>
+									<Link to={`/ledger/${account.id}`}>
+										<p className="text-primary p-2 bg-primary3 rounded-md">
+											Ledger
+										</p>
+									</Link>
 								</div>
-								<div className="mt-3">
-									<BsPencilSquare
-										onClick={() => openShowUpdate(account)}
-										className="text-warning "
-									/>
-								</div>
-								<Link to={`/ledger/${account.id}`}>
-									<p className="text-primary p-2 bg-primary3 rounded-md">
-										Ledger
-									</p>
-								</Link>
 							</div>
 						</div>
-					</div>
-				))}
-			{loading.accounts && <Loader />}
+					))}
+				{loading.accounts && <Loader />}
+			</div>
 		</>
 	);
 }

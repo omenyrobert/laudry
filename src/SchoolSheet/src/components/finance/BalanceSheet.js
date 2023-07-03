@@ -110,7 +110,7 @@ function BalanceSheet() {
 						<p className="text-secondary text-xl font-bold">Balance Sheet </p>
 					</div>
 					<div className="flex">
-						<div className="mr-3">
+						{/* <div className="mr-3">
 							<InputField type="date" label="From" />
 						</div>
 						<div className="mr-3">
@@ -118,7 +118,7 @@ function BalanceSheet() {
 						</div>
 						<div>
 							<InputField type="month" label="By Month" />
-						</div>
+						</div> */}
 						<div className="ml-5 mt-12" onClick={handleGeneratePDF}>
 							<Button value={"Pdf"} />
 						</div>

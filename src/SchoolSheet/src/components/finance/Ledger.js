@@ -145,10 +145,10 @@ function Ledger() {
                     <div className="w-1/4 p-2">{transaction.transactionId}</div>
                     <div className="w-1/4 p-2 truncate">{transaction.description}</div>
                     <div className="w-1/4 p-2">{transaction.account.accountName}</div>
-                    <div className="w-1/4 p-2">{transaction.credit}</div>
-                    <div className="w-1/4 p-2">{transaction.debit}</div>
-                    <div className="w-1/4 p-2">{transaction.amount}</div>
-                    <div className="w-1/4 p-2">{transaction.balance}</div>
+                    <div className="w-1/4 p-2">{Number(transaction.credit).toLocaleString()}</div>
+                    <div className="w-1/4 p-2">{Number(transaction.debit).toLocaleString()}</div>
+                    <div className="w-1/4 p-2">{Number(transaction.amount).toLocaleString()}</div>
+                    <div className="w-1/4 p-2">{Number(transaction.balance).toLocaleString()}</div>
                   </div>
                 );
               })}
