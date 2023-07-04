@@ -135,8 +135,8 @@ function CashFlow() {
             {/* <div>
               <InputField type="month" label="By Month" />
             </div> */}
-            <div className="ml-5 mt-12">
-              <Button value={"Pdf"} onClick={handleGeneratePDF} />
+            <div onClick={handleGeneratePDF} className="ml-5 mt-12">
+              <Button value={"Pdf"} />
             </div>
           </div>
         </div>
