@@ -13,12 +13,36 @@ import { Link } from "react-router-dom";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 
 function AssetsComp() {
 	const { setLoading, toggleFeedback } = useFeedback();
 	const navigate = useNavigate();
 	const [assetTotal, setAssetTotal] = useState("");
 	const [assetsData, setAssetsData] = useState([]);
+
+	// fetch asset typess
+	const [assetTypesData, setassetTypesData] = useState([]);
+
+	const fetchassetTypes = async () => {
+		const response = await axiosInstance.get("/transaction-types/asset");
+		const { status, payload } = response.data;
+
+		if (status === false) {
+			toggleFeedback("error", payload);
+			return;
+		}
+
+		const assetTypes = payload.map((item) => {
+			return {
+				label: item.name,
+				value: item.name,
+				...item,
+			};
+		});
+		setassetTypesData(assetTypes);
+	};
+
 
 	const fetchAssets = async () => {
 		const res = await axiosInstance.get("/transactions/type/asset");
@@ -86,7 +110,6 @@ function AssetsComp() {
 				axiosInstance
 					.delete(`/transactions/${assetItem.transactionId}`)
 					.then((response) => {
-						console.log(response);
 						const { status, payload } = response.data;
 						toggleFeedback(status ? "success" : "error", {
 							title: payload,
@@ -94,7 +117,6 @@ function AssetsComp() {
 						fetchAssets();
 					})
 					.catch((error) => {
-						console.log(error);
 						toggleFeedback("error", error.message);
 					});
 			}
@@ -107,6 +129,7 @@ function AssetsComp() {
 			setLoading(true);
 			try {
 				await fetchAssets();
+				await fetchassetTypes();
 				setLoading(false);
 			} catch (error) {
 				setLoading(false);
@@ -119,6 +142,68 @@ function AssetsComp() {
 
 	const [id, setId] = useState("");
 
+	// implement search
+	const [query, setQuery] = useState({
+		search: "",
+		filter: "",
+		startDate: NaN,
+		endDate: NaN,
+	});
+	const [searchedassets, setSearchedassets] = useState([]);
+
+	useEffect(() => {
+		if (
+			query.search === "" &&
+			query.filter === "" &&
+			isNaN(query.startDate) &&
+			isNaN(query.endDate)
+		) {
+			setSearchedassets(assetsData);
+			return;
+		}
+		const filteredassets = assetsData.filter((asset) => {
+			const assetDate = new Date(asset.date);
+			const isStartDateValid = isNaN(query.startDate)
+				? true
+				: assetDate.getTime() >= query.startDate;
+			const isEndDateValid = isNaN(query.endDate)
+				? true
+				: assetDate.getTime() <= query.endDate;
+			const isSearchValid = asset.title
+				.toLowerCase()
+				.includes(query.search.toLowerCase());
+			const isFilterValid = query.filter
+				? asset.subType?.name === query.filter
+				: true;
+			return (
+				isStartDateValid && isEndDateValid && isSearchValid && isFilterValid
+			);
+		});
+		setSearchedassets(filteredassets);
+	}, [query, assetsData]);
+
+	const printTable = () => {
+		const table = document.getElementById("asset-table");
+		const myWindow = window.open("", "", "width=900,height=700");
+		myWindow.document.write(table.outerHTML);
+
+		const stylesheets = Array.from(document.styleSheets);
+
+		stylesheets.forEach((stylesheet) => {
+			myWindow.document.head.appendChild(stylesheet.ownerNode.cloneNode(true));
+		});
+
+		const links = Array.from(document.getElementsByTagName("link"));
+
+		links.forEach((link) => {
+			myWindow.document.head.appendChild(link.cloneNode(true));
+		});
+
+		setTimeout(() => {
+			myWindow.print();
+		}, 1000);
+	};
+
 	return (
 		<>
 			<div className="flex  mt-2 bg-white px-3 border border-gray2 rounded-md">
@@ -130,29 +215,49 @@ function AssetsComp() {
 						type="search"
 						placeholder="Search for Asset"
 						icon={<BsSearch className="w-3 -ml-7 mt-3" />}
+						onChange={(e) => {
+							setQuery({ ...query, search: e.target.value });
+						}}
 					/>
 				</div>
 				<div className="w-2/12 px-2">
-					<InputField placeholder="Filter By Type" />
+					<Select
+						placeholder={"Filter By Type"}
+						name="filter"
+						onChange={(e) => {
+							setQuery({ ...query, filter: e.value });
+						}}
+						options={assetTypesData}
+					/>
 				</div>{" "}
 				<div className="w-2/12 px-2">
-					<InputField type="date" />
+					<InputField
+						type="date"
+						onChange={(e) => {
+							setQuery({ ...query, startDate: e.target.valueAsNumber });
+						}}
+					/>
 				</div>
 				<div className="w-2/12">
-					<InputField type="date" />
+					<InputField
+						type="date"
+						onChange={(e) => {
+							setQuery({ ...query, endDate: e.target.valueAsNumber });
+						}}
+					/>
 				</div>
 				<div className="w-2/12 ml-5 mt-5 flex">
 					<Link to="/addTransaction?transactionType=asset&action=create">
 						<Button2 value={"Asset"} />
 					</Link>
-					<div className="ml-5">
+					<div onClick={printTable} className="ml-5">
 						<Button value={"Print"} />
 					</div>
 				</div>
 			</div>
 
 			<div className="w-full h-[80vh]">
-				<table className="mt-10 w-[98%] table-auto">
+				<table id="asset-table" className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
 						<th className="p-2 text-primary text-sm text-left">asset</th>
@@ -163,7 +268,7 @@ function AssetsComp() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-						{assetsData.map((assetItem) => {
+						{searchedassets.map((assetItem) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
