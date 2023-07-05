@@ -238,12 +238,30 @@ function TrialBalance() {
 							</div>
 						))}
 						<div className="flex bg-primary text-white mt-5">
-						<div className="border border-gray1 p-3  w-3/5">Total</div>
-						<div className="border border-gray1 p-3 w-1/5">Debit</div>
-						<div className="border border-gray1 p-3 w-1/5">Credit</div>
+							<div className="border border-gray1 p-3  w-3/5">Total</div>
+							<div className="border border-gray1 p-3 w-1/5">
+								Debit:  {
+									Number(
+										currentAssets.reduce((acc, curr) => acc + curr.amount, 0) +
+										nonCurrentAssets.reduce((acc, curr) => acc + curr.amount, 0) +
+										directIncomes.reduce((acc, curr) => acc + curr.amount, 0) +
+										indirectIncomes.reduce((acc, curr) => acc + curr.amount, 0)
+									).toLocaleString()
+								}
+							</div>
+							<div className="border border-gray1 p-3 w-1/5">
+								Credit: {
+									Number(
+										currentLiabilities.reduce((acc, curr) => acc + curr.amount, 0) +
+										nonCurrentLiabilities.reduce((acc, curr) => acc + curr.amount, 0) +
+										directExpenses.reduce((acc, curr) => acc + curr.amount, 0) +
+										indirectExpenses.reduce((acc, curr) => acc + curr.amount, 0)
+									).toLocaleString()
+								}
+							</div>
+						</div>
 					</div>
-					</div>
-					
+
 				</div>
 			</div>
 		</>
