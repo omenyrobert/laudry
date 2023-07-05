@@ -179,7 +179,7 @@ const ClassesComp = () => {
 	return (
 		<>
 			<h5 className="text-xl font-medium ml-5 text-secondary">Classes</h5>
-			<div className="w-full h-[80vh] ml-5">
+			<div className="w-full ml-5">
 				<div className="flex justify-between bg-white pl-5 shadow-lg">
 					<div className="w-1/3 p-2">
 						<InputField
@@ -188,7 +188,6 @@ const ClassesComp = () => {
 							label="Class"
 							value={sclass}
 							onChange={(e) => setSclass(e.target.value)}
-							
 						/>
 					</div>
 					<div className="w-1/3 p-2">
@@ -236,114 +235,115 @@ const ClassesComp = () => {
 						)}
 					</div>
 				</div>
+				<div className="h-[70vh] overflow-y-auto">
+					<table className="mt-10 w-[98%] table-auto">
+						<thead style={{ backgroundColor: "#0d6dfd10" }}>
+							<th className="p-2 text-primary text-sm text-left">Class</th>
+							{/* <th className="p-2 text-primary text-sm text-left">Stream</th> */}
 
-				<table className="mt-10 w-[98%] table-auto">
-					<thead style={{ backgroundColor: "#0d6dfd10" }}>
-						<th className="p-2 text-primary text-sm text-left">Class</th>
-						{/* <th className="p-2 text-primary text-sm text-left">Stream</th> */}
-
-						<th className="p-2 text-primary text-sm text-left">Action</th>
-					</thead>
-					<tbody>
-						{/* edit popup start */}
-						{editData ? (
-							<div className="absolute shadow-2xl rounded flex w-[45vw] p-5 bg-white">
-								<div className="w-2/5 p-2">
-									<InputField
-										type="text"
-										placeholder="Enter Class"
-										label="Class"
-										name="Charge"
-										value={sclassEdit}
-										onChange={(e) => setsclassEdit(e.target.value)}
-										
-									/>
+							<th className="p-2 text-primary text-sm text-left">Action</th>
+						</thead>
+						<tbody>
+							{/* edit popup start */}
+							{editData ? (
+								<div className="absolute shadow-2xl rounded flex w-[45vw] p-5 bg-white">
+									<div className="w-2/5 p-2">
+										<InputField
+											type="text"
+											placeholder="Enter Class"
+											label="Class"
+											name="Charge"
+											value={sclassEdit}
+											onChange={(e) => setsclassEdit(e.target.value)}
+										/>
+									</div>
+									<div className="w-2/5 p-2">
+										<br />
+										<label className="text-gray4">Stream</label>
+										<br />
+										<input
+											onFocus={showSelect2}
+											onBlur={closeSelect2}
+											type="search"
+											placeholder="Select Streams"
+											className="p-3 w-[15vw] relative bg-gray1 text-sm rounded-md"
+										/>
+										{select2 ? (
+											<div className="absolute z-50 w-[15vw] bg-white shadow-md rounded-md h-52 overflow-y-auto">
+												{streamOptions.map((stream) => {
+													return (
+														<div className="p-2 hover:bg-gray1 flex cursor-pointer">
+															<div>
+																<input
+																	type="checkbox"
+																	className="cursor-pointer"
+																	onClick={() => handleStreamChange(stream.id)}
+																/>
+															</div>
+															<div className="text-gray5 ml-5">
+																{stream.stream}
+															</div>
+														</div>
+													);
+												})}
+											</div>
+										) : null}
+									</div>
+									<div className=" w-1/5  p-2">
+										<div>
+											<p
+												className="text-black text-lg -mt-5 ml-[100px] cursor-pointer"
+												onClick={closeEditData}
+											>
+												X
+											</p>
+										</div>
+										<br />
+										<div onClick={updateClass} className="mt-3">
+											<ButtonSecondary value={"Update"} />
+										</div>
+									</div>
 								</div>
-								<div className="w-2/5 p-2">
-									<br />
-									<label className="text-gray4">Stream</label>
-									<br />
-									<input
-										onFocus={showSelect2}
-										onBlur={closeSelect2}
-										type="search"
-										placeholder="Select Streams"
-										className="p-3 w-[15vw] relative bg-gray1 text-sm rounded-md"
-									/>
-									{select2 ? (
-										<div className="absolute z-50 w-[15vw] bg-white shadow-md rounded-md h-52 overflow-y-auto">
-											{streamOptions.map((stream) => {
+							) : null}
+							{/* edit popup end */}
+
+							{classes.map((sclass) => {
+								return (
+									<tr
+										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={sclass.id}
+									>
+										<td className="text-xs p-3 text-gray5">
+											{sclass.class}{" "}
+											{sclass.streams.map((stream) => {
 												return (
-													<div className="p-2 hover:bg-gray1 flex cursor-pointer">
-														<div>
-															<input
-																type="checkbox"
-																className="cursor-pointer"
-																onClick={() => handleStreamChange(stream.id)}
-															/>
-														</div>
-														<div className="text-gray5 ml-5">
-															{stream.stream}
-														</div>
-													</div>
+													<span className="p-1 bg-white shadow rounded m-1">
+														{stream.stream}
+													</span>
 												);
 											})}
-										</div>
-									) : null}
-								</div>
-								<div className=" w-1/5  p-2">
-									<div>
-										<p
-											className="text-black text-lg -mt-5 ml-[100px] cursor-pointer"
-											onClick={closeEditData}
-										>
-											X
-										</p>
-									</div>
-									<br />
-									<div onClick={updateClass} className="mt-3">
-										<ButtonSecondary value={"Update"} />
-									</div>
-								</div>
-							</div>
-						) : null}
-						{/* edit popup end */}
+										</td>
+										{/* <td className="text-xs p-3 text-gray5">{sclass.stream.stream}</td> */}
 
-						{classes.map((sclass) => {
-							return (
-								<tr
-									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={sclass.id}
-								>
-									<td className="text-xs p-3 text-gray5">
-										{sclass.class}{" "}
-										{sclass.streams.map((stream) => {
-											return (
-												<span className="p-1 bg-white shadow rounded m-1">
-													{stream.stream}
-												</span>
-											);
-										})}
-									</td>
-									{/* <td className="text-xs p-3 text-gray5">{sclass.stream.stream}</td> */}
+										<td className="text-xs p-3 text-gray5 flex">
+											<MdDeleteOutline
+												onClick={() => deleteClass(sclass)}
+												className="text-red w-4 h-4"
+											/>
 
-									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deleteClass(sclass)}
-											className="text-red w-4 h-4"
-										/>
+											<BsPencilSquare
+												className="text-warning h-4 w-4 ml-5"
+												onClick={() => openEditData(sclass)}
+											/>
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
+				</div>
 
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => openEditData(sclass)}
-										/>
-									</td>
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
-				<Loader/>
+				<Loader />
 			</div>
 		</>
 	);

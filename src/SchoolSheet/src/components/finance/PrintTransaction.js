@@ -7,13 +7,16 @@ import { Link, useLocation } from "react-router-dom";
 import { useFeedback } from "../../hooks/feedback";
 import axiosInstance, { UPLOADS_URL } from "../../axios-instance";
 import { useNavigate } from "react-router-dom";
-import { usePrint } from "../../hooks/print"
+import { usePrint } from "../../hooks/print";
 import { getSchools } from "../../store/schoolSheetSlices/schoolStore";
 import { useDispatch, useSelector } from "react-redux";
+import { BsTelephoneFill } from "react-icons/bs";
+import { BsEnvelopeFill } from "react-icons/bs";
+import { MdLocationPin } from "react-icons/md";
 
 function PrintTransaction() {
 	const navigate = useNavigate();
-	const { printContent } = usePrint()
+	const { printContent } = usePrint();
 	const [date, setDate] = useState("");
 	const [amount, setAmount] = useState("");
 	const location = useLocation();
@@ -321,8 +324,6 @@ function PrintTransaction() {
 		return true;
 	};
 
-
-
 	// items
 	const [items, setItems] = useState([]);
 
@@ -346,9 +347,7 @@ function PrintTransaction() {
 		}
 	};
 
-	const deleteItem = () => { };
-
-
+	const deleteItem = () => {};
 
 	return (
 		<>
@@ -357,12 +356,10 @@ function PrintTransaction() {
 					<div>
 						<p
 							onClick={() => {
-								printContent("print-content")
+								printContent("print-content");
 							}}
 						>
-
 							<Button value={"PRINT " + transactionType?.toLocaleUpperCase()} />
-
 						</p>
 					</div>
 					<div>
@@ -379,181 +376,95 @@ function PrintTransaction() {
 
 				<div id="print-content">
 					{/* Header */}
-					<div className="flex justify-center">
-						<div className="w-1/2">
 
-							<div className="flex justify-center">
-								<div className="w-1/2">
-									<p className="text-center text-2xl font-bold">
-										{school?.name}
-									</p>
-								</div>
+					<div className="flex bg-primary rounded text-white py-5 px-6">
+						<div className="flex w-10/12">
+							<div className="">
+								<img
+									src={
+										schools && schools.length > 0 && schools[0]?.logo
+											? UPLOADS_URL + schools[0]?.logo
+											: "avatar.jpeg"
+									}
+									className="w-28 h-28 object-cover rounded"
+									alt="school_logo"
+								/>
 							</div>
-							<div className="flex justify-center">
-								<div className="w-1/2">
-									<p className="text-center font-normal">
-										{school?.motto}
-									</p>
-								</div>
-							</div>
-							<div className="flex justify-center">
-								<div className="w-1/2">
-									<p className="text-center font-normal">
-										{school?.location}
-									</p>
-								</div>
-							</div>
-							<div className="flex justify-center">
-								<div className="w-1/2">
-									<p className="text-center  font-normal">
-										{school?.phoneNumbers}
-									</p>
+							<div className="ml-5 text-white">
+								<h1 className="text-2xl  font-semibold">{schools[0]?.name}</h1>
+								<h1 className="">{schools[0]?.motto}</h1>
+								<div className="flex mt-5 text-sm">
+									<div className="font-thin flex">
+										<div>
+											<BsTelephoneFill className="text-sm mt-1 flex" />
+										</div>{" "}
+										<div className="ml-1">{schools[0]?.phoneNumbers}</div>{" "}
+									</div>
+									<div className="font-thin ml-5 flex">
+										<div>
+											<BsEnvelopeFill className="text-sm mt-1" />
+										</div>
+										<div className="ml-1">{schools[0]?.emails}</div>
+									</div>
+									<div className=" ml-5 font-thin flex">
+										<div>
+											<MdLocationPin className="text-sm mt-1" />
+										</div>
+										<div className="ml-1">{schools[0]?.location}</div>
+									</div>
+									<h1 className=" ml-5 font-thin">{schools[0]?.sites}</h1>
 								</div>
 							</div>
 						</div>
+
+						<div className="w-[300px]">
+							<h1 className="font-bold text-2xl text-center ">
+								{transactionType}
+							</h1>
+							<p className="text-center mt-2">
+								{selectedTransactionSubType?.value}
+							</p>
+						</div>
 					</div>
-
-
-					<div className="flex justify-between mx-3">
-						<div className="w-1/4 p-1">
-							<InputField
-								type="text"
-								placeholder="Enter Title"
-								label="Title"
-								value={title}
-								onChange={(e) => setTitle(e.target.value)}
-							/>
+					<div className="flex justify-between mx-3 mt-5">
+						<div className="w-1/3 p-1">
+							<p className="text-primary font-semibold text-2xl">{title}</p>
 						</div>
 
 						<div className="w-1/3 p-1">
-							<InputField
-								type="number"
-								label="Amount"
-								placeholder="Enter Amount"
-								value={amount}
-								onChange={(e) => setAmount(parseInt(e.target.value))}
-							/>
+							<p className=" font-semibold">{amount}</p>
 						</div>
 
-						<div className="w-1/4 p-1 mt-2">
+						<div className="w-1/3 p-1 mt-2">
 							<br />
 							<label className="text-gray4">Account To Debit</label>
-							<Select
-								placeholder="Select Account"
-								options={accounts}
-								onChange={(e) => {
-									setAccountToDebit(e);
-								}}
-								value={accountToDebit}
-							/>
+							<p>{accountToDebit?.value}</p>
 						</div>
 					</div>
 					<div className="flex justify-between mx-3">
 						<div className="w-1/3 p-1">
 							<br />
 							<label className="text-gray4">Account To Credit</label>
-							<Select
-								placeholder="Select Account"
-								options={accounts}
-								onChange={(e) => {
-									setAccountToCredit(e);
-								}}
-								value={accountToCredit}
-							/>
+							<p>{accountToCredit?.value}</p>
 						</div>
 
 						<div className="w-1/3 p-1">
-							<InputField
-								type="text"
-								placeholder="Enter Recipient"
-								label="Recieved By"
-								value={recievedBy}
-								onChange={(e) => setRecievedBy(e.target.value)}
-							/>
+							<label className="text-gray4">Received By</label>
+							<p>{recievedBy}</p>
 						</div>
 
 						<div className="w-1/3 p-1">
-							<InputField
-								type="text"
-								placeholder="Enter Contacts"
-								label="Contacts"
-								value={contacts}
-								onChange={(e) => setContacts(e.target.value)}
-							/>
+							<label className="text-gray4">Contacts</label>
+							<p>{contacts}</p>
 						</div>
 					</div>
 
-					<div className="flex justify-between mx-3">
-						<div className="w-1/3 p-1">
-							<br />
-							<label className="text-gray4">Transaction Type</label>
-							{transactionType ? (
-								<InputField
-									type="text"
-									value={transactionType.toLocaleUpperCase()}
-									editable={false}
-								/>
-							) : (
-								<Select
-									placeholder="Select Category"
-									options={transactionTypes}
-									onChange={handleTypeChange}
-									value={selectedTransactionType}
-								/>
-							)}
-						</div>
-
-						<div className="w-1/3 p-1 mt-5">
-							<br />
-							<label className="text-gray4">Sub Type</label>
-							<Select
-								placeholder="Select Sub Type"
-								options={subTypesOptions}
-								onChange={(e) => setSelectedTransactionSubType(e)}
-								value={selectedTransactionSubType}
-							/>
-						</div>
-
-						<div className="w-4/12 p-1 mt-2">
-							<InputField
-								type="text"
-								placeholder="Enter Receipt"
-								label="Receipt/Invoice/file"
-								value={receipt}
-								onChange={(e) => setReceipt(e.target.value)}
-							/>
-						</div>
-					</div>
 					<div className="p-5 border-2 border-gray1 rounded-md m-2">
-						<div className="flex">
-							<div className="p-2 w-1/4">
-								<InputField
-									placeholder="Item"
-									value={item}
-									onChange={(e) => setItem(e.target.value)}
-								/>
-							</div>
-							<div className="p-2 w-1/4">
-								<InputField
-									placeholder="Qty"
-									value={qty}
-									onChange={(e) => setQty(e.target.value)}
-								/>
-							</div>
-
-							<div className="p-2 w-1/4">
-								<InputField
-									placeholder="Unit cost"
-									value={unitCost}
-									onChange={(e) => setUnitCost(e.target.value)}
-								/>
-							</div>
-
-							<div className="p-2 w-1/4 mt-5">
-								<div className="w-16" onClick={addItem}>
-									<Button value={"Add"} />
-								</div>
-							</div>
+						<div className="flex bg-gray1">
+							<div className="p-2 w-1/4">Item</div>
+							<div className="p-2 w-1/4">qty</div>
+							<div className="p-2 w-1/4">Unit cost</div>
+							<div className="p-2 w-1/4">Total</div>
 						</div>
 						{items.map((item, index) => {
 							return (
@@ -561,7 +472,9 @@ function PrintTransaction() {
 									key={index}
 									className=" flex border-b border-gray2 hover:bg-gray1"
 								>
-									<div className="w-1/4 p-2 text-sm text-gray5">{item?.item}</div>
+									<div className="w-1/4 p-2 text-sm text-gray5">
+										{item?.item}
+									</div>
 									<div className="w-1/4 p-2 text-sm text-gray5">
 										{Number(item?.qty).toLocaleString()}
 									</div>
@@ -571,28 +484,12 @@ function PrintTransaction() {
 									<div className="w-1/4 p-2 text-sm text-gray5">
 										{Number(item?.qty * item?.unitCost).toLocaleString()}
 									</div>
-									<div className="w-1/4 p-2">
-										<p
-											className="text-red text-xl cursor-pointer"
-											onClick={deleteItem}
-										>
-											X
-										</p>
-									</div>
 								</div>
 							);
 						})}
 					</div>
 
 					<div className="flex justify-between mx-3">
-						<div className="w-4/12 p-1">
-							<InputField
-								type="file"
-								label="Attach receipt / file"
-								onChange={(e) => setFile(e.target.files[0])}
-							/>
-						</div>
-
 						<div className="w-8/12 p-1">
 							<br />
 							<label>Description</label>
