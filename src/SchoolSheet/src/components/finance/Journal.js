@@ -14,6 +14,7 @@ import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
 import ButtonLoader from "../ButtonLoader";
 import { BsSearch } from "react-icons/bs";
+import { usePrint } from "../../hooks/print";
 
 function Journal() {
 	const dispatch = useDispatch();
@@ -31,6 +32,7 @@ function Journal() {
 	const [journalTotal, setjournalTotal] = useState("");
 	const [journalsData, setjournalsData] = useState([]);
 	const [description, setDescription] = useState("");
+	const { printContent } = usePrint();
 
 	const fetchjournals = async () => {
 		const res = await axiosInstance.get("/transactions/type/journal");
@@ -353,6 +355,7 @@ function Journal() {
 			<div className="h-[80vh] overflow-y-auto">
 				{searchedjournals.map((journal) => (
 					<div
+						id={journal.id + "journal"}
 						key={journal.id}
 						className="p-2 bg-gray1 text-sm hover:bg-white cursor-pointer rounded-md my-2"
 					>
@@ -365,7 +368,9 @@ function Journal() {
 							</div>
 							<div className="w-1/3 flex justify-between">
 								<p>Transaction Type: {journal.title}</p>
-								<p className="text-primary border border-primary rounded-md py-1 px-3 cursor-pointer">
+								<p
+									onClick={() => printContent(journal.id + "journal")}
+									className="text-primary border border-primary rounded-md py-1 px-3 cursor-pointer">
 									Print
 								</p>
 							</div>

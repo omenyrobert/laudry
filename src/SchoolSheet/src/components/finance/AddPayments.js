@@ -226,6 +226,7 @@ function AddPayments() {
 									onChange={(e) => {
 										setQuery({ ...query, search: e.target.value });
 									}}
+									value={query.search}
 								/>
 							</div>
 							<div className="w-3/12 px-2">
@@ -328,7 +329,14 @@ function AddPayments() {
 												/>
 											</div>
 										) : null}
-										<BsPrinterFill className="text-primary ml-5" />
+										<BsPrinterFill
+											onClick={() => {
+												setQuery({ search: paymentItem.title });
+												setTimeout(() => {
+													printTable();
+												}, 1000);
+											}}
+											className="text-primary ml-5" />
 									</td>
 								</tr>
 							);

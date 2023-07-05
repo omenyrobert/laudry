@@ -16,12 +16,14 @@ import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
+import { usePrint } from "../../hooks/print";
 
 //let db = new Localbase("db");
 
 function ExpensesComp() {
 	const { setLoading, toggleFeedback } = useFeedback();
 	const navigate = useNavigate();
+	const { printContent } = usePrint();
 
 	// fetch expense typess
 	const [expenseTypesData, setExpenseTypesData] = useState([]);
@@ -228,6 +230,7 @@ function ExpensesComp() {
 								onChange={(e) => {
 									setQuery({ ...query, search: e.target.value });
 								}}
+								value={query.search}
 							/>
 						</div>
 						<div className="w-3/12 px-2">
@@ -284,6 +287,7 @@ function ExpensesComp() {
 						{searchedExpenses.map((expenseItem) => {
 							return (
 								<tr
+									id={expenseItem.id + "expense"}
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
 									key={expenseItem.id}
 								>
@@ -320,6 +324,7 @@ function ExpensesComp() {
 														);
 													}}
 												/>
+
 											</div>
 										) : null}
 
@@ -346,7 +351,17 @@ function ExpensesComp() {
 												<div className="w-3/12" onClick={closeFile}></div>
 											</div>
 										) : null}
-										<BsPrinterFill className="text-primary ml-5" />
+										<BsPrinterFill
+											onClick={() => {
+												setQuery({
+													search: expenseItem.title,
+
+												});
+												setTimeout(() => {
+													printTable();
+												}, 1000);
+											}}
+											className="text-primary ml-5" />
 									</td>
 								</tr>
 							);
