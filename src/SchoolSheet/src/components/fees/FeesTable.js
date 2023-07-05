@@ -5,6 +5,7 @@ import InputField from "../InputField";
 import Button from "../Button";
 import axiosInstance from "../../axios-instance";
 import { useNavigate } from "react-router-dom";
+import ButtonLoader from "../ButtonLoader";
 
 const FeesTable = (props) => {
 	const { studentData } = props;
@@ -40,9 +41,12 @@ const FeesTable = (props) => {
 	const onChangeCash = (e) => {
 		setCashForm({ ...cashForm, [e.target.name]: e.target.value });
 	};
+
+	const [posting, setPosting] = useState(false);
 	const postPayment = async (e, formData, method) => {
 		e.preventDefault();
 		try {
+			setPosting(true);
 			formData.studentId = studentId;
 			formData.method = method;
 			if (formData) {
@@ -83,6 +87,7 @@ const FeesTable = (props) => {
 		} catch (error) {
 			console.log(error);
 		}
+		setPosting(false);
 	};
 
 	// toogle bankslip
@@ -380,7 +385,7 @@ const FeesTable = (props) => {
 									type="text"
 									label="Branch"
 									name="branch"
-                                    placeholder="Enter Branch Name"
+									placeholder="Enter Branch Name"
 									onChange={onChangeBankSlip}
 									value={bankSlipForm.branch}
 								/>
@@ -388,7 +393,7 @@ const FeesTable = (props) => {
 									type="text"
 									label="Bank slip No"
 									name="bankSlipNo"
-                                    placeholder="Enter Bankslip No"
+									placeholder="Enter Bankslip No"
 									onChange={onChangeBankSlip}
 									value={bankSlipForm.bankSlipNo}
 								/>
@@ -408,7 +413,8 @@ const FeesTable = (props) => {
 									onChange={onChangeBankSlip}
 									value={bankSlipForm.contact}
 								/>
-								<div className="w-40 float-right mb-5"
+								<div
+									className="w-40 float-right mb-5"
 									onClick={(event) =>
 										postPayment(event, bankSlipForm, "Bank Slip")
 									}
@@ -458,6 +464,7 @@ const FeesTable = (props) => {
 									type="text"
 									label="Bank"
 									name="bank"
+									placeholder="Enter Bank Name"
 									onChange={onChangeBank}
 									value={bankForm.name}
 								/>
@@ -467,12 +474,14 @@ const FeesTable = (props) => {
 									type="text"
 									label="From Account No"
 									name="fromAccountNo"
+									placeholder="Enter Account Number"
 									onChange={onChangeBank}
 									value={bankForm.fromAccountNo}
 								/>
 								<InputField
 									type="text"
 									label="Account Name"
+									placeholder="Enter Account Name"
 									name="accountName"
 									onChange={onChangeBank}
 									value={bankForm.accountName}
@@ -493,7 +502,8 @@ const FeesTable = (props) => {
 									onChange={onChangeBank}
 									value={bankForm.contact}
 								/>
-								<div className="w-40 float-right mb-5"
+								<div
+									className="w-40 float-right mb-5"
 									onClick={(event) =>
 										postPayment(event, bankForm, "Bank Transfer")
 									}
@@ -507,7 +517,7 @@ const FeesTable = (props) => {
 					</div>
 				) : null}
 				{mobile ? (
-					<div className="w-[600px] absolute bg-white rounded-md shadow-lg -mt-10 border-2 border-gray1 z-50">
+					<div className="w-[700px] absolute bg-white rounded-md shadow-lg -mt-10 border-2 border-gray1 z-50">
 						<div className="flex justify-between p-3 bg-gray1">
 							<div>
 								<p className="text-primary font-semibold">
@@ -520,62 +530,78 @@ const FeesTable = (props) => {
 								</p>
 							</div>
 						</div>
-						<div className="px-5">
-							<InputField
-								type="date"
-								label="Date"
-								name="date"
-								onChange={onChangeMobile}
-								value={mobileForm.date}
-							/>
-							<InputField
-								type="number"
-								label="Amount"
-								name="amount"
-								placeholder="Enter Amount"
-								onChange={onChangeMobile}
-								value={mobileForm.amount}
-							/>
-							<InputField
-								type="text"
-								label="From Mobile No"
-								name="mobileNo"
-								onChange={onChangeMobile}
-								value={mobileForm.mobileNo}
-							/>
-							<InputField
-								type="text"
-								label="Names"
-								name="mobileName"
-								onChange={onChangeMobile}
-								value={mobileForm.mobileName}
-							/>
-
-							<InputField
-								type="text"
-								label="Paid By"
-								name="paidBy"
-								placeholder="Enter Name"
-								onChange={onChangeMobile}
-								value={mobileForm.paidBy}
-							/>
-							<InputField
-								type="text"
-								label="Contact"
-								name="contact"
-								placeholder="Enter Contact"
-								onChange={onChangeMobile}
-								value={mobileForm.contact}
-							/>
-							<div className="w-40 float-right mb-5"
-								onClick={(event) =>
-									postPayment(event, mobileForm, "Mobile Money")
-								}
-							>
-								<Button value={"Add Payment"} />
+						<div className="px-5 flex ">
+							<div className="w-1/2">
+								<InputField
+									type="date"
+									label="Date"
+									name="date"
+									onChange={onChangeMobile}
+									value={mobileForm.date}
+								/>
+								<InputField
+									type="number"
+									label="Amount"
+									name="amount"
+									placeholder="Enter Amount"
+									onChange={onChangeMobile}
+									value={mobileForm.amount}
+								/>
+								<InputField
+									type="text"
+									label="From Mobile No"
+									name="mobileNo"
+									placeholder="Enter Number"
+									onChange={onChangeMobile}
+									value={mobileForm.mobileNo}
+								/>
 							</div>
+							<div className="w-1/2 ml-3">
+								<InputField
+									type="text"
+									label="Names"
+									name="mobileName"
+									placeholder="Enter Name"
+									onChange={onChangeMobile}
+									value={mobileForm.mobileName}
+								/>
 
-							<br />
+								<InputField
+									type="text"
+									label="Paid By"
+									name="paidBy"
+									placeholder="Enter Paid by Name"
+									onChange={onChangeMobile}
+									value={mobileForm.paidBy}
+								/>
+								<InputField
+									type="text"
+									label="Contact"
+									name="contact"
+									placeholder="Enter Contact"
+									onChange={onChangeMobile}
+									value={mobileForm.contact}
+								/>
+							</div>
+						</div>
+						<div className="flex justify-between mb-3 mr-3">
+							<div></div>
+							<div>
+								{posting ? (
+									<div className="w-40">
+										<ButtonLoader />
+									</div>
+								) : (
+									<div
+										className="w-40"
+										onClick={(event) =>
+											postPayment(event, mobileForm, "Mobile Money")
+										}
+									>
+										<Button value={"Add Payment"} />
+									</div>
+								)}
+							</div>
 						</div>
 					</div>
 				) : null}
@@ -616,6 +642,7 @@ const FeesTable = (props) => {
 									type="text"
 									label="Bank"
 									name="bank"
+									placeholder="Enter Bank Name"
 									onChange={onChangeCheque}
 									value={chequeForm.bank}
 								/>
@@ -625,6 +652,7 @@ const FeesTable = (props) => {
 									type="text"
 									label="Account Name"
 									name="accountName"
+									placeholder="Enter Account Name"
 									onChange={onChangeCheque}
 									value={chequeForm.accountName}
 								/>
@@ -632,6 +660,7 @@ const FeesTable = (props) => {
 									type="text"
 									label="Account No"
 									name="accountNo"
+									placeholder="Enter Account Number"
 									onChange={onChangeCheque}
 									value={chequeForm.accountNo}
 								/>
@@ -651,7 +680,8 @@ const FeesTable = (props) => {
 									onChange={onChangeCheque}
 									value={chequeForm.contact}
 								/>
-								<div className="w-40 float-right mb-5"
+								<div
+									className="w-40 float-right mb-5"
 									onClick={(event) => postPayment(event, chequeForm, "Cheque")}
 								>
 									<Button value={"Add Payment"} />
