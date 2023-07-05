@@ -73,7 +73,7 @@ function TrialBalance() {
 
 	const handleGeneratePDF = () => {
 		const documentWindow = window.open("", "PRINT", "height=600,width=1000");
-		const content = document.getElementById("ledger-table").outerHTML;
+		const content = document.getElementById("trial-balance-table").outerHTML;
 
 		documentWindow.document.write(content);
 
@@ -97,7 +97,7 @@ function TrialBalance() {
 
 	return (
 		<>
-			<div className="bg-white p-3  mt-2 border border-gray2 shadow rounded">
+			<div className="bg-white p-3  mt-2 border border-gray2 shadow rounded overflow-y-auto">
 				<div className="flex justify-between">
 					<div>
 						<p className="text-secondary text-xl font-bold">Trial Balance </p>
@@ -118,132 +118,152 @@ function TrialBalance() {
 					</div>
 				</div>
 
-				<div id="ledger-table" className="h-[80vh] overflow-y-auto">
-					<div className="flex bg-primary text-white mt-5">
-						<div className="border border-gray1 p-3  w-3/5">Accounts</div>
-						<div className="border border-gray1 p-3 w-1/5">Debit</div>
-						<div className="border border-gray1 p-3 w-1/5">Credit</div>
-					</div>
-					<div className="">
-						<div className="border border-gray1 p-3 text-primary text-xl">
-							Assets
-						</div>
-
-						{currentAssets.map((curr) => (
-							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-								<div className="border border-gray1 p-3  w-3/5">
-									{curr.accountName}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5">
-									{Number(curr.amount).toLocaleString()}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5"></div>
-							</div>
-						))}
-
-						{nonCurrentAssets.map((nonCurr) => (
-							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-								<div className="border border-gray1 p-3  w-3/5">
-									{nonCurr.accountName}
-								</div>
-
-								<div className="border border-gray1 p-3 w-1/5">
-									{Number(nonCurr.amount).toLocaleString()}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5"></div>
-							</div>
-						))}
-
-						<div className="border border-gray1 p-3 text-primary text-xl">
-							Liabilities
-						</div>
-
-						{currentLiabilities.map((curr) => (
-							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-								<div className="border border-gray1 p-3  w-3/5">
-									{curr.accountName}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5"></div>
-								<div className="border border-gray1 p-3 w-1/5">
-									{Number(curr.amount).toLocaleString()}
-								</div>
-							</div>
-						))}
-
-						{nonCurrentLiabilities.map((nonCurr) => (
-							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-								<div className="border border-gray1 p-3  w-3/5">
-									{nonCurr.accountName}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5"></div>
-								<div className="border border-gray1 p-3 w-1/5">
-									{Number(nonCurr.amount).toLocaleString()}
-								</div>
-							</div>
-						))}
-
-						<div className="border border-gray1 p-3 text-primary text-xl">
-							Incomes
-						</div>
-
-						{directIncomes.map((curr) => (
-							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-								<div className="border border-gray1 p-3  w-3/5">
-									{curr.accountName}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5">
-									{Number(curr.amount).toLocaleString()}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5"></div>
-							</div>
-						))}
-
-						{indirectIncomes.map((nonCurr) => (
-							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-								<div className="border border-gray1 p-3  w-3/5">
-									{nonCurr.accountName}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5">
-									{Number(nonCurr.amount).toLocaleString()}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5"></div>
-							</div>
-						))}
-
-						<div className="border border-gray1 p-3 text-primary text-xl">
-							Expenses
-						</div>
-
-						{directExpenses.map((curr) => (
-							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-								<div className="border border-gray1 p-3  w-3/5">
-									{curr.accountName}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5"></div>
-								<div className="border border-gray1 p-3 w-1/5">
-									{Number(curr.amount).toLocaleString()}
-								</div>
-							</div>
-						))}
-
-						{indirectExpenses.map((nonCurr) => (
-							<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
-								<div className="border border-gray1 p-3  w-3/5">
-									{nonCurr.accountName}
-								</div>
-								<div className="border border-gray1 p-3 w-1/5"></div>
-								<div className="border border-gray1 p-3 w-1/5">
-									{Number(nonCurr.amount).toLocaleString()}
-								</div>
-							</div>
-						))}
+				<div className="h-[80vh] overflow-y-auto">
+					<div id="trial-balance-table" className="">
 						<div className="flex bg-primary text-white mt-5">
-						<div className="border border-gray1 p-3  w-3/5">Total</div>
-						<div className="border border-gray1 p-3 w-1/5">Debit</div>
-						<div className="border border-gray1 p-3 w-1/5">Credit</div>
+							<div className="border border-gray1 p-3  w-3/5">Accounts</div>
+							<div className="border border-gray1 p-3 w-1/5">Debit</div>
+							<div className="border border-gray1 p-3 w-1/5">Credit</div>
+						</div>
+						<div className="">
+							<div className="border border-gray1 p-3 text-primary text-xl">
+								Assets
+							</div>
+
+							{currentAssets.map((curr) => (
+								<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+									<div className="border border-gray1 p-3  w-3/5">
+										{curr.accountName}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5">
+										{Number(curr.amount).toLocaleString()}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5"></div>
+								</div>
+							))}
+
+							{nonCurrentAssets.map((nonCurr) => (
+								<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+									<div className="border border-gray1 p-3  w-3/5">
+										{nonCurr.accountName}
+									</div>
+
+									<div className="border border-gray1 p-3 w-1/5">
+										{Number(nonCurr.amount).toLocaleString()}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5"></div>
+								</div>
+							))}
+
+							<div className="border border-gray1 p-3 text-primary text-xl">
+								Liabilities
+							</div>
+
+							{currentLiabilities.map((curr) => (
+								<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+									<div className="border border-gray1 p-3  w-3/5">
+										{curr.accountName}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5"></div>
+									<div className="border border-gray1 p-3 w-1/5">
+										{Number(curr.amount).toLocaleString()}
+									</div>
+								</div>
+							))}
+
+							{nonCurrentLiabilities.map((nonCurr) => (
+								<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+									<div className="border border-gray1 p-3  w-3/5">
+										{nonCurr.accountName}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5"></div>
+									<div className="border border-gray1 p-3 w-1/5">
+										{Number(nonCurr.amount).toLocaleString()}
+									</div>
+								</div>
+							))}
+
+							<div className="border border-gray1 p-3 text-primary text-xl">
+								Incomes
+							</div>
+
+							{directIncomes.map((curr) => (
+								<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+									<div className="border border-gray1 p-3  w-3/5">
+										{curr.accountName}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5">
+										{Number(curr.amount).toLocaleString()}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5"></div>
+								</div>
+							))}
+
+							{indirectIncomes.map((nonCurr) => (
+								<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+									<div className="border border-gray1 p-3  w-3/5">
+										{nonCurr.accountName}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5">
+										{Number(nonCurr.amount).toLocaleString()}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5"></div>
+								</div>
+							))}
+
+							<div className="border border-gray1 p-3 text-primary text-xl">
+								Expenses
+							</div>
+
+							{directExpenses.map((curr) => (
+								<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+									<div className="border border-gray1 p-3  w-3/5">
+										{curr.accountName}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5"></div>
+									<div className="border border-gray1 p-3 w-1/5">
+										{Number(curr.amount).toLocaleString()}
+									</div>
+								</div>
+							))}
+
+							{indirectExpenses.map((nonCurr) => (
+								<div className="flex text-gray5 font-light cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
+									<div className="border border-gray1 p-3  w-3/5">
+										{nonCurr.accountName}
+									</div>
+									<div className="border border-gray1 p-3 w-1/5"></div>
+									<div className="border border-gray1 p-3 w-1/5">
+										{Number(nonCurr.amount).toLocaleString()}
+									</div>
+								</div>
+							))}
+							<div className="flex bg-primary text-white mt-5">
+								<div className="border border-gray1 p-3  w-3/5">Total</div>
+								<div className="border border-gray1 p-3 w-1/5">
+									Debit:  {
+										Number(
+											currentAssets.reduce((acc, curr) => acc + curr.amount, 0) +
+											nonCurrentAssets.reduce((acc, curr) => acc + curr.amount, 0) +
+											directIncomes.reduce((acc, curr) => acc + curr.amount, 0) +
+											indirectIncomes.reduce((acc, curr) => acc + curr.amount, 0)
+										).toLocaleString()
+									}
+								</div>
+								<div className="border border-gray1 p-3 w-1/5">
+									Credit: {
+										Number(
+											currentLiabilities.reduce((acc, curr) => acc + curr.amount, 0) +
+											nonCurrentLiabilities.reduce((acc, curr) => acc + curr.amount, 0) +
+											directExpenses.reduce((acc, curr) => acc + curr.amount, 0) +
+											indirectExpenses.reduce((acc, curr) => acc + curr.amount, 0)
+										).toLocaleString()
+									}
+								</div>
+							</div>
+						</div>
+
 					</div>
-					</div>
-					
 				</div>
 			</div>
 		</>
