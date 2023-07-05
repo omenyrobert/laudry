@@ -57,6 +57,7 @@ import Journal from "../src/components/finance/Journal";
 import AddTransaction from "./components/finance/AddTransaction";
 import Ledger from "./components/finance/Ledger";
 import RoleGuard from "./components/RoleGuard";
+import PrintTransaction from "./components/finance/PrintTransaction";
 
 const router = createBrowserRouter([
   {
@@ -142,32 +143,32 @@ const router = createBrowserRouter([
         ),
       },
       // students
-	  {
+      {
         path: "/addStudentForm",
         element: (
           <RoleGuard allowedRoles={["student", "admin"]}>
-             <AddStudentForm />
+            <AddStudentForm />
           </RoleGuard>
         ),
       },
-	  {
-		path: "/editStudentsForm",
+      {
+        path: "/editStudentsForm",
         element: (
           <RoleGuard allowedRoles={["student", "admin"]}>
-             <EditStudentsForm />
+            <EditStudentsForm />
           </RoleGuard>
         ),
       },
-	  {
+      {
         path: "/showStudentsForm",
         element: (
           <RoleGuard allowedRoles={["student", "admin"]}>
-              <ShowStudentsForm />
+            <ShowStudentsForm />
           </RoleGuard>
         ),
       },
       // classes
-	  {
+      {
         path: "/studentAttendance",
         element: (
           <RoleGuard allowedRoles={["student", "admin"]}>
@@ -249,6 +250,10 @@ const router = createBrowserRouter([
         path: "/addTransaction",
         element: <AddTransaction />,
       },
+      {
+        path: "/printTransaction",
+        element: <PrintTransaction />,
+      },
       // hrm routes
       {
         path: "/staff",
@@ -258,7 +263,7 @@ const router = createBrowserRouter([
           </RoleGuard>
         ),
       },
-	  {
+      {
         path: "/staffEditForm",
         element: (
           <RoleGuard allowedRoles={["hrm", "admin"]}>
@@ -277,7 +282,7 @@ const router = createBrowserRouter([
       {
         path: "/staffAttendance",
         element: (
-          <RoleGuard allowedRoles={["hrm",  "admin"]}>
+          <RoleGuard allowedRoles={["hrm", "admin"]}>
             <StaffAttendance />
           </RoleGuard>
         ),

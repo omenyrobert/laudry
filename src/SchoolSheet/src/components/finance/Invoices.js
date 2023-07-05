@@ -222,7 +222,12 @@ function Invoices() {
 												/>
 											</div>
 										) : null}
-										<BsPrinterFill className="text-primary ml-5" />
+										<BsPrinterFill
+											onClick={() => {
+												navigate(
+													`/printTransaction?transactionType=invoice&action=edit&transactionId=${invoiceItem.transactionId}`
+												);
+											}} className="text-primary ml-5" />
 									</td>
 								</tr>
 							);
