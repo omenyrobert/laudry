@@ -13,6 +13,7 @@ import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
 import ButtonLoader from "../ButtonLoader";
+import { BsSearch } from "react-icons/bs";
 
 function Journal() {
 	const dispatch = useDispatch();
@@ -29,6 +30,7 @@ function Journal() {
 	const navigate = useNavigate();
 	const [journalTotal, setjournalTotal] = useState("");
 	const [journalsData, setjournalsData] = useState([]);
+	const [description, setDescription] = useState("");
 
 	const fetchjournals = async () => {
 		const res = await axiosInstance.get("/transactions/type/journal");
@@ -149,6 +151,7 @@ function Journal() {
 				accountToCredit: creditAccount && creditAccount.id,
 				amountToDebit: parseFloat(debit),
 				amountToCredit: parseFloat(debit),
+				description: description,
 			};
 
 			console.log("formData", formData);
@@ -178,6 +181,42 @@ function Journal() {
 		// }
 	};
 
+	// implement search
+	const [query, setQuery] = useState({
+		search: "",
+		startDate: NaN,
+		endDate: NaN,
+	});
+	const [searchedjournals, setSearchedjournals] = useState([]);
+
+	useEffect(() => {
+		if (
+			query.search === "" &&
+			query.filter === "" &&
+			isNaN(query.startDate) &&
+			isNaN(query.endDate)
+		) {
+			setSearchedjournals(journalsData);
+			return;
+		}
+		const filteredjournals = journalsData.filter((income) => {
+			const incomeDate = new Date(income.date);
+			const isStartDateValid = isNaN(query.startDate)
+				? true
+				: incomeDate.getTime() >= query.startDate;
+			const isEndDateValid = isNaN(query.endDate)
+				? true
+				: incomeDate.getTime() <= query.endDate;
+			const isSearchValid = income.title
+				.toLowerCase()
+				.includes(query.search.toLowerCase());
+			return (
+				isStartDateValid && isEndDateValid && isSearchValid
+			);
+		});
+		setSearchedjournals(filteredjournals);
+	}, [query, journalsData]);
+
 	return (
 		<div className="bg-white p-3 h-full">
 			<div className="flex relative">
@@ -185,15 +224,32 @@ function Journal() {
 					<p className="text-secondary text-xl font-bold">General Journal</p>
 				</div>
 				<div className="p-2 w-7/12 flex gap-4 -mt-5">
-					<InputField placeholder="Search for Income" type="date" />
-					<InputField placeholder="Search for Income" type="date" />
-
-					<InputField
-						placeholder="Search for Income"
-						type="month"
-						format="YYYY"
-					/>
-					<InputField placeholder="Search for Income" type="date" />
+					<div className="w-4/12">
+						<InputField
+							type="search"
+							placeholder="Search for Journal"
+							icon={<BsSearch className="w-3 -ml-7 mt-3" />}
+							onChange={(e) => {
+								setQuery({ ...query, search: e.target.value });
+							}}
+						/>
+					</div>
+					<div className="w-2/12 px-2">
+						<InputField
+							type="date"
+							onChange={(e) => {
+								setQuery({ ...query, startDate: e.target.valueAsNumber });
+							}}
+						/>
+					</div>
+					<div className="w-2/12">
+						<InputField
+							type="date"
+							onChange={(e) => {
+								setQuery({ ...query, endDate: e.target.valueAsNumber });
+							}}
+						/>
+					</div>
 				</div>
 				<div className="p-2 w-2/12"></div>
 				<div className="p-2 w-2/12">
@@ -270,6 +326,8 @@ function Journal() {
 					<textarea
 						className="bg-gray1 min-h-[100px] ml-5 p-5 border border-gray2 w-[95%]"
 						placeholder="Enter Description"
+						value={description}
+						onChange={(e) => setDescription(e.target.value)}
 					></textarea>
 
 					<div className="flex justify-between text-primary text-lg font-semibold p-3 bg-gray1">
@@ -293,7 +351,7 @@ function Journal() {
 				</div>
 			) : null}
 			<div className="h-[80vh] overflow-y-auto">
-				{journalsData.map((journal) => (
+				{searchedjournals.map((journal) => (
 					<div
 						key={journal.id}
 						className="p-2 bg-gray1 text-sm hover:bg-white cursor-pointer rounded-md my-2"
@@ -320,7 +378,7 @@ function Journal() {
 								<p>Amount Debited: {journal.transactionAmount} </p>
 							</div>
 							<div className="w-1/3">
-								<p>Description: fhhhhfdf</p>
+								<p>Description: {journal.description}</p>
 							</div>
 						</div>
 						<div className="flex text-gray5  mt-4">
@@ -334,7 +392,7 @@ function Journal() {
 						</div>
 					</div>
 				))}
-				<br/>
+				<br />
 			</div>
 		</div>
 	);
