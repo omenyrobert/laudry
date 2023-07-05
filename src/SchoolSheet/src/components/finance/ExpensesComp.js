@@ -152,7 +152,6 @@ function ExpensesComp() {
 
 	const [id, setId] = useState("");
 
-
 	// implement search
 	const [query, setQuery] = useState({
 		search: "",
@@ -231,14 +230,16 @@ function ExpensesComp() {
 							/>
 						</div>
 						<div className="w-3/12 px-2">
-							<Select
-								placeholder={"Filter By Type"}
-								name="filter"
-								onChange={(e) => {
-									setQuery({ ...query, filter: e.value });
-								}}
-								options={expenseTypesData}
-							/>
+							<div className="mt-5">
+								<Select
+									placeholder={"Filter By Type"}
+									name="filter"
+									onChange={(e) => {
+										setQuery({ ...query, filter: e.value });
+									}}
+									options={expenseTypesData}
+								/>
+							</div>
 						</div>{" "}
 						<div className="w-2/12 px-2">
 							<InputField

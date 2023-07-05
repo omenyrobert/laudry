@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import SettingsLinks from "./sidebarFolder/SettingsLinks";
 import {
@@ -127,6 +127,11 @@ function Sidebar() {
 		setLink14(!link14);
 	};
 
+	const [user, setUser] = useState("");
+	useEffect(() => {
+		setUser(JSON.parse(localStorage.getItem("schoolSoftUser")));
+	}, []);
+
 	return (
 		<div className="bg-white h-screen text-primary2 my-2 -mt-1 pt-5  shadow-xl">
 			<div className="flex ml-2 ">
@@ -145,8 +150,7 @@ function Sidebar() {
 				<SettingsLinks />
 
 				{/* 2. Fees */}
-
-				<FeesLinks />
+				{user?.roles?.includes("fees") ? <FeesLinks /> : null}
 
 				{/* Students */}
 
@@ -259,16 +263,10 @@ function Sidebar() {
 				{/* E-learning */}
 				<ElearningLinks />
 
-				
 				{/* voting */}
-			
-
-				
 
 				{/* Discipline */}
-				<DisciplineLinks/>
-
-				
+				<DisciplineLinks />
 			</div>
 			<div className="p-4 m-4 bg-secondary rounded-md h-48">
 				<div className="flex justify-center items-center">

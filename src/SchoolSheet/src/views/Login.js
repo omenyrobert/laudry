@@ -18,34 +18,38 @@ const Login = () => {
 	const onChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
-
+	const [loginError, setLoginError] = useState("");
 	const [isLoging, setIsLoging] = useState(false);
 	const handleLogin = async () => {
 		try {
-			setIsLoging(true)
-			const response = await axiosInstance.post('/auth/login', formData);
+			setIsLoging(true);
+			const response = await axiosInstance.post("/auth/login", formData);
 			const { data } = response;
 			const { status, payload } = data;
 			const { token, user } = payload;
 			if (status) {
-				localStorage.setItem('schoolSoftToken', token);
-				localStorage.setItem('schoolSoftUser', JSON.stringify(user))
-				setIsLoging(false)
-				navigate('/dashboard');
+				localStorage.setItem("schoolSoftToken", token);
+				localStorage.setItem("schoolSoftUser", JSON.stringify(user));
+				setIsLoging(false);
+				navigate("/dashboard");
+			} else {
+				setIsLoging(false);
+				setLoginError(payload);
+				console.log("error", payload);
 			}
 		} catch (error) {
 			console.log(error);
-			setIsLoging(false)
+			setIsLoging(false);
 		}
 	};
 	useEffect(() => {
-		const token = localStorage.getItem('schoolSoftToken');
+		const token = localStorage.getItem("schoolSoftToken");
 		if (token !== null && token !== undefined) {
-			navigate('/dashboard');
+			navigate("/dashboard");
 		}
-	}, [navigate])
+	}, [navigate]);
 	return (
-	<div className="flex overflow-hidden h-screen w-full bgdiv">
+		<div className="flex overflow-hidden h-screen w-full bgdiv">
 			<div className="w-7/12 flex justify-center items-center">
 				<div>
 					<img src="login2.png" className="w-[500px]" alt="Logo" />
@@ -61,6 +65,7 @@ const Login = () => {
 						</h1>
 					</div>
 					<p className="text-center text-primary mt-2">Sign in</p>
+					<p className="text-red m-2 text-center">{loginError}</p>
 					<InputField
 						type="email"
 						placeholder="Enter Your email"
@@ -84,19 +89,26 @@ const Login = () => {
 						</div>
 						<div>
 							<Link to="/email">
-								<p className="text-secondary font-semibold text-sm">Forgot Password?</p>
+								<p className="text-secondary font-semibold text-sm">
+									Forgot Password?
+								</p>
 							</Link>
 						</div>
 					</div>
-					<div >
-						{isLoging ? <ButtonLoader /> : <div onClick={handleLogin}> <Button value={"Login"} /> </div>}
-
-
+					<div>
+						{isLoging ? (
+							<ButtonLoader />
+						) : (
+							<div onClick={handleLogin}>
+								{" "}
+								<Button value={"Login"} />{" "}
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
 		</div>
 	);
-}
+};
 
 export default Login;

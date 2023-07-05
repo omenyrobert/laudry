@@ -43,7 +43,6 @@ function AssetsComp() {
 		setassetTypesData(assetTypes);
 	};
 
-
 	const fetchAssets = async () => {
 		const res = await axiosInstance.get("/transactions/type/asset");
 
@@ -221,14 +220,16 @@ function AssetsComp() {
 					/>
 				</div>
 				<div className="w-2/12 px-2">
-					<Select
-						placeholder={"Filter By Type"}
-						name="filter"
-						onChange={(e) => {
-							setQuery({ ...query, filter: e.value });
-						}}
-						options={assetTypesData}
-					/>
+					<div className="mt-5">
+						<Select
+							placeholder={"Filter By Type"}
+							name="filter"
+							onChange={(e) => {
+								setQuery({ ...query, filter: e.value });
+							}}
+							options={assetTypesData}
+						/>
+					</div>
 				</div>{" "}
 				<div className="w-2/12 px-2">
 					<InputField

@@ -15,7 +15,6 @@ import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
-
 function AddPayments() {
 	const { setLoading, toggleFeedback } = useFeedback();
 	const navigate = useNavigate();
@@ -127,7 +126,6 @@ function AddPayments() {
 			};
 		});
 		setpaymentTypesData(paymentTypes);
-
 	};
 
 	// delete
@@ -148,7 +146,6 @@ function AddPayments() {
 
 		fetchData();
 	}, []);
-
 
 	// implement search
 	const [query, setQuery] = useState({
@@ -229,14 +226,16 @@ function AddPayments() {
 								/>
 							</div>
 							<div className="w-3/12 px-2">
-								<Select
-									placeholder={"Filter By Type"}
-									name="filter"
-									onChange={(e) => {
-										setQuery({ ...query, filter: e.value });
-									}}
-									options={paymentTypesData}
-								/>
+								<div className="mt-5">
+									<Select
+										placeholder={"Filter By Type"}
+										name="filter"
+										onChange={(e) => {
+											setQuery({ ...query, filter: e.value });
+										}}
+										options={paymentTypesData}
+									/>
+								</div>
 							</div>{" "}
 							<div className="w-2/12 px-2">
 								<InputField
@@ -256,7 +255,12 @@ function AddPayments() {
 							</div>
 							<div
 								onClick={() => {
-									setQuery({ search: "", filter: "", startDate: NaN, endDate: NaN });
+									setQuery({
+										search: "",
+										filter: "",
+										startDate: NaN,
+										endDate: NaN,
+									});
 								}}
 								className="mt-5 ml-5"
 							>
