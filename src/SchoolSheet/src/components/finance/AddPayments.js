@@ -331,10 +331,9 @@ function AddPayments() {
 										) : null}
 										<BsPrinterFill
 											onClick={() => {
-												setQuery({ search: paymentItem.title });
-												setTimeout(() => {
-													printTable();
-												}, 1000);
+												navigate(
+													`/printTransaction?transactionType=payment&action=edit&transactionId=${paymentItem.transactionId}`
+												);
 											}}
 											className="text-primary ml-5" />
 									</td>

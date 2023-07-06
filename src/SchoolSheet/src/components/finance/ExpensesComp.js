@@ -353,13 +353,9 @@ function ExpensesComp() {
 										) : null}
 										<BsPrinterFill
 											onClick={() => {
-												setQuery({
-													search: expenseItem.title,
-
-												});
-												setTimeout(() => {
-													printTable();
-												}, 1000);
+												navigate(
+													`/printTransaction?transactionType=expense&action=edit&transactionId=${expenseItem.transactionId}`
+												);
 											}}
 											className="text-primary ml-5" />
 									</td>

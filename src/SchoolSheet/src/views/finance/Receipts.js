@@ -218,7 +218,13 @@ function Receipts() {
 											</div>
 										) : null}
 
-										<BsPrinterFill className="ml-5 text-primary" />
+										<BsPrinterFill
+											onClick={() => {
+												navigate(
+													`/printTransaction?transactionType=receipt&action=edit&transactionId=${receiptItem.transactionId}`
+												);
+											}}
+											className="ml-5 text-primary" />
 									</td>
 								</tr>
 							);
