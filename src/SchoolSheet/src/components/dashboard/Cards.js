@@ -43,7 +43,7 @@ function Cards() {
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">
-							<p className="text-gray5">Incomes</p>
+							<p className="text-gray5">Staff Members</p>
 						</div>
 					</div>
 					<div className="">
@@ -62,11 +62,11 @@ function Cards() {
 
 			{/* third card */}
 
-			<div className="w-1/4 m-2 p-2 h-32   bg-white shadow hover:bg-green11 cursor-pointer rounded-md border-b-4 border-green">
+			<div className="w-1/4 m-2 p-2 h-32    bg-white shadow hover:bg-green11 cursor-pointer rounded-md border-b-4 border-green">
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">
-							<p className="text-gray5">Expenses</p>
+							<p className="text-gray5">Fees</p>
 						</div>
 					</div>
 					<div className="">
@@ -89,7 +89,7 @@ function Cards() {
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">
-							<p className="text-gray5">Students</p>
+							<p className="text-gray5">Attendance</p>
 						</div>
 					</div>
 					<div className="">

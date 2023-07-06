@@ -6,13 +6,14 @@ import InputField from "../InputField";
 
 import ButtonSecondary from "../ButtonSecondary";
 import Swal from "sweetalert2";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import withReactContent from "sweetalert2-react-content";
 import { useDispatch, useSelector } from "react-redux";
 import { getTerms } from "../../store/schoolSheetSlices/schoolStore";
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../ButtonLoader";
-import Loader from "../Loader"
+import Loader from "../Loader";
+import Loader2 from "../Loader2";
 
 const Terms = () => {
 	const dispatch = useDispatch();
@@ -38,21 +39,22 @@ const Terms = () => {
 	};
 	const { terms } = useSelector((state) => state.schoolStore);
 
-
 	// update terms
 	const updateTerm = async () => {
 		try {
+			setSelecting(true);
 			let formData = {
 				term: editTerm,
 				from: fromEdit,
 				to: toEdit,
 				selected: activeTerm ? 1 : 0,
-				termId: termId
+				termId: termId,
 			};
 			const response = await axiosInstance.patch("/terms", formData);
 			const { data } = response;
 			const { status } = data;
 			if (status) {
+				setSelecting(false);
 				dispatch(getTerms());
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
@@ -62,11 +64,16 @@ const Terms = () => {
 				});
 				closeShowUpdate();
 				setActiveTerm(false);
-				navigate(0);
+				// navigate(0);
+				setSelectId("");
 			}
 		} catch (error) {
 			console.log(error);
+			setSelectId("");
+			setSelecting(false);
 		}
+		setSelectId("");
+		setSelecting(false);
 	};
 
 	// delete terms
@@ -140,15 +147,19 @@ const Terms = () => {
 			setIsPosting(false);
 		}
 	};
+	const [selecting, setSelecting] = useState(false);
+	const [selectId, setSelectId] = useState("");
 
 	const selectTerm = (termItem) => {
+		setSelectId(termItem.id);
+		setSelecting(true);
 		setActiveTerm(true);
 		setEditTerm(termItem.term);
 		setFromEdit(termItem.from);
 		setToEdit(termItem.to);
 		setTermId(termItem.id);
 		updateTerm();
-	}
+	};
 
 	// fetching terms
 	useEffect(() => {
@@ -246,32 +257,68 @@ const Terms = () => {
 					""
 				)}
 				{/* edit div end */}
-				<div className="h-52 overflow-y-auto">
-					{terms &&
-						terms.map((termItem) => (
-							<div
-								key={termItem.id}
-								className="flex border-b border-gray2 text-xs  hover:bg-gray1 cursor-pointer"
-							>
-								<div className={termItem.is_selected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.term}</div>
-								<div className={termItem.is_selected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.from}</div>
-								<div className={termItem.is_selected === 1 ? "bg-primary text-white w-2/3 p-2" : "w-2/3 p-2 text-gray5"}>{termItem.to}</div>
-								<div className="w-1/3 p-2 flex">
-									<MdDeleteOutline
-										onClick={() => deleteTerm(termItem)}
-										className="text-red w-4 h-4 ml-5"
-									/>
+				{terms.length === 0 ? (
+					<Loader />
+				) : (
+					<div className="h-52 overflow-y-auto">
+						{terms &&
+							terms.map((termItem) => (
+								<div
+									key={termItem.id}
+									className="flex border-b border-gray2 text-xs  hover:bg-gray1 cursor-pointer"
+								>
+									<div
+										className={
+											termItem.is_selected === 1
+												? "bg-primary text-white w-2/3 p-2"
+												: "w-2/3 p-2 text-gray5"
+										}
+									>
+										{termItem.term}
+									</div>
+									<div
+										className={
+											termItem.is_selected === 1
+												? "bg-primary text-white w-2/3 p-2"
+												: "w-2/3 p-2 text-gray5"
+										}
+									>
+										{termItem.from}
+									</div>
+									<div
+										className={
+											termItem.is_selected === 1
+												? "bg-primary text-white w-2/3 p-2"
+												: "w-2/3 p-2 text-gray5"
+										}
+									>
+										{termItem.to}
+									</div>
+									<div className="w-1/3 p-2 flex">
+										<MdDeleteOutline
+											onClick={() => deleteTerm(termItem)}
+											className="text-red w-4 h-4 ml-5"
+										/>
 
-									<BsPencilSquare
-										onClick={() => openShowUpdate(termItem)}
-										className="text-warning h-4 w-4 ml-5"
-									/>
-									<p className="text-primary ml-5" onClick={() => selectTerm(termItem)}>Select</p>
+										<BsPencilSquare
+											onClick={() => openShowUpdate(termItem)}
+											className="text-warning h-4 w-4 ml-5"
+										/>
+										{selecting && selectId === termId.id ? (
+											<Loader2 />
+										) : (
+											<p
+												className="text-primary ml-5"
+												onClick={() => selectTerm(termItem)}
+											>
+												Select
+											</p>
+										)}
+									</div>
 								</div>
-							</div>
-						))}
-						<Loader/>
-				</div>
+							))}
+					</div>
+				)}
 			</div>
 		</div>
 	);
