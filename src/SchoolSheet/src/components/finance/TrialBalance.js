@@ -97,7 +97,7 @@ function TrialBalance() {
 
 	return (
 		<>
-			<div className="bg-white p-3  mt-2 border border-gray2 shadow rounded overflow-y-auto">
+			<div className="bg-white p-3  mt-2 border border-gray2 shadow rounded">
 				<div className="flex justify-between">
 					<div>
 						<p className="text-secondary text-xl font-bold">Trial Balance </p>
@@ -118,7 +118,7 @@ function TrialBalance() {
 					</div>
 				</div>
 
-				<div className="h-[80vh] overflow-y-auto">
+				<div className="h-[70vh] overflow-y-auto">
 					<div id="trial-balance-table" className="">
 						<div className="flex bg-primary text-white mt-5">
 							<div className="border border-gray1 p-3  w-3/5">Accounts</div>

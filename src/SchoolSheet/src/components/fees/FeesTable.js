@@ -74,7 +74,7 @@ const FeesTable = (props) => {
 					if (method === "Mobile Money") {
 						closeMobile();
 					}
-					navigate(0);
+					// navigate(0);
 				} else {
 					MySwal.fire({
 						icon: "error",
@@ -331,11 +331,22 @@ const FeesTable = (props) => {
 								onChange={onChangeCash}
 								value={cashForm.contact}
 							/>
-							<div
-								className="w-40 mb-5 float-right"
-								onClick={(event) => postPayment(event, cashForm, "Cash")}
-							>
-								<Button value={"Add Payment"} />
+						</div>
+						<div className="flex justify-between mb-3 mr-3">
+							<div></div>
+							<div>
+								{posting ? (
+									<div className="w-40">
+										<ButtonLoader />
+									</div>
+								) : (
+									<div
+										className="w-40 mb-5 float-right"
+										onClick={(event) => postPayment(event, cashForm, "Cash")}
+									>
+										<Button value={"Add Payment"} />
+									</div>
+								)}
 							</div>
 						</div>
 					</div>
@@ -413,19 +424,29 @@ const FeesTable = (props) => {
 									onChange={onChangeBankSlip}
 									value={bankSlipForm.contact}
 								/>
-								<div
-									className="w-40 float-right mb-5"
-									onClick={(event) =>
-										postPayment(event, bankSlipForm, "Bank Slip")
-									}
-								>
-									<Button value={"Add Payment"} />
-								</div>
 							</div>
 
 							<br />
 						</div>
-						<br />
+						<div className="flex justify-between mb-3 mr-3">
+							<div></div>
+							<div>
+								{posting ? (
+									<div className="w-40">
+										<ButtonLoader />
+									</div>
+								) : (
+									<div
+										className="w-40 float-right mb-5"
+										onClick={(event) =>
+											postPayment(event, bankSlipForm, "Bank Slip")
+										}
+									>
+										<Button value={"Add Payment"} />
+									</div>
+								)}
+							</div>
+						</div>
 					</div>
 				) : null}
 				{bank ? (
@@ -502,17 +523,28 @@ const FeesTable = (props) => {
 									onChange={onChangeBank}
 									value={bankForm.contact}
 								/>
-								<div
-									className="w-40 float-right mb-5"
-									onClick={(event) =>
-										postPayment(event, bankForm, "Bank Transfer")
-									}
-								>
-									<Button value={"Add Payment"} />
-								</div>
 							</div>
 
 							<br />
+						</div>
+						<div className="flex justify-between mb-3 mr-3">
+							<div></div>
+							<div>
+								{posting ? (
+									<div className="w-40">
+										<ButtonLoader />
+									</div>
+								) : (
+									<div
+										className="w-40"
+										onClick={(event) =>
+											postPayment(event, bankForm, "Bank Transfer")
+										}
+									>
+										<Button value={"Add Payment"} />
+									</div>
+								)}
+							</div>
 						</div>
 					</div>
 				) : null}
@@ -680,12 +712,25 @@ const FeesTable = (props) => {
 									onChange={onChangeCheque}
 									value={chequeForm.contact}
 								/>
-								<div
-									className="w-40 float-right mb-5"
-									onClick={(event) => postPayment(event, chequeForm, "Cheque")}
-								>
-									<Button value={"Add Payment"} />
-								</div>
+							</div>
+						</div>
+						<div className="flex justify-between mb-3 mr-3">
+							<div></div>
+							<div>
+								{posting ? (
+									<div className="w-40">
+										<ButtonLoader />
+									</div>
+								) : (
+									<div
+										className="w-40"
+										onClick={(event) =>
+											postPayment(event, chequeForm, "Cheque")
+										}
+									>
+										<Button value={"Add Payment"} />
+									</div>
+								)}
 							</div>
 						</div>
 					</div>
@@ -723,7 +768,7 @@ const FeesTable = (props) => {
                                             790,000
                                         </div> */}
 									<div className="w-1/4 truncate p-2">
-										{student?.amount_paid}
+										{Number(student?.amount_paid).toLocaleString()}
 									</div>
 									{/* <div className='w-1/4 truncate p-2'>
                                             550,000
@@ -784,15 +829,15 @@ const FeesTable = (props) => {
 							<td className="text-xs p-3 text-gray5">
 								{student.fees?.map((f, i) => {
 									return i === student?.fees.length - 1 ? (
-										<span>{f.amount}</span>
+										<span>{Number(f.amount).toLocaleString()}</span>
 									) : null;
 								})}
 							</td>
 							<td className="text-xs p-3 text-gray5">
-								{JSON.parse(student.feesBalance).amount}
+								{Number(JSON.parse(student.feesBalance).amount).toLocaleString()}
 							</td>
 							<td className="text-xs p-3 text-gray5">
-								{JSON.parse(student?.feesBalance).balance}
+								{Number(JSON.parse(student?.feesBalance).balance).toLocaleString()}
 							</td>
 							<td className="text-xs p-3  flex">
 								<p className="bg-primary3 p-2 rounded-md text-primary2 hoverbtn">
