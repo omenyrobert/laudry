@@ -57,6 +57,11 @@ export class Transaction extends BaseEntity  {
   @Column({
     nullable: true
   })
+  invoice!: string;
+
+  @Column({
+    nullable: true
+  })
   transactionType!: string;
 
 
@@ -98,9 +103,63 @@ export class Transaction extends BaseEntity  {
   )
   credit!: number;
 
+  @Column({
+    nullable: true
+  })
+  receipt_number!: string;
+
+  @OneToMany(() => Item, item => item.transaction, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+    nullable: true,
+    eager: true,
+  })
+  items!: Item[];
+
+  @Column({
+    nullable: true
+  })
+  status!: string;
+
+
+  @Column({
+    nullable: true
+  })
+  invoice_balance!: number;
 
 
 }
+
+
+@Entity()
+export class Item extends BaseEntity  {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column()
+  name!: string;
+
+  @Column()
+  price!: number;
+
+  @Column()
+  quantity!: number;
+
+  @ManyToOne(() => Transaction, transaction => transaction.items, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+    nullable: true,
+    //eager: true,
+  })
+  transaction!: Transaction;
+
+}
+
+
+
+
+
+
 
 
 function generateTransactionID() {
@@ -130,6 +189,18 @@ export const deleteTransaction = async (id: number) => {
   return transaction;
 }
 
+type ItemType = {
+  name: string,
+  price: number,
+  quantity: number,
+}
+
+const generateRandomReceiptNumber = () => {
+  const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e8);
+  const receiptNumber = "RPT-"+ uniqueSuffix
+  return receiptNumber
+}
+
 export const createTransaction = async (
   transID: string,
   title: string,
@@ -144,7 +215,10 @@ export const createTransaction = async (
   contacts: string | null = null,
   file: string | null = null,
   receipt: string | null = null,
+  invoice: string | null = null,
   transactionTypeID: number | null = null,
+  items: ItemType[] | null = null,
+  status: string | null = null,
 ) => {
   let transactionType : TransactionType | null = null;
   if (transactionTypeID) {
@@ -196,7 +270,43 @@ export const createTransaction = async (
     transaction.receipt = receipt;
   }
 
+  if (invoice) {
+    transaction.invoice = invoice;
+  }
+
+  
+  
+
+  if (transactionCategory === "invoice" || transactionCategory === "receipt") {
+    transaction.receipt_number = generateRandomReceiptNumber();
+  }
+
+  if (status) {
+    transaction.status = status;
+  }
+
+
   await transaction.save();
+
+
+    if (items) {
+      let invoice_balance = 0;
+      for (const item of items) {
+        const newItem = new Item();
+        newItem.name = item.name;
+        newItem.price = item.price;
+        newItem.quantity = item.quantity;
+        newItem.transaction = transaction;
+        await newItem.save();
+        invoice_balance += item.price * item.quantity;
+      }
+      transaction.invoice_balance = invoice_balance;
+      await transaction.save();
+    }
+
+
+
+
   return transaction;
 }
 
@@ -219,7 +329,10 @@ export const createTransactionDoubleEntry = async (
   contacts: string | null = null,
   file: string | null = null,
   receipt: string | null = null,
+  invoice: string | null = null,
   transactionTypeID: number | null = null,
+  items: ItemType[] | null = null,
+  status: string | null = null,
 ) => {
   // Get Accounts
   const accountToDebitEntity = await Account.findOne({
@@ -276,7 +389,10 @@ export const createTransactionDoubleEntry = async (
     contacts,
     file,
     receipt,
+    invoice,
     transactionTypeID,
+    items,
+    status,
   )
 
   // Create Credit Transaction
@@ -294,7 +410,10 @@ export const createTransactionDoubleEntry = async (
     contacts,
     file,
     receipt,
+    invoice,
     transactionTypeID,
+    items,
+    status,
   );
 
   // Update Accounts
@@ -334,7 +453,10 @@ export const updateTransaction = async (
   contacts: string | null = null,
   file: string | null = null,
   receipt: string | null = null,
+  invoice: string | null = null,
   transactionTypeID: number | null = null,
+  items: ItemType[] | null = null,
+  status: string | null = null,
 ) => {
   const transaction = await Transaction.findOne(
     {where: {id: id}}
@@ -391,6 +513,30 @@ export const updateTransaction = async (
     transaction.receipt = receipt;
   }
 
+  if (invoice) {
+    transaction.invoice = invoice;
+  }
+
+  if (items) {
+    let invoice_balance = 0;
+    for (const item of items) {
+      const newItem = new Item();
+      newItem.name = item.name;
+      newItem.price = item.price;
+      newItem.quantity = item.quantity;
+      newItem.transaction = transaction;
+      await newItem.save();
+      invoice_balance += item.price * item.quantity;
+    }
+    transaction.invoice_balance = invoice_balance;
+  }
+
+
+  if (status) {
+    transaction.status = status;
+  }
+
+
   await transaction.save();
   return transaction;
 }
@@ -409,7 +555,10 @@ export const updateTransactionDoubleEntry = async (
   contacts: string | null = null,
   file: string | null = null,
   receipt: string | null = null,
+  invoice: string | null = null,
   transactionTypeID: number | null = null,
+  items: ItemType[] | null = null,
+  status: string | null = null,
 ) => {
   
 
@@ -527,7 +676,10 @@ export const updateTransactionDoubleEntry = async (
     contacts,
     file,
     receipt,
+    invoice,
     transactionTypeID,
+    items,
+    status,
   )
 
   // Update credit transaction
@@ -545,7 +697,10 @@ export const updateTransactionDoubleEntry = async (
     contacts,
     file,
     receipt,
+    invoice,
     transactionTypeID,
+    items,
+    status,
   )
 
   return {
