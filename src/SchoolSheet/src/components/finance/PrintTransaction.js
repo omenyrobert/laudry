@@ -178,6 +178,10 @@ function PrintTransaction() {
 				...debitTransaction.subType,
 			});
 		}
+		console.log(debitTransaction);
+		if (debitTransaction.items) {
+			setItems(debitTransaction.items);
+		}
 	};
 
 	useEffect(() => {
@@ -199,155 +203,11 @@ function PrintTransaction() {
 		fetchData();
 	}, []);
 
-	const handleTypeChange = (type) => {
-		setSelectedTransactionType(type);
-		const subTypes = transactionSubTypes.filter(
-			(subType) => subType.type === type.value
-		);
-		setSubTypesOptions(subTypes);
-		setSelectedTransactionSubType(null);
-	};
-
-	const postFormData = async () => {
-		setFormLoading(true);
-		const formData = new FormData();
-		formData.append("title", title);
-		formData.append("contacts", contacts);
-		formData.append("description", description);
-		formData.append("receipt", receipt);
-		formData.append("receivedBy", recievedBy);
-		formData.append("file", file);
-		formData.append(
-			"transactionCategory",
-			transactionType ? transactionType : selectedTransactionType.type
-		);
-		formData.append(
-			"transactionTypeID",
-			selectedTransactionSubType
-				? parseInt(selectedTransactionSubType.id)
-				: null
-		);
-		formData.append("accountToDebit", accountToDebit.id);
-		formData.append("accountToCredit", accountToCredit.id);
-		formData.append("amount", amount);
-
-		const response = await axiosInstance.post(`/transactions`, formData, {
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-		});
-		const { status, payload } = response.data;
-		if (status === false) {
-			setFormLoading(false);
-			setTimeout(() => {
-				toggleFeedback("error", { title: "Error", text: payload });
-				setTimeout(() => {
-					navigate(-1);
-				}, 500);
-			}, 500);
-			return;
-		}
-		setFormLoading(false);
-		setTimeout(() => {
-			toggleFeedback("success", {
-				title: "Success",
-				text: "Transaaction SuccessFully created",
-			});
-		}, 500);
-	};
-
-	const validateForm = () => {
-		if (!title) {
-			toggleFeedback("error", { title: "Error", text: "Title is required" });
-			return false;
-		}
-		if (!contacts) {
-			toggleFeedback("error", { title: "Error", text: "Contacts is required" });
-			return false;
-		}
-		if (!description) {
-			toggleFeedback("error", {
-				title: "Error",
-				text: "Description is required",
-			});
-			return false;
-		}
-		if (!recievedBy) {
-			toggleFeedback("error", {
-				title: "Error",
-				text: "Recieved By is required",
-			});
-			return false;
-		}
-		if (!transactionType) {
-			if (!selectedTransactionType) {
-				toggleFeedback("error", {
-					title: "Error",
-					text: "Transaction Type is required",
-				});
-				return false;
-			}
-		}
-
-		// Check debit account
-		if (!accountToDebit) {
-			toggleFeedback("error", {
-				title: "Error",
-				text: "Debit Account is required",
-			});
-			return false;
-		}
-
-		// Check credit account
-		if (!accountToCredit) {
-			toggleFeedback("error", {
-				title: "Error",
-				text: "Credit Account is required",
-			});
-			return false;
-		}
-
-		if (!amount) {
-			toggleFeedback("error", { title: "Error", text: "Amount is required" });
-			return false;
-		}
-
-		// check if credit account and debit account are the same
-		if (accountToCredit.id === accountToDebit.id) {
-			toggleFeedback("error", {
-				title: "Error",
-				text: "Credit Account and Debit Account cannot be the same",
-			});
-			return false;
-		}
-
-		return true;
-	};
 
 	// items
 	const [items, setItems] = useState([]);
 
-	const [item, setItem] = useState("");
-	const [qty, setQty] = useState("");
-	const [unitCost, setUnitCost] = useState("");
 
-	const addItem = () => {
-		if (item && qty && unitCost) {
-			let itemObj = {
-				item: item,
-				qty: qty,
-				unitCost: unitCost,
-			};
-			// const newArray = [];
-			items.push(itemObj);
-			// setItems(newArray);
-			setItem("");
-			setQty("");
-			setUnitCost("");
-		}
-	};
-
-	const deleteItem = () => {};
 
 	return (
 		<>
@@ -473,16 +333,16 @@ function PrintTransaction() {
 									className=" flex border-b border-gray2 hover:bg-gray1"
 								>
 									<div className="w-1/4 p-2 text-sm text-gray5">
-										{item?.item}
+										{item?.name}
 									</div>
 									<div className="w-1/4 p-2 text-sm text-gray5">
-										{Number(item?.qty).toLocaleString()}
+										{Number(item?.quantity).toLocaleString()}
 									</div>
 									<div className="w-1/4 p-2 text-sm text-gray5">
-										{Number(item?.unitCost).toLocaleString()}
+										{Number(item?.price).toLocaleString()}
 									</div>
 									<div className="w-1/4 p-2 text-sm text-gray5">
-										{Number(item?.qty * item?.unitCost).toLocaleString()}
+										{Number(item?.quantity * item?.price).toLocaleString()}
 									</div>
 								</div>
 							);
