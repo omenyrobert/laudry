@@ -27,20 +27,6 @@ export const createNewToken = async (
     token: token,
     code: code,
   });
-  const mailOptions = {
-    from: process.env.MAIL_USER,
-    to: email,
-    subject: "Password Reset Code",
-    html: `Hello  your  password reset code is <p><b>${code}</b></p>`,
-  };
-  const mailTransport = mailTransporter(
-    process.env.MAIL_USER,
-    process.env.MAIL_PASSWORD
-  );
-  mailTransport
-    .sendMail(mailOptions)
-    .then(() => {})
-    .catch((error) => console.log(error));
   return createToken;
 };
 

@@ -5,7 +5,7 @@ import {
   customPayloadResponse,
   randomStringGenerator,
   hashPassword,
-  mailTransporter,
+  sendingMail,
 } from "../Helpers/Helpers";
 
 import {
@@ -17,7 +17,7 @@ import {
   updateMember,
   updatePassword,
   updateProfile,
-  updateProfilePicture
+  updateProfilePicture,
 } from "../Entities/Staff";
 
 export const fetchMembers = async (req: Request, res: Response) => {
@@ -31,7 +31,8 @@ export const fetchMembers = async (req: Request, res: Response) => {
 
 export const createStaffMember = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, email, middleName, staffType, roles } = req.body;
+    const { firstName, lastName, email, middleName, staffType, roles } =
+      req.body;
     if (!firstName) {
       return res
         .json(customPayloadResponse(false, "First Name Required"))
@@ -76,22 +77,22 @@ export const createStaffMember = async (req: Request, res: Response) => {
 
     if (insertMember) {
       const mailOptions = {
-        from: process.env.MAIL_USER,
         to: email,
         subject: "Temporary Password",
-        html: `Hello ${firstName} your temporary password is <p><b>${password}</b></p>`,
+        template: "Email",
+        context: {
+          body:
+            "Hey " +
+            firstName +
+            " " +
+            middleName +
+            " " +
+            lastName +
+            ", Below is your temporary password.",
+          data: password,
+        },
       };
-
-      const mailTransport = mailTransporter(
-        process.env.MAIL_USER,
-        process.env.MAIL_PASSWORD
-      );
-
-      mailTransport
-        .sendMail(mailOptions)
-        .then(() => {})
-        .catch((error) => console.log(error));
-
+      sendingMail(mailOptions);
       return res
         .json(customPayloadResponse(true, "Member Added"))
         .status(200)
@@ -251,7 +252,6 @@ export const passwordUpdate = async (req: Request, res: Response) => {
   }
 };
 
-
 export const fetchStaffById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -273,25 +273,24 @@ export const fetchStaffById = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
   }
-}
-
+};
 
 export const updateStaffProfile = async (req: Request, res: Response) => {
   try {
-    const { 
-      first_name, 
-      middle_name, 
+    const {
+      first_name,
+      middle_name,
       last_name,
-      email, 
+      email,
       gender,
       address,
       phone_number,
       date_of_birth,
       marital_status,
       nationality,
-      staff_type
+      staff_type,
     } = req.body;
-    const {id} = req.params
+    const { id } = req.params;
 
     if (!id) {
       return res
@@ -313,24 +312,29 @@ export const updateStaffProfile = async (req: Request, res: Response) => {
       gender,
       marital_status,
       nationality
-    )
+    );
 
     if (staff) {
-      return res.json(customPayloadResponse(true, "Profile Updated")).status(200).end();
+      return res
+        .json(customPayloadResponse(true, "Profile Updated"))
+        .status(200)
+        .end();
     }
     return res
       .json(customPayloadResponse(false, "Staff Member not Found"))
       .status(200)
       .end();
-
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-export const updateStaffProfilePicture = async (req: Request, res: Response) => {
+export const updateStaffProfilePicture = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const {id} = req.params
+    const { id } = req.params;
     console.log("Uploading files");
 
     if (!req.file) {
@@ -339,7 +343,6 @@ export const updateStaffProfilePicture = async (req: Request, res: Response) => 
         .status(200)
         .end();
     }
-    
 
     if (!id) {
       return res
@@ -348,7 +351,6 @@ export const updateStaffProfilePicture = async (req: Request, res: Response) => 
         .end();
     }
 
-    
     if (!req.file) {
       return res
         .json(customPayloadResponse(false, "Profile Picture Required"))
@@ -356,27 +358,21 @@ export const updateStaffProfilePicture = async (req: Request, res: Response) => 
         .end();
     }
 
-    const photo = req.file.filename
+    const photo = req.file.filename;
 
-
-
-    
-    
-
-    const staff = await updateProfilePicture(
-      parseInt(id),
-      photo
-    )
+    const staff = await updateProfilePicture(parseInt(id), photo);
 
     if (staff) {
-      return res.json(customPayloadResponse(true, "Profile Picture Updated")).status(200).end();
+      return res
+        .json(customPayloadResponse(true, "Profile Picture Updated"))
+        .status(200)
+        .end();
     }
     return res
       .json(customPayloadResponse(false, "Staff Member not Found"))
       .status(200)
-      .end(); 
-
+      .end();
   } catch (error) {
     console.log(error);
   }
-}
+};

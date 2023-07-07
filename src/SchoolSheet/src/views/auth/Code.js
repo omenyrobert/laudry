@@ -53,7 +53,7 @@ const Code = () => {
                     <InputField
                         type="text"
                         placeholder="Enter Your Code"
-                        label="Email"
+                        label="Code"
                         name="code"
                         icon={<MdAlternateEmail className="w-10 mt-3" />}
                         onChange={onChange}

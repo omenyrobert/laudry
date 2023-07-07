@@ -79,7 +79,7 @@ const StaffComp = () => {
 												{staff.address}
 											</td>
 											<td className="text-xs p-3 text-gray5">
-												{staff?.staff_type.type}
+												{staff?.staff_type?.type}
 											</td>
 
 											<td colSpan="3" className="text-xs p-3 text-gray5 flex">

@@ -1,6 +1,10 @@
 import { hash, compare } from "bcrypt";
 import { sign, verify, decode } from "jsonwebtoken";
 import { createTransport } from "nodemailer";
+import { join } from "path";
+
+//handlebars
+const hbs = require("nodemailer-express-handlebars");
 
 export const customPayloadResponse = (
   status: boolean,
@@ -79,17 +83,30 @@ export const setTokenExpiryToZero = (decodedToken: any) => {
   return modifiedPayload;
 };
 
+//mail configs
 export const mailTransporter = (email: any, password: any) => {
   const transporter = createTransport({
     host: "smtp.gmail.com",
     port: 465,
-    secure: false,
+    secure: true,
     service: "gmail",
     auth: {
       user: email,
       pass: password,
     },
   });
+  transporter.use(
+    "compile",
+    hbs({
+      viewEngine: {
+        extName: ".handlebars",
+        defaultLayout: false,
+        partialsDir: join(__dirname, "..", "Views/"),
+      },
+      viewPath: join(__dirname, "..", "Views/"),
+      extName: ".handlebars",
+    })
+  );
   return transporter;
 };
 
@@ -101,4 +118,17 @@ export const extraLatestArrayIndex = (array: any) => {
     }
   }
   return lastIndexItem;
+};
+
+//sending emails
+export const sendingMail = (options: object) => {
+  let new_options = { ...options, from: process.env.MAIL_USER };
+  const mailTransport = mailTransporter(
+    process.env.MAIL_USER,
+    process.env.MAIL_PASSWORD
+  );
+  mailTransport
+    .sendMail(new_options)
+    .then(() => console.log("Message sent!!"))
+    .catch((err) => console.log(err));
 };

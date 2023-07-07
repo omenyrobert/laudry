@@ -16,6 +16,7 @@ import {
   setTokenExpiryToZero,
   invalidateToken,
   randomStringGenerator,
+  sendingMail,
 } from "../Helpers/Helpers";
 
 export const handleLogin = async (req: Request, res: Response) => {
@@ -128,26 +129,39 @@ export const passwordResetRequest = async (req: Request, res: Response) => {
         .json(customPayloadResponse(false, "Email Does Not Exist"))
         .status(200)
         .end();
-    }
-
-    const findToken = await findByEmail(email);
-
-    if (findToken) {
-      await deleteToken(findToken.id);
-
-      await createNewToken(email, resetToken, code);
-
-      return res
-        .json(customPayloadResponse(true, { email: email, token: resetToken }))
-        .status(200)
-        .end();
     } else {
-      await createNewToken(email, resetToken, code);
+      const findToken = await findByEmail(email);
 
-      return res
-        .json(customPayloadResponse(true, { email: email, token: resetToken }))
-        .status(200)
-        .end();
+      if (findToken) {
+        await deleteToken(findToken.id);
+      }
+      const createToken = await createNewToken(email, resetToken, code);
+
+      if (createToken) {
+        const mailOptions = {
+          to: email,
+          subject: "Password Reset Code",
+          template: "Email",
+          context: {
+            body:
+              "Hey " +
+              user.first_name +
+              " " +
+              user.middle_name +
+              " " +
+              user.last_name +
+              ", Below is the code for password reset.",
+            data: code,
+          },
+        };
+        sendingMail(mailOptions);
+        return res
+          .json(
+            customPayloadResponse(true, { email: email, token: resetToken })
+          )
+          .status(200)
+          .end();
+      }
     }
   } catch (error) {
     console.log(error);
