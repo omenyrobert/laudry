@@ -8,13 +8,13 @@ import ClassesComp from "../../components/settings/ClassesComp";
 function ClassesStreams() {
 	return (
 		<div className="w-full">
-			<div className="p-5 h-screen overflow-y-auto mt-2 w-full">
+			<div className="p-5 h-screen  mt-2 w-full">
 				
 				<div className="flex mt-5">
-					<div className="w-1/3 border-r-2 border-gray1 mr-5 h-[90vh] overflow-y-auto">
+					<div className="w-1/3 border-r-2 border-gray1 mr-5">
 						<StreamsComp />
 					</div>
-					<div className="w-2/3 h-[90vh] overflow-y-auto">
+					<div className="w-2/3 h-[90vh]">
 						<ClassesComp />
 					</div>
 				</div>

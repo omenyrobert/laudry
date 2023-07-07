@@ -24,7 +24,7 @@ function Assessment() {
 	const [term, setTerm] = useState(null);
 	const [stream, setStream] = useState("");
 
-	const { examTypes, subjects, students, terms, assessmentsByTerm  } = useSelector((state) => state.schoolStore);
+	const { examTypes, subjects, students, terms, assessmentsByTerm } = useSelector((state) => state.schoolStore);
 
 	const openAdd = (student) => {
 		const { streams } = student;
@@ -34,7 +34,7 @@ function Assessment() {
 		setSelectedSubject(student.selectedSubject);
 		setStream(streams && streams.length > 0 ? streams[0].stream : "");
 	};
-	  
+
 	const closeAdd = () => {
 		setAdd(false);
 	};
@@ -78,22 +78,22 @@ function Assessment() {
 	useEffect(() => {
 		if (assessmentsByTerm) {
 			const updatedAssessments = assessmentsByTerm.map((assessment) => {
-				const matchingExamType = 
-				examTypes.find((examType) => examType.id === parseFloat(assessment.examType));
+				const matchingExamType =
+					examTypes.find((examType) => examType.id === parseFloat(assessment.examType));
 				if (matchingExamType) {
-				  return {
-					...assessment,
-					examType: matchingExamType.examType,
-				  };
+					return {
+						...assessment,
+						examType: matchingExamType.examType,
+					};
 				}
 				return assessment;
-			  });
+			});
 			const data = updatedAssessments.filter((assessment) => {
 				return assessment.studentId === studentId.toString()
 			});
 			setAssessAll(assessSubjects(data));
 			const studentAssessment = data.filter(
-				(assessment) => { 
+				(assessment) => {
 					return assessment.subject === selectedSubject
 				});
 			setAssessData(studentAssessment);
@@ -114,16 +114,34 @@ function Assessment() {
 
 	// set Term
 	useEffect(() => {
-		const _term = terms.length > 0 && 
+		const _term = terms.length > 0 &&
 			terms.filter(term => term.is_selected === 1)[0];
 		setTerm(_term);
 	}, [terms]);
-	
+
 	useEffect(() => {
 		if (term && term.id) {
 			dispatch(getAssessmentsByTerm(term.id));
 		}
 	}, [dispatch, term]);
+
+	// implement search
+	const [search, setSearch] = useState("");
+	const [searchedData, setSearchedData] = useState([]);
+
+	useEffect(() => {
+		if (search === "" || search === null) {
+			setSearchedData(studentData);
+			return;
+		}
+		const data = studentData.filter((student) => {
+			const fullName = `${student.firstName} ${student.middleName} ${student.lastName}`;
+			return fullName.toLowerCase().includes(search.toLowerCase());
+		});
+		setSearchedData(data);
+	}, [search, studentData])
+
+
 
 	return (
 		<div>
@@ -141,6 +159,8 @@ function Assessment() {
 					<div className="bg-white p-3 overflow-y-auto h-[83vh]">
 						<InputField
 							placeholder="Search student..."
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
 							icon={<BsSearch className="mt-3 mr-4" />}
 						/>
 						<table className="mt-4 w-full table-auto">
@@ -152,7 +172,7 @@ function Assessment() {
 								<th className="p-2 text-primary text-sm text-left">Action</th>
 							</thead>
 							<tbody>
-								{studentData.length > 0 && studentData.map((student) => {
+								{searchedData?.length > 0 && searchedData?.map((student) => {
 									const { classes } = student;
 									return (
 										<tr
@@ -185,14 +205,14 @@ function Assessment() {
 													Assess
 												</p>
 												<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 -mt-5 z-50">
-													
+
 													{subjects && subjects.length > 0 && subjects.map((subject) => {
 														return (
-														<div className="p-2 hover:bg-gray1"
-															onClick={() => openAdd({...student, selectedSubject: subject.subject})} 
-														>
-															{subject.subject} 
-														</div>);
+															<div className="p-2 hover:bg-gray1"
+																onClick={() => openAdd({ ...student, selectedSubject: subject.subject })}
+															>
+																{subject.subject}
+															</div>);
 													})}
 												</div>
 											</td>
@@ -204,7 +224,7 @@ function Assessment() {
 					</div>
 				</div>
 				<div className="w-8/12 ml-5">
-					
+
 					{add ? (
 						<AssessmentForm
 							closeAdd={closeAdd}

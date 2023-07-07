@@ -493,8 +493,6 @@ function PayRoll() {
 	}, [formTaxes, formGrossSalary, formDeductions]);
 
 	const updateEmployeePay = () => {
-
-
 		let data = {
 			gross_salary: formGrossSalary,
 			taxes: [...formTaxes],
@@ -561,7 +559,6 @@ function PayRoll() {
 		}
 	};
 
-
 	const [printing, setPrinting] = useState(false);
 	const [printData, setPrintData] = useState(null);
 
@@ -572,44 +569,40 @@ function PayRoll() {
 
 	useEffect(() => {
 		if (printing && printData) {
-			const documentWindow = window.open("", "PRINT", "height=600,width=1000")
+			const documentWindow = window.open("", "PRINT", "height=600,width=1000");
 			const content = document.getElementById("payslip-pdf").outerHTML;
 
-			documentWindow.document.write(
-				content
-			);
+			documentWindow.document.write(content);
 			// Get All stylesheets
 			const stylesheets = document.querySelectorAll("link");
 			// Append them to the head of the new window
 			stylesheets.forEach((stylesheet) => {
-				documentWindow.document.write(stylesheet.outerHTML)
+				documentWindow.document.write(stylesheet.outerHTML);
 			});
-			// Get all style tags 
+			// Get all style tags
 			const styleTags = document.querySelectorAll("style");
 			// Append them to the head of the new window
 			styleTags.forEach((styleTag) => {
-				documentWindow.document.write(styleTag.outerHTML)
-			})
+				documentWindow.document.write(styleTag.outerHTML);
+			});
 
 			setTimeout(() => {
 				documentWindow.print();
 				setPrinting(false);
 				setPrintData(null);
 			}, 1000);
-
-
 		}
 	}, [printing, printData]);
 
 	return (
 		<div className="w-full">
-
-			<div style={{
-				display: 'none',
-			}}>
+			<div
+				style={{
+					display: "none",
+				}}
+			>
 				<PaySlipPDF payslip={printData} />
 			</div>
-
 
 			<div className="h-screen mt-2">
 				<div className="flex bg-white p-3 justify-between shadow-lg rounded-md">
@@ -776,7 +769,7 @@ function PayRoll() {
 				) : null}
 
 				<div className="flex relative">
-					<div className="w-3/12">
+					<div className="w-3/12 h-[80vh] overflow-y-auto">
 						<p className="mt-5 text-lg font-medium text-secondary">
 							Payslip Category
 						</p>
@@ -797,7 +790,6 @@ function PayRoll() {
 												name="Staff_type"
 												value={typeEdit}
 												onChange={(e) => setTypeEdit(e.target.value)}
-												
 											/>
 										</div>
 										<div className="flex justify-between w-1/3 mt-[55px]">
@@ -843,7 +835,7 @@ function PayRoll() {
 							</tbody>
 						</table>
 					</div>
-					<div className="w-9/12 ml-5">
+					<div className="w-9/12 ml-5 h-[80vh] overflow-y-auto ">
 						<p className="mt-5 text-lg font-medium text-secondary">
 							{" "}
 							Employee Payslip{" "}
@@ -1027,25 +1019,19 @@ function PayRoll() {
 
 export default PayRoll;
 
-
 const PaySlipPDF = ({ payslip }) => {
-
 	return (
 		<div id="payslip-pdf" className="bg-white z-50 absolute w-full h-full">
 			<div className="p-3 bg-primary text-lg text-white flex justify-between">
 				<div>
-					<p>PaySlip for {payslip?.staff?.first_name} {payslip?.staff?.middle_name[0]?.toUpperCase()} {payslip?.staff?.last_name} </p>
+					<p>
+						PaySlip for {payslip?.staff?.first_name}{" "}
+						{payslip?.staff?.middle_name[0]?.toUpperCase()}{" "}
+						{payslip?.staff?.last_name}{" "}
+					</p>
 				</div>
-				<div>
-					{
-						payslip?.paySlipCategory?.category
-					}
-				</div>
-				<div>
-					{
-						new Date(payslip?.created_at).toLocaleDateString()
-					}
-				</div>
+				<div>{payslip?.paySlipCategory?.category}</div>
+				<div>{new Date(payslip?.created_at).toLocaleDateString()}</div>
 			</div>
 			<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
 				<div>Gross Salary</div>
@@ -1060,34 +1046,37 @@ const PaySlipPDF = ({ payslip }) => {
 				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
 					<div className="w-20">{tax.name}</div>
 					<div>{tax.percentage}%</div>
-					<div>{parseInt(payslip.gross_salary) * parseInt(tax.percentage) / 100}</div>
+					<div>
+						{(parseInt(payslip.gross_salary) * parseInt(tax.percentage)) / 100}
+					</div>
 				</div>
-			))
-			}
+			))}
 
 			{payslip?.deductions?.map((deduction) => (
 				<div className="flex border-b border-gray1 p-5 justify-between text-gray5">
 					<div className="w-20">{deduction.name}</div>
 					<div>{deduction.amount}</div>
 				</div>
-			))
-			}
+			))}
 			<div className="flex bg-gray1 p-5 justify-between text-gray5">
 				<div className="">Total Deductions</div>
-				<div>
-					{payslip?.deductions?.reduce((a, b) => a + b.amount, 0)}
-				</div>
+				<div>{payslip?.deductions?.reduce((a, b) => a + b.amount, 0)}</div>
 			</div>
 			<div className="flex bg-gray1 p-5 justify-between text-gray5">
 				<div className="">Total Tax</div>
-				<div>{
-					payslip?.taxes?.reduce((a, b) => a + (parseInt(payslip.gross_salary) * parseInt(b.percentage) / 100), 0)
-				}</div>
+				<div>
+					{payslip?.taxes?.reduce(
+						(a, b) =>
+							a +
+							(parseInt(payslip.gross_salary) * parseInt(b.percentage)) / 100,
+						0
+					)}
+				</div>
 			</div>
 			<div className="flex border-b border-gray1 text-lg text-primary p-5 justify-between font-bold">
 				<div className="">Net Salary</div>
 				<div>{payslip?.net_salary}</div>
 			</div>
 		</div>
-	)
-}
+	);
+};

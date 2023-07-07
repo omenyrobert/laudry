@@ -14,6 +14,7 @@ import ButtonSecondary from "../../components/ButtonSecondary";
 import ButtonLoader from "../../components/ButtonLoader";
 import Loader from "../../components/Loader";
 import { Link } from "react-router-dom";
+import { useFeedback } from "../../hooks/feedback"
 
 const accountTypes = [
 	{ label: "Asset", value: "Asset" },
@@ -62,6 +63,7 @@ function Accounts() {
 	const [accountId, setAccountId] = useState("");
 	const [showUpdate, setShowUpdate] = useState(false);
 	const { accounts, loading } = useSelector((state) => state.schoolStore);
+	const { toggleFeedback } = useFeedback()
 
 	const handleAccountNameChange = (e) => {
 		setAccountName(e.target.value);
@@ -70,6 +72,17 @@ function Accounts() {
 	// createAccount
 	const [posting, setPosting] = useState(false);
 	const createAccount = async () => {
+		// validation
+		if (!accountName || !accountType || !subType || !supplier || !amount) {
+			toggleFeedback("error", {
+				title: "Error",
+				text: "All fields are required"
+			})
+			return;
+		}
+
+
+
 		try {
 			setPosting(true);
 			let formData = {
@@ -114,7 +127,49 @@ function Accounts() {
 
 	// update supplier
 	const updateAccount = async () => {
+		// validate
+		if (!editAccountName) {
+			toggleFeedback("error", {
+				title: "Error",
+				text: "Account Name is required"
+			})
+			return;
+		}
+		if (!editAccountType) {
+			toggleFeedback("error", {
+				title: "Error",
+				text: "Account Type is required"
+			})
+			return;
+		}
+		if (!editSubType) {
+			toggleFeedback("error", {
+				title: "Error",
+				text: "Sub Type is required"
+			})
+			return;
+		}
+		if (!editSupplier) {
+			toggleFeedback("error", {
+				title: "Error",
+				text: "Supplier is required"
+			})
+			return;
+		}
+
+		if (!editAmount) {
+			toggleFeedback("error", {
+				title: "Error",
+				text: "Amount is required"
+			})
+			return;
+		}
+
+
+
+
 		try {
+			console.log("Posting update")
 			setPosting(true);
 			let formData = {
 				id: accountId,
@@ -127,11 +182,14 @@ function Accounts() {
 				about: editAbout,
 				amount: parseFloat(editAmount),
 			};
+			console.log(formData)
 
 			const account = await axiosInstance.put(`/accounts`, formData);
 			const { data } = account;
-			const { status } = data;
+			const { status, payload } = data;
+			console.log(account)
 			if (status) {
+				console.log("Stutus is true")
 				dispatch(getAccounts());
 				setEditAccountName("");
 				setEditAccountType(null);
@@ -149,7 +207,14 @@ function Accounts() {
 					timer: 500,
 				});
 				closeShowUpdate();
+			} else {
+				toggleFeedback("error", {
+					title: "Error",
+					text: payload
+				})
+				setPosting(false);
 			}
+
 		} catch (error) {
 			console.log(error);
 			setPosting(false);
@@ -221,6 +286,40 @@ function Accounts() {
 		setEditSupplier(acc.supplierName);
 		setAccountId(acc.id);
 	};
+
+
+	// implement search
+	const [query, setQuery] = useState({
+		search: "",
+		type: "",
+	});
+	const [searchedaccounts, setSearchedaccounts] = useState([]);
+
+	useEffect(() => {
+		if (
+			query.search === "" &&
+			query.type === ""
+		) {
+			setSearchedaccounts(accounts);
+			return;
+		}
+		const filteredaccounts = accounts.filter((acc) => {
+
+			const isSearchValid = acc.accountName
+				.toLowerCase()
+				.includes(query.search.toLowerCase());
+
+			const isTypeValid = acc.accountType
+				.toLowerCase()
+				.includes(query.type.toLowerCase());
+
+			return (
+				isSearchValid && isTypeValid
+			);
+		});
+		setSearchedaccounts(filteredaccounts);
+	}, [query, accounts]);
+
 
 	return (
 		<>
@@ -469,13 +568,18 @@ function Accounts() {
 						type="search"
 						placeholder="Search for Account"
 						icon={<BsSearch className="w-3 -ml-7 mt-3" />}
+						value={query.search}
+						onChange={(e) => setQuery({ ...query, search: e.target.value })}
 					/>
 				</div>
 				<div className="mt-5">
 					<Select
 						placeholder="Select Account Type"
 						defaultValue={accountType}
-						onChange={setAccountType}
+						onChange={(e) => {
+							setQuery({ ...query, type: e.value })
+							setAccountType(e)
+						}}
 						options={accountTypes}
 					/>
 				</div>
@@ -495,7 +599,7 @@ function Accounts() {
 			<div className="h-[70vh] overflow-y-auto">
 				{accounts &&
 					accounts.length > 0 &&
-					accounts.map((account) => (
+					searchedaccounts.map((account) => (
 						<div className="flex text-gray5 font-light text-sm border-b border-gray2 cursor-pointer hover:border-l-2 hover:border-l-primary hover:shadow-lg">
 							<div className="border border-gray1 p-3  w-1/4">
 								{account.accountName}

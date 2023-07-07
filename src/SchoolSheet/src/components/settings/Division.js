@@ -25,7 +25,7 @@ function Division() {
 	const openEditData = (div) => {
 		setEditData(true);
 		setEditDivision(div?.division);
-		setEditPoints(div.points)
+		setEditPoints(div.points);
 		setDivisionId(div.id);
 	};
 
@@ -81,9 +81,7 @@ function Division() {
 		}).then(async (result) => {
 			if (result.isConfirmed) {
 				try {
-					const response = await axiosInstance.delete(
-						`/divisions/${div.id}`
-					);
+					const response = await axiosInstance.delete(`/divisions/${div.id}`);
 					const { data } = response;
 					const { status } = data;
 					if (status) {
@@ -131,7 +129,7 @@ function Division() {
 
 	const { divisions } = useSelector((state) => state.schoolStore);
 
-	console.log("divisions",  divisions);
+	console.log("divisions", divisions);
 
 	return (
 		<div className=" bg-white pl-5 shadow-lg rounded-md h-auto p-3">
@@ -168,77 +166,76 @@ function Division() {
 						)}
 					</div>
 				</div>
-
-				<table className=" w-[98%] table-auto">
-					<thead style={{ backgroundColor: "#0d6dfd10" }}>
-						<th className="p-2 text-primary text-sm text-left">Division</th>
-						<th className="p-2 text-primary text-sm text-left">Points</th>
-						<th className="p-2 text-primary text-sm text-left">Action</th>
-					</thead>
-					<tbody>
-						{/* edit popup start */}
-						{editData ? (
-							<div className="absolute shadow-2xl rounded flex w-[40vw] p-5 bg-white">
-								<div className="w-2/5 pr-2">
-									<InputField
-										type="text"
-										placeholder="Enter Division"
-										label="Division"
-										onChange={(e) => setEditDivision(e.target.value)}
-										value={editDivision}
-										
-									/>
-								</div>
-								<div className="w-2/5 pr-2">
-									<InputField
-										type="text"
-										placeholder="Enter Points"
-										label="Points"
-										onChange={(e) => setEditPoints(e.target.value)}
-										value={editPoints}
-										
-									/>
-								</div>
-								<div className="flex justify-between w-1/5 mt-[55px]">
-									<div onClick={updateDivision}>
-										<ButtonSecondary value={"Update"} />
-									</div>
-									<div>
-										<p
-											className="text-black text-lg ml-5 cursor-pointer"
-											onClick={closeEditData}
-										>
-											X
-										</p>
-									</div>
-								</div>
-							</div>
-						) : null}
-						{/* edit popup end */}
-
-						{divisions.map((div) => {
-							return (
-								<tr
-									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={div.id}
-								>
-									<td className="text-xs p-3 text-gray5">{div.division}</td>
-									<td className="text-xs p-3 text-gray5">{div.points}</td>
-									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deleteDivision(div)}
-											className="text-red w-4 h-4"
+				<div className="h-[25vh] overflow-y-auto">
+					<table className=" w-[98%] table-auto">
+						<thead style={{ backgroundColor: "#0d6dfd10" }}>
+							<th className="p-2 text-primary text-sm text-left">Division</th>
+							<th className="p-2 text-primary text-sm text-left">Points</th>
+							<th className="p-2 text-primary text-sm text-left">Action</th>
+						</thead>
+						<tbody>
+							{/* edit popup start */}
+							{editData ? (
+								<div className="absolute shadow-2xl rounded flex w-[40vw] p-5 bg-white">
+									<div className="w-2/5 pr-2">
+										<InputField
+											type="text"
+											placeholder="Enter Division"
+											label="Division"
+											onChange={(e) => setEditDivision(e.target.value)}
+											value={editDivision}
 										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => openEditData(div)}
+									</div>
+									<div className="w-2/5 pr-2">
+										<InputField
+											type="text"
+											placeholder="Enter Points"
+											label="Points"
+											onChange={(e) => setEditPoints(e.target.value)}
+											value={editPoints}
 										/>
-									</td>
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
+									</div>
+									<div className="flex justify-between w-1/5 mt-[55px]">
+										<div onClick={updateDivision}>
+											<ButtonSecondary value={"Update"} />
+										</div>
+										<div>
+											<p
+												className="text-black text-lg ml-5 cursor-pointer"
+												onClick={closeEditData}
+											>
+												X
+											</p>
+										</div>
+									</div>
+								</div>
+							) : null}
+							{/* edit popup end */}
+
+							{divisions.map((div) => {
+								return (
+									<tr
+										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={div.id}
+									>
+										<td className="text-xs p-3 text-gray5">{div.division}</td>
+										<td className="text-xs p-3 text-gray5">{div.points}</td>
+										<td className="text-xs p-3 text-gray5 flex">
+											<MdDeleteOutline
+												onClick={() => deleteDivision(div)}
+												className="text-red w-4 h-4"
+											/>
+											<BsPencilSquare
+												className="text-warning h-4 w-4 ml-5"
+												onClick={() => openEditData(div)}
+											/>
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	);

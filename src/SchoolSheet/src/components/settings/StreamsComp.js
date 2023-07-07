@@ -123,7 +123,7 @@ const StreamsComp = () => {
 	return (
 		<>
 			<h5 className="text-xl font-medium text-secondary">Streams</h5>
-			<div className="w-full h-[80vh]">
+			<div className="w-full">
 				<div className="flex justify-between bg-white pl-4 shadow-lg">
 					<div className="w-1/2">
 						<InputField
@@ -132,7 +132,6 @@ const StreamsComp = () => {
 							label="Stream Name"
 							value={stream}
 							onChange={(e) => setStream(e.target.value)}
-							
 						/>
 					</div>
 					<div className="mt-8 mr-5">
@@ -146,68 +145,69 @@ const StreamsComp = () => {
 						)}
 					</div>
 				</div>
-
-				<table className="mt-10 w-full table-auto">
-					<thead style={{ backgroundColor: "#0d6dfd10" }}>
-						<th className="p-2 text-primary text-sm text-left">Stream</th>
-						<th className="p-2 text-primary text-sm text-left">Action</th>
-					</thead>
-					<tbody>
-						{/* edit popup start */}
-						{editData ? (
-							<div className="absolute shadow-lg rounded flex w-auto p-5 bg-white">
-								<div className="w-2/3 pr-5">
-									<InputField
-										type="text"
-										placeholder="Enter Stream Name"
-										label="Stream Name"
-										onChange={(e) => setstreamEdit(e.target.value)}
-										value={streamEdit}
-										
-									/>
-								</div>
-								<div className="flex justify-between w-1/3 mt-[55px]">
-									<div onClick={updateStream}>
-										<ButtonSecondary value={"Update"} />
+				<div className="h-[70vh] overflow-y-auto">
+					<table className="mt-10 w-full table-auto">
+						<thead style={{ backgroundColor: "#0d6dfd10" }}>
+							<th className="p-2 text-primary text-sm text-left">Stream</th>
+							<th className="p-2 text-primary text-sm text-left">Action</th>
+						</thead>
+						<tbody>
+							{/* edit popup start */}
+							{editData ? (
+								<div className="absolute shadow-lg rounded flex w-auto p-5 bg-white">
+									<div className="w-2/3 pr-5">
+										<InputField
+											type="text"
+											placeholder="Enter Stream Name"
+											label="Stream Name"
+											onChange={(e) => setstreamEdit(e.target.value)}
+											value={streamEdit}
+										/>
 									</div>
-									<div className="ml-5">
-										<p
-											className="text-black text-lg cursor-pointer"
-											onClick={closeEditData}
-										>
-											X
-										</p>
-									</div>
-								</div>
-							</div>
-						) : null}
-						{/* edit popup end */}
-
-						{streams.map((stream) => {
-							return (
-								<tr
-									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={stream.id}
-								>
-									<td className="text-xs p-3 text-gray5">{stream.stream}</td>
-									<td className="text-xs p-3 text-gray5">
-										<div className="flex">
-											<MdDeleteOutline
-												onClick={() => deleteStream(stream)}
-												className="text-red w-4 h-4"
-											/>
-											<BsPencilSquare
-												onClick={() => openEditData(stream)}
-												className="text-warning h-4 w-4 ml-5"
-											/>
+									<div className="flex justify-between w-1/3 mt-[55px]">
+										<div onClick={updateStream}>
+											<ButtonSecondary value={"Update"} />
 										</div>
-									</td>
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
-				<Loader/>
+										<div className="ml-5">
+											<p
+												className="text-black text-lg cursor-pointer"
+												onClick={closeEditData}
+											>
+												X
+											</p>
+										</div>
+									</div>
+								</div>
+							) : null}
+							{/* edit popup end */}
+
+							{streams.map((stream) => {
+								return (
+									<tr
+										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={stream.id}
+									>
+										<td className="text-xs p-3 text-gray5">{stream.stream}</td>
+										<td className="text-xs p-3 text-gray5">
+											<div className="flex">
+												<MdDeleteOutline
+													onClick={() => deleteStream(stream)}
+													className="text-red w-4 h-4"
+												/>
+												<BsPencilSquare
+													onClick={() => openEditData(stream)}
+													className="text-warning h-4 w-4 ml-5"
+												/>
+											</div>
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
+				</div>
+
+				<Loader />
 			</div>
 		</>
 	);

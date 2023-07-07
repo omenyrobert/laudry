@@ -2,122 +2,257 @@ import React, { useEffect, useState } from "react";
 import '../../assets/styles/main.css';
 import { useDispatch, useSelector } from "react-redux";
 import ReportCardTemplate from '../../components/classes/ReportCardTemplate';
-import { getStudents  } from "../../store/schoolSheetSlices/schoolStore"
+import { getStudents } from "../../store/schoolSheetSlices/schoolStore"
+import InputField from "../../components/InputField";
+import { BsSearch } from "react-icons/bs";
+import Select from "react-select";
 
 function ReportCards(props) {
-    const dispatch = useDispatch();
-    const [studentInfo, setStudentInfo] = useState();
-   
-    const { students } = useSelector((state) => state.schoolStore);
+  const dispatch = useDispatch();
+  const [studentInfo, setStudentInfo] = useState();
+  const [classes, setClasses] = useState([]);
+  const [streams, setStreams] = useState([]);
 
-    // get students
-	useEffect(() => {
-		dispatch(getStudents());
-	}, [dispatch]);
+  const { students } = useSelector((state) => state.schoolStore);
 
-    const [card, setCard] = useState(false);
-    const openCard = (student) => {
-        setCard(true);
-        setStudentInfo(student);
-    };
-    const closeCard = () => {
-        setCard(false);
-    };
-    return (
-        <div>
-            <p className='text-secondary font-semibold text-xl'>Report Cards</p>
-            {card ? (
-                <ReportCardTemplate
-                    closeCard={closeCard}
-                    studentData={studentInfo}
+  // get students
+  useEffect(() => {
+    dispatch(getStudents());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (students) {
+      const _classes = students.map((student) => {
+        return {
+          value: student?.classes[0]?.class,
+          label: student?.classes[0]?.class,
+        };
+      });
+      const _streams = students.map((student) => {
+        return {
+          value: student?.streams[0]?.stream,
+          label: student?.streams[0]?.stream,
+        };
+      }
+      );
+      // remove duplicates
+      const uniqueClasses = [...new Set(_classes.map((item) => item.value))];
+      const uniqueStreams = [...new Set(_streams.map((item) => item.value))];
+      uniqueClasses.splice(uniqueClasses.indexOf(null), 1);
+      uniqueClasses.splice(uniqueClasses.indexOf(undefined), 1);
+      uniqueStreams.splice(uniqueStreams.indexOf(null), 1);
+      uniqueStreams.splice(uniqueStreams.indexOf(undefined), 1);
+
+      const finalClasses = uniqueClasses.map((item) => {
+        return {
+          value: item,
+          label: item,
+        };
+      });
+      const finalStreams = uniqueStreams.map((item) => {
+        return {
+          value: item,
+          label: item,
+        };
+      });
+
+      setClasses(finalClasses);
+      setStreams(finalStreams);
+    }
+  }, [students]);
+
+  const [card, setCard] = useState(false);
+  const openCard = (student) => {
+    setCard(true);
+    setStudentInfo(student);
+  };
+  const closeCard = () => {
+    setCard(false);
+  };
+
+  // implement search
+  const [query, setQuery] = useState({
+    search: "",
+    class: "",
+    stream: "",
+  });
+  const [filteredStudents, setFilteredStudents] = useState([]);
+
+  useEffect(() => {
+    if (
+      query.search === "" &&
+      query.class === "" &&
+      query.stream === ""
+    ) {
+      setFilteredStudents(students);
+    } else {
+      const _filteredStudents = students.filter((student) => {
+        const fullName = `${student.firstName} ${student.middleName} ${student.lastName}`;
+        const studentClass = student?.classes[0] ? student?.classes[0]?.class : "";
+        const stream = student?.streams[0] ? student?.streams[0]?.stream : "";
+        const searchIsValid = fullName
+          .toLowerCase()
+          .includes(query.search.toLowerCase());
+        const classIsValid = studentClass
+          .toLowerCase()
+          .includes(query.class.toLowerCase());
+        const streamIsValid = stream
+          .toLowerCase()
+          .includes(query.stream.toLowerCase());
+        return searchIsValid && classIsValid && streamIsValid;
+      }
+      );
+      setFilteredStudents(_filteredStudents);
+    }
+  }, [query, students]);
+
+
+
+  return (
+    <div>
+      <div className="flex bg-white">
+        <div className="w-10/12 ">
+          <div className="flex">
+            <div className="w-6/12 px-2">
+              <InputField
+                placeholder="Search for Income"
+                type="search"
+                icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+                onChange={(e) => {
+                  setQuery({ ...query, search: e.target.value });
+                }}
+                value={query.search}
+              />
+            </div>
+            <div className="w-3/12 px-2">
+              <div className="mt-5">
+                <Select
+                  placeholder={"Filter By Class"}
+                  name="class"
+                  onChange={(e) => {
+                    setQuery({
+                      ...query,
+                      class: e.value
+                    });
+                  }}
+                  options={classes}
                 />
-            ) : null}
-            <table className='mt-4 w-full table-auto'>
-                <thead style={{ backgroundColor: '#0d6dfd10' }}>
-                    <th className='p-2 text-primary text-sm text-left'>
-                        Full Name
-                    </th>
-                  
-                    <th className='p-2 text-primary text-sm text-left'>
-                        Gender
-                    </th>
-                    <th className='p-2 text-primary text-sm text-left'>
-                        Student Type
-                    </th>
-                    <th className='p-2 text-primary text-sm text-left'>
-                        Parents
-                    </th>
-                    <th className='p-2 text-primary text-sm text-left'>
-                        Contacts
-                    </th>
-                   
-                    <th className='p-2 text-primary text-sm text-left'>
-                        Class
-                    </th>
-                  
-                    <th className='p-2 text-primary text-sm text-left'>
-                        Action
-                    </th>
-                </thead>
-                <tbody>
-                    {students.map((student) => {
-                        const studentType = student?.student_types[0];
-
-                        const _class = student?.classes[0]
-
-                        return (
-                            <tr
-                                className='shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md'
-                                key={student.id}
-                            >
-                                <td className='flex mx-4'>
-                                    <div className='rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3'>
-                                        {student.firstName[0]}{' '}
-                                        {student.lastName[0]}
-                                    </div>
-                                    <div>
-                                        <p className='text-sm p-3 -mt-1 text-gray5'>
-                                            {student.firstName}{' '}
-                                            {student?.middleName}{' '}
-                                            {student.lastName}
-                                        </p>
-                                        <p className='text-red text-xs -mt-3 ml-3'>
-                                            {student?.nin}
-                                        </p>
-                                    </div>
-                                </td>
-                              
-                                <td className='text-xs p-3 text-gray5'>
-                                    {student.gender}
-                                </td>
-                                <td className='text-xs p-3 text-gray5'>
-                                    {studentType?.type}
-                                </td>
-                                <td className='text-xs p-3 text-gray5'>
-                                    {student.fatherContact}
-                                </td>
-                                <td className='text-xs p-3 text-gray5'>
-                                    {student.motherContact}
-                                </td>
-                               
-                                <td className='text-xs p-3 text-gray5'>
-                                    {_class?.class}
-                                </td>
-                               
-                                <td className='text-xs p-3 text-gray5 flex justify-between'>
-                                    <div onClick={() => openCard(student)}>
-                                        <p className='p-2 rounded text-primary'>
-                                            Generate Report Card
-                                        </p>
-                                    </div>
-                                </td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+              </div>
+            </div>
+            <div className="w-3/12 px-2">
+              <div className="mt-5">
+                <Select
+                  placeholder={"Filter By Stream"}
+                  name="stream"
+                  onChange={(e) => {
+                    setQuery({
+                      ...query,
+                      stream: e.value
+                    });
+                  }}
+                  options={streams}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-    );
+
+      </div>
+
+
+      <p className='text-secondary font-semibold text-xl'>Report Cards</p>
+      {card ? (
+        <ReportCardTemplate
+          closeCard={closeCard}
+          studentData={studentInfo}
+        />
+      ) : null}
+      <table className='mt-4 w-full table-auto'>
+        <thead style={{ backgroundColor: '#0d6dfd10' }}>
+          <th className='p-2 text-primary text-sm text-left'>
+            Full Name
+          </th>
+
+          <th className='p-2 text-primary text-sm text-left'>
+            Gender
+          </th>
+          <th className='p-2 text-primary text-sm text-left'>
+            Student Type
+          </th>
+          <th className='p-2 text-primary text-sm text-left'>
+            Parents
+          </th>
+          <th className='p-2 text-primary text-sm text-left'>
+            Contacts
+          </th>
+
+          <th className='p-2 text-primary text-sm text-left'>
+            Class
+          </th>
+
+          <th className='p-2 text-primary text-sm text-left'>
+            Action
+          </th>
+        </thead>
+        <tbody>
+          {students ? filteredStudents.map((student) => {
+            const studentType = student?.student_types[0];
+
+            const _class = student?.classes[0]
+
+            return (
+              <tr
+                className='shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md'
+                key={student.id}
+              >
+                <td className='flex mx-4'>
+                  <div className='rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3'>
+                    {student.firstName[0]}{' '}
+                    {student.lastName[0]}
+                  </div>
+                  <div>
+                    <p className='text-sm p-3 -mt-1 text-gray5'>
+                      {student.firstName}{' '}
+                      {student?.middleName}{' '}
+                      {student.lastName}
+                    </p>
+                    <p className='text-red text-xs -mt-3 ml-3'>
+                      {student?.nin}
+                    </p>
+                  </div>
+                </td>
+
+                <td className='text-xs p-3 text-gray5'>
+                  {student.gender}
+                </td>
+                <td className='text-xs p-3 text-gray5'>
+                  {studentType?.type}
+                </td>
+                <td className='text-xs p-3 text-gray5'>
+                  {student.fatherContact}
+                </td>
+                <td className='text-xs p-3 text-gray5'>
+                  {student.motherContact}
+                </td>
+
+                <td className='text-xs p-3 text-gray5'>
+                  {_class?.class}
+                </td>
+
+                <td className='text-xs p-3 text-gray5 flex justify-between'>
+                  <div onClick={() => openCard(student)}>
+                    <p className='p-2 rounded text-primary'>
+                      Generate Report Card
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            );
+          }) : null}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export default ReportCards;

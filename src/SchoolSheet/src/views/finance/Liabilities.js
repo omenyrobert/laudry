@@ -118,6 +118,65 @@ function Liabilities() {
 
 	const [id, setId] = useState("");
 
+
+	// implement search
+	const [query, setQuery] = useState({
+		search: "",
+		startDate: NaN,
+		endDate: NaN,
+	});
+	const [searchedliabilitys, setSearchedliabilitys] = useState([]);
+
+	useEffect(() => {
+		if (
+			query.search === "" &&
+			query.filter === "" &&
+			isNaN(query.startDate) &&
+			isNaN(query.endDate)
+		) {
+			setSearchedliabilitys(liabilitysData);
+			return;
+		}
+		const filteredliabilitys = liabilitysData.filter((income) => {
+			const incomeDate = new Date(income.date);
+			const isStartDateValid = isNaN(query.startDate)
+				? true
+				: incomeDate.getTime() >= query.startDate;
+			const isEndDateValid = isNaN(query.endDate)
+				? true
+				: incomeDate.getTime() <= query.endDate;
+			const isSearchValid = income.title
+				.toLowerCase()
+				.includes(query.search.toLowerCase());
+			return (
+				isStartDateValid && isEndDateValid && isSearchValid
+			);
+		});
+		setSearchedliabilitys(filteredliabilitys);
+	}, [query, liabilitysData]);
+
+	const printTable = () => {
+		const table = document.getElementById("liability-table");
+		const myWindow = window.open("", "", "width=900,height=700");
+		myWindow.document.write(table.outerHTML);
+
+		const stylesheets = Array.from(document.styleSheets);
+
+		stylesheets.forEach((stylesheet) => {
+			myWindow.document.head.appendChild(stylesheet.ownerNode.cloneNode(true));
+		});
+
+		const links = Array.from(document.getElementsByTagName("link"));
+
+		links.forEach((link) => {
+			myWindow.document.head.appendChild(link.cloneNode(true));
+		});
+
+		setTimeout(() => {
+			myWindow.print();
+		}, 1000);
+	};
+
 	return (
 		<>
 			<div className="flex mt-2 bg-white px-3 border border-gray2 rounded-md">
@@ -129,30 +188,42 @@ function Liabilities() {
 				<div className="w-4/12">
 					<InputField
 						type="search"
-						placeholder="Search for Liability"
+						placeholder="Search for Journal"
 						icon={<BsSearch className="w-3 -ml-7 mt-3" />}
+						onChange={(e) => {
+							setQuery({ ...query, search: e.target.value });
+						}}
 					/>
 				</div>
-
 				<div className="w-2/12 px-2">
-					<InputField type="date" />
+					<InputField
+						type="date"
+						onChange={(e) => {
+							setQuery({ ...query, startDate: e.target.valueAsNumber });
+						}}
+					/>
 				</div>
 				<div className="w-2/12">
-					<InputField type="date" />
+					<InputField
+						type="date"
+						onChange={(e) => {
+							setQuery({ ...query, endDate: e.target.valueAsNumber });
+						}}
+					/>
 				</div>
 
 				<div className="w-2/12 mt-5 ml-5 flex">
 					<Link to="/addTransaction?transactionType=liability&action=create">
 						<Button2 value={"liability"} />
 					</Link>
-					<div className="ml-5">
+					<div onClick={printTable} className="ml-5">
 						<Button value={"Print"} />
 					</div>
 				</div>
 			</div>
 
 			<div className="w-full h-[80vh]">
-				<table className="mt-10 w-[98%] table-auto">
+				<table id="liability-table" className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
 						<th className="p-2 text-primary text-sm text-left">Liability</th>
@@ -163,7 +234,7 @@ function Liabilities() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-						{liabilitysData.map((liabilityItem) => {
+						{searchedliabilitys.map((liabilityItem) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
@@ -213,7 +284,7 @@ function Liabilities() {
 						<tr className="bg-white text-lg text-primary font-semibold">
 							<td colSpan="6" className="p-1">Total</td>
 							<td>{Number(liabilityTotal).toLocaleString()}</td>
-							
+
 						</tr>
 					</tbody>
 				</table>

@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
+import { usePrint } from "../../hooks/print";
 import { useNavigate } from "react-router-dom";
 import { BsSearch, BsPrinterFill } from "react-icons/bs";
 
@@ -19,6 +20,7 @@ import { BsSearch, BsPrinterFill } from "react-icons/bs";
 function Invoices() {
 	const { setLoading, toggleFeedback } = useFeedback();
 	const navigate = useNavigate();
+	const { printContent } = usePrint();
 
 	// fetch invoice typess
 	const [invoiceTypesData, setinvoiceTypesData] = useState([]);
@@ -160,13 +162,15 @@ function Invoices() {
 					<Link to="/addTransaction?transactionType=invoice&action=create">
 						<Button2 value={"invoice"} />
 					</Link>
-					<div className="ml-5">
+					<div onClick={() => {
+						printContent("invoice-table")
+					}} className="ml-5">
 						<Button value={"Print"} />
 					</div>
 				</div>
 			</div>
 			<div className="w-full h-[80vh]">
-				<table className="mt-5 w-[98%] table-auto">
+				<table id="invoice-table" className="mt-5 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
 						<th className="p-2 text-primary text-sm text-left">Invoice</th>
@@ -222,7 +226,12 @@ function Invoices() {
 												/>
 											</div>
 										) : null}
-										<BsPrinterFill className="text-primary ml-5" />
+										<BsPrinterFill
+											onClick={() => {
+												navigate(
+													`/printTransaction?transactionType=invoice&action=edit&transactionId=${invoiceItem.transactionId}`
+												);
+											}} className="text-primary ml-5" />
 									</td>
 								</tr>
 							);

@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {
-	BrowserRouter,
-	createBrowserRouter,
-	RouterProvider,
+  BrowserRouter,
+  createBrowserRouter,
+  RouterProvider,
 } from "react-router-dom";
 import "./index.css";
 import store from "./store";
@@ -56,210 +56,258 @@ import StudentAttendanceComp from "./components/classes/StudentAttendanceComp";
 import Journal from "../src/components/finance/Journal";
 import AddTransaction from "./components/finance/AddTransaction";
 import Ledger from "./components/finance/Ledger";
+import RoleGuard from "./components/RoleGuard";
+import PrintTransaction from "./components/finance/PrintTransaction";
 
 const router = createBrowserRouter([
-	{
-		path: "/email",
-		element: <Email />,
-	},
-	{
-		path: "/passwordReset",
-		element: <PasswordReset />,
-	},
-	{
-		path: "/",
-		element: <Login />,
-	},
-	{
-		path: "/code",
-		element: <Code />,
-	},
-	{
-		path: "/",
-		element: <Root />,
-		errorElement: <ErrorPage />,
-
-		children: [
-			{
-				path: "/dashboard",
-				element: <Dashboard />,
-			},
-			{
-				path: "/sample",
-				element: <Sample />,
-			},
-			{
-				path: "/settings",
-				element: <Settings />,
-			},
-			{
-				path: "/classesStreams",
-				element: <ClassesStreams />,
-			},
-			{
-				path: "/subjectsGrading",
-				element: <SubjectsGrading />,
-			},
-			{
-				path: "/feesStrructures",
-				element: <FeesStrructures />,
-			},
-			{
-				path: "/fees",
-				element: <Fees />,
-			},
-			{
-				path: "/scholarShip",
-				element: <ScholarShip />,
-			},
-			{
-				path: "/students",
-				element: <Students />,
-			},
-			{
-				path: "/groupsAndTypes",
-				element: <GroupsAndTypes />,
-			},
-
-			// students
-			{
-				path: "/addStudentForm",
-				element: <AddStudentForm />,
-			},
-			{
-				path: "/editStudentsForm",
-				element: <EditStudentsForm />,
-			},
-			{
-				path: "/showStudentsForm",
-				element: <ShowStudentsForm />,
-			},
-
-			//classes
-			{
-				path: "/studentAttendance",
-				element: <StudentAttendanceComp />,
-			},
-			{
-				path: "/assessment",
-				element: <Assessment />,
-			},
-			{
-				path: "/reportCards",
-				element: <ReportCards />,
-			},
-
-			// time table
-			{
-				path: "/calendar",
-				element: <SchoolCalendar />,
-			},
-			{
-				path: "/lessons",
-				element: <Lessons />,
-			},
-			{
-				path: "/exams",
-				element: <Exams />,
-			},
-
-			// finance routes
-
-			{
-				path: "/incomes",
-				element: <Incomes />,
-			},
-			{
-				path: "/expenses",
-				element: <Expenses />,
-			},
-			{
-				path: "/reports",
-				element: <Reports />,
-			},
-			{
-				path: "/invoices",
-				element: <Invoices />,
-			},
-			{
-				path: "/stock",
-				element: <Stock />,
-			},
-			{
-				path: "/assets",
-				element: <Assets />,
-			},
-			{
-				path: "/payments",
-				element: <Payments />,
-			},
-			{
-				path: "/receipts",
-				element: <Receipts />,
-			},
-			{
-				path: "/bills",
-				element: <Bills />,
-			},
-			,
-			{
-				path: "/liabilities",
-				element: <Liabilities />,
-			},
-			,
-			{
-				path: "/accounts",
-				element: <Accounts />,
-			},
-			,
-			{
-				path: "/equity",
-				element: <Equity />,
-			},
-			{
-            path: "/addTransaction",
-			element: <AddTransaction/>
-			},
-
-			//  hrm routes
-
-			{
-				path: "/staff",
-				element: <Staff />,
-			},
-			{
-				path: "/staffEditForm",
-				element: <StaffEditForm />,
-			},
-			{
-				path: "/payRoll",
-				element: <PayRoll />,
-			},
-			{
-				path: "/staffAttendance",
-				element: <StaffAttendance />,
-			},
-			{
-				path: "/reportCardTemplate",
-				element: <ReportCardTemplate />,
-			},
-			{
-				path: "/journal",
-				element: <Journal />,
-			},
-			{
-				path: "/ledger/:accountId",
-				element: <Ledger/>
-			}
-		],
-	},
+  {
+    path: "/email",
+    element: <Email />,
+  },
+  {
+    path: "/passwordReset",
+    element: <PasswordReset />,
+  },
+  {
+    path: "/",
+    element: <Login />,
+  },
+  {
+    path: "/code",
+    element: <Code />,
+  },
+  // component to show the user is in the wrong route
+  {
+    path: "/error-page",
+    element: <ErrorPage />,
+  },
+  {
+    path: "/",
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "/sample",
+        element: <Sample />,
+      },
+      {
+        path: "/settings",
+        element: <Settings />,
+      },
+      {
+        path: "/classesStreams",
+        element: <ClassesStreams />,
+      },
+      {
+        path: "/subjectsGrading",
+        element: <SubjectsGrading />,
+      },
+      {
+        path: "/feesStrructures",
+        element: (
+          <RoleGuard allowedRoles={["admin", "fees"]}>
+            <FeesStrructures />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/fees",
+        element: (
+          <RoleGuard allowedRoles={["admin", "fees"]}>
+            <Fees />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/scholarShip",
+        element: <ScholarShip />,
+      },
+      {
+        path: "/students",
+        element: (
+          <RoleGuard allowedRoles={["student", "admin"]}>
+            <Students />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/groupsAndTypes",
+        element: (
+          <RoleGuard allowedRoles={["student", "admin"]}>
+            <GroupsAndTypes />
+          </RoleGuard>
+        ),
+      },
+      // students
+      {
+        path: "/addStudentForm",
+        element: (
+          <RoleGuard allowedRoles={["student", "admin"]}>
+            <AddStudentForm />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/editStudentsForm",
+        element: (
+          <RoleGuard allowedRoles={["student", "admin"]}>
+            <EditStudentsForm />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/showStudentsForm",
+        element: (
+          <RoleGuard allowedRoles={["student", "admin"]}>
+            <ShowStudentsForm />
+          </RoleGuard>
+        ),
+      },
+      // classes
+      {
+        path: "/studentAttendance",
+        element: (
+          <RoleGuard allowedRoles={["student", "admin"]}>
+            <StudentAttendanceComp />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/assessment",
+        element: <Assessment />,
+      },
+      {
+        path: "/reportCards",
+        element: <ReportCards />,
+      },
+      // time table
+      {
+        path: "/calendar",
+        element: <SchoolCalendar />,
+      },
+      {
+        path: "/lessons",
+        element: <Lessons />,
+      },
+      {
+        path: "/exams",
+        element: <Exams />,
+      },
+      // finance routes
+      {
+        path: "/incomes",
+        element: <Incomes />,
+      },
+      {
+        path: "/expenses",
+        element: <Expenses />,
+      },
+      {
+        path: "/reports",
+        element: <Reports />,
+      },
+      {
+        path: "/invoices",
+        element: <Invoices />,
+      },
+      {
+        path: "/stock",
+        element: <Stock />,
+      },
+      {
+        path: "/assets",
+        element: <Assets />,
+      },
+      {
+        path: "/payments",
+        element: <Payments />,
+      },
+      {
+        path: "/receipts",
+        element: <Receipts />,
+      },
+      {
+        path: "/bills",
+        element: <Bills />,
+      },
+      {
+        path: "/liabilities",
+        element: <Liabilities />,
+      },
+      {
+        path: "/accounts",
+        element: <Accounts />,
+      },
+      {
+        path: "/equity",
+        element: <Equity />,
+      },
+      {
+        path: "/addTransaction",
+        element: <AddTransaction />,
+      },
+      {
+        path: "/printTransaction",
+        element: <PrintTransaction />,
+      },
+      // hrm routes
+      {
+        path: "/staff",
+        element: (
+          <RoleGuard allowedRoles={["hrm", "admin"]}>
+            <Staff />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/staffEditForm",
+        element: (
+          <RoleGuard allowedRoles={["hrm", "admin"]}>
+            <StaffEditForm />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/payRoll",
+        element: (
+          <RoleGuard allowedRoles={["hrm", "admin"]}>
+            <PayRoll />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/staffAttendance",
+        element: (
+          <RoleGuard allowedRoles={["hrm", "admin"]}>
+            <StaffAttendance />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/reportCardTemplate",
+        element: <ReportCardTemplate />,
+      },
+      {
+        path: "/journal",
+        element: <Journal />,
+      },
+      {
+        path: "/ledger/:accountId",
+        element: <Ledger />,
+      },
+    ],
+  },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-	<Provider store={store}>
-		<RouterProvider router={router} />
-	</Provider>
+  <Provider store={store}>
+    <RouterProvider router={router} />
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

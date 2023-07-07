@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
 import { useNavigate } from "react-router-dom";
-
+import Select from "react-select";
 
 function AddPayments() {
 	const { setLoading, toggleFeedback } = useFeedback();
@@ -111,8 +111,21 @@ function AddPayments() {
 
 	const fetchpaymentTypes = async () => {
 		const response = await axiosInstance.get("/transaction-types/payment");
+		const { status, payload } = response.data;
 
-		setpaymentTypesData(response.data.payload);
+		if (status === false) {
+			toggleFeedback("error", payload);
+			return;
+		}
+
+		const paymentTypes = payload.map((item) => {
+			return {
+				label: item.name,
+				value: item.name,
+				...item,
+			};
+		});
+		setpaymentTypesData(paymentTypes);
 	};
 
 	// delete
@@ -134,6 +147,68 @@ function AddPayments() {
 		fetchData();
 	}, []);
 
+	// implement search
+	const [query, setQuery] = useState({
+		search: "",
+		filter: "",
+		startDate: NaN,
+		endDate: NaN,
+	});
+	const [searchedPayments, setSearchedPayments] = useState([]);
+
+	useEffect(() => {
+		if (
+			query.search === "" &&
+			query.filter === "" &&
+			isNaN(query.startDate) &&
+			isNaN(query.endDate)
+		) {
+			setSearchedPayments(paymentsData);
+			return;
+		}
+		const filteredPayments = paymentsData.filter((income) => {
+			const incomeDate = new Date(income.date);
+			const isStartDateValid = isNaN(query.startDate)
+				? true
+				: incomeDate.getTime() >= query.startDate;
+			const isEndDateValid = isNaN(query.endDate)
+				? true
+				: incomeDate.getTime() <= query.endDate;
+			const isSearchValid = income.title
+				.toLowerCase()
+				.includes(query.search.toLowerCase());
+			const isFilterValid = query.filter
+				? income.subType.name === query.filter
+				: true;
+			return (
+				isStartDateValid && isEndDateValid && isSearchValid && isFilterValid
+			);
+		});
+		setSearchedPayments(filteredPayments);
+	}, [query, paymentsData]);
+
+	const printTable = () => {
+		const table = document.getElementById("payments-table");
+		const myWindow = window.open("", "", "width=900,height=700");
+		myWindow.document.write(table.outerHTML);
+
+		const stylesheets = Array.from(document.styleSheets);
+
+		stylesheets.forEach((stylesheet) => {
+			myWindow.document.head.appendChild(stylesheet.ownerNode.cloneNode(true));
+		});
+
+		const links = Array.from(document.getElementsByTagName("link"));
+
+		links.forEach((link) => {
+			myWindow.document.head.appendChild(link.cloneNode(true));
+		});
+
+		setTimeout(() => {
+			myWindow.print();
+		}, 1000);
+	};
+
 	return (
 		<>
 			<div className="w-full h-[80vh]">
@@ -145,16 +220,52 @@ function AddPayments() {
 									placeholder="Search for Income"
 									type="search"
 									icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+									onChange={(e) => {
+										setQuery({ ...query, search: e.target.value });
+									}}
+									value={query.search}
 								/>
 							</div>
 							<div className="w-3/12 px-2">
-								<InputField placeholder="Filter By Type" />
+								<div className="mt-5">
+									<Select
+										placeholder={"Filter By Type"}
+										name="filter"
+										onChange={(e) => {
+											setQuery({ ...query, filter: e.value });
+										}}
+										options={paymentTypesData}
+									/>
+								</div>
 							</div>{" "}
 							<div className="w-2/12 px-2">
-								<InputField type="date" />
+								<InputField
+									type="date"
+									onChange={(e) => {
+										setQuery({ ...query, startDate: e.target.valueAsNumber });
+									}}
+								/>
 							</div>
 							<div className="w-2/12">
-								<InputField type="date" />
+								<InputField
+									type="date"
+									onChange={(e) => {
+										setQuery({ ...query, endDate: e.target.valueAsNumber });
+									}}
+								/>
+							</div>
+							<div
+								onClick={() => {
+									setQuery({
+										search: "",
+										filter: "",
+										startDate: NaN,
+										endDate: NaN,
+									});
+								}}
+								className="mt-5 ml-5"
+							>
+								<Button value={"Clear"} />
 							</div>
 						</div>
 					</div>
@@ -163,14 +274,14 @@ function AddPayments() {
 							<Link to="/addTransaction?transactionType=payment&action=create">
 								<Button2 value={"Payment"} />
 							</Link>
-							<div className="ml-5">
+							<div onClick={printTable} className="ml-5">
 								<Button value={"Print"} />
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<table className="mt-10 w-[98%] table-auto">
+				<table id="payments-table" className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
 						<th className="p-2 text-primary text-sm text-left">Payment</th>
@@ -181,7 +292,7 @@ function AddPayments() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-						{paymentsData.map((paymentItem) => {
+						{searchedPayments.map((paymentItem) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
@@ -222,7 +333,13 @@ function AddPayments() {
 												/>
 											</div>
 										) : null}
-										<BsPrinterFill className="text-primary ml-5" />
+										<BsPrinterFill
+											onClick={() => {
+												navigate(
+													`/printTransaction?transactionType=payment&action=edit&transactionId=${paymentItem.transactionId}`
+												);
+											}}
+											className="text-primary ml-5" />
 									</td>
 								</tr>
 							);

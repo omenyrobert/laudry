@@ -9,19 +9,21 @@ import Cards from "../components/dashboard/Cards";
 import Doughnut from "../components/dashboard/DoughnutComp";
 import { FaUserAlt } from "react-icons/fa";
 import { GiAlarmClock } from "react-icons/gi";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
 	useEffect(() => {
-		const token = localStorage.getItem('schoolSoftToken');
+		const token = localStorage.getItem("schoolSoftToken");
 		if (token === null || token === undefined) {
-			navigate('/');
+			navigate("/");
 		}
 	}, [navigate]);
 	return (
-
 		<div className="h-screen overflow-y-auto">
+
+			
+
 			<Cards />
 			<div className="flex w-full">
 				<div className="w-8/12">
@@ -155,9 +157,6 @@ const Dashboard = () => {
 								</div>
 							</div>
 						</div>
-
-
-
 					</div>
 
 					<div className="bg-gray1 p-2 m-2">
@@ -272,17 +271,11 @@ const Dashboard = () => {
 								</div>
 							</div>
 						</div>
-
-
-
 					</div>
-
-
 				</div>
 			</div>
 		</div>
-
 	);
-}
+};
 
 export default Dashboard;

@@ -34,7 +34,7 @@ function Grades() {
 				from: from,
 				to: to,
 				grade: grade,
-				points
+				points,
 			};
 			const response = await axiosInstance.post("/grades", formData);
 			const { data } = response;
@@ -116,7 +116,7 @@ function Grades() {
 				from: fromEdit,
 				to: toEdit,
 				grade: gradeEdit,
-				points: pointsEdit
+				points: pointsEdit,
 			};
 			const grade = await axiosInstance.put(`/grades/${gradeId}`, formData);
 			const { data } = grade;
@@ -142,7 +142,7 @@ function Grades() {
 	const { grades } = useSelector((state) => state.schoolStore);
 
 	return (
-		<div className=" bg-white pl-5 shadow-lg rounded-md p-3 h-auto" >
+		<div className=" bg-white pl-5 shadow-lg rounded-md p-3 h-auto">
 			<h5 className="text-xl font-medium text-secondary">Grading</h5>
 			<div className="w-full">
 				<div className="flex justify-between">
@@ -153,7 +153,6 @@ function Grades() {
 							label="From"
 							value={from}
 							onChange={(e) => setFrom(e.target.value)}
-							
 						/>
 					</div>
 					<div className="w-1/4 ml-2">
@@ -163,7 +162,6 @@ function Grades() {
 							label="To"
 							value={to}
 							onChange={(e) => setTo(e.target.value)}
-							
 						/>
 					</div>
 					<div className="w-1/4 ml-2">
@@ -173,7 +171,6 @@ function Grades() {
 							label="Grade"
 							value={grade}
 							onChange={(e) => setGrade(e.target.value)}
-							
 						/>
 					</div>
 					<div className="w-1/4 ml-2">
@@ -183,7 +180,6 @@ function Grades() {
 							label="Points"
 							value={points}
 							onChange={(e) => setPoints(e.target.value)}
-							
 						/>
 					</div>
 					<div className="mt-8 mr-5 w-1/4 ml-2">
@@ -197,101 +193,98 @@ function Grades() {
 						)}
 					</div>
 				</div>
-
-				<table className="w-[98%] table-auto">
-					<thead style={{ backgroundColor: "#0d6dfd10" }}>
-						<th className="p-2 text-primary text-sm text-left">From</th>
-						<th className="p-2 text-primary text-sm text-left">To</th>
-						<th className="p-2 text-primary text-sm text-left">Grade</th>
-						<th className="p-2 text-primary text-sm text-left">Points</th>
-						<th className="p-2 text-primary text-sm text-left">Action</th>
-					</thead>
-					<tbody>
-						{/* edit popup start */}
-						{editData ? (
-							<div className="absolute shadow-2xl rounded flex w-[50vw] md:w-[45vw] p-5 bg-white">
-								<div className="w-3/12 pr-2">
-									<InputField
-										type="number"
-										placeholder="Enter starting marks"
-										label="From"
-										value={fromEdit}
-										onChange={(e) => setFromEdit(e.target.value)}
-										
-									/>
-								</div>
-								<div className="w-3/12 pr-2">
-									<InputField
-										type="number"
-										placeholder="Enter end marks"
-										label="To"
-										value={toEdit}
-										onChange={(e) => setToEdit(e.target.value)}
-										
-									/>
-								</div>
-								<div className="w-3/12 pr-2">
-									<InputField
-										type="text"
-										placeholder="Enter grade"
-										label="Grade"
-										value={gradeEdit}
-										onChange={(e) => setGradeEdit(e.target.value)}
-										
-									/>
-								</div>
-								<div className="w-3/12 pr-2">
-									<InputField
-										type="text"
-										placeholder="Enter points"
-										label="Points"
-										value={pointsEdit}
-										onChange={(e) => setPointsEdit(e.target.value)}
-										
-									/>
-								</div>
-								<div className="flex justify-between w-3/12 mt-[55px]">
-									<div onClick={updateGrade}>
-										<ButtonSecondary value={"Update"} />
+				<div className="h-[25vh] overflow-y-auto">
+					<table className="w-[98%] table-auto">
+						<thead style={{ backgroundColor: "#0d6dfd10" }}>
+							<th className="p-2 text-primary text-sm text-left">From</th>
+							<th className="p-2 text-primary text-sm text-left">To</th>
+							<th className="p-2 text-primary text-sm text-left">Grade</th>
+							<th className="p-2 text-primary text-sm text-left">Points</th>
+							<th className="p-2 text-primary text-sm text-left">Action</th>
+						</thead>
+						<tbody>
+							{/* edit popup start */}
+							{editData ? (
+								<div className="absolute shadow-2xl rounded flex w-[50vw] md:w-[45vw] p-5 bg-white">
+									<div className="w-3/12 pr-2">
+										<InputField
+											type="number"
+											placeholder="Enter starting marks"
+											label="From"
+											value={fromEdit}
+											onChange={(e) => setFromEdit(e.target.value)}
+										/>
 									</div>
-									<div>
-										<p
-											className="text-black text-lg cursor-pointer"
-											onClick={closeEditData}
-										>
-											X
-										</p>
+									<div className="w-3/12 pr-2">
+										<InputField
+											type="number"
+											placeholder="Enter end marks"
+											label="To"
+											value={toEdit}
+											onChange={(e) => setToEdit(e.target.value)}
+										/>
+									</div>
+									<div className="w-3/12 pr-2">
+										<InputField
+											type="text"
+											placeholder="Enter grade"
+											label="Grade"
+											value={gradeEdit}
+											onChange={(e) => setGradeEdit(e.target.value)}
+										/>
+									</div>
+									<div className="w-3/12 pr-2">
+										<InputField
+											type="text"
+											placeholder="Enter points"
+											label="Points"
+											value={pointsEdit}
+											onChange={(e) => setPointsEdit(e.target.value)}
+										/>
+									</div>
+									<div className="flex justify-between w-3/12 mt-[55px]">
+										<div onClick={updateGrade}>
+											<ButtonSecondary value={"Update"} />
+										</div>
+										<div>
+											<p
+												className="text-black text-lg cursor-pointer"
+												onClick={closeEditData}
+											>
+												X
+											</p>
+										</div>
 									</div>
 								</div>
-							</div>
-						) : null}
-						{/* edit popup end */}
+							) : null}
+							{/* edit popup end */}
 
-						{grades.map((grade) => {
-							return (
-								<tr
-									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={grade.id}
-								>
-									<td className="text-xs p-3 text-gray5">{grade.from}</td>
-									<td className="text-xs p-3 text-gray5">{grade.to}</td>
-									<td className="text-xs p-3 text-gray5">{grade.grade}</td>
-									<td className="text-xs p-3 text-gray5">{grade.points}</td>
-									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={(e) => deleteGrade(grade)}
-											className="text-red w-4 h-4"
-										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => openEditData(grade)}
-										/>
-									</td>
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
+							{grades.map((grade) => {
+								return (
+									<tr
+										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={grade.id}
+									>
+										<td className="text-xs p-3 text-gray5">{grade.from}</td>
+										<td className="text-xs p-3 text-gray5">{grade.to}</td>
+										<td className="text-xs p-3 text-gray5">{grade.grade}</td>
+										<td className="text-xs p-3 text-gray5">{grade.points}</td>
+										<td className="text-xs p-3 text-gray5 flex">
+											<MdDeleteOutline
+												onClick={(e) => deleteGrade(grade)}
+												className="text-red w-4 h-4"
+											/>
+											<BsPencilSquare
+												className="text-warning h-4 w-4 ml-5"
+												onClick={() => openEditData(grade)}
+											/>
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	);

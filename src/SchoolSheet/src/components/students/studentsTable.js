@@ -23,7 +23,7 @@ const StudentsTable = (props) => {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-						{studentData.map((student) => {
+						{studentData?.map((student) => {
 							return (
 								<tr
 									className="shadow-sm border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"

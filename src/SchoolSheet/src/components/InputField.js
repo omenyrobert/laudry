@@ -11,13 +11,9 @@ function InputField({
 	onChange,
 	editable = true,
 }) {
-	const [required, setRequired] = useState(false);
+	
 
-const validate = (e)=>{
-if(e.target.value === ""){
-	setRequired(true)
-}
-}
+
 
 	return (
 		<div className="my-5">
@@ -29,15 +25,13 @@ if(e.target.value === ""){
 					value={value}
 					placeholder={placeholder}
 					onChange={(e) => onChange(e)}
-					onBlur={validate}
+				
 					readOnly={!editable}
 					className="py-1 px-4 rounded-lg my-1 w-full bg-gray1 text-xs text-gray5 h-8"
 				/>
 				<div>{icon}</div>
 			</div>
-			{required ? (
-				<p className="text-red text-xs">This field is required</p>
-			) : null}
+			
 		</div>
 	);
 }

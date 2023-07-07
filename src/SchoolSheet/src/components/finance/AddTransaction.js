@@ -33,7 +33,8 @@ function AddTransaction() {
 	const [title, setTitle] = useState("");
 	const [contacts, setContacts] = useState("");
 	const [description, setDescription] = useState("");
-	const [receipt, setReceipt] = useState("");
+	const [receipt, setReceipt] = useState(null);
+	const [invoice, setInvoice] = useState(null);
 	const [recievedBy, setRecievedBy] = useState("");
 	const [file, setFile] = useState(null);
 
@@ -60,7 +61,6 @@ function AddTransaction() {
 				}, 500);
 				return;
 			}
-			console.log(payload);
 			const transSubTypes = payload.map((transactionType) => {
 				return {
 					label: transactionType.name?.toLocaleUpperCase(),
@@ -166,6 +166,8 @@ function AddTransaction() {
 			try {
 				await fetchTransactionSubTypes();
 				await fetchAccounts();
+				await fetchreceipt();
+				await fetchinvoice();
 				if (action === "edit") {
 					await fetchTransaction();
 				}
@@ -194,7 +196,8 @@ function AddTransaction() {
 		formData.append("title", title);
 		formData.append("contacts", contacts);
 		formData.append("description", description);
-		formData.append("receipt", receipt);
+		formData.append("receipt", receipt.transactionId);
+		formData.append("invoice", invoice.transactionId);
 		formData.append("receivedBy", recievedBy);
 		formData.append("file", file);
 		formData.append(
@@ -210,6 +213,11 @@ function AddTransaction() {
 		formData.append("accountToDebit", accountToDebit.id);
 		formData.append("accountToCredit", accountToCredit.id);
 		formData.append("amount", amount);
+		formData.append(
+			"status",
+			invoiceStatusValue ? invoiceStatusValue.value : null
+		);
+		formData.append("items", JSON.stringify(items));
 
 		const response = await axiosInstance.post(`/transactions`, formData, {
 			headers: {
@@ -349,6 +357,11 @@ function AddTransaction() {
 		formData.append("accountToCredit", accountToCredit.id);
 		formData.append("amount", amount);
 		formData.append("transactionId", transactionId);
+		formData.append(
+			"status",
+			invoiceStatusValue ? invoiceStatusValue.value : null
+		);
+		formData.append("items", JSON.stringify(items));
 
 		const response = await axiosInstance.put(`/transactions`, formData, {
 			headers: {
@@ -378,27 +391,128 @@ function AddTransaction() {
 	// items
 	const [items, setItems] = useState([]);
 
-	const [item, setItem] = useState("");
-	const [qty, setQty] = useState("");
-	const [unitCost, setUnitCost] = useState("");
+	const [item, setItem] = useState(null);
+	const [qty, setQty] = useState(null);
+	const [unitCost, setUnitCost] = useState(null);
 
 	const addItem = () => {
 		if (item && qty && unitCost) {
 			let itemObj = {
-				item: item,
-				qty: qty,
-				unitCost: unitCost,
+				name: item,
+				quantity: parseInt(qty),
+				price: parseInt(unitCost),
 			};
-			// const newArray = [];
-			items.push(itemObj);
-			// setItems(newArray);
-			setItem("");
-			setQty("");
-			setUnitCost("");
+			setItems([...items, itemObj]);
+			setItem(null);
+			setQty(null);
+			setUnitCost(null);
 		}
 	};
 
-	const deleteItem = () => {};
+	const deleteItem = (index) => {
+		let newItems = [...items];
+		newItems.splice(index, 1);
+		setItems(newItems);
+	};
+
+	const invoiceStatus = [
+		{ label: "Paid", value: "paid" },
+		{ label: "Unpaid", value: "unpaid" },
+	];
+
+	const [invoiceStatusValue, setInvoiceStatusValue] = useState(null);
+
+	// fetch receipts
+	const [receiptsData, setreceiptsData] = useState([]);
+	const fetchreceipt = async () => {
+		const res = await axiosInstance.get("/transactions/type/receipt");
+
+		const { status, payload } = res.data;
+
+		if (status === false) {
+			setLoading(false);
+			toggleFeedback("error", payload);
+			return;
+		}
+
+		const coupledTransactions = [];
+
+		for (let i = 0; i < payload.length; i++) {
+			const transaction = payload[i];
+
+			if (
+				coupledTransactions.find(
+					(t) => t.transactionId === transaction.transactionId
+				)
+			)
+				continue;
+
+			// find corresponding transaction with same id
+			const correspondingTransaction = payload.find((t) => {
+				return (
+					t.transactionId === transaction.transactionId &&
+					t.id !== transaction.id
+				);
+			});
+
+			if (correspondingTransaction) {
+				coupledTransactions.push({
+					transactionId: transaction.transactionId,
+					...transaction,
+					label: transaction.title,
+					value: transaction.title,
+				});
+			}
+		}
+
+		setreceiptsData(coupledTransactions);
+	};
+
+	// fetch invoices
+	const [invoicesData, setinvoicesData] = useState([]);
+	const fetchinvoice = async () => {
+		const res = await axiosInstance.get("/transactions/type/invoice");
+
+		const { status, payload } = res.data;
+
+		if (status === false) {
+			setLoading(false);
+			toggleFeedback("error", payload);
+			return;
+		}
+
+		const coupledTransactions = [];
+
+		for (let i = 0; i < payload.length; i++) {
+			const transaction = payload[i];
+
+			if (
+				coupledTransactions.find(
+					(t) => t.transactionId === transaction.transactionId
+				)
+			)
+				continue;
+
+			// find corresponding transaction with same id
+			const correspondingTransaction = payload.find((t) => {
+				return (
+					t.transactionId === transaction.transactionId &&
+					t.id !== transaction.id
+				);
+			});
+
+			if (correspondingTransaction) {
+				coupledTransactions.push({
+					transactionId: transaction.transactionId,
+					...transaction,
+					label: transaction.title,
+					value: transaction.title,
+				});
+			}
+		}
+
+		setinvoicesData(coupledTransactions);
+	};
 
 	return (
 		<>
@@ -427,204 +541,238 @@ function AddTransaction() {
 						</p>
 					</div>
 				</div>
-
-				<div className="flex justify-between mx-3">
-					<div className="w-1/4 p-1">
-						<InputField
-							type="date"
-							label="Date"
-							value={title}
-							onChange={(e) => setTitle(e.target.value)}
-						/>
-					</div>
-					<div className="w-1/4 p-1">
-						<InputField
-							type="text"
-							placeholder="Enter Title"
-							label="Title"
-							value={title}
-							onChange={(e) => setTitle(e.target.value)}
-						/>
-					</div>
-
-					<div className="w-1/3 p-1">
-						<InputField
-							type="number"
-							label="Amount"
-							placeholder="Enter Amount"
-							value={amount}
-							onChange={(e) => setAmount(parseInt(e.target.value))}
-						/>
-					</div>
-
-					<div className="w-1/4 p-1 mt-2">
-						<br />
-						<label className="text-gray4">Account To Debit</label>
-						<Select
-							placeholder="Select Account"
-							options={accounts}
-							onChange={(e) => {
-								setAccountToDebit(e);
-							}}
-							value={accountToDebit}
-						/>
-					</div>
-				</div>
-				<div className="flex justify-between mx-3">
-					<div className="w-1/3 p-1">
-						<br />
-						<label className="text-gray4">Account To Credit</label>
-						<Select
-							placeholder="Select Account"
-							options={accounts}
-							onChange={(e) => {
-								setAccountToCredit(e);
-							}}
-							value={accountToCredit}
-						/>
-					</div>
-
-					<div className="w-1/3 p-1">
-						<InputField
-							type="text"
-							placeholder="Enter Recipient"
-							label="Recieved By"
-							value={recievedBy}
-							onChange={(e) => setRecievedBy(e.target.value)}
-						/>
-					</div>
-
-					<div className="w-1/3 p-1">
-						<InputField
-							type="text"
-							placeholder="Enter Contacts"
-							label="Contacts"
-							value={contacts}
-							onChange={(e) => setContacts(e.target.value)}
-						/>
-					</div>
-				</div>
-
-				<div className="flex justify-between mx-3">
-					<div className="w-1/3 p-1">
-						<br />
-						<label className="text-gray4">Transaction Type</label>
-						{transactionType ? (
+				<div className="h-[80vh]">
+					<div className="flex justify-between mx-3 -mt-5">
+						<div className="w-1/4 p-1">
+							<InputField
+								type="date"
+								label="Date"
+								value={title}
+								onChange={(e) => setTitle(e.target.value)}
+							/>
+						</div>
+						<div className="w-1/4 p-1">
 							<InputField
 								type="text"
-								value={transactionType.toLocaleUpperCase()}
-								editable={false}
+								placeholder="Enter Title"
+								label="Title"
+								value={title}
+								onChange={(e) => setTitle(e.target.value)}
 							/>
-						) : (
+						</div>
+
+						<div className="w-1/3 p-1">
+							<InputField
+								type="number"
+								label="Amount"
+								placeholder="Enter Amount"
+								value={amount}
+								onChange={(e) => setAmount(parseInt(e.target.value))}
+							/>
+						</div>
+
+						<div className="w-1/4 p-1 mt-2">
+							<br />
+							<label className="text-gray4">Account To Debit</label>
 							<Select
-								placeholder="Select Category"
-								options={transactionTypes}
-								onChange={handleTypeChange}
-								value={selectedTransactionType}
+								placeholder="Select Account"
+								options={accounts}
+								onChange={(e) => {
+									setAccountToDebit(e);
+								}}
+								value={accountToDebit}
 							/>
+						</div>
+					</div>
+					<div className="flex justify-between mx-3 -mt-8">
+						<div className="w-1/3 p-1">
+							<br />
+							<label className="text-gray4">Account To Credit</label>
+							<Select
+								placeholder="Select Account"
+								options={accounts}
+								onChange={(e) => {
+									setAccountToCredit(e);
+								}}
+								value={accountToCredit}
+							/>
+						</div>
+
+						<div className="w-1/3 p-1">
+							<InputField
+								type="text"
+								placeholder="Enter Recipient"
+								label="Recieved By"
+								value={recievedBy}
+								onChange={(e) => setRecievedBy(e.target.value)}
+							/>
+						</div>
+
+						<div className="w-1/3 p-1">
+							<InputField
+								type="text"
+								placeholder="Enter Contacts"
+								label="Contacts"
+								value={contacts}
+								onChange={(e) => setContacts(e.target.value)}
+							/>
+						</div>
+					</div>
+
+					<div className="flex justify-between mx-3 -mt-8">
+						<div className="w-1/3 p-1">
+							<br />
+							<label className="text-gray4">Transaction Type</label>
+							{transactionType ? (
+								<InputField
+									type="text"
+									value={transactionType.toLocaleUpperCase()}
+									editable={false}
+								/>
+							) : (
+								<Select
+									placeholder="Select Category"
+									options={transactionTypes}
+									onChange={handleTypeChange}
+									value={selectedTransactionType}
+								/>
+							)}
+						</div>
+
+						<div className="w-1/3 p-1 mt-5">
+							<br />
+							<label className="text-gray4">Sub Type</label>
+							<Select
+								placeholder="Select Sub Type"
+								options={subTypesOptions}
+								onChange={(e) => setSelectedTransactionSubType(e)}
+								value={selectedTransactionSubType}
+							/>
+						</div>
+						{transactionType === "invoice" || transactionType === "receipt" ? (
+							<div className="w-1/3 p-1 mt-5">
+								<br />
+								<label className="text-gray4">Status</label>
+								<Select
+									placeholder="Select Status"
+									options={invoiceStatus}
+									onChange={(e) => setInvoiceStatusValue(e)}
+									value={invoiceStatusValue}
+								/>
+							</div>
+						) : (
+							<>
+								<div className="w-4/12 p-1 mt-2">
+									<br />
+									<label className="text-gray4">Receipt</label>
+									<Select
+										placeholder="Select Receipt"
+										options={receiptsData}
+										onChange={(e) => setReceipt(e)}
+										value={receipt}
+									/>
+								</div>
+								<div className="w-4/12 p-1 mt-2">
+									<br />
+									<label className="text-gray4">Invoice</label>
+									<Select
+										placeholder="Select Receipt"
+										options={invoicesData}
+										onChange={(e) => setInvoice(e)}
+										value={invoice}
+									/>
+								</div>
+							</>
 						)}
 					</div>
+					{transactionType === "invoice" || transactionType === "receipt" ? (
+						<div className="p-5 border-2 h-[25vh] overflow-y-auto border-gray1 rounded-md mx-2">
+							<div className="flex -mt-8">
+								<div className="p-2 w-1/4">
+									<InputField
+										placeholder="Item"
+										value={item}
+										onChange={(e) => setItem(e.target.value)}
+									/>
+								</div>
+								<div className="p-2 w-1/4">
+									<InputField
+										placeholder="Qty"
+										value={qty}
+										type="number"
+										onChange={(e) => setQty(e.target.value)}
+									/>
+								</div>
 
-					<div className="w-1/3 p-1 mt-5">
-						<br />
-						<label className="text-gray4">Sub Type</label>
-						<Select
-							placeholder="Select Sub Type"
-							options={subTypesOptions}
-							onChange={(e) => setSelectedTransactionSubType(e)}
-							value={selectedTransactionSubType}
-						/>
-					</div>
+								<div className="p-2 w-1/4">
+									<InputField
+										placeholder="Unit cost"
+										type="number"
+										value={unitCost}
+										onChange={(e) => setUnitCost(e.target.value)}
+									/>
+								</div>
 
-					<div className="w-4/12 p-1 mt-2">
-						<InputField
-							type="text"
-							placeholder="Enter Receipt"
-							label="Receipt/Invoice/file"
-							value={receipt}
-							onChange={(e) => setReceipt(e.target.value)}
-						/>
-					</div>
-				</div>
-				<div className="p-5 border-2 border-gray1 rounded-md m-2">
-					<div className="flex">
-						<div className="p-2 w-1/4">
-							<InputField
-								placeholder="Item"
-								value={item}
-								onChange={(e) => setItem(e.target.value)}
-							/>
-						</div>
-						<div className="p-2 w-1/4">
-							<InputField
-								placeholder="Qty"
-								value={qty}
-								onChange={(e) => setQty(e.target.value)}
-							/>
-						</div>
-
-						<div className="p-2 w-1/4">
-							<InputField
-								placeholder="Unit cost"
-								value={unitCost}
-								onChange={(e) => setUnitCost(e.target.value)}
-							/>
-						</div>
-
-						<div className="p-2 w-1/4 mt-5">
-							<div className="w-16" onClick={addItem}>
-								<Button value={"Add"} />
+								<div className="p-2 w-1/4 mt-5">
+									<div className="w-16" onClick={addItem}>
+										<Button value={"Add"} />
+									</div>
+								</div>
 							</div>
-						</div>
-					</div>
-					{items.map((item, index) => {
-						return (
-							<div
-								key={index}
-								className=" flex border-b border-gray2 hover:bg-gray1"
-							>
-								<div className="w-1/4 p-2 text-sm text-gray5">{item?.item}</div>
-								<div className="w-1/4 p-2 text-sm text-gray5">
-									{Number(item?.qty).toLocaleString()}
-								</div>
-								<div className="w-1/4 p-2 text-sm text-gray5">
-									{Number(item?.unitCost).toLocaleString()}
-								</div>
-								<div className="w-1/4 p-2 text-sm text-gray5">
-									{Number(item?.qty * item?.unitCost).toLocaleString()}
-								</div>
-								<div className="w-1/4 p-2">
-									<p
-										className="text-red text-xl cursor-pointer"
-										onClick={deleteItem}
+							{items.map((item, index) => {
+								return (
+									<div
+										key={index}
+										className=" flex border-b border-gray2 hover:bg-gray1"
 									>
-										X
-									</p>
-								</div>
-							</div>
-						);
-					})}
-				</div>
+										<div className="w-1/4 p-2 text-sm text-gray5">
+											{item?.name}
+										</div>
+										<div className="w-1/4 p-2 text-sm text-gray5">
+											{Number(item?.quantity).toLocaleString()}
+										</div>
+										<div className="w-1/4 p-2 text-sm text-gray5">
+											{Number(item?.price).toLocaleString()}
+										</div>
+										<div className="w-1/4 p-2 text-sm text-gray5">
+											{Number(item?.quantity * item?.price).toLocaleString()}
+										</div>
+										<div className="w-1/4 p-2">
+											<p
+												className="text-red text-xl cursor-pointer"
+												onClick={() => {
+													deleteItem(index);
+												}}
+											>
+												X
+											</p>
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					) : null}
 
-				<div className="flex justify-between mx-3">
-					<div className="w-4/12 p-1">
-						<InputField
-							type="file"
-							label="Attach receipt / file"
-							onChange={(e) => setFile(e.target.files[0])}
-						/>
-					</div>
+					<div className="flex justify-between mx-3 -mt-5">
+						<div className="w-4/12 p-1">
+							<InputField
+								type="file"
+								label="Attach Receipt/Invoice/file"
+								onChange={(e) => setFile(e.target.files[0])}
+							/>
+						</div>
 
-					<div className="w-8/12 p-1">
-						<br />
-						<label>Description</label>
-						<br />
-						<textarea
-							className="bg-gray1 min-h-[100px] p-5 border border-gray2 w-full"
-							placeholder="Enter Description"
-							value={description}
-							onChange={(e) => setDescription(e.target.value)}
-						></textarea>
+						<div className="w-8/12 p-1">
+							<br />
+							<label>Description</label>
+							<br />
+							<textarea
+								className="bg-gray1 min-h-[100px] p-5 border border-gray2 w-full"
+								placeholder="Enter Description"
+								value={description}
+								onChange={(e) => setDescription(e.target.value)}
+							></textarea>
+						</div>
 					</div>
 				</div>
 

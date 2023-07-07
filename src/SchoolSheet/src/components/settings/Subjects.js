@@ -136,7 +136,6 @@ function Subject() {
 							label="Subject"
 							value={subject}
 							onChange={(e) => setSubject(e.target.value)}
-							
 						/>
 					</div>
 
@@ -151,66 +150,68 @@ function Subject() {
 						)}
 					</div>
 				</div>
-
-				<table className="mt-10 w-[98%] table-auto">
-					<thead style={{ backgroundColor: "#0d6dfd10" }}>
-						<th className="p-2 text-primary text-sm text-left">Subject</th>
-						<th className="p-2 text-primary text-sm text-left">Action</th>
-					</thead>
-					<tbody>
-						{/* edit popup start */}
-						{editData ? (
-							<div className="absolute shadow-2xl rounded flex w-[30vw] p-5 bg-white">
-								<div className="w-7/12 pr-2">
-									<InputField
-										type="text"
-										placeholder="Enter Subject"
-										label="Subject"
-										onChange={(e) => setEditSubject(e.target.value)}
-										value={editSubject}
-										
-									/>
-								</div>
-								<div className="flex justify-between w-5/12 mt-[55px]">
-									<div onClick={updateSubject}>
-										<ButtonSecondary value={"Update"} />
-									</div>
-									<div>
-										<p
-											className="text-black text-lg ml-5 cursor-pointer"
-											onClick={closeEditData}
-										>
-											X
-										</p>
-									</div>
-								</div>
-							</div>
-						) : null}
-						{/* edit popup end */}
-
-						{subjects.map((subject) => {
-							return (
-								<tr
-									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-									key={subject.id}
-								>
-									<td className="text-xs p-3 text-gray5">{subject.subject}</td>
-
-									<td className="text-xs p-3 text-gray5 flex">
-										<MdDeleteOutline
-											onClick={() => deleteSubject(subject)}
-											className="text-red w-4 h-4"
+				<div className="h-[70vh] overflow-y-auto">
+					<table className="mt-10 w-[98%] table-auto">
+						<thead style={{ backgroundColor: "#0d6dfd10" }}>
+							<th className="p-2 text-primary text-sm text-left">Subject</th>
+							<th className="p-2 text-primary text-sm text-left">Action</th>
+						</thead>
+						<tbody>
+							{/* edit popup start */}
+							{editData ? (
+								<div className="absolute shadow-2xl rounded flex w-[30vw] p-5 bg-white">
+									<div className="w-7/12 pr-2">
+										<InputField
+											type="text"
+											placeholder="Enter Subject"
+											label="Subject"
+											onChange={(e) => setEditSubject(e.target.value)}
+											value={editSubject}
 										/>
-										<BsPencilSquare
-											className="text-warning h-4 w-4 ml-5"
-											onClick={() => openEditData(subject)}
-										/>
-									</td>
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
+									</div>
+									<div className="flex justify-between w-5/12 mt-[55px]">
+										<div onClick={updateSubject}>
+											<ButtonSecondary value={"Update"} />
+										</div>
+										<div>
+											<p
+												className="text-black text-lg ml-5 cursor-pointer"
+												onClick={closeEditData}
+											>
+												X
+											</p>
+										</div>
+									</div>
+								</div>
+							) : null}
+							{/* edit popup end */}
+
+							{subjects.map((subject) => {
+								return (
+									<tr
+										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+										key={subject.id}
+									>
+										<td className="text-xs p-3 text-gray5">
+											{subject.subject}
+										</td>
+
+										<td className="text-xs p-3 text-gray5 flex">
+											<MdDeleteOutline
+												onClick={() => deleteSubject(subject)}
+												className="text-red w-4 h-4"
+											/>
+											<BsPencilSquare
+												className="text-warning h-4 w-4 ml-5"
+												onClick={() => openEditData(subject)}
+											/>
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	);

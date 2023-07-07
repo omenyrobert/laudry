@@ -29,6 +29,9 @@ export const addTransaction = async (req: Request, res: Response) => {
       transactionTypeID,
       amountToDebit,
       amountToCredit,
+      items,
+      status,
+      invoice
     } = req.body;
 
     const file = req.file ? req.file.filename : null;
@@ -77,6 +80,11 @@ export const addTransaction = async (req: Request, res: Response) => {
       }
     }
 
+    let itemsObj = items
+    if(typeof items === "string"){
+      itemsObj = JSON.parse(items)
+    }
+
     const transaction = await createTransactionDoubleEntry(
       title,
       amountObj,
@@ -88,7 +96,10 @@ export const addTransaction = async (req: Request, res: Response) => {
       contacts,
       file,
       receipt,
-      parseInt(transactionTypeID)
+      invoice,
+      parseInt(transactionTypeID),
+      itemsObj,
+      status
     )
 
     return res.json(customPayloadResponse(true, transaction)).status(200).end();
@@ -132,7 +143,11 @@ export const updateTransaction = async (req: Request, res: Response) => {
       transactionTypeID,
       amountToDebit,
       amountToCredit,
+      items,
+      status,
+      invoice
     } = req.body
+
     const file = req.file ? req.file.filename : null;
 
     if (!transactionId) {
@@ -172,6 +187,12 @@ export const updateTransaction = async (req: Request, res: Response) => {
         .end();
     }
 
+    let itemsObj = items
+    if(typeof items === "string"){
+      itemsObj = JSON.parse(items)
+    }
+
+
     let amountObj: AmountType
 
     if(amountToDebit && amountToCredit){
@@ -198,7 +219,10 @@ export const updateTransaction = async (req: Request, res: Response) => {
       contacts,
       file,
       receipt,
-      transactionTypeID
+      invoice,
+      transactionTypeID,
+      itemsObj,
+      status
     )
 
     return res.json(customPayloadResponse(true, transaction)).status(200).end();

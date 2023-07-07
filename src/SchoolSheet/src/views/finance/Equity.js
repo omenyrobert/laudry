@@ -117,6 +117,64 @@ function Equity() {
 
 	const [id, setId] = useState("");
 
+	// implement search
+	const [query, setQuery] = useState({
+		search: "",
+		startDate: NaN,
+		endDate: NaN,
+	});
+	const [searchedequitys, setSearchedequitys] = useState([]);
+
+	useEffect(() => {
+		if (
+			query.search === "" &&
+			isNaN(query.startDate) &&
+			isNaN(query.endDate)
+		) {
+			setSearchedequitys(equitysData);
+			return;
+		}
+		const filteredequitys = equitysData.filter((equity) => {
+			const equityDate = new Date(equity.date);
+			const isStartDateValid = isNaN(query.startDate)
+				? true
+				: equityDate.getTime() >= query.startDate;
+			const isEndDateValid = isNaN(query.endDate)
+				? true
+				: equityDate.getTime() <= query.endDate;
+			const isSearchValid = equity.title
+				.toLowerCase()
+				.includes(query.search.toLowerCase());
+
+			return (
+				isStartDateValid && isEndDateValid && isSearchValid
+			);
+		});
+		setSearchedequitys(filteredequitys);
+	}, [query, equitysData]);
+
+	const printTable = () => {
+		const table = document.getElementById("equity-table");
+		const myWindow = window.open("", "", "width=900,height=700");
+		myWindow.document.write(table.outerHTML);
+
+		const stylesheets = Array.from(document.styleSheets);
+
+		stylesheets.forEach((stylesheet) => {
+			myWindow.document.head.appendChild(stylesheet.ownerNode.cloneNode(true));
+		});
+
+		const links = Array.from(document.getElementsByTagName("link"));
+
+		links.forEach((link) => {
+			myWindow.document.head.appendChild(link.cloneNode(true));
+		});
+
+		setTimeout(() => {
+			myWindow.print();
+		}, 1000);
+	};
+
 	return (
 		<>
 			<div className="flex mt-2 bg-white px-3 border border-gray2 rounded-md">
@@ -128,27 +186,40 @@ function Equity() {
 						type="search"
 						placeholder="Search for equity"
 						icon={<BsSearch className="w-3 -ml-7 mt-3" />}
+						onChange={(e) => {
+							setQuery({ ...query, search: e.target.value });
+						}}
 					/>
 				</div>
 				<div className="w-2/12 ml-5">
-					<InputField type="date" />
+					<InputField
+						type="date"
+						onChange={(e) => {
+							setQuery({ ...query, startDate: e.target.valueAsNumber });
+						}}
+					/>
 				</div>
 				<div className="w-2/12 ml-5">
-					<InputField type="date" />
+					<InputField
+						type="date"
+						onChange={(e) => {
+							setQuery({ ...query, endDate: e.target.valueAsNumber });
+						}}
+					/>
 				</div>
 
 				<div className="w-2/12 mt-5 ml-5 flex">
 					<Link to="/addTransaction?transactionType=equity&action=create">
 						<Button2 value={"Equity"} />
 					</Link>
-					<div className="ml-2">
+					<div onClick={printTable} className="ml-2">
 						<Button value={"Print"} />
 					</div>
 				</div>
 			</div>
 
 			<div className="w-full h-[80vh]">
-				<table className="mt-10 w-[98%] table-auto">
+				<table id="equity-table" className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
 						<th className="p-2 text-primary text-sm text-left">equity</th>
@@ -160,7 +231,7 @@ function Equity() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-						{equitysData.map((equityItem) => {
+						{searchedequitys.map((equityItem) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"

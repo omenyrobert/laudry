@@ -12,6 +12,7 @@ import ButtonSecondary from "../../components/ButtonSecondary";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
 import { useNavigate, Link } from "react-router-dom";
+import Select from "react-select";
 
 function Bills() {
 	const { setLoading, toggleFeedback } = useFeedback();
@@ -120,6 +121,64 @@ function Bills() {
 		fetchData();
 	}, []);
 	const [id, setId] = useState("");
+
+	// implement search
+	const [query, setQuery] = useState({
+		search: "",
+		startDate: NaN,
+		endDate: NaN,
+	});
+	const [searchedBills, setSearchedBills] = useState([]);
+
+	useEffect(() => {
+		if (
+			query.search === "" &&
+			query.filter === "" &&
+			isNaN(query.startDate) &&
+			isNaN(query.endDate)
+		) {
+			setSearchedBills(billsData);
+			return;
+		}
+		const filteredBills = billsData.filter((income) => {
+			const incomeDate = new Date(income.date);
+			const isStartDateValid = isNaN(query.startDate)
+				? true
+				: incomeDate.getTime() >= query.startDate;
+			const isEndDateValid = isNaN(query.endDate)
+				? true
+				: incomeDate.getTime() <= query.endDate;
+			const isSearchValid = income.title
+				.toLowerCase()
+				.includes(query.search.toLowerCase());
+			return (
+				isStartDateValid && isEndDateValid && isSearchValid
+			);
+		});
+		setSearchedBills(filteredBills);
+	}, [query, billsData]);
+
+	const printTable = () => {
+		const table = document.getElementById("income-table");
+		const myWindow = window.open("", "", "width=900,height=700");
+		myWindow.document.write(table.outerHTML);
+
+		const stylesheets = Array.from(document.styleSheets);
+
+		stylesheets.forEach((stylesheet) => {
+			myWindow.document.head.appendChild(stylesheet.ownerNode.cloneNode(true));
+		});
+
+		const links = Array.from(document.getElementsByTagName("link"));
+
+		links.forEach((link) => {
+			myWindow.document.head.appendChild(link.cloneNode(true));
+		});
+
+		setTimeout(() => {
+			myWindow.print();
+		}, 1000);
+	};
 	return (
 		<>
 			<div className="w-full h-[80vh]">
@@ -131,16 +190,34 @@ function Bills() {
 									placeholder="Search for Income"
 									type="search"
 									icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+									onChange={(e) => {
+										setQuery({ ...query, search: e.target.value });
+									}}
 								/>
 							</div>
-							<div className="w-3/12 px-2">
-								<InputField placeholder="Filter By Type" />
-							</div>{" "}
 							<div className="w-2/12 px-2">
-								<InputField type="date" />
+								<InputField
+									type="date"
+									onChange={(e) => {
+										setQuery({ ...query, startDate: e.target.valueAsNumber });
+									}}
+								/>
 							</div>
 							<div className="w-2/12">
-								<InputField type="date" />
+								<InputField
+									type="date"
+									onChange={(e) => {
+										setQuery({ ...query, endDate: e.target.valueAsNumber });
+									}}
+								/>
+							</div>
+							<div
+								onClick={() => {
+									setQuery({ search: "", startDate: NaN, endDate: NaN });
+								}}
+								className="mt-5 ml-5"
+							>
+								<Button value={"Clear Fitlers"} />
 							</div>
 						</div>
 					</div>
@@ -149,14 +226,14 @@ function Bills() {
 							<Link to="/addTransaction?transactionType=bill&action=create">
 								<Button2 value={"Bill"} />
 							</Link>
-							<div className="ml-5">
+							<div onClick={printTable} className="ml-5">
 								<Button value={"Print"} />
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<table className="mt-10 w-[98%] table-auto">
+				<table id="income-table" className="mt-10 w-[98%] table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Date</th>
 						<th className="p-2 text-primary text-sm text-left">bill</th>
@@ -167,7 +244,7 @@ function Bills() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-						{billsData.map((billItem) => {
+						{searchedBills.map((billItem) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
@@ -215,8 +292,8 @@ function Bills() {
 						<tr className="bg-white p-4 text-lg text-primary font-semibold">
 							<td colSpan="6" className="p-1">Total</td>
 							<td>{Number(billTotal).toLocaleString()}</td>
-							
-						
+
+
 						</tr>
 					</tbody>
 				</table>
