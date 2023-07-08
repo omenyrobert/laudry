@@ -102,7 +102,7 @@ function studentsTable2() {
 				<th className="p-2 text-primary text-sm text-left">Full Name</th>
 				<th className="p-2 text-primary text-sm text-left">Class</th>
 				<th className="p-2 text-primary text-sm text-left">Paid</th>
-				<th className="p-2 text-primary text-sm text-left">Contact</th>
+				<th className="p-2 text-primary text-sm text-left">Balance</th>
 			</thead>
 			<tbody>
 				{patients.map((patient) => {
