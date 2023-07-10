@@ -88,7 +88,7 @@ export const mailTransporter = (email: any, password: any) => {
   const transporter = createTransport({
     host: "smtp.gmail.com",
     port: 465,
-    secure: true,
+    secure: false,
     service: "gmail",
     auth: {
       user: email,

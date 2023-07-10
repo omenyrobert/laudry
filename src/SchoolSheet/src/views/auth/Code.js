@@ -6,65 +6,81 @@ import "../../assets/styles/login.css";
 import Button from "../../components/Button";
 import InputField from "../../components/InputField";
 import axiosInstance from "../../axios-instance";
+import ButtonLoader from "../../components/ButtonLoader";
 
 const Code = () => {
+	const navigate = useNavigate();
 
-    const navigate = useNavigate();
+	const [formData, setFormData] = useState({
+		code: "",
+	});
 
-    const [formData, setFormData] = useState({
-        code: "",
-    });
+	const onChange = (e) => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
 
-    const onChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const submitCode = async () => {
-        try {
-            const response = await axiosInstance.post('/auth/submit-code', formData)
-            const { data } = response;
-            const { status, payload } = data;
-            if (status) {
-                const { email } = payload;
-                localStorage.setItem('resetEmail', email);
-                navigate(`/passwordReset`);
+	const [posting, setPosting] = useState(false);
+    const [errorMessage, setError] = useState("");
+	const submitCode = async () => {
+		try {
+			setPosting(true);
+			const response = await axiosInstance.post("/auth/submit-code", formData);
+			const { data } = response;
+			const { status, payload } = data;
+			if (status) {
+				const { email } = payload;
+				localStorage.setItem("resetEmail", email);
+				navigate(`/passwordReset`);
+				setPosting(false);
+			} else{
+                setError(payload);
+                setPosting(false);
             }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    return (
-        <div className="flex overflow-hidden h-screen w-full bgdiv">
-            <div className="w-7/12 flex justify-center items-center">
-                <div>
-                    <img src="login2.png" className="w-[500px]" alt="Logo" />
-                </div>
-            </div>
+		} catch (error) {
+			console.log(error);
+			setPosting(false);
+		}
+		setPosting(false);
+	};
+	return (
+		<div className="flex overflow-hidden h-screen w-full bgdiv">
+			<div className="w-7/12 flex justify-center items-center">
+				<div>
+					<img src="login2.png" className="w-[500px]" alt="Logo" />
+				</div>
+			</div>
 
-            <div className="w-5/12 p-2 flex justify-center items-center">
-                <div className="bg-white rounded-md shadow-lg p-10 w-[500px]">
-                    <div className="flex justify-center">
-                        <FaBriefcase className="text-secondary text-3xl mt-2" />
-                        <h1 className="font-bold text-4xl mt-1 text-secondary ml-2">
-                            School SoftOffice
-                        </h1>
-                    </div>
-                    <p className="text-center text-primary mt-2">Enter Code</p>
-                    <InputField
-                        type="text"
-                        placeholder="Enter Your Code"
-                        label="Code"
-                        name="code"
-                        icon={<MdAlternateEmail className="w-10 mt-3" />}
-                        onChange={onChange}
-                    />
-                    <div onClick={submitCode}>
-                        <Button value={"Submit Code"} />
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
+			<div className="w-5/12 p-2 flex justify-center items-center">
+				<div className="bg-white rounded-md shadow-lg p-10 w-[500px]">
+					<div className="flex justify-center">
+						<FaBriefcase className="text-secondary text-3xl mt-2" />
+						<h1 className="font-bold text-4xl mt-1 text-secondary ml-2">
+							School SoftOffice
+						</h1>
+					</div>
+					<p className="text-center text-primary mt-2">Enter Code</p>
+                    <p className="text-center text-red text-sm mt-2">{errorMessage}</p>
+					<InputField
+						type="text"
+						placeholder="Enter Your Code"
+						label="Code"
+						name="code"
+						icon={<MdAlternateEmail className="w-10 mt-3" />}
+						onChange={onChange}
+					/>
+					{posting ? (
+						<div>
+							<ButtonLoader />
+						</div>
+					) : (
+						<div onClick={submitCode}>
+							<Button value={"Submit Code"} />
+						</div>
+					)}
+				</div>
+			</div>
+		</div>
+	);
+};
 
 export default Code;
