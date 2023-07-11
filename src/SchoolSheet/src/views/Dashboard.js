@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import SmallCalendar from "../components/dashboard/SmallCalendar";
 // import Loader from "../components/Loader"
 import PatientTable2 from "../components/students/studentsTable2";
@@ -10,21 +10,45 @@ import Doughnut from "../components/dashboard/DoughnutComp";
 import { FaUserAlt } from "react-icons/fa";
 import { GiAlarmClock } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../axios-instance"
+import { useSelector, useDispatch } from "react-redux"
+import { getStaffMembers } from "../store/schoolSheetSlices/schoolStore"
 
 const Dashboard = () => {
 	const navigate = useNavigate();
+	const [studentCount, setStudentCount] = useState(0)
+	const { staffMembers } = useSelector(state => state.schoolStore)
+	const dispatch = useDispatch()
+
+
 	useEffect(() => {
 		const token = localStorage.getItem("schoolSoftToken");
 		if (token === null || token === undefined) {
 			navigate("/");
 		}
+
 	}, [navigate]);
+
+	function fetchStudentCount() {
+		axiosInstance.get("/students/studentCount/count").then((res) => {
+			setStudentCount(res.data.payload)
+		})
+	}
+
+	useEffect(() => {
+		fetchStudentCount()
+		dispatch(getStaffMembers())
+	}, [dispatch])
+
+
+
+
 	return (
 		<div className="h-screen overflow-y-auto">
 
-			
 
-			<Cards />
+
+			<Cards studentCount={studentCount} staffMembers={staffMembers} />
 			<div className="flex w-full">
 				<div className="w-8/12">
 					<div className="rounded-md w-full shadow-md bg-white h-[65vh] p-5">

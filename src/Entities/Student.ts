@@ -500,3 +500,12 @@ export const deleteStudentDocument = async (id: number) => {
 }
 
 
+
+
+// Get nuber of students
+export const getNumberOfStudents = async () => {
+  const students = await Student.find()
+  
+  return students.length;
+}
+

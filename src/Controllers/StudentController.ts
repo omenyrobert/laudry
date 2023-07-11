@@ -9,6 +9,7 @@ import {
   createDocument,
   getStudentDocuments,
   deleteStudentDocument,
+  getNumberOfStudents,
 } from "../Entities/Student";
 import { getTermBySelect } from "../Entities/Term";
 
@@ -360,4 +361,21 @@ export const removeStudentDocument = async (req: Request, res: Response) => {
       .status(500)
       .end();
   }
+}
+
+
+export const fetchNumberOfStudents = async (req: Request, res: Response) => {
+    const numberOfStudents = await getNumberOfStudents();
+    if (numberOfStudents) {
+      return res
+        .json(customPayloadResponse(true, numberOfStudents))
+        .status(200)
+        .end();
+    } else {
+      return res
+        .json(customPayloadResponse(false, "No Students Found"))
+        .status(404)
+        .end();
+    }
+  
 }

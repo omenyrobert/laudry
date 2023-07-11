@@ -1,8 +1,9 @@
 import * as React from "react";
 import { FaUsers, FaFileInvoiceDollar, FaTooth } from "react-icons/fa";
-import {TbZoomMoney} from "react-icons/tb"
+import { TbZoomMoney } from "react-icons/tb"
 
-function Cards() {
+
+function Cards({ studentCount, staffMembers }) {
 	return (
 		<div className="flex w-full">
 
@@ -29,7 +30,7 @@ function Cards() {
 				</div>
 				<div className="flex justify-between mt-12">
 					<div className="">
-						<p className="text-2xl">204</p>
+						<p className="text-2xl">{studentCount}</p>
 					</div>
 					<div className="">
 						<p className="bg-blue11 p-2 text-primary text-xs rounded">View All</p>
@@ -52,7 +53,9 @@ function Cards() {
 				</div>
 				<div className="flex justify-between mt-12">
 					<div className="">
-						<p className="text-2xl">20,090,00</p>
+						<p className="text-2xl">
+							{staffMembers.length}
+						</p>
 					</div>
 					<div className="">
 						<p className="bg-yellow11 p-2 text-orange text-xs rounded">View All</p>
