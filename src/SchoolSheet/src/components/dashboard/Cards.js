@@ -3,15 +3,26 @@ import { FaUsers, FaFileInvoiceDollar, FaTooth } from "react-icons/fa";
 import { TbZoomMoney } from "react-icons/tb"
 
 
-function Cards({ studentCount, staffMembers }) {
+function Cards({ studentCount, staffMembers, selectedTerm, studentsWithLowBalance }) {
+
 	return (
 		<div className="flex w-full">
 
 			<div className="w-1/4 my-2 mr-2 p-3 h-24  bg-primary text-white shadow  rounded-md">
-				<p className="text-lg font-semibold">Term 1</p>
+				<p className="text-lg font-semibold">
+					{selectedTerm.term}
+				</p>
 				<div className="flex justify-between mt-3 text-sm">
-					<div>3rd Jan 2023</div>
-					<div>13rd April 2023</div>
+					<div>
+						{
+							new Date(selectedTerm.from).toLocaleDateString()
+						}
+					</div>
+					<div>
+						{
+							new Date(selectedTerm.to).toLocaleDateString()
+						}
+					</div>
 				</div>
 			</div>
 
@@ -78,7 +89,9 @@ function Cards({ studentCount, staffMembers }) {
 				</div>
 				<div className="flex justify-between mt-12">
 					<div className="">
-						<p className="text-2xl">670,000</p>
+						<p className="text-2xl">
+							{studentsWithLowBalance.length}
+						</p>
 					</div>
 					<div className="">
 						<p className="bg-green11 p-2 text-green text-xs rounded">View All</p>

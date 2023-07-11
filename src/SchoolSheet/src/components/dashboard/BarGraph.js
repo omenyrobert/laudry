@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
 
-function BarGraph() {
-const data = {
+function BarGraph({ classes }) {
+  // classes is an array of objects like: {id: 1, class: "JSS 1", numberOfStudents: 9}
+  const [chartData, setChartData] = useState(null)
+  const data = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Amy', 'June'],
     datasets: [
       {
@@ -26,15 +28,32 @@ const data = {
       }
     ],
     responsive: true,
+  }
+
+  useEffect(() => {
+    const newChartData = {
+      labels: classes.map((item) => item.class),
+      datasets: [
+        {
+          label: 'Number of Students',
+          data: classes.map((item) => item.numberOfStudents),
+          backgroundColor: '#193296',
+        }
+      ],
+      responsive: true,
     }
+    setChartData(newChartData);
+  }, [classes]);
 
 
-    return (
+  return (
     <div className='w-full'>
 
-        <Bar data={data} />
-  </div>
-    )
+      {
+        chartData && <Bar data={chartData} />
+      }
+    </div>
+  )
 }
 
 export default BarGraph;

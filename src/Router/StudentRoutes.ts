@@ -10,7 +10,8 @@ import {
   removeStudentDocument,
   addStudentDocument,
   fetchStudentDocuments,
-  fetchNumberOfStudents
+  fetchNumberOfStudents,
+  fetchStudentsWithFeesBalanceLessThan50Controller
 } from "../Controllers/StudentController";
 import {validateStudentRequest} from "../Middlewares/StudentMiddleware";
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
@@ -42,5 +43,6 @@ export default (router: Router) => {
   router.get(`${studentRoutePrefix}/documents/:student`, JWTAuthMiddleWare, fetchStudentDocuments);
   router.delete(`${studentRoutePrefix}/document/delete/:id`, JWTAuthMiddleWare, removeStudentDocument);
   router.get(`${studentRoutePrefix}/studentCount/count`, JWTAuthMiddleWare, fetchNumberOfStudents);
+  router.get(`${studentRoutePrefix}/balance/lessThan50`, JWTAuthMiddleWare, fetchStudentsWithFeesBalanceLessThan50Controller);
 
 };
