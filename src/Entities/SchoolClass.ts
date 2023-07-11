@@ -123,3 +123,28 @@ export const removeClassFromStaff = async (classId: number, staffId: number) => 
   }
 }
 
+
+// get number of students in a class
+export const getNumberOfStudentsInClass = async (classId: number) => {
+  const classToFind = await getClassById(classId);
+  const students = await Student.find();
+  const numberOfStudents = students.filter(
+    (item: Student) =>{
+      return item.classes.some((item: any) => item.id === classToFind.id)
+    }).length;
+  return numberOfStudents
+}
+
+// get number of students per class and return and array of objects
+export const getNumberOfStudentsPerClass = async () => {
+  const classes = await SchoolClass.find();
+  const numberOfStudentsPerClass = await Promise.all(classes.map(async (item: any) => {
+    const numberOfStudents = await getNumberOfStudentsInClass(item.id);
+    return {
+      id: item.id,
+      class: item.class,
+      numberOfStudents: numberOfStudents
+    }
+  }))
+  return numberOfStudentsPerClass;
+}

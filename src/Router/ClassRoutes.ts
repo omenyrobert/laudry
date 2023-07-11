@@ -5,7 +5,8 @@ import {
   modifyClass,
   removeClass,
   addClassToStaffController,
-  removeClassFromStaffController
+  removeClassFromStaffController,
+  getNumberOfStudentsPerClassController
 } from "../Controllers/ClassController";
 
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
@@ -25,5 +26,10 @@ export default (router: Router) => {
     `${classPrefix}/remove-class-from-staff`,
     JWTAuthMiddleWare,
     removeClassFromStaffController
+  );
+  router.get(
+    `${classPrefix}/number-of-students-per-class`,
+    JWTAuthMiddleWare,
+    getNumberOfStudentsPerClassController
   );
 };

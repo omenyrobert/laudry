@@ -17,6 +17,10 @@ import { DatabaseConnection } from "../Database/database";
 import { Fee, selectedFee } from "./Fee";
 import { Term, selectedTermIds, getTermBySelect } from "./Term";
 import { SchoolClass } from "./SchoolClass";
+import {
+  extraLatestArrayIndex,
+} from "../Helpers/Helpers";
+import { getStudentTermPayments } from "./StudentPaidBalance";
 
 @Entity()
 export class Student extends BaseEntity {
@@ -498,5 +502,68 @@ export const deleteStudentDocument = async (id: number) => {
     return false;
   }
 }
+
+
+
+
+// Get nuber of students
+export const getNumberOfStudents = async () => {
+  const students = await Student.find()
+  
+  return students.length;
+}
+
+
+
+// get students with fees balance less than 50%
+export const getStudentsWithFeesBalanceLessThan50 = async () => {
+  const studentsToFetch = await Student.find()
+  const activeTerm = await getTermBySelect();
+
+  if (activeTerm === null) {
+    throw new Error("Act Term not found");
+  }
+
+  const students = await Promise.all(
+      studentsToFetch.map(async (student) => {
+        const studentPaymentsPerTerm = await getStudentTermPayments(
+          student.id,
+          activeTerm.id
+        );
+        const feesType = extraLatestArrayIndex(student.fees);
+        const balanceToReturn =
+          studentPaymentsPerTerm !== null
+            ? studentPaymentsPerTerm
+            : { balance: feesType?.amount, amount: 0 };
+        return { ...student, feesBalance: JSON.stringify(balanceToReturn) };
+      })
+    );
+
+
+
+  const studentsWithFeesBalanceLessThan50 = students.filter((student: any) => {
+    if (student.feesBalance !== null) {
+      // decode the JSON
+      const feesBalance = JSON.parse(student.feesBalance);
+
+      if (feesBalance.balance && feesBalance.amount) {
+        const balance = parseFloat(feesBalance.balance);
+        const amount = parseFloat(feesBalance.amount);
+        const percentage = (balance / amount) * 100;
+        if (percentage < 50) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+  });
+
+  
+  return studentsWithFeesBalanceLessThan50;
+}
+
 
 

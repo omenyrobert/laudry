@@ -7,6 +7,7 @@ import {
   createClass,
   addClassToStaff,
   removeClassFromStaff,
+  getNumberOfStudentsPerClass
 } from "../Entities/SchoolClass";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -131,6 +132,16 @@ export const removeClassFromStaffController = async (req: Request, res: Response
     }
     await removeClassFromStaff(classId, staffId);
     return res.json(customPayloadResponse(true, "Class Removed from Staff")).status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getNumberOfStudentsPerClassController = async (req: Request, res: Response) => {
+  try {
+    const numberOfStudents = await getNumberOfStudentsPerClass();
+    return res.json(customPayloadResponse(true, numberOfStudents)).status(200).end();
+
   } catch (error) {
     console.log(error);
   }
