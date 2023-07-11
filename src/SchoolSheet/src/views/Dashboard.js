@@ -10,96 +10,88 @@ import Doughnut from "../components/dashboard/DoughnutComp";
 import { FaUserAlt } from "react-icons/fa";
 import { GiAlarmClock } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../axios-instance"
-import { useSelector, useDispatch } from "react-redux"
-import { getStaffMembers, getStudents } from "../store/schoolSheetSlices/schoolStore"
+import axiosInstance from "../axios-instance";
+import { useSelector, useDispatch } from "react-redux";
+import {
+	getStaffMembers,
+	getStudents,
+} from "../store/schoolSheetSlices/schoolStore";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
-	const [studentCount, setStudentCount] = useState(0)
-	const { staffMembers } = useSelector(state => state.schoolStore)
-	const dispatch = useDispatch()
-	const [selectedTerm, setSelectedTerm] = useState({})
-	const [studentsWithLowBalance, setStudentsWithLowBalance] = useState([])
-	const [classes, setClasses] = useState([])
-
+	const [studentCount, setStudentCount] = useState(0);
+	const { staffMembers } = useSelector((state) => state.schoolStore);
+	const dispatch = useDispatch();
+	const [selectedTerm, setSelectedTerm] = useState({});
+	const [studentsWithLowBalance, setStudentsWithLowBalance] = useState([]);
+	const [classes, setClasses] = useState([]);
 
 	useEffect(() => {
 		const token = localStorage.getItem("schoolSoftToken");
 		if (token === null || token === undefined) {
 			navigate("/");
 		}
-
 	}, [navigate]);
 
 	function fetchStudentCount() {
 		axiosInstance.get("/students/studentCount/count").then((res) => {
-			setStudentCount(res.data.payload)
-		})
+			setStudentCount(res?.data?.payload);
+		});
 	}
 
 	useEffect(() => {
-		fetchClasses()
-		fetchStudentCount()
-		dispatch(getStaffMembers())
-		dispatch(getStudents())
-		getSelectedTerm()
-		fetchStudetsWithLowBalance()
-	}, [dispatch])
+		fetchClasses();
+		fetchStudentCount();
+		dispatch(getStaffMembers());
+		dispatch(getStudents());
+		getSelectedTerm();
+		fetchStudetsWithLowBalance();
+	}, [dispatch]);
 
 	function getSelectedTerm() {
 		axiosInstance.get("/terms/selected/term").then((res) => {
-			setSelectedTerm(res.data.payload)
-		}
-		)
+			setSelectedTerm(res?.data?.payload);
+		});
 	}
-
 
 	function fetchStudetsWithLowBalance() {
 		axiosInstance.get("/students/balance/lessThan50").then((res) => {
-			setStudentsWithLowBalance(res.data.payload)
+			setStudentsWithLowBalance(res?.data?.payload);
 			//console.log(res.data.payload)
-		})
+		});
 	}
 
 	function fetchClasses() {
-		console.log("-=======")
-		axiosInstance.get("/class/number-of-students-per-class").then((res) => {
-			setClasses(res.data.payload)
-		}).catch((err) => {
-			console.log("An error occured while fetching classes")
-		})
+		console.log("-=======");
+		axiosInstance
+			.get("/class/number-of-students-per-class")
+			.then((res) => {
+				setClasses(res?.data?.payload);
+			})
+			.catch((err) => {
+				console.log("An error occured while fetching classes");
+			});
 	}
-
-
-
-
 
 	return (
 		<div className="h-screen overflow-y-auto">
-
-
-
 			<Cards
 				studentCount={studentCount}
 				staffMembers={staffMembers}
 				selectedTerm={selectedTerm}
 				studentsWithLowBalance={studentsWithLowBalance}
-
 			/>
 			<div className="flex w-full">
 				<div className="w-8/12">
 					<div className="rounded-md w-full shadow-md bg-white h-[65vh] p-5">
-						<p className="text-xl text-primary font-semibold">Fees Payment</p>
+						<p className="text-xl text-primary font-semibold">Students</p>
 						<BarGraph classes={classes} />
 					</div>
 					<div className="rounded-md w-full shadow-md overflow-y-auto bg-white h-[50vh] p-5 mt-3">
 						<p className="text-xl text-primary font-semibold">
 							Students With Lowest Payments
 						</p>
-						<PatientTable2
-							students={studentsWithLowBalance}
-						/>
+						<PatientTable2 students={studentsWithLowBalance} />
 					</div>
 				</div>
 				<div className="w-4/12 rounded-md shadow-md bg-white ml-2 overflow-y-auto h-[125vh] p-2">
