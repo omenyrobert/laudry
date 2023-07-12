@@ -83,7 +83,6 @@ function StaffEditForm(props) {
 	};
 
 	const fetchStaffProfile = async () => {
-	
 		try {
 			const response = await axiosInstance.post(`/staff-profile/get-profile`, {
 				staff: staffId,
@@ -103,7 +102,6 @@ function StaffEditForm(props) {
 		} catch (error) {
 			console.log(error);
 		}
-		
 	};
 
 	useEffect(() => {
@@ -130,27 +128,39 @@ function StaffEditForm(props) {
 
 	const [postingPhoto, setPostingPhoto] = useState(false);
 
-	const handlePhotoChange = (e) => {
-		setPostingPhoto(true);
-		console.log('posting', postingPhoto);
-		const file = e.target.files[0];
-		const formData = new FormData();
-		formData.append("profile_picture", file);
-		axiosInstance
-			.post(`/staff/profile-picture/${staffId}`, formData, {
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
-			})
-			.then((res) => {
+	const handlePhotoChange = async (e) => {
+		try {
+			setPostingPhoto(true);
+			// console.log("posting", postingPhoto);
+			const file = e.target.files[0];
+			const formData = new FormData();
+			formData.append("profile_picture", file);
+			let res = await axiosInstance.post(
+				`/staff/profile-picture/${staffId}`,
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				}
+			);
+			if (res.status) {
 				fetchStaffInfo();
-				console.log(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-		setPostingPhoto(false);
-		console.log('posting2', postingPhoto);
+				setPostingPhoto(false);
+			} else {
+				setPostingPhoto(false);
+			}
+		} catch (error) {}
+
+		// 	.then((res) => {
+
+		// 		console.log(res.data);
+		// 	})
+		// 	.catch((err) => {
+		// 		console.log(err);
+		// 	});
+		// setPostingPhoto(false);
+		// console.log("posting2", postingPhoto);
 	};
 
 	const [posting, setPosting] = useState(false);
@@ -241,7 +251,7 @@ function StaffEditForm(props) {
 			<div className="bg-white h-[90vh] overflow-y-auto  ">
 				<div className="p-3 bg-gray1 flex justify-between">
 					<div>
-						<p className="text-primary text-lg font-semibold">
+						<p className="text-primary text-lg  font-semibold">
 							Staff Member Info
 						</p>
 					</div>
@@ -256,10 +266,11 @@ function StaffEditForm(props) {
 				</div>
 				<div className="flex p-3">
 					<div className="w-5/12 py-3 pl-3 pr-10">
-						<div className="flex justify-center">
-							
+						<div className="flex justify-center h-64 bg-primary rounded-md">
 							{postingPhoto ? (
+								<div className="mt-24">
 								<Loader />
+								</div>
 							) : (
 								<div className="flex">
 									<div>
@@ -269,7 +280,7 @@ function StaffEditForm(props) {
 													? UPLOADS_URL + staffInfo?.profile_picture
 													: "avata.jpeg"
 											}
-											className="w-60 h-60 object-cover rounded-full  border border-gray1 shadow"
+											className="w-60 h-60 object-cover rounded-full  border-4 my-2 border-white"
 											alt={staffInfo?.firstName}
 										/>
 										<input
@@ -286,9 +297,9 @@ function StaffEditForm(props) {
 												const imgInput = document.getElementById("ppImage");
 												imgInput.click();
 											}}
-											className="bg-primary w-8 rounded-full h-8  absolute -ml-10 mt-10"
+											className="bg-white w-8 rounded-full h-8 border-2 border-primary  absolute -ml-10 mt-10"
 										>
-											<BsCameraFill className="w-4 m-2 text-center text-white h-4" />
+											<BsCameraFill className="w-4 ml-1.5 mt-1 text-primary h-4" />
 										</div>
 									</div>
 								</div>
@@ -309,15 +320,20 @@ function StaffEditForm(props) {
 								)}
 							</div>
 							<div className="flex overflow-x-auto gap-2 mt-1">
-								{
-									matchingRoles && matchingRoles.map((role, id) => {
+								{matchingRoles &&
+									matchingRoles.map((role, id) => {
 										return (
 											<div key={id} className="bg-white p-1 rounded-md">
-												{role.label} <span className="cursor-pointer ml-2 text-red" onClick={() => removeRole(role)}>X</span>
+												{role.label}{" "}
+												<span
+													className="cursor-pointer ml-2 text-red"
+													onClick={() => removeRole(role)}
+												>
+													X
+												</span>
 											</div>
-										)
-									})
-								}
+										);
+									})}
 							</div>
 						</div>
 

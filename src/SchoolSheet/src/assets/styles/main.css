@@ -15,7 +15,7 @@
     height: 40px;
 /*     background-color: #bbb; */
     border-radius: 100%;
-    border: 5px solid #0d6dfd3d;
+    border: 5px solid #fff;
     border-top: 5px solid #193296;
     animation: animate 1s linear infinite;
 }
