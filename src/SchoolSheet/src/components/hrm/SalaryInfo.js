@@ -6,6 +6,8 @@ import Button from "../Button";
 import axiosInstance from "../../axios-instance"
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import ButtonSecondary from "../ButtonSecondary";
+import ButtonLoader from "../ButtonLoader";
 
 
 
@@ -35,12 +37,15 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 		}
 	}
 
-	const addSalaryInfo = () => {
+	const [posting, setPositing] = useState(false);
+	const addSalaryInfo = async () => {
+		setPositing(true)
 		if (gross_salary === "" || bank_name === "" || account_name === "" || account_number === "" || bank_branch === "") {
 			enqueFeedBack("error", {
 				title: "Oops...",
 				text: "Please fill all fields"
 			})
+			setPositing(false)
 			return
 		}
 		const data = {
@@ -51,7 +56,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 			bank_branch: bank_branch,
 			staff: staffId
 		}
-		axiosInstance.post("/salary-info", data)
+		await axiosInstance.post("/salary-info", data)
 			.then((res) => {
 				const { status, payload } = res.data
 				if (status) {
@@ -60,11 +65,13 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 						title: "Success",
 						text: "Salary Info Added"
 					})
+					setPositing(false)
 				} else {
 					enqueFeedBack("error", {
 						title: "Oops...",
 						text: payload
 					})
+					setPositing(false)
 				}
 			})
 			.catch((err) => {
@@ -72,16 +79,22 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 					title: "Error",
 					text: "Salary Info Not Added"
 				})
+				setPositing(false)
 			})
+			setPositing(false)
 	}
 
 
-	const updateSalaryInfo = () => {
+	const [updating, setUpdating] = useState(false)
+
+	const updateSalaryInfo = async () => {
+		setUpdating(true)
 		if (gross_salary === "" || bank_name === "" || account_name === "" || account_number === "" || bank_branch === "") {
 			enqueFeedBack("error", {
 				title: "Oops...",
 				text: "Please fill all fields"
 			})
+			setUpdating(false)
 			return
 		}
 		const data = {
@@ -93,7 +106,7 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 			staff: staffId,
 			id: salaryInfo[0].id
 		}
-		axiosInstance.put(`/salary-info/${salaryInfo[0].id}`, data)
+		await axiosInstance.put(`/salary-info/${salaryInfo[0].id}`, data)
 			.then((res) => {
 				const { status, payload } = res.data
 				if (status) {
@@ -103,11 +116,13 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 						text: "Salary Info Updated"
 					})
 					closeSalaryInfo();
+					setUpdating(false)
 				} else {
 					enqueFeedBack("error", {
 						title: "Oops...",
 						text: payload
 					})
+					setUpdating(false)
 				}
 			})
 			.catch((err) => {
@@ -115,7 +130,9 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 					title: "Error",
 					text: "Salary Info Not Updated"
 				})
+				setUpdating(false)
 			})
+		setUpdating(false)
 	}
 
 
@@ -145,78 +162,94 @@ function SalaryInfo({ salaryInfo, staffId, fetchStaffInfo }) {
 				</div>
 				<div
 					onClick={openSalaryInfo}
-					className="text-sm  flex text-primary cursor-pointer relative p-2 border border-primary rounded h-10 mt-5"
+					className="text-sm  flex text-primary cursor-pointer p-2 border border-primary rounded h-10 mt-5"
 				>
 					<BsFillPencilFill className="mr-2 mt-1" /> {salaryInfo?.length === 0 ? "Add Salary Info" : "Edit Salary Info"}
 				</div>
 
 				{/** Edit Modal */}
 				{editModalOpen ? (
-					<div className="border absolute z-50 -mt-[200px] border-gray3 bg-white shadow h-[400px] rounded w-[700px] overflow-y-auto">
-						<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
-							<div>
-								<p>Add Salary Info</p>
-							</div>
-							<div>
-								<p className="cursor-pointer" onClick={closeSalaryInfo}>
-									X
-								</p>
-							</div>
+					<div className="absolute flex w-full h-full z-50 bg-black/50 top-0 left-0">
+						<div onClick={closeSalaryInfo} className="w-7/12">
 						</div>
-						<div className="flex">
-							<div className="w-1/2 p-3">
-								<InputField
-									type="text"
-									placeholder="Gross Salary"
-									label="Gross Salary"
-									onChange={(e) => setGrossSalary(e.target.value)}
-									value={gross_salary}
-
-								/>
-								<InputField
-									type="text"
-									placeholder="Bank"
-									label="Bank"
-									onChange={(e) => setBankName(e.target.value)}
-									value={bank_name}
-
-								/>
-								<InputField
-									type="text"
-									placeholder="Account Name"
-									label="Account Name"
-									onChange={(e) => setAccountName(e.target.value)}
-									value={account_name}
-
-								/>
-							</div>
-							<div className="w-1/2 p-3 -mt-5">
-								<InputField
-									type="text"
-									placeholder="Account Number"
-									label="Account Number"
-
-									onChange={(e) => setAccountNumber(e.target.value)}
-									value={account_number}
-
-								/>
-
-								<InputField
-									type="text"
-									label="Account Branch"
-									placeholder="Account Branch"
-									onChange={(e) => setBankBranch(e.target.value)}
-									value={bank_branch}
-								/>
-
-								{salaryInfo?.length === 0 ? (
-									<div onClick={addSalaryInfo} className="mt-14">
-										<Button value={"Add SalaryInfo"} />
-									</div>) : (
-									<div onClick={updateSalaryInfo} className="mt-14">
-										<Button value={"Update SalaryInfo"} />
+						<div className="mt-[10vh] mr-[10vw]  w-5/12 ">
+							<div className="bg-white rounded-md">
+								<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
+									<div>
+										<p>Add Salary Info</p>
 									</div>
-								)}
+									<div>
+										<p className="cursor-pointer" onClick={closeSalaryInfo}>
+											X
+										</p>
+									</div>
+								</div>
+								<div className="flex">
+									<div className="w-1/2 p-3">
+										<InputField
+											type="text"
+											placeholder="Gross Salary"
+											label="Gross Salary"
+											onChange={(e) => setGrossSalary(e.target.value)}
+											value={gross_salary}
+
+										/>
+										<InputField
+											type="text"
+											placeholder="Bank"
+											label="Bank"
+											onChange={(e) => setBankName(e.target.value)}
+											value={bank_name}
+
+										/>
+										<InputField
+											type="text"
+											placeholder="Account Name"
+											label="Account Name"
+											onChange={(e) => setAccountName(e.target.value)}
+											value={account_name}
+
+										/>
+									</div>
+									<div className="w-1/2 p-3 -mt-5">
+										<InputField
+											type="text"
+											placeholder="Account Number"
+											label="Account Number"
+
+											onChange={(e) => setAccountNumber(e.target.value)}
+											value={account_number}
+
+										/>
+
+										<InputField
+											type="text"
+											label="Account Branch"
+											placeholder="Account Branch"
+											onChange={(e) => setBankBranch(e.target.value)}
+											value={bank_branch}
+										/>
+
+
+									</div>
+								</div>
+								<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
+									<div>
+										<ButtonSecondary value={"Close"} />
+									</div>
+									<div>
+										{salaryInfo?.length === 0 ? (
+											<div onClick={addSalaryInfo} className="">
+												{posting ? <ButtonLoader /> : <Button value={"Add"} />}
+											</div>) : (
+											<div onClick={updateSalaryInfo} className="">
+												{updating ? <ButtonLoader /> : <Button value={"Update"} />}
+
+
+											</div>
+										)}
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
