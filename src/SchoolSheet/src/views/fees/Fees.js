@@ -126,7 +126,7 @@ const Fees = () => {
                             handleSearchPercent(e);
                         }}
                     >
-                        <p className='text-white bg-primary w-24 mt-6 text-center px-4 py-2 rounded-md font-semibold text-sm cursor-pointer'>
+                        <p className='text-white bg-primary w-16 ml-5 mt-6 text-center px-4 py-2 rounded-md font-semibold text-sm cursor-pointer'>
                             Filter
                         </p>
                     </div>
@@ -153,23 +153,12 @@ const Fees = () => {
                         />
                     </form>
                 </div>
-                <div className='w-1/3 flex pl-5'>
-                    <div className='w-1/3'>
-                        <InputField
-                            type='number'
-                            placeholder='from'
-                            name='last_name'
-                        />
-                    </div>
-                    <div className='w-1/3 pl-2'>
-                        <InputField
-                            type='number'
-                            placeholder='to'
-                            name='last_name'
-                        />
-                    </div>
-                    <div className='w-1/3 pl-2 pt-5'>
+                <div className='w-1/3 flex justify-between pl-5'>
+                <div className='pl-2 pt-5'>
                         <Button value={'Filter'} />
+                    </div>
+                    <div className=' pl-2 pt-5'>
+                        <Button value={'Print'} />
                     </div>
                 </div>
             </div>
