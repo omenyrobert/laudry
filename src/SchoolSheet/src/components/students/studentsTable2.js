@@ -20,24 +20,24 @@ function studentsTable2({ students }) {
 						>
 							<td className="flex pl-2">
 								<div className="rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold text-primary bg-primary3">
-									{patient.firstName[0]} {patient.lastName[0]}
+									{patient?.firstName[0]} {patient?.lastName[0]}
 								</div>
 								<div>
 									<p className="text-sm p-3 -mt-1 text-gray5">
-										{patient.firstName} {patient.middleName}{" "}
-										{patient.lastName}
+										{patient?.firstName} {patient?.middleName}{" "}
+										{patient?.lastName}
 									</p>
 									<p className="text-red text-xs -mt-3 ml-3">
-										{patient.identifier}
+										{patient?.identifier}
 									</p>
 								</div>
 							</td>
 
-							<td className="text-xs p-3 text-gray5">{patient.classes[0]?.class}</td>
+							<td className="text-xs p-3 text-gray5">{patient?.classes[0]?.class}</td>
 
-							<td className="text-xs p-3 text-gray5">{patient.phoneNumber}</td>
+							<td className="text-xs p-3 text-gray5">{patient?.phoneNumber}</td>
 							<td className="text-xs p-3 text-gray5">{
-								JSON.parse(patient.feesBalance)?.balance
+								JSON.parse(patient?.feesBalance)?.balance
 							}</td>
 
 						</tr>

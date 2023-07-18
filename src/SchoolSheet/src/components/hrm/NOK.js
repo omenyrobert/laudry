@@ -6,6 +6,7 @@ import Button from "../Button";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
 import ButtonLoader from "../ButtonLoader";
+import ButtonSecondary from "../ButtonSecondary";
 
 function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 	const [nok, setNok] = useState(false);
@@ -119,48 +120,62 @@ function NOK({ staffProfile, staffId, fetchStaffInfo }) {
 					<BsFillPencilFill className="mr-2 mt-1" /> Next Of Kin
 				</div>
 				{nok ? (
-					<div className="border absolute z-50 -mt-[250px] border-gray3 bg-white shadow h-[300px] rounded w-[700px] overflow-y-auto">
-						<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
-							<div>
-								<p>Add Next Of Kin</p>
-							</div>
-							<div>
-								<p className="cursor-pointer" onClick={closeNok}>
-									X
-								</p>
-							</div>
+					<div className="top-0 w-full h-full bg-black/50 right-0 absolute z-50 flex">
+						<div onClick={closeNok} className="w-2/12">
 						</div>
-						<div className="flex">
-							<div className="w-1/2 p-3">
-								<InputField
-									type="text"
-									placeholder="Enter relationship"
-									label="Relationship"
-									onChange={(e) => setRelationship(e.target.value)}
-									value={relationship}
-								/>
-								<InputField
-									type="text"
-									placeholder="Enter Name"
-									label="Name"
-									onChange={(e) => setNokName(e.target.value)}
-									value={nokname}
-								/>
-							</div>
-							<div className="w-1/2 p-3 -mt-5">
-								<InputField
-									type="text"
-									placeholder="Enter Contacts"
-									label="Contacts"
-									name="Contacts"
-									onChange={(e) => setNokContact(e.target.value)}
-									value={nokContact}
-								/>
-
-								<div onClick={addNok} className="mt-14">
-									{posting ? <ButtonLoader /> : <Button value={"Add Next Of Kin"} />}
+						<div className=" w-5/12 mt-[10vh]">
+							<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
+								<div>
+									<p>Add Next Of Kin</p>
+								</div>
+								<div>
+									<p className="cursor-pointer" onClick={closeNok}>
+										X
+									</p>
 								</div>
 							</div>
+							<div className="flex bg-white">
+								<div className="w-1/2 p-3">
+									<InputField
+										type="text"
+										placeholder="Enter relationship"
+										label="Relationship"
+										onChange={(e) => setRelationship(e.target.value)}
+										value={relationship}
+									/>
+									<InputField
+										type="text"
+										placeholder="Enter Name"
+										label="Name"
+										onChange={(e) => setNokName(e.target.value)}
+										value={nokname}
+									/>
+								</div>
+								<div className="w-1/2 p-3 -mt-5">
+									<InputField
+										type="text"
+										placeholder="Enter Contacts"
+										label="Contacts"
+										name="Contacts"
+										onChange={(e) => setNokContact(e.target.value)}
+										value={nokContact}
+									/>
+
+
+
+
+								</div>
+							</div>
+							<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
+								<div onClick={closeNok}>
+									<ButtonSecondary value={"Close"} />
+								</div>
+								<div>
+									{posting ? <ButtonLoader /> : <div onClick={addNok}> <Button value={"Add"} /></div>}
+								</div>
+							</div>
+						</div>
+						<div onClick={closeNok} className="w-5/12">
 						</div>
 					</div>
 				) : null}
