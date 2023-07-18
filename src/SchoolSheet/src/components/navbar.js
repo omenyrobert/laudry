@@ -25,12 +25,12 @@ const Navbar = () => {
 		}
 	};
 	useEffect(() => {
-		const token = localStorage.getItem('schoolSoftToken');
+		const token = localStorage.getItem("schoolSoftToken");
 		const loggedInUser = JSON.parse(localStorage.getItem("schoolSoftUser"));
 		if (token === null || token === undefined) {
-			return navigate('/');
+			return navigate("/");
 		} else if (loggedInUser === null || loggedInUser === undefined) {
-			return navigate('/');
+			return navigate("/");
 		} else {
 			const { first_name, last_name, email } = loggedInUser;
 			setFirstName(first_name);
@@ -39,11 +39,14 @@ const Navbar = () => {
 		}
 	}, [navigate]);
 	return (
-		<div className="mt-2 h-12">
-			<div className=" flex float-right" onClick={toggleLog}>
-
+		<div className="mt-2 h-12 flex justify-between">
+			<div></div>
+			<div className="bg-white p-2 rounded-md">
+				<p className="text-red text-sm">The Activation Key Expires in 10days</p>
+			</div>
+			<div className="flex" onClick={toggleLog}>
 				<div className="ml-2 relative cursor-pointer">
-					<p className="font-bold float-right">{firstName + " " + lastName}</p>
+					<p className="font-bold">{firstName + " " + lastName}</p>
 					<p className="text-xs -mt-1">{email}</p>
 				</div>
 				{log ? (

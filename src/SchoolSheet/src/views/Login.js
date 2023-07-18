@@ -21,7 +21,7 @@ const Login = () => {
 	const [loginError, setLoginError] = useState("");
 	const [isLoging, setIsLoging] = useState(false);
 
-	const expireDate = true;
+	const expireDate = false;
 
 	const handleLogin = async () => {
 		if (expireDate) {
