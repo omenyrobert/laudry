@@ -195,7 +195,7 @@ function Invoices() {
 										{invoiceItem.title}
 									</td>
 									<td className="text-xs p-3 text-gray5">
-										{invoiceItem?.subType?.name}
+										{invoiceItem?.status}
 									</td>
 									<td className="text-xs p-3 text-gray5">
 										{Number(invoiceItem.transactionAmount).toLocaleString()}
@@ -210,7 +210,7 @@ function Invoices() {
 										{invoiceItem.contacts}
 									</td>
 									<td className="text-xs p-3 text-gray5 flex">
-										{invoiceItem.id === id ? (
+										{invoiceItem.id ? (
 											<div className="flex">
 												<MdDeleteOutline
 													onClick={() => deleteinvoice(invoiceItem)}

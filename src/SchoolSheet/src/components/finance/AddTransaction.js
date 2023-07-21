@@ -196,8 +196,11 @@ function AddTransaction() {
 		formData.append("title", title);
 		formData.append("contacts", contacts);
 		formData.append("description", description);
-		formData.append("receipt", receipt.transactionId);
-		formData.append("invoice", invoice.transactionId);
+		if (transactionType !== "receipt" && transactionType !== "invoice") {
+			formData.append("receipt", receipt.transactionId);
+			formData.append("invoice", invoice.transactionId);
+		}
+
 		formData.append("receivedBy", recievedBy);
 		formData.append("file", file);
 		formData.append(
@@ -327,6 +330,7 @@ function AddTransaction() {
 			}
 		} catch (error) {
 			toggleFeedback("error", { title: "Error", text: error.message });
+			console.log(error);
 		}
 	};
 
