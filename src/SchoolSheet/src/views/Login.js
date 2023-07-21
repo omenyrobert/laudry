@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import InputField from "../components/InputField";
 import axiosInstance from "../axios-instance";
 import ButtonLoader from "../components/ButtonLoader";
+import { useFeedback } from "../hooks/feedback"
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -20,10 +21,19 @@ const Login = () => {
 	};
 	const [loginError, setLoginError] = useState("");
 	const [isLoging, setIsLoging] = useState(false);
+	const [token, setToken] = useState("");
+	const { toggleFeedback } = useFeedback()
+	const [activating, setActivating] = useState(false);
 
 	const expireDate = false;
 
 	const handleLogin = async () => {
+		setIsLoging(true);
+		const isActive = await checkActivation();
+		if (!isActive) {
+			setActivate(true);
+			return;
+		}
 		if (expireDate) {
 			setActivate(true);
 		} else {
@@ -52,12 +62,78 @@ const Login = () => {
 
 	const [activate, setActivate] = useState(false);
 
+
+	async function checkActivation() {
+		try {
+			const response = await axiosInstance.get("/system");
+			const { status, payload } = response.data;
+			if (status) {
+				if (payload === null) {
+					return false
+				} else {
+					const now = new Date().getTime();
+					const expiryDate = new Date(payload).getTime();
+					if (now > expiryDate) {
+						return false
+					}
+					return true
+
+				}
+			} else {
+				return false
+			}
+		} catch (error) {
+			return false
+		}
+	}
+
 	useEffect(() => {
 		const token = localStorage.getItem("schoolSoftToken");
 		if (token !== null && token !== undefined) {
 			navigate("/dashboard");
 		}
 	}, [navigate]);
+
+
+	async function validateToken() {
+		if (token === "") {
+			toggleFeedback("error", {
+				title: "Error",
+				text: "Please enter a valid token",
+			})
+			return
+		}
+		try {
+			setActivating(true);
+			const response = await axiosInstance.post("/system", {
+				key: token,
+			});
+			const { status, payload } = response.data;
+			if (status) {
+				setActivate(false);
+				toggleFeedback("success", {
+					title: "Activation Successful",
+					text: "You can now login",
+				})
+				handleLogin();
+			} else {
+				setToken("");
+				setActivate(true);
+				toggleFeedback("error", {
+					title: "Activation Failed",
+					text: payload,
+				})
+			}
+		} catch (error) {
+			console.log(error);
+			toggleFeedback("error", {
+				title: "An Error Occured",
+				text: error.message,
+			})
+		}
+
+
+	}
 	return (
 		<>
 			<div className="flex overflow-hidden h-screen w-full bgdiv">
@@ -128,11 +204,18 @@ const Login = () => {
 						</p>
 						<div className="flex">
 							<div className="w-[80%]">
-								<InputField type="text" placeholder="Enter Activation Key" />
+								<InputField
+									type="text"
+									placeholder="Enter Activation Key"
+									value={token}
+									onChange={(e) => setToken(e.target.value)}
+								/>
 							</div>
-							<div className="w-[20%] ml-5 mt-5">
-								<Button value={"Submit"} />
-							</div>
+							{
+								activating ? <ButtonLoader /> : <div onClick={validateToken} className="w-[20%] ml-5 mt-5">
+									<Button value={"Submit"} />
+								</div>
+							}
 						</div>
 					</div>
 				</div>
