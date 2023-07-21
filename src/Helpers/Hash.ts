@@ -13,8 +13,9 @@ const encryptionIV = crypto
 
 export const encrypt = (date: string | null = null) => {
   if (!date) {
-    const newDate = new Date()
-    newDate.setDate(newDate.getDay() + 2)
+    const now = new Date().getTime()
+    const in2Days = now + 2 * 24 * 60 * 60 * 1000
+    const newDate = new Date(in2Days)
     date = newDate.toISOString()
   }
 

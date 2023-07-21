@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axios-instance";
 import Swal from "sweetalert2";
+import { useDispatch, useSelector } from "react-redux";
+import { getToken } from "../store/schoolSheetSlices/schoolStore"
 
 const Navbar = () => {
 	const navigate = useNavigate();
@@ -9,10 +11,9 @@ const Navbar = () => {
 	const [lastName, setLastName] = useState("");
 	const [email, setEmail] = useState("");
 	const [log, setLog] = useState(false);
-	const [active, setActive] = useState("loading");
-	const [activity, setActivity] = useState();
-	const [expiry, setExpiry] = useState({});
-	const [loading, setLoading] = useState(false);
+	const dispatch = useDispatch();
+	const { token } = useSelector((state) => state.schoolStore);
+	const [expiryDate, setExpiryDate] = useState(null);
 	const toggleLog = () => {
 		setLog(!log);
 	};
@@ -30,80 +31,23 @@ const Navbar = () => {
 		}
 	};
 
-	async function checkActivation() {
-		try {
-			const response = await axiosInstance.get("/system");
-			const { status, payload } = response.data;
-			if (status) {
-				if (payload === null) {
-					setActive(false)
-				} else {
-					setActive(true)
-					setActivity(payload)
-					const date = new Date(payload.date).toLocaleDateString()
-					const time = new Date(payload.date).toLocaleTimeString()
-
-					setExpiry({
-						date: date,
-						time: time,
-					})
-
-
-				}
-			}
-		} catch (error) {
-			console.log(error);
-
-		}
-	}
 
 	useEffect(() => {
-		checkActivation()
-	}, []);
+		dispatch(getToken())
+	}, [dispatch])
+
 
 	useEffect(() => {
-		if (active === false) {
-			Swal.fire({
-				title: 'Activation key Expired',
-				text: 'Please enter a new key',
-				input: 'text',
-				inputAttributes: {
-					autocapitalize: 'off'
-				},
-				showCancelButton: false,
-				confirmButtonText: 'Confirm',
-				showLoaderOnConfirm: true,
-				allowOutsideClick: false,
-				preConfirm: (login) => {
-					return axiosInstance.post("/system", { key: login })
-						.then((res) => {
-							const { status, payload } = res.data
-							if (status) {
-								setActive(true)
-								// ss
-								checkActivation()
-								return true
-							} else {
-								Swal.showValidationMessage(
-									`Invalid Key`
-								)
-							}
-						})
-						.catch(error => {
-							Swal.showValidationMessage(
-								`Request failed: ${error}`
-							)
-						})
-				},
-			}).then((result) => {
-				if (result.isConfirmed) {
-					Swal.fire({
-						title: "Successfull",
-					})
-				}
-			})
+		if (token) {
+			const date = new Date(token).toLocaleDateString()
+			const time = new Date(token).toLocaleTimeString()
+
+			setExpiryDate(date + " at " + time)
+
 		}
-	}, [active])
+	}, [token])
+
+
 
 
 
@@ -128,13 +72,7 @@ const Navbar = () => {
 
 				<p className="text-red text-sm">
 					{
-						active === "loading" ? (
-							<div className="loader2"></div>
-						) : active === false ? (
-							"Please activate your account"
-						) : (
-							"The Activation Key Expires on " + expiry.date + " at " + expiry.time
-						)
+						"The Activation Key Expires on " + expiryDate
 					}
 				</p>
 			</div>
