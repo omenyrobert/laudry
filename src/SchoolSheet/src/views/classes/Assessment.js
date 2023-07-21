@@ -10,9 +10,12 @@ import {
 	getSubjects,
 	getStudents,
 	getTerms,
-	getAssessmentsByTerm
+	getAssessmentsByTerm,
+	getClasses,
 } from "../../store/schoolSheetSlices/schoolStore";
 import { assessSubjects } from "../../utils/assessment";
+import Select from "react-select";
+import Button from "../../components/Button";
 
 function Assessment() {
 	const dispatch = useDispatch();
@@ -23,8 +26,9 @@ function Assessment() {
 	const [selectedSubject, setSelectedSubject] = useState("");
 	const [term, setTerm] = useState(null);
 	const [stream, setStream] = useState("");
+	const [classOptions, setClassOptions] = useState([]);
 
-	const { examTypes, subjects, students, terms, assessmentsByTerm } = useSelector((state) => state.schoolStore);
+	const { examTypes, subjects, students, terms, assessmentsByTerm, classes } = useSelector((state) => state.schoolStore);
 
 	const openAdd = (student) => {
 		const { streams } = student;
@@ -53,7 +57,18 @@ function Assessment() {
 		dispatch(getSubjects());
 		dispatch(getStudents());
 		dispatch(getTerms());
+		dispatch(getClasses());
 	}, [dispatch]);
+
+	useEffect(() => {
+		const _classes = classes.map((res) => ({
+			value: res.class,
+			label: res.class,
+			...res
+		}));
+		setClassOptions(_classes);
+	}, [classes])
+
 
 	useEffect(() => {
 		const _examTypes = examTypes.map((res) => ({
@@ -128,18 +143,25 @@ function Assessment() {
 	// implement search
 	const [search, setSearch] = useState("");
 	const [searchedData, setSearchedData] = useState([]);
+	const [query, setQuery] = useState({
+		search: "",
+		studentClass: "",
+	});
 
 	useEffect(() => {
-		if (search === "" || search === null) {
+		if (query.search === "" && query.studentClass === "") {
 			setSearchedData(studentData);
 			return;
 		}
 		const data = studentData.filter((student) => {
 			const fullName = `${student.firstName} ${student.middleName} ${student.lastName}`;
-			return fullName.toLowerCase().includes(search.toLowerCase());
+			const classData = student.classes.length > 0 && student.classes[0].class;
+			const isClass = classData ? classData.includes(query.studentClass) : false;
+			const isNameValid = fullName.toLowerCase().includes(query.search.toLowerCase());
+			return isNameValid && isClass;
 		});
 		setSearchedData(data);
-	}, [search, studentData])
+	}, [query, studentData])
 
 
 
@@ -157,12 +179,37 @@ function Assessment() {
 			<div className="w-full flex overflow-y-auto">
 				<div className="w-4/12 bg-white p-3">
 					<div className="bg-white p-3 overflow-y-auto h-[83vh]">
-						<InputField
-							placeholder="Search student..."
-							value={search}
-							onChange={(e) => setSearch(e.target.value)}
-							icon={<BsSearch className="mt-3 mr-4" />}
-						/>
+						<div >
+							<InputField
+								placeholder="Search student..."
+								value={query.search}
+								onChange={(e) => {
+									setQuery({ ...query, search: e.target.value });
+								}}
+								icon={<BsSearch className="mt-3 mr-4" />}
+							/>
+
+							{/* Filter */}
+							<div className="flex justify-between mt-5">
+								<Select
+									className="w-32"
+									placeholder="Filter by Class"
+									options={classOptions}
+									onChange={(e) => {
+										setQuery({ ...query, studentClass: e.class });
+									}}
+
+								/>
+								<span onClick={(e) => {
+									setQuery({
+										search: "",
+										studentClass: "",
+									})
+								}} ><Button value={"Clear Filters"} /></span>
+
+							</div>
+
+						</div>
 						<table className="mt-4 w-full table-auto">
 							<thead style={{ backgroundColor: "#0d6dfd10" }}>
 								<th className="p-2 text-primary text-sm text-left">Full Name</th>

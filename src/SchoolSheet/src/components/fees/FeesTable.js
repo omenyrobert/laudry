@@ -269,7 +269,7 @@ const FeesTable = (props) => {
 	};
 
 	return (
-		<table className="mt-4 w-full table-auto">
+		<table id="fees-table-1" className="mt-4 w-full table-auto">
 			<thead style={{ backgroundColor: "#0d6dfd10" }}>
 				<th className="p-2 text-primary text-sm text-left">Full Name</th>
 				<th className="p-2 text-primary text-sm text-left">

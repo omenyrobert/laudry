@@ -6,6 +6,7 @@ import { getStudents } from "../../store/schoolSheetSlices/schoolStore"
 import InputField from "../../components/InputField";
 import { BsSearch } from "react-icons/bs";
 import Select from "react-select";
+import Button from "../../components/Button";
 
 function ReportCards(props) {
   const dispatch = useDispatch();
@@ -153,6 +154,19 @@ function ReportCards(props) {
                   options={streams}
                 />
               </div>
+
+            </div>
+            <div className="mt-5">
+              <span onClick={(e) => {
+                setQuery({
+                  search: "",
+                  class: "",
+                  stream: "",
+                })
+              }}>
+                <Button value={"Clear Filters"} />
+              </span>
+
             </div>
           </div>
         </div>
