@@ -269,629 +269,714 @@ const FeesTable = (props) => {
 	};
 
 	return (
-		<table id="fees-table-1" className="mt-4 w-full table-auto">
-			<thead style={{ backgroundColor: "#0d6dfd10" }}>
-				<th className="p-2 text-primary text-sm text-left">Full Name</th>
-				<th className="p-2 text-primary text-sm text-left">
-					Place Of Residence
-				</th>
-				<th className="p-2 text-primary text-sm text-left">Parents</th>
-				<th className="p-2 text-primary text-sm text-left">Student Type</th>
-				<th className="p-2 text-primary text-sm text-left">Class</th>
-				<th className="p-2 text-primary text-sm text-left">Fees</th>
-				<th className="p-2 text-primary text-sm text-left">Paid</th>
-				<th className="p-2 text-primary text-sm text-left">Balance</th>
-				<th className="p-2 text-primary text-sm text-left">Action</th>
-			</thead>
-			<tbody>
-				{cash ? (
-					<div className="w-[600px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
-						<div className="flex justify-between p-3 bg-gray1">
-							<div>
-								<p className="text-primary font-semibold">
-									Register Cash Payment
-								</p>
-							</div>
-							<div>
-								<p className="cursor-pointer" onClick={closeCash}>
-									X
-								</p>
-							</div>
-						</div>
-						<div className="px-5">
-							<InputField
-								type="date"
-								label="Date"
-								name="date"
-								onChange={onChangeCash}
-								value={cashForm.date}
-							/>
-
-							<InputField
-								type="number"
-								label="Amount"
-								name="amount"
-								placeholder="Enter Amount"
-								onChange={onChangeCash}
-								value={cashForm.amount}
-							/>
-							<InputField
-								type="text"
-								label="Paid By"
-								name="paidBy"
-								placeholder="Enter Name"
-								onChange={onChangeCash}
-								value={cashForm.paidBy}
-							/>
-							<InputField
-								type="text"
-								label="Contact"
-								name="contact"
-								placeholder="Enter Contact"
-								onChange={onChangeCash}
-								value={cashForm.contact}
-							/>
-						</div>
-						<div className="flex justify-between mb-3 mr-3">
-							<div></div>
-							<div>
-								{posting ? (
-									<div className="w-40">
-										<ButtonLoader />
+		<div>
+			<div className="h-[65vh] bg-white overflow-y-auto">
+				<table className="mt-4 w-full table-auto">
+					<thead style={{ backgroundColor: "#0d6dfd10" }}>
+						<th className="p-2 text-primary text-sm text-left">Full Name</th>
+						<th className="p-2 text-primary text-sm text-left">
+							Place Of Residence
+						</th>
+						<th className="p-2 text-primary text-sm text-left">Parents</th>
+						<th className="p-2 text-primary text-sm text-left">Student Type</th>
+						<th className="p-2 text-primary text-sm text-left">Class</th>
+						<th className="p-2 text-primary text-sm text-left">Fees</th>
+						<th className="p-2 text-primary text-sm text-left">Paid</th>
+						<th className="p-2 text-primary text-sm text-left">Balance</th>
+						<th className="p-2 text-primary text-sm text-left">Action</th>
+					</thead>
+					<tbody>
+						{cash ? (
+							<div className="w-[600px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
+								<div className="flex justify-between p-3 bg-gray1">
+									<div>
+										<p className="text-primary font-semibold">
+											Register Cash Payment
+										</p>
 									</div>
-								) : (
-									<div
-										className="w-40 mb-5 float-right"
-										onClick={(event) => postPayment(event, cashForm, "Cash")}
-									>
-										<Button value={"Add Payment"} />
+									<div>
+										<p className="cursor-pointer" onClick={closeCash}>
+											X
+										</p>
 									</div>
-								)}
-							</div>
-						</div>
-					</div>
-				) : null}
-				{bankslip ? (
-					<div className="w-[800px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
-						<div className="flex justify-between p-3 bg-gray1">
-							<div>
-								<p className="text-primary font-semibold">Register Bankslip</p>
-							</div>
-							<div>
-								<p className="cursor-pointer" onClick={closeBankSlip}>
-									X
-								</p>
-							</div>
-						</div>
+								</div>
+								<div className="px-5">
+									<InputField
+										type="date"
+										label="Date"
+										name="date"
+										onChange={onChangeCash}
+										value={cashForm.date}
+									/>
 
-						<div className="px-5 flex">
-							<div className="w-1/2">
-								<InputField
-									type="date"
-									label="Date"
-									name="date"
-									onChange={onChangeBankSlip}
-									value={bankSlipForm.date}
-								/>
-
-								<InputField
-									type="number"
-									label="Amount"
-									name="amount"
-									placeholder="Enter Amount"
-									onChange={onChangeBankSlip}
-									value={bankSlipForm.amount}
-								/>
-								<InputField
-									type="text"
-									label="Bank"
-									name="bank"
-									placeholder="Enter Bank Name"
-									onChange={onChangeBankSlip}
-									value={bankSlipForm.bank}
-								/>
-							</div>
-							<div className="w-1/2 ml-5">
-								<InputField
-									type="text"
-									label="Branch"
-									name="branch"
-									placeholder="Enter Branch Name"
-									onChange={onChangeBankSlip}
-									value={bankSlipForm.branch}
-								/>
-								<InputField
-									type="text"
-									label="Bank slip No"
-									name="bankSlipNo"
-									placeholder="Enter Bankslip No"
-									onChange={onChangeBankSlip}
-									value={bankSlipForm.bankSlipNo}
-								/>
-								<InputField
-									type="text"
-									label="Paid By"
-									name="paidBy"
-									placeholder="Enter Name"
-									onChange={onChangeBankSlip}
-									value={bankSlipForm.paidBy}
-								/>
-								<InputField
-									type="text"
-									label="Contact"
-									name="contact"
-									placeholder="Enter Contact"
-									onChange={onChangeBankSlip}
-									value={bankSlipForm.contact}
-								/>
-							</div>
-
-							<br />
-						</div>
-						<div className="flex justify-between mb-3 mr-3">
-							<div></div>
-							<div>
-								{posting ? (
-									<div className="w-40">
-										<ButtonLoader />
+									<InputField
+										type="number"
+										label="Amount"
+										name="amount"
+										placeholder="Enter Amount"
+										onChange={onChangeCash}
+										value={cashForm.amount}
+									/>
+									<InputField
+										type="text"
+										label="Paid By"
+										name="paidBy"
+										placeholder="Enter Name"
+										onChange={onChangeCash}
+										value={cashForm.paidBy}
+									/>
+									<InputField
+										type="text"
+										label="Contact"
+										name="contact"
+										placeholder="Enter Contact"
+										onChange={onChangeCash}
+										value={cashForm.contact}
+									/>
+								</div>
+								<div className="flex justify-between mb-3 mr-3">
+									<div></div>
+									<div>
+										{posting ? (
+											<div className="w-40">
+												<ButtonLoader />
+											</div>
+										) : (
+											<div
+												className="w-40 mb-5 float-right"
+												onClick={(event) => postPayment(event, cashForm, "Cash")}
+											>
+												<Button value={"Add Payment"} />
+											</div>
+										)}
 									</div>
-								) : (
-									<div
-										className="w-40 float-right mb-5"
-										onClick={(event) =>
-											postPayment(event, bankSlipForm, "Bank Slip")
-										}
-									>
-										<Button value={"Add Payment"} />
+								</div>
+							</div>
+						) : null}
+						{bankslip ? (
+							<div className="w-[800px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
+								<div className="flex justify-between p-3 bg-gray1">
+									<div>
+										<p className="text-primary font-semibold">Register Bankslip</p>
 									</div>
-								)}
-							</div>
-						</div>
-					</div>
-				) : null}
-				{bank ? (
-					<div className="w-[800px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
-						<div className="flex justify-between p-3 bg-gray1">
-							<div>
-								<p className="text-primary font-semibold">
-									Register Bank Transfer
-								</p>
-							</div>
-							<div>
-								<p className="cursor-pointer" onClick={closeBank}>
-									X
-								</p>
-							</div>
-						</div>
-						<div className="px-5 flex mb-5">
-							<div className="w-1/2">
-								<InputField
-									type="date"
-									label="Date"
-									name="date"
-									onChange={onChangeBank}
-									value={bankForm.date}
-								/>
+									<div>
+										<p className="cursor-pointer" onClick={closeBankSlip}>
+											X
+										</p>
+									</div>
+								</div>
 
-								<InputField
-									type="number"
-									label="Amount"
-									name="amount"
-									placeholder="Enter Amount"
-									onChange={onChangeBank}
-									value={bankForm.amount}
-								/>
-								<InputField
-									type="text"
-									label="Bank"
-									name="bank"
-									placeholder="Enter Bank Name"
-									onChange={onChangeBank}
-									value={bankForm.name}
-								/>
-							</div>
-							<div className="w-1/2 ml-5">
-								<InputField
-									type="text"
-									label="From Account No"
-									name="fromAccountNo"
-									placeholder="Enter Account Number"
-									onChange={onChangeBank}
-									value={bankForm.fromAccountNo}
-								/>
-								<InputField
-									type="text"
-									label="Account Name"
-									placeholder="Enter Account Name"
-									name="accountName"
-									onChange={onChangeBank}
-									value={bankForm.accountName}
-								/>
-								<InputField
-									type="text"
-									label="Paid By"
-									name="paidBy"
-									placeholder="Enter Name"
-									onChange={onChangeBank}
-									value={bankForm.paidBy}
-								/>
-								<InputField
-									type="text"
-									label="Contact"
-									name="contact"
-									placeholder="Enter Contact"
-									onChange={onChangeBank}
-									value={bankForm.contact}
-								/>
-							</div>
+								<div className="px-5 flex">
+									<div className="w-1/2">
+										<InputField
+											type="date"
+											label="Date"
+											name="date"
+											onChange={onChangeBankSlip}
+											value={bankSlipForm.date}
+										/>
 
-							<br />
-						</div>
-						<div className="flex justify-between mb-3 mr-3">
-							<div></div>
-							<div>
-								{posting ? (
-									<div className="w-40">
-										<ButtonLoader />
+										<InputField
+											type="number"
+											label="Amount"
+											name="amount"
+											placeholder="Enter Amount"
+											onChange={onChangeBankSlip}
+											value={bankSlipForm.amount}
+										/>
+										<InputField
+											type="text"
+											label="Bank"
+											name="bank"
+											placeholder="Enter Bank Name"
+											onChange={onChangeBankSlip}
+											value={bankSlipForm.bank}
+										/>
 									</div>
-								) : (
-									<div
-										className="w-40"
-										onClick={(event) =>
-											postPayment(event, bankForm, "Bank Transfer")
-										}
-									>
-										<Button value={"Add Payment"} />
+									<div className="w-1/2 ml-5">
+										<InputField
+											type="text"
+											label="Branch"
+											name="branch"
+											placeholder="Enter Branch Name"
+											onChange={onChangeBankSlip}
+											value={bankSlipForm.branch}
+										/>
+										<InputField
+											type="text"
+											label="Bank slip No"
+											name="bankSlipNo"
+											placeholder="Enter Bankslip No"
+											onChange={onChangeBankSlip}
+											value={bankSlipForm.bankSlipNo}
+										/>
+										<InputField
+											type="text"
+											label="Paid By"
+											name="paidBy"
+											placeholder="Enter Name"
+											onChange={onChangeBankSlip}
+											value={bankSlipForm.paidBy}
+										/>
+										<InputField
+											type="text"
+											label="Contact"
+											name="contact"
+											placeholder="Enter Contact"
+											onChange={onChangeBankSlip}
+											value={bankSlipForm.contact}
+										/>
 									</div>
-								)}
-							</div>
-						</div>
-					</div>
-				) : null}
-				{mobile ? (
-					<div className="w-[700px] absolute bg-white rounded-md shadow-lg -mt-10 border-2 border-gray1 z-50">
-						<div className="flex justify-between p-3 bg-gray1">
-							<div>
-								<p className="text-primary font-semibold">
-									Register Mobile Money Payment
-								</p>
-							</div>
-							<div>
-								<p className="cursor-pointer" onClick={closeMobile}>
-									X
-								</p>
-							</div>
-						</div>
-						<div className="px-5 flex ">
-							<div className="w-1/2">
-								<InputField
-									type="date"
-									label="Date"
-									name="date"
-									onChange={onChangeMobile}
-									value={mobileForm.date}
-								/>
-								<InputField
-									type="number"
-									label="Amount"
-									name="amount"
-									placeholder="Enter Amount"
-									onChange={onChangeMobile}
-									value={mobileForm.amount}
-								/>
-								<InputField
-									type="text"
-									label="From Mobile No"
-									name="mobileNo"
-									placeholder="Enter Number"
-									onChange={onChangeMobile}
-									value={mobileForm.mobileNo}
-								/>
-							</div>
-							<div className="w-1/2 ml-3">
-								<InputField
-									type="text"
-									label="Names"
-									name="mobileName"
-									placeholder="Enter Name"
-									onChange={onChangeMobile}
-									value={mobileForm.mobileName}
-								/>
 
-								<InputField
-									type="text"
-									label="Paid By"
-									name="paidBy"
-									placeholder="Enter Paid by Name"
-									onChange={onChangeMobile}
-									value={mobileForm.paidBy}
-								/>
-								<InputField
-									type="text"
-									label="Contact"
-									name="contact"
-									placeholder="Enter Contact"
-									onChange={onChangeMobile}
-									value={mobileForm.contact}
-								/>
-							</div>
-						</div>
-						<div className="flex justify-between mb-3 mr-3">
-							<div></div>
-							<div>
-								{posting ? (
-									<div className="w-40">
-										<ButtonLoader />
+									<br />
+								</div>
+								<div className="flex justify-between mb-3 mr-3">
+									<div></div>
+									<div>
+										{posting ? (
+											<div className="w-40">
+												<ButtonLoader />
+											</div>
+										) : (
+											<div
+												className="w-40 float-right mb-5"
+												onClick={(event) =>
+													postPayment(event, bankSlipForm, "Bank Slip")
+												}
+											>
+												<Button value={"Add Payment"} />
+											</div>
+										)}
 									</div>
-								) : (
-									<div
-										className="w-40"
-										onClick={(event) =>
-											postPayment(event, mobileForm, "Mobile Money")
-										}
-									>
-										<Button value={"Add Payment"} />
-									</div>
-								)}
+								</div>
 							</div>
-						</div>
-					</div>
-				) : null}
+						) : null}
+						{bank ? (
+							<div className="w-[800px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
+								<div className="flex justify-between p-3 bg-gray1">
+									<div>
+										<p className="text-primary font-semibold">
+											Register Bank Transfer
+										</p>
+									</div>
+									<div>
+										<p className="cursor-pointer" onClick={closeBank}>
+											X
+										</p>
+									</div>
+								</div>
+								<div className="px-5 flex mb-5">
+									<div className="w-1/2">
+										<InputField
+											type="date"
+											label="Date"
+											name="date"
+											onChange={onChangeBank}
+											value={bankForm.date}
+										/>
 
-				{cheque ? (
-					<div className="w-[600px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
-						<div className="flex justify-between p-3 bg-gray1">
-							<div>
-								<p className="text-primary font-semibold">
-									Register Checque Payment
-								</p>
-							</div>
-							<div>
-								<p className="cursor-pointer" onClick={closeCheque}>
-									X
-								</p>
-							</div>
-						</div>
-						<div className="px-5 flex mb-5">
-							<div className="w-1/2">
-								<InputField
-									type="date"
-									label="Date"
-									name="date"
-									onChange={onChangeCheque}
-									value={chequeForm.date}
-								/>
-
-								<InputField
-									type="number"
-									label="Amount"
-									name="amount"
-									placeholder="Enter Amount"
-									onChange={onChangeCheque}
-									value={chequeForm.amount}
-								/>
-								<InputField
-									type="text"
-									label="Bank"
-									name="bank"
-									placeholder="Enter Bank Name"
-									onChange={onChangeCheque}
-									value={chequeForm.bank}
-								/>
-							</div>
-							<div className="w-1/2 ml-5">
-								<InputField
-									type="text"
-									label="Account Name"
-									name="accountName"
-									placeholder="Enter Account Name"
-									onChange={onChangeCheque}
-									value={chequeForm.accountName}
-								/>
-								<InputField
-									type="text"
-									label="Account No"
-									name="accountNo"
-									placeholder="Enter Account Number"
-									onChange={onChangeCheque}
-									value={chequeForm.accountNo}
-								/>
-								<InputField
-									type="text"
-									label="Paid By"
-									name="paidBy"
-									placeholder="Enter Name"
-									onChange={onChangeCheque}
-									value={chequeForm.paidBy}
-								/>
-								<InputField
-									type="text"
-									label="Contact"
-									name="contact"
-									placeholder="Enter Contact"
-									onChange={onChangeCheque}
-									value={chequeForm.contact}
-								/>
-							</div>
-						</div>
-						<div className="flex justify-between mb-3 mr-3">
-							<div></div>
-							<div>
-								{posting ? (
-									<div className="w-40">
-										<ButtonLoader />
+										<InputField
+											type="number"
+											label="Amount"
+											name="amount"
+											placeholder="Enter Amount"
+											onChange={onChangeBank}
+											value={bankForm.amount}
+										/>
+										<InputField
+											type="text"
+											label="Bank"
+											name="bank"
+											placeholder="Enter Bank Name"
+											onChange={onChangeBank}
+											value={bankForm.name}
+										/>
 									</div>
-								) : (
-									<div
-										className="w-40"
-										onClick={(event) =>
-											postPayment(event, chequeForm, "Cheque")
-										}
-									>
-										<Button value={"Add Payment"} />
+									<div className="w-1/2 ml-5">
+										<InputField
+											type="text"
+											label="From Account No"
+											name="fromAccountNo"
+											placeholder="Enter Account Number"
+											onChange={onChangeBank}
+											value={bankForm.fromAccountNo}
+										/>
+										<InputField
+											type="text"
+											label="Account Name"
+											placeholder="Enter Account Name"
+											name="accountName"
+											onChange={onChangeBank}
+											value={bankForm.accountName}
+										/>
+										<InputField
+											type="text"
+											label="Paid By"
+											name="paidBy"
+											placeholder="Enter Name"
+											onChange={onChangeBank}
+											value={bankForm.paidBy}
+										/>
+										<InputField
+											type="text"
+											label="Contact"
+											name="contact"
+											placeholder="Enter Contact"
+											onChange={onChangeBank}
+											value={bankForm.contact}
+										/>
 									</div>
-								)}
-							</div>
-						</div>
-					</div>
-				) : null}
 
-				{payments ? (
-					<div className="w-3/4 absolute h-[60vh] overflow-y-auto bg-white rounded-md shadow-lg border-2 border-gray2 z-50">
-						<div className="flex justify-between p-3 bg-gray1">
-							<div>
-								<p className="text-primary font-semibold">Payment history</p>
+									<br />
+								</div>
+								<div className="flex justify-between mb-3 mr-3">
+									<div></div>
+									<div>
+										{posting ? (
+											<div className="w-40">
+												<ButtonLoader />
+											</div>
+										) : (
+											<div
+												className="w-40"
+												onClick={(event) =>
+													postPayment(event, bankForm, "Bank Transfer")
+												}
+											>
+												<Button value={"Add Payment"} />
+											</div>
+										)}
+									</div>
+								</div>
 							</div>
-							<div>
-								<p className="cursor-pointer" onClick={closePayments}>
-									X
-								</p>
+						) : null}
+						{mobile ? (
+							<div className="w-[700px] absolute bg-white rounded-md shadow-lg -mt-10 border-2 border-gray1 z-50">
+								<div className="flex justify-between p-3 bg-gray1">
+									<div>
+										<p className="text-primary font-semibold">
+											Register Mobile Money Payment
+										</p>
+									</div>
+									<div>
+										<p className="cursor-pointer" onClick={closeMobile}>
+											X
+										</p>
+									</div>
+								</div>
+								<div className="px-5 flex ">
+									<div className="w-1/2">
+										<InputField
+											type="date"
+											label="Date"
+											name="date"
+											onChange={onChangeMobile}
+											value={mobileForm.date}
+										/>
+										<InputField
+											type="number"
+											label="Amount"
+											name="amount"
+											placeholder="Enter Amount"
+											onChange={onChangeMobile}
+											value={mobileForm.amount}
+										/>
+										<InputField
+											type="text"
+											label="From Mobile No"
+											name="mobileNo"
+											placeholder="Enter Number"
+											onChange={onChangeMobile}
+											value={mobileForm.mobileNo}
+										/>
+									</div>
+									<div className="w-1/2 ml-3">
+										<InputField
+											type="text"
+											label="Names"
+											name="mobileName"
+											placeholder="Enter Name"
+											onChange={onChangeMobile}
+											value={mobileForm.mobileName}
+										/>
+
+										<InputField
+											type="text"
+											label="Paid By"
+											name="paidBy"
+											placeholder="Enter Paid by Name"
+											onChange={onChangeMobile}
+											value={mobileForm.paidBy}
+										/>
+										<InputField
+											type="text"
+											label="Contact"
+											name="contact"
+											placeholder="Enter Contact"
+											onChange={onChangeMobile}
+											value={mobileForm.contact}
+										/>
+									</div>
+								</div>
+								<div className="flex justify-between mb-3 mr-3">
+									<div></div>
+									<div>
+										{posting ? (
+											<div className="w-40">
+												<ButtonLoader />
+											</div>
+										) : (
+											<div
+												className="w-40"
+												onClick={(event) =>
+													postPayment(event, mobileForm, "Mobile Money")
+												}
+											>
+												<Button value={"Add Payment"} />
+											</div>
+										)}
+									</div>
+								</div>
 							</div>
-						</div>
-						<div className="px-5 flex bg-gray2 p-2 text-xs mt-2 cursor-pointer w-full">
-							<div className="w-1/4 p-2">Date</div>
-							{/* <div className='w-1/4 p-2'>Fees</div> */}
-							<div className="w-1/4 p-2">Amount</div>
-							{/* <div className='w-1/4 p-2'>Balance</div> */}
-							<div className="w-1/4 p-2">Method</div>
-							<div className="w-1/4 p-2">Paid By</div>
-							<div className="w-1/4 p-2">Contact</div>
-						</div>
-						{paymentsForm?.map((student) => {
-							return (
-								<div
-									className="px-5 flex border-b text-gray5 border-gray2 hover:border-b-2 cursor-pointer text-xs w-full"
-									key={student.id}
-								>
-									<div className="w-1/4 truncate p-2">{student?.date}</div>
-									{/* <div className='w-1/4 truncate p-2'>
+						) : null}
+
+						{cheque ? (
+							<div className="w-[600px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
+								<div className="flex justify-between p-3 bg-gray1">
+									<div>
+										<p className="text-primary font-semibold">
+											Register Checque Payment
+										</p>
+									</div>
+									<div>
+										<p className="cursor-pointer" onClick={closeCheque}>
+											X
+										</p>
+									</div>
+								</div>
+								<div className="px-5 flex mb-5">
+									<div className="w-1/2">
+										<InputField
+											type="date"
+											label="Date"
+											name="date"
+											onChange={onChangeCheque}
+											value={chequeForm.date}
+										/>
+
+										<InputField
+											type="number"
+											label="Amount"
+											name="amount"
+											placeholder="Enter Amount"
+											onChange={onChangeCheque}
+											value={chequeForm.amount}
+										/>
+										<InputField
+											type="text"
+											label="Bank"
+											name="bank"
+											placeholder="Enter Bank Name"
+											onChange={onChangeCheque}
+											value={chequeForm.bank}
+										/>
+									</div>
+									<div className="w-1/2 ml-5">
+										<InputField
+											type="text"
+											label="Account Name"
+											name="accountName"
+											placeholder="Enter Account Name"
+											onChange={onChangeCheque}
+											value={chequeForm.accountName}
+										/>
+										<InputField
+											type="text"
+											label="Account No"
+											name="accountNo"
+											placeholder="Enter Account Number"
+											onChange={onChangeCheque}
+											value={chequeForm.accountNo}
+										/>
+										<InputField
+											type="text"
+											label="Paid By"
+											name="paidBy"
+											placeholder="Enter Name"
+											onChange={onChangeCheque}
+											value={chequeForm.paidBy}
+										/>
+										<InputField
+											type="text"
+											label="Contact"
+											name="contact"
+											placeholder="Enter Contact"
+											onChange={onChangeCheque}
+											value={chequeForm.contact}
+										/>
+									</div>
+								</div>
+								<div className="flex justify-between mb-3 mr-3">
+									<div></div>
+									<div>
+										{posting ? (
+											<div className="w-40">
+												<ButtonLoader />
+											</div>
+										) : (
+											<div
+												className="w-40"
+												onClick={(event) =>
+													postPayment(event, chequeForm, "Cheque")
+												}
+											>
+												<Button value={"Add Payment"} />
+											</div>
+										)}
+									</div>
+								</div>
+							</div>
+						) : null}
+
+						{payments ? (
+							<div className="w-3/4 absolute h-[60vh] overflow-y-auto bg-white rounded-md shadow-lg border-2 border-gray2 z-50">
+								<div className="flex justify-between p-3 bg-gray1">
+									<div>
+										<p className="text-primary font-semibold">Payment history</p>
+									</div>
+									<div>
+										<p className="cursor-pointer" onClick={closePayments}>
+											X
+										</p>
+									</div>
+								</div>
+								<div className="px-5 flex bg-gray2 p-2 text-xs mt-2 cursor-pointer w-full">
+									<div className="w-1/4 p-2">Date</div>
+									{/* <div className='w-1/4 p-2'>Fees</div> */}
+									<div className="w-1/4 p-2">Amount</div>
+									{/* <div className='w-1/4 p-2'>Balance</div> */}
+									<div className="w-1/4 p-2">Method</div>
+									<div className="w-1/4 p-2">Paid By</div>
+									<div className="w-1/4 p-2">Contact</div>
+								</div>
+								{paymentsForm?.map((student) => {
+									return (
+										<div
+											className="px-5 flex border-b text-gray5 border-gray2 hover:border-b-2 cursor-pointer text-xs w-full"
+											key={student.id}
+										>
+											<div className="w-1/4 truncate p-2">{student?.date}</div>
+											{/* <div className='w-1/4 truncate p-2'>
                                             790,000
                                         </div> */}
-									<div className="w-1/4 truncate p-2">
-										{Number(student?.amount_paid).toLocaleString()}
-									</div>
-									{/* <div className='w-1/4 truncate p-2'>
+											<div className="w-1/4 truncate p-2">
+												{Number(student?.amount_paid).toLocaleString()}
+											</div>
+											{/* <div className='w-1/4 truncate p-2'>
                                             550,000
                                         </div> */}
-									<div className="w-1/4 truncate p-2">{student?.method}</div>
-									<div className="w-1/4 truncate p-2">{student?.paid_by}</div>
-									<div className="w-1/4 truncate p-2">{student?.contact}</div>
-								</div>
+											<div className="w-1/4 truncate p-2">{student?.method}</div>
+											<div className="w-1/4 truncate p-2">{student?.paid_by}</div>
+											<div className="w-1/4 truncate p-2">{student?.contact}</div>
+										</div>
+									);
+								})}
+								<br />
+							</div>
+						) : null}
+
+						{studentData?.map((student) => {
+							return (
+								<tr
+									className="shadow-sm border-b hover:border-l-2 hover:border-l-primary border-gray1 cursor-pointer hover:shadow-md"
+									key={student.id}
+								>
+									<td className="flex">
+										<div className="rounded-full ml-2 h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
+											{student.firstName[0]} {student.lastName[0]}
+										</div>
+										<div>
+											<p className="text-sm p-3 -mt-1 text-gray5">
+												{student.firstName} {student.middleName} {student.lastName}
+											</p>
+											<p className="text-secondary text-xs -mt-3 ml-3">
+												{student?.nin}
+											</p>
+										</div>
+									</td>
+
+									<td className="text-xs p-3 text-gray5">{student?.residence}</td>
+									<td className="flex flex-col">
+										<p className="text-xs p-3 text-gray5">
+											{student?.fatherContact}
+										</p>
+										<p className="text-xs text-gray5 -mt-3 ml-3">
+											{student?.motherContact}
+										</p>
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{student?.student_types?.map((t, i) => {
+											return i === student?.student_types?.length - 1 ? (
+												<span>{t.type}</span>
+											) : null;
+										})}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{student.classes?.map((c, i) => {
+											return i === student?.classes.length - 1 ? (
+												<span>{c.class}</span>
+											) : null;
+										})}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{student.fees?.map((f, i) => {
+											return i === student?.fees.length - 1 ? (
+												<span>{Number(f.amount).toLocaleString()}</span>
+											) : null;
+										})}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{Number(JSON.parse(student.feesBalance).amount).toLocaleString()}
+									</td>
+									<td className="text-xs p-3 text-gray5">
+										{Number(JSON.parse(student?.feesBalance).balance).toLocaleString()}
+									</td>
+									<td className="text-xs p-3  flex">
+										<p className="bg-primary3 p-2 rounded-md text-primary2 hoverbtn">
+											Enter Payment
+										</p>
+										<div className="bg-white rounded-md shadow-lg w-40 hoverContent absolute z-10 mt-2">
+											<p
+												onClick={() => openCash(student)}
+												className="cursor-pointer text-xs text-gray5 p-2 hover:bg-gray1"
+											>
+												Cash
+											</p>
+											<hr className="text-gray4" />
+											<p
+												onClick={() => openBankSlip(student)}
+												className="cursor-pointer text-xs text-gray5 p-2 hover:bg-gray1"
+											>
+												Bank Slip
+											</p>
+											<hr className="text-gray4" />
+											<p
+												onClick={() => openChecque(student)}
+												className="cursor-pointer text-xs text-gray5 p-2 hover:bg-gray1"
+											>
+												Cheque
+											</p>
+											<hr className="text-gray4" />
+											<p
+												onClick={() => openBank(student)}
+												className="cursor-pointer text-xs text-gray5 p-2 hover:bg-gray1"
+											>
+												Bank Transfer
+											</p>
+											<hr className="text-gray4" />
+											<p
+												onClick={() => openMobile(student)}
+												className="cursor-pointer text-xs text-gray5 p-2 hover:bg-gray1"
+											>
+												Mobile Money
+											</p>
+											<hr className="text-gray4" />
+										</div>
+										<p
+											onClick={() => openPayments(student)}
+											className="bg-secondary11 ml-2 pt-2 px-3 rounded-md"
+										>
+											Payments
+										</p>
+									</td>
+								</tr>
 							);
 						})}
-						<br />
-					</div>
-				) : null}
+					</tbody>
+				</table>
+			</div>
+			<table id="fees-table-1" className="mt-20 w-full table-auto">
+				<thead style={{ backgroundColor: "#0d6dfd10" }}>
+					<th className="p-2 text-primary text-sm text-left">Full Name</th>
+					<th className="p-2 text-primary text-sm text-left">
+						Place Of Residence
+					</th>
+					<th className="p-2 text-primary text-sm text-left">Parents</th>
+					<th className="p-2 text-primary text-sm text-left">Student Type</th>
+					<th className="p-2 text-primary text-sm text-left">Class</th>
+					<th className="p-2 text-primary text-sm text-left">Fees</th>
+					<th className="p-2 text-primary text-sm text-left">Paid</th>
+					<th className="p-2 text-primary text-sm text-left">Balance</th>
 
-				{studentData?.map((student) => {
-					return (
-						<tr
-							className="shadow-sm border-b hover:border-l-2 hover:border-l-primary border-gray1 cursor-pointer hover:shadow-md"
-							key={student.id}
-						>
-							<td className="flex">
-								<div className="rounded-full ml-2 h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
-									{student.firstName[0]} {student.lastName[0]}
-								</div>
-								<div>
-									<p className="text-sm p-3 -mt-1 text-gray5">
-										{student.firstName} {student.middleName} {student.lastName}
-									</p>
-									<p className="text-secondary text-xs -mt-3 ml-3">
-										{student?.nin}
-									</p>
-								</div>
-							</td>
+				</thead>
+				<tbody>
 
-							<td className="text-xs p-3 text-gray5">{student?.residence}</td>
-							<td className="flex flex-col">
-								<p className="text-xs p-3 text-gray5">
-									{student?.fatherContact}
-								</p>
-								<p className="text-xs text-gray5 -mt-3 ml-3">
-									{student?.motherContact}
-								</p>
-							</td>
-							<td className="text-xs p-3 text-gray5">
-								{student?.student_types?.map((t, i) => {
-									return i === student?.student_types?.length - 1 ? (
-										<span>{t.type}</span>
-									) : null;
-								})}
-							</td>
-							<td className="text-xs p-3 text-gray5">
-								{student.classes?.map((c, i) => {
-									return i === student?.classes.length - 1 ? (
-										<span>{c.class}</span>
-									) : null;
-								})}
-							</td>
-							<td className="text-xs p-3 text-gray5">
-								{student.fees?.map((f, i) => {
-									return i === student?.fees.length - 1 ? (
-										<span>{Number(f.amount).toLocaleString()}</span>
-									) : null;
-								})}
-							</td>
-							<td className="text-xs p-3 text-gray5">
-								{Number(JSON.parse(student.feesBalance).amount).toLocaleString()}
-							</td>
-							<td className="text-xs p-3 text-gray5">
-								{Number(JSON.parse(student?.feesBalance).balance).toLocaleString()}
-							</td>
-							<td className="text-xs p-3  flex">
-								<p className="bg-primary3 p-2 rounded-md text-primary2 hoverbtn">
-									Enter Payment
-								</p>
-								<div className="bg-white rounded-md shadow-lg w-40 hoverContent absolute z-10 mt-2">
-									<p
-										onClick={() => openCash(student)}
-										className="cursor-pointer text-xs text-gray5 p-2 hover:bg-gray1"
-									>
-										Cash
+
+					{studentData?.map((student) => {
+						return (
+							<tr
+								className="shadow-sm border-b hover:border-l-2 hover:border-l-primary border-gray1 cursor-pointer hover:shadow-md"
+								key={student.id}
+							>
+								<td className="flex">
+									<div className="rounded-full ml-2 h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
+										{student.firstName[0]} {student.lastName[0]}
+									</div>
+									<div>
+										<p className="text-sm p-3 -mt-1 text-gray5">
+											{student.firstName} {student.middleName} {student.lastName}
+										</p>
+										<p className="text-secondary text-xs -mt-3 ml-3">
+											{student?.nin}
+										</p>
+									</div>
+								</td>
+
+								<td className="text-xs p-3 text-gray5">{student?.residence}</td>
+								<td className="flex flex-col">
+									<p className="text-xs p-3 text-gray5">
+										{student?.fatherContact}
 									</p>
-									<hr className="text-gray4" />
-									<p
-										onClick={() => openBankSlip(student)}
-										className="cursor-pointer text-xs text-gray5 p-2 hover:bg-gray1"
-									>
-										Bank Slip
+									<p className="text-xs text-gray5 -mt-3 ml-3">
+										{student?.motherContact}
 									</p>
-									<hr className="text-gray4" />
-									<p
-										onClick={() => openChecque(student)}
-										className="cursor-pointer text-xs text-gray5 p-2 hover:bg-gray1"
-									>
-										Cheque
-									</p>
-									<hr className="text-gray4" />
-									<p
-										onClick={() => openBank(student)}
-										className="cursor-pointer text-xs text-gray5 p-2 hover:bg-gray1"
-									>
-										Bank Transfer
-									</p>
-									<hr className="text-gray4" />
-									<p
-										onClick={() => openMobile(student)}
-										className="cursor-pointer text-xs text-gray5 p-2 hover:bg-gray1"
-									>
-										Mobile Money
-									</p>
-									<hr className="text-gray4" />
-								</div>
-								<p
-									onClick={() => openPayments(student)}
-									className="bg-secondary11 ml-2 pt-2 px-3 rounded-md"
-								>
-									Payments
-								</p>
-							</td>
-						</tr>
-					);
-				})}
-			</tbody>
-		</table>
+								</td>
+								<td className="text-xs p-3 text-gray5">
+									{student?.student_types?.map((t, i) => {
+										return i === student?.student_types?.length - 1 ? (
+											<span>{t.type}</span>
+										) : null;
+									})}
+								</td>
+								<td className="text-xs p-3 text-gray5">
+									{student.classes?.map((c, i) => {
+										return i === student?.classes.length - 1 ? (
+											<span>{c.class}</span>
+										) : null;
+									})}
+								</td>
+								<td className="text-xs p-3 text-gray5">
+									{student.fees?.map((f, i) => {
+										return i === student?.fees.length - 1 ? (
+											<span>{Number(f.amount).toLocaleString()}</span>
+										) : null;
+									})}
+								</td>
+								<td className="text-xs p-3 text-gray5">
+									{Number(JSON.parse(student.feesBalance).amount).toLocaleString()}
+								</td>
+								<td className="text-xs p-3 text-gray5">
+									{Number(JSON.parse(student?.feesBalance).balance).toLocaleString()}
+								</td>
+
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+
+		</div>
+
 	);
 };
 

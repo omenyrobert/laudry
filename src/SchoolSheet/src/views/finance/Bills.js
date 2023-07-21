@@ -183,7 +183,7 @@ function Bills() {
 		<>
 			<div className="w-full h-[80vh]">
 				<div className="flex bg-white p-2">
-					<div className="w-10/12">
+					<div className="w-9/12">
 						<div className="flex">
 							<div className="w-6/12 px-2">
 								<InputField
@@ -217,11 +217,11 @@ function Bills() {
 								}}
 								className="mt-5 ml-5"
 							>
-								<Button value={"Clear Fitlers"} />
+								<Button value={"Clear"} />
 							</div>
 						</div>
 					</div>
-					<div className="w-2/12">
+					<div className="w-3/12">
 						<div className="relative w-[150px] ml-5 mt-5 flex">
 							<Link to="/addTransaction?transactionType=bill&action=create">
 								<Button2 value={"Bill"} />

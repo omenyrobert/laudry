@@ -209,7 +209,7 @@ function IncomeComp() {
 	return (
 		<>
 			<div className="flex bg-white">
-				<div className="w-6/12 px-2">
+				<div className="w-[30%] px-2">
 					<InputField
 						placeholder="Search for Income"
 						type="search"
@@ -219,7 +219,7 @@ function IncomeComp() {
 						}}
 					/>
 				</div>
-				<div className="w-3/12 px-2 mt-5">
+				<div className="w-[22%] px-2 mt-5">
 					<Select
 						placeholder={"Filter By Type"}
 						name="filter"
@@ -228,8 +228,8 @@ function IncomeComp() {
 						}}
 						options={incomeTypesData}
 					/>
-				</div>{" "}
-				<div className="w-2/12 px-2">
+				</div>
+				<div className="w-[12%] px-2">
 					<InputField
 						type="date"
 						onChange={(e) => {
@@ -237,7 +237,7 @@ function IncomeComp() {
 						}}
 					/>
 				</div>
-				<div className="w-2/12">
+				<div className="w-[12%]">
 					<InputField
 						type="date"
 						onChange={(e) => {

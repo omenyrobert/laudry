@@ -545,7 +545,7 @@ function AddTransaction() {
 						</p>
 					</div>
 				</div>
-				<div className="h-[80vh]">
+				<div className="h-[75vh] overflow-y-auto">
 					<div className="flex justify-between mx-3 -mt-5">
 						<div className="w-1/4 p-1">
 							<InputField

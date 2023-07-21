@@ -179,12 +179,12 @@ function Liabilities() {
 
 	return (
 		<>
+			<div className="w-2/12">
+				<h5 className="text-lg font-medium text-secondary mt-5">
+					Liabilities
+				</h5>
+			</div>
 			<div className="flex mt-2 bg-white px-3 border border-gray2 rounded-md">
-				<div className="w-2/12">
-					<h5 className="text-lg font-medium text-secondary mt-5">
-						Liabilities
-					</h5>
-				</div>
 				<div className="w-4/12">
 					<InputField
 						type="search"

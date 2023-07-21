@@ -134,8 +134,8 @@ const Fees = () => {
             <p className='text-secondary text-xl font-medium'>Fees Payments</p>
             <br />
             <div className='flex p-2 bg-white shadow-lg rounded-md'>
-                <div className='w-1/3 flex pl-5'>
-                    <div className='w-1/3'>
+                <div className='w-[20%] flex pl-2'>
+                    <div className='w-1/2'>
                         <InputField
                             type='number'
                             placeholder='Enter Percentage'
@@ -155,29 +155,9 @@ const Fees = () => {
                             value={percent}
                         />
                     </div>
-                    <div className='w-1/3 flex'>
-                        <div className='flex ml-3'>
-                            <p className='text-xs mt-9'>Below</p>
-                            <input
-                                type='radio'
-                                className='ml-1 cursor-pointer'
-                                name='below'
-                                value='below'
-                                checked={query.percentage.checkInput === 'below'}
-
-                                onChange={(e) => {
-                                    setQuery({
-                                        ...query,
-                                        percentage: {
-                                            ...query.percentage,
-                                            checkInput: e.target.value,
-                                        },
-                                    });
-                                }}
-                            />
-                        </div>
-                        <div className='flex ml-4'>
-                            <p className='text-xs mt-9'>Above</p>
+                    <div className='w-1/2'>
+                    <div className='flex ml-4 mt-5'>
+                            <p className='text-xs'>Above</p>
                             <input
                                 type='radio'
                                 className='ml-1 cursor-pointer'
@@ -196,10 +176,31 @@ const Fees = () => {
 
                             />
                         </div>
+                        <div className='flex ml-4 mt-2'>
+                            <p className='text-xs'>Below</p>
+                            <input
+                                type='radio'
+                                className='ml-1 cursor-pointer'
+                                name='below'
+                                value='below'
+                                checked={query.percentage.checkInput === 'below'}
+
+                                onChange={(e) => {
+                                    setQuery({
+                                        ...query,
+                                        percentage: {
+                                            ...query.percentage,
+                                            checkInput: e.target.value,
+                                        },
+                                    });
+                                }}
+                            />
+                        </div>
+                       
                     </div>
 
                 </div>
-                <div className='w-1/3 flex justify-between'>
+                <div className='w-[30%]'>
                     <InputField
                         type='text'
                         placeholder='Search For Student ...'
@@ -215,9 +216,26 @@ const Fees = () => {
                             />
                         }
                     />
+                </div>
+                <div className='w-[15%] ml-3'>
+
 
                     <Select
-                        placeholder={'Filter By Class'}
+                        placeholder={'Select Class'}
+                        name='class'
+                        className='mt-6'
+                        options={classOpts}
+                        onChange={(e) => {
+                            setQuery({ ...query, class: e.class });
+                        }}
+                    />
+
+
+                </div>
+                <div className='w-[18%] ml-3'>
+
+                    <Select
+                        placeholder={'Select Stream'}
                         name='class'
                         className='mt-6'
                         options={classOpts}
@@ -227,7 +245,10 @@ const Fees = () => {
                     />
 
                 </div>
-                <div className='w-1/3 flex justify-between pl-5'>
+                <div className='w-[8%] mt-6 ml-3'>
+                    <Button value={'Clear'} />
+                </div>
+                <div className='w-[8%]'>
                     <div onClick={() => {
                         setQuery({
                             class: '',
@@ -238,13 +259,13 @@ const Fees = () => {
                             }
                         })
                     }} className='pl-2 pt-5'>
-                        <Button value={'Clear Filters'} />
+
                     </div>
                     <div
                         onClick={() => {
                             printContent('fees-table-1')
                         }}
-                        className=' pl-2 pt-5'>
+                        className=' pl-2 mt-1'>
                         <Button value={'Print'} />
                     </div>
                 </div>

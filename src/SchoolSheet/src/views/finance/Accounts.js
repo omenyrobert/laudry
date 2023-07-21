@@ -583,7 +583,7 @@ function Accounts() {
 						options={accountTypes}
 					/>
 				</div>
-				<div onClick={openModal}>
+				<div onClick={openModal} className="mt-5">
 					<Button2 value={"Account"} />
 				</div>
 			</div>
