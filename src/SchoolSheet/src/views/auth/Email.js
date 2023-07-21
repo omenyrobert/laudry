@@ -7,6 +7,7 @@ import Button from "../../components/Button";
 import InputField from "../../components/InputField";
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../../components/ButtonLoader";
+import { Link } from "react-router-dom";
 
 const Email = () => {
 	const navigate = useNavigate();
@@ -36,7 +37,7 @@ const Email = () => {
 				if (token) {
 					navigate("/code");
 				}
-			} else{
+			} else {
 				setError(payload);
 				setPosting(false);
 			}
@@ -73,6 +74,14 @@ const Email = () => {
 						icon={<MdAlternateEmail className="w-10 mt-3" />}
 						onChange={onChange}
 					/>
+					<div className="flex justify-between my-2">
+						<div></div>
+						<div>
+							<Link to="/" className="text-secondary">
+								Back to login
+							</Link>
+						</div>
+					</div>
 					{posting ? (
 						<div>
 							<ButtonLoader />
