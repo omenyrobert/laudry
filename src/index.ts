@@ -4,6 +4,7 @@ import { DatabaseConnection } from "./Database/database";
 import cors from "cors";
 import { join } from "path";
 import cookieParser from "cookie-parser";
+import { encrypt } from "./Helpers/Hash";
 
 const app: Application = express();
 const PORT: string | 3001 = process.env.PORT || 3001;
@@ -29,6 +30,8 @@ app.get("*", (req: Request, res: Response) => {
 DatabaseConnection.initialize()
   .then(() => {
     console.log("Database Connection Successful");
+    const hash = encrypt()
+    console.log("HASH:  ", hash);
   })
   .catch((error) => {
     console.log(error);

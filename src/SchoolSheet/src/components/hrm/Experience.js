@@ -7,10 +7,9 @@ import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback";
 import ButtonLoader from "../ButtonLoader";
 
-
 function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 	const [experience, setExperience] = useState(false);
-	const { toggleFeedback } = useFeedback()
+	const { toggleFeedback } = useFeedback();
 	const [loading, setLoading] = useState(false);
 
 	const openExperience = () => {
@@ -26,12 +25,13 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 	const [to, setTo] = useState("");
 	const [position, setPosition] = useState("");
 
+	// const [posting, setPositing] =   useState(false);
 	const addExperience = async () => {
 		if (school === "" || from === "" || to === "" || position === "") {
 			toggleFeedback("error", {
 				title: "Oops...",
-				text: "Please Fill in all fields"
-			})
+				text: "Please Fill in all fields",
+			});
 			return;
 		}
 		const experienceData = {
@@ -39,62 +39,65 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 			company: school,
 			position,
 			start_date: from,
-			end_date: to
-		}
-		setLoading(true)
+			end_date: to,
+		};
+		setLoading(true);
 
 		try {
-			const res = await axiosInstance.post("/staff-profile/work-experience", experienceData)
-			const { status, payload } = res.data
+			const res = await axiosInstance.post(
+				"/staff-profile/work-experience",
+				experienceData
+			);
+			const { status, payload } = res.data;
 			if (status) {
 				toggleFeedback("success", {
 					title: "Success",
-					text: "Experience added successfully"
-				})
-				fetchStaffInfo()
-				closeExperience()
+					text: "Experience added successfully",
+				});
+				fetchStaffInfo();
+				closeExperience();
 			} else {
 				toggleFeedback("error", {
 					title: "Error",
-					text: payload
-				})
+					text: payload,
+				});
 			}
-			setLoading(false)
+			setLoading(false);
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 			toggleFeedback("error", {
 				title: "Error",
-				text: error.message
-			})
-			closeExperience()
-			setLoading(false)
+				text: error.message,
+			});
+			closeExperience();
+			setLoading(false);
 		}
-	}
-
+	};
 
 	function deleteWorkExperience(id) {
-		axiosInstance.delete(`/staff-profile/work-experience/${id}`)
+		axiosInstance
+			.delete(`/staff-profile/work-experience/${id}`)
 			.then((res) => {
-				const { status, payload } = res.data
+				const { status, payload } = res.data;
 				if (status) {
 					toggleFeedback("success", {
 						title: "Success",
-						text: "Experience deleted successfully"
-					})
-					fetchStaffInfo()
+						text: "Experience deleted successfully",
+					});
+					fetchStaffInfo();
 				} else {
 					toggleFeedback("error", {
 						title: "Error",
-						text: payload
-					})
+						text: payload,
+					});
 				}
 			})
 			.catch((err) => {
 				toggleFeedback("error", {
 					title: "Error",
-					text: err.message
-				})
-			})
+					text: err.message,
+				});
+			});
 	}
 
 	return (
@@ -112,7 +115,7 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 					<BsFillPencilFill className="mr-2 mt-1" /> Experience
 				</div>
 				{experience ? (
-					<div className="border absolute z-50  border-gray3 bg-white shadow h-auto rounded w-[30vw] overflow-y-auto">
+					<div className="border absolute z-50  border-gray3 bg-white shadow h-auto rounded w-[35vw] overflow-y-auto">
 						<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
 							<div>
 								<p>Add Experience</p>
@@ -131,7 +134,6 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									label="School"
 									onChange={(e) => setSchool(e.target.value)}
 									value={school}
-
 								/>
 								<InputField
 									type="date"
@@ -139,7 +141,6 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									label="From Date"
 									onChange={(e) => setFrom(e.target.value)}
 									value={from}
-
 								/>
 							</div>
 							<div className="w-1/2 p-3 -mt-5">
@@ -148,10 +149,9 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									placeholder="To"
 									label="To Date"
 									onChange={(e) => {
-										setTo(e.target.value)
+										setTo(e.target.value);
 									}}
 									value={to}
-
 								/>
 								<InputField
 									type="text"
@@ -160,11 +160,18 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 									name="position"
 									onChange={(e) => setPosition(e.target.value)}
 									value={position}
-
 								/>
-
-								<div onClick={addExperience} className="mt-14">
-									<Button value={"Add Experience"} />
+								<div className="flex justify-between mt-5">
+									<div></div>
+									<div>
+										{loading ? (
+											<ButtonLoader />
+										) : (
+											<div onClick={addExperience} className=" w-20">
+												<Button value={"Add"} />
+											</div>
+										)}
+									</div>
 								</div>
 							</div>
 						</div>
@@ -172,35 +179,37 @@ function Experience({ staffProfile, staffId, fetchStaffInfo }) {
 				) : null}
 			</div>
 
-			{
-				staffProfile?.workExperience?.map((experience, index) => (
-					<div key={index} className="flex border-b border-gray1">
-						<div className="p-2 w-1/3 text-sm text-gray5 truncate">{experience.company}</div>
-						<div className="p-2 w-1/3 text-sm text-gray5 truncate">
-							{experience.start_date} - {experience.end_date}
-						</div>
-						<div className="p-2 w-1/3 text-sm text-gray5 truncate">
-							{experience.position}
-						</div>
-						<div className="p-2 w-1/5 text-sm text-gray5 truncate">
-							<div className="flex justify-end">
-								<div onClick={() => {
-									deleteWorkExperience(experience.id)
-								}} className="text-red cursor-pointer">
-									Delete
-								</div>
+			{staffProfile?.workExperience?.map((experience, index) => (
+				<div key={index} className="flex border-b border-gray1">
+					<div className="p-2 w-1/3 text-sm text-gray5 truncate">
+						{experience.company}
+					</div>
+					<div className="p-2 w-1/3 text-sm text-gray5 truncate">
+						{experience.start_date} - {experience.end_date}
+					</div>
+					<div className="p-2 w-1/3 text-sm text-gray5 truncate">
+						{experience.position}
+					</div>
+					<div className="p-2 w-1/5 text-sm text-gray5 truncate">
+						<div className="flex justify-end">
+							<div
+								onClick={() => {
+									deleteWorkExperience(experience.id);
+								}}
+								className="text-red cursor-pointer"
+							>
+								Delete
 							</div>
 						</div>
 					</div>
-				))
-			}
+				</div>
+			))}
 
 			{staffProfile?.workExperience?.length === 0 ? (
 				<div className="flex justify-center items-center h-20">
 					<p className="text-gray5 text-sm">No Experience Added</p>
 				</div>
 			) : null}
-
 		</>
 	);
 }

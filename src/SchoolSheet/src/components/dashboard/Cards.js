@@ -1,16 +1,28 @@
 import * as React from "react";
 import { FaUsers, FaFileInvoiceDollar, FaTooth } from "react-icons/fa";
-import {TbZoomMoney} from "react-icons/tb"
+import { TbZoomMoney } from "react-icons/tb"
 
-function Cards() {
+
+function Cards({ studentCount, staffMembers, selectedTerm, studentsWithLowBalance }) {
+
 	return (
 		<div className="flex w-full">
 
 			<div className="w-1/4 my-2 mr-2 p-3 h-24  bg-primary text-white shadow  rounded-md">
-				<p className="text-lg font-semibold">Term 1</p>
+				<p className="text-lg font-semibold">
+					{selectedTerm.term}
+				</p>
 				<div className="flex justify-between mt-3 text-sm">
-					<div>3rd Jan 2023</div>
-					<div>13rd April 2023</div>
+					<div>
+						{
+							new Date(selectedTerm.from).toLocaleDateString()
+						}
+					</div>
+					<div>
+						{
+							new Date(selectedTerm.to).toLocaleDateString()
+						}
+					</div>
 				</div>
 			</div>
 
@@ -29,7 +41,7 @@ function Cards() {
 				</div>
 				<div className="flex justify-between mt-12">
 					<div className="">
-						<p className="text-2xl">204</p>
+						<p className="text-2xl">{studentCount}</p>
 					</div>
 					<div className="">
 						<p className="bg-blue11 p-2 text-primary text-xs rounded">View All</p>
@@ -52,7 +64,9 @@ function Cards() {
 				</div>
 				<div className="flex justify-between mt-12">
 					<div className="">
-						<p className="text-2xl">20,090,00</p>
+						<p className="text-2xl">
+							{staffMembers.length}
+						</p>
 					</div>
 					<div className="">
 						<p className="bg-yellow11 p-2 text-orange text-xs rounded">View All</p>
@@ -75,7 +89,9 @@ function Cards() {
 				</div>
 				<div className="flex justify-between mt-12">
 					<div className="">
-						<p className="text-2xl">670,000</p>
+						<p className="text-2xl">
+							{studentsWithLowBalance.length}
+						</p>
 					</div>
 					<div className="">
 						<p className="bg-green11 p-2 text-green text-xs rounded">View All</p>

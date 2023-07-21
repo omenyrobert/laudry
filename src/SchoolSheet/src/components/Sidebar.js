@@ -135,8 +135,8 @@ function Sidebar() {
 	return (
 		<div className="bg-white h-screen text-primary2 my-2 -mt-1 pt-5  shadow-xl">
 			<div className="flex ml-2 ">
-				<FaBriefcase className="text-secondary text-md mt-1" />
-				<p className="text-secondary text-xl ml-2 font-bold">
+				<FaBriefcase className="text-secondary text-sm mt-1 ml-2" />
+				<p className="text-secondary text-xl md:text-sm ml-1 font-bold">
 					School SoftOffice
 				</p>
 			</div>
