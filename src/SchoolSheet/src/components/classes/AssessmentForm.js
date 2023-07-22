@@ -218,7 +218,7 @@ function AssessmentForm({
 
 	return (
 		<>
-			<div className="bg-white p-3 h-[85vh] overflow-y-auto">
+			<div className="bg-white p-3 h-[70vh] overflow-y-auto">
 				<div className="bg-gray1 p-2 font-semibold flex justify-between text-primary">
 					<div>
 						{studentData.firstName} {studentData.middleName}
@@ -231,8 +231,8 @@ function AssessmentForm({
 						X
 					</div>
 				</div>
-				<div className="p-2 flex">
-					<div className="w-1/3 p-1">
+				<div className="flex">
+					<div className="w-4/12 p-1">
 						<br />
 						<Select
 							placeholder="Select Exam Type"
@@ -242,7 +242,7 @@ function AssessmentForm({
 							options={examTypesData}
 						/>
 					</div>
-					<div className="w-1/3 p-1">
+					<div className="w-3/12 p-1">
 						<InputField
 
 							placeholder="Enter Marks in %"
@@ -251,7 +251,7 @@ function AssessmentForm({
 							onChange={onChange}
 						/>
 					</div>
-					<div className="w-1/3 p-1">
+					<div className="w-3/12 p-1">
 						<InputField
 
 							placeholder="Enter Comment"
@@ -260,14 +260,12 @@ function AssessmentForm({
 							onChange={onChange}
 						/>
 					</div>
-				</div>
-				<div className="flex justify-between mx-2">
-					<div></div>
-					<div onClick={postAssessment}>
-						<Button2 value={"Add"} />
+					<div className="w-2/12 mt-6 ml-1" onClick={postAssessment}>
+						<Button value={"Add"} />
 					</div>
 				</div>
-				<div className="mt-5 flex bg-gray1 p-2 text-sm mx-5">
+				
+				<div className="m-1 flex bg-gray1 p-2 text-sm ">
 					<div className="w-1/4">Exam Type</div>
 					<div className="w-1/4">Marks %</div>
 					<div className="w-1/4">Final Mark </div>
