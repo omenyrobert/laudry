@@ -31,7 +31,8 @@ export const addTransaction = async (req: Request, res: Response) => {
       amountToCredit,
       items,
       status,
-      invoice
+      invoice,
+      transactionDate
     } = req.body;
 
     const file = req.file ? req.file.filename : null;
@@ -99,7 +100,8 @@ export const addTransaction = async (req: Request, res: Response) => {
       invoice,
       parseInt(transactionTypeID),
       itemsObj,
-      status
+      status,
+      transactionDate
     )
 
     return res.json(customPayloadResponse(true, transaction)).status(200).end();
@@ -145,7 +147,8 @@ export const updateTransaction = async (req: Request, res: Response) => {
       amountToCredit,
       items,
       status,
-      invoice
+      invoice,
+      transactionDate
     } = req.body
 
     const file = req.file ? req.file.filename : null;
@@ -222,7 +225,8 @@ export const updateTransaction = async (req: Request, res: Response) => {
       invoice,
       transactionTypeID,
       itemsObj,
-      status
+      status,
+      transactionDate
     )
 
     return res.json(customPayloadResponse(true, transaction)).status(200).end();
