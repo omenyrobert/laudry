@@ -1,6 +1,6 @@
 export function assignGrade(finalMark, gradesArray) {
-	const gradeObj = gradesArray.find(obj => finalMark >= obj.from && finalMark <= obj.to);
-	return gradeObj ? gradeObj : "No Grade Found";
+  const gradeObj = gradesArray.find(obj => finalMark >= obj.from && finalMark <= obj.to);
+  return gradeObj ? gradeObj : "No Grade Found";
 }
 
 export function assessSubjects(data) {
@@ -41,6 +41,7 @@ export function assessSubjects(data) {
 }
 
 export const findDivision = (points, divisions) => divisions.find((division, index, arr) => {
-  const nextDivision = arr[index + 1];
-  return points >= division.points && (!nextDivision || points < nextDivision.points);
+  const max = division.upperLimit;
+  const min = division.lowerLimit;
+  return points >= min && points <= max;
 });

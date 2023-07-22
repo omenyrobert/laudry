@@ -10,6 +10,17 @@ export class Division extends BaseEntity {
 
   @Column()
   points!: number;
+
+  @Column({
+    nullable: true
+  })
+  upperLimit!: number;
+
+  @Column({
+    nullable: true
+  })
+  lowerLimit!: number;
+
 }
 
 export const getDivisions = async () => {
@@ -21,13 +32,55 @@ export const getDivisions = async () => {
   return divisions;
 };
 
-export const createDivision = async (division: string, points: number) => {
-  const divisionToInsert = await Division.insert({ division, points });
+
+export const createDivision = async (
+  division: string, 
+  points: number,
+  upperLimit: null | number = null,
+  lowerLimit: null | number = null
+) => {
+  const divisionToInsert = new Division();
+  divisionToInsert.division = division;
+  divisionToInsert.points = points;
+
+  if (upperLimit) {
+    divisionToInsert.upperLimit = upperLimit;
+  }
+
+  if (lowerLimit) {
+    divisionToInsert.lowerLimit = lowerLimit;
+  }
+
+
+  await divisionToInsert.save();
   return divisionToInsert;
 };
 
-export const updateDivision = async (id: number, division: string, points: number) => {
-  const divisionToUpdate = await Division.update(id, { division, points });
+export const updateDivision = async (
+  id: number, 
+  division: string, 
+  points: number,
+  upperLimit: null | number = null,
+  lowerLimit: null | number = null
+) => {
+  const divisionToUpdate = await Division.findOne({ where: { id: id } })
+
+  if (divisionToUpdate === null) {
+    throw new Error("Division not found");
+  }
+
+  divisionToUpdate.division = division;
+  divisionToUpdate.points = points;
+
+  if (upperLimit) {
+    divisionToUpdate.upperLimit = upperLimit;
+  }
+
+  if (lowerLimit) {
+    divisionToUpdate.lowerLimit = lowerLimit;
+  }
+
+  await divisionToUpdate.save();
   return divisionToUpdate;
 };
 
