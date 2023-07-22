@@ -4,10 +4,9 @@ import { DatabaseConnection } from "./Database/database";
 import cors from "cors";
 import { join } from "path";
 import cookieParser from "cookie-parser";
-import { encrypt } from "./Helpers/Hash";
 
 const app: Application = express();
-const PORT: string | 3001 = process.env.PORT || 3001;
+export const PORT: string | 3001 = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -27,11 +26,12 @@ app.get("*", (req: Request, res: Response) => {
   res.sendFile(join(__dirname, "SchoolSheet/build", "index.html"));
 });
 
+
+
+
 DatabaseConnection.initialize()
   .then(() => {
     console.log("Database Connection Successful");
-    const hash = encrypt()
-    console.log("HASH:  ", hash);
   })
   .catch((error) => {
     console.log(error);
@@ -40,3 +40,6 @@ DatabaseConnection.initialize()
 app.listen(PORT, () => {
   console.log(`Server Running on http://localhost:${PORT}`);
 });
+
+
+export const dataSource = DatabaseConnection

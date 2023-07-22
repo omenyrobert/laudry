@@ -58,6 +58,7 @@ import AddTransaction from "./components/finance/AddTransaction";
 import Ledger from "./components/finance/Ledger";
 import RoleGuard from "./components/RoleGuard";
 import PrintTransaction from "./components/finance/PrintTransaction";
+import DesktopLoading from "./components/DesktopLoading";
 
 const router = createBrowserRouter([
   {
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
   {
     path: "/error-page",
     element: <ErrorPage />,
+  },
+  {
+    path: "/desktop-loading-page",
+    element: <DesktopLoading />,
   },
   {
     path: "/",

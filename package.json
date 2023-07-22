@@ -10,7 +10,9 @@
     "build": "tsc --build",
     "start": "ts-node ./src/index.ts",
     "build:client": "npm run build --prefix ./src/SchoolSheet",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "electron": "electron .",
+    "token": "ts-node ./src/token.ts"
   },
   "author": "Robert",
   "license": "ISC",
@@ -47,6 +49,7 @@
     "typescript": "^5.0.4"
   },
   "devDependencies": {
+    "@types/electron": "^1.6.10",
     "electron": "^25.3.1",
     "webpack-cli": "^5.1.1"
   }
