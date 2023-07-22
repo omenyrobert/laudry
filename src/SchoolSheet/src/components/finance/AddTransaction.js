@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 
 function AddTransaction() {
 	const navigate = useNavigate();
-	const [date, setDate] = useState("");
 	const [amount, setAmount] = useState("");
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
@@ -37,6 +36,7 @@ function AddTransaction() {
 	const [invoice, setInvoice] = useState(null);
 	const [recievedBy, setRecievedBy] = useState("");
 	const [file, setFile] = useState(null);
+	const [transactionDate, setTransactionDate] = useState(null);
 
 	const defaultTypes = [
 		{ label: "BILL", value: "bill", type: "bill" },
@@ -141,6 +141,7 @@ function AddTransaction() {
 		setReceipt(debitTransaction.receipt);
 		setRecievedBy(debitTransaction.receivedBy);
 		setAmount(debitTransaction.debit);
+		setTransactionDate(debitTransaction.transactionDate);
 		setAccountToDebit({
 			label: debitTransaction.account.accountName,
 			value: debitTransaction.account.accountName,
@@ -191,9 +192,11 @@ function AddTransaction() {
 	};
 
 	const postFormData = async () => {
+
 		setFormLoading(true);
 		const formData = new FormData();
 		formData.append("title", title);
+		formData.append("transactionDate", transactionDate);
 		formData.append("contacts", contacts);
 		formData.append("description", description);
 		if (transactionType !== "receipt" && transactionType !== "invoice") {
@@ -250,6 +253,13 @@ function AddTransaction() {
 	const validateForm = () => {
 		if (!title) {
 			toggleFeedback("error", { title: "Error", text: "Title is required" });
+			return false;
+		}
+		if (!transactionDate) {
+			toggleFeedback("error", {
+				title: "Error",
+				text: "Date is required",
+			});
 			return false;
 		}
 		if (!contacts) {
@@ -342,6 +352,7 @@ function AddTransaction() {
 
 		const formData = new FormData();
 		formData.append("title", title);
+		formData.append("transactionDate", transactionDate);
 		formData.append("contacts", contacts);
 		formData.append("description", description);
 		formData.append("receipt", receipt);
@@ -551,8 +562,8 @@ function AddTransaction() {
 							<InputField
 								type="date"
 								label="Date"
-								value={title}
-								onChange={(e) => setTitle(e.target.value)}
+								value={transactionDate}
+								onChange={(e) => setTransactionDate(e.target.value)}
 							/>
 						</div>
 						<div className="w-1/4 p-1">
