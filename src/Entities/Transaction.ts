@@ -127,6 +127,10 @@ export class Transaction extends BaseEntity  {
   })
   invoice_balance!: number;
 
+  @Column({
+    nullable: true
+  })
+  transactionDate!: Date;
 
 }
 
@@ -219,6 +223,7 @@ export const createTransaction = async (
   transactionTypeID: number | null = null,
   items: ItemType[] | null = null,
   status: string | null = null,
+  transactionDate: string | null = null,
 ) => {
   let transactionType : TransactionType | null = null;
   if (transactionTypeID) {
@@ -249,6 +254,10 @@ export const createTransaction = async (
   transaction.balance = balance;
   transaction.debit = debit;
   transaction.credit = credit;
+
+  if (transactionDate) {
+    transaction.transactionDate = new Date(transactionDate);
+  }
   
   if (transactionType) {
     transaction.subType = transactionType;
@@ -333,6 +342,7 @@ export const createTransactionDoubleEntry = async (
   transactionTypeID: number | null = null,
   items: ItemType[] | null = null,
   status: string | null = null,
+  transactionDate: string | null = null,
 ) => {
   // Get Accounts
   const accountToDebitEntity = await Account.findOne({
@@ -393,6 +403,7 @@ export const createTransactionDoubleEntry = async (
     transactionTypeID,
     items,
     status,
+    transactionDate
   )
 
   // Create Credit Transaction
@@ -414,6 +425,7 @@ export const createTransactionDoubleEntry = async (
     transactionTypeID,
     items,
     status,
+    transactionDate
   );
 
   // Update Accounts
@@ -457,6 +469,7 @@ export const updateTransaction = async (
   transactionTypeID: number | null = null,
   items: ItemType[] | null = null,
   status: string | null = null,
+  transactionDate: string | null = null,
 ) => {
   const transaction = await Transaction.findOne(
     {where: {id: id}}
@@ -517,6 +530,10 @@ export const updateTransaction = async (
     transaction.invoice = invoice;
   }
 
+  if (transactionDate) {
+    transaction.transactionDate = new Date(transactionDate);
+  }
+
   if (items) {
     let invoice_balance = 0;
     for (const item of items) {
@@ -559,6 +576,7 @@ export const updateTransactionDoubleEntry = async (
   transactionTypeID: number | null = null,
   items: ItemType[] | null = null,
   status: string | null = null,
+  transactionDate: string | null = null,
 ) => {
   
 
@@ -680,6 +698,7 @@ export const updateTransactionDoubleEntry = async (
     transactionTypeID,
     items,
     status,
+    transactionDate
   )
 
   // Update credit transaction
@@ -701,6 +720,7 @@ export const updateTransactionDoubleEntry = async (
     transactionTypeID,
     items,
     status,
+    transactionDate
   )
 
   return {

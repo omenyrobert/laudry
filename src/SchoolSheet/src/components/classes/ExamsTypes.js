@@ -39,11 +39,11 @@ function ExamsTypes() {
 				examType: examType,
 				mark: mark,
 			};
-	
+
 			const response = await axiosInstance.post("/exam-types", formData);
 			const { data } = response;
 			const { status } = data;
-	
+
 			if (status) {
 				dispatch(getExamTypes());
 				setexamType("");
@@ -55,7 +55,7 @@ function ExamsTypes() {
 					timer: 500,
 				});
 			}
-		} catch(error) {
+		} catch (error) {
 			console.log(error);
 		}
 	};
@@ -181,7 +181,7 @@ function ExamsTypes() {
 							label="Exam Type"
 							value={examType}
 							onChange={(e) => setexamType(e.target.value)}
-							
+
 						/>
 						<InputField
 							type="text"
@@ -189,7 +189,7 @@ function ExamsTypes() {
 							label="Mark"
 							value={mark}
 							onChange={(e) => setMark(e.target.value)}
-							
+
 						/>
 
 						<div onClick={postexamType}>
@@ -214,7 +214,7 @@ function ExamsTypes() {
 											label="exam Type"
 											value={examTypeEdit}
 											onChange={(e) => setexamTypeEdit(e.target.value)}
-											
+
 										/>
 									</div>
 									<div className="w-full pr-5">
@@ -224,7 +224,7 @@ function ExamsTypes() {
 											label="Mark"
 											value={markEdit}
 											onChange={(e) => setMarkEdit(e.target.value)}
-										
+
 										/>
 									</div>
 
@@ -245,7 +245,7 @@ function ExamsTypes() {
 							) : null}
 							{/* edit popup end */}
 
-							{examTypes.map((examTypeItem) => {
+							{examTypes && examTypes.map((examTypeItem) => {
 								return (
 									<tr
 										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
