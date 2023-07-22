@@ -167,49 +167,62 @@ function Assessment() {
 
 	return (
 		<div>
-			<div className="flex justify-between mr-5 mt-5">
+			<div className="flex justify-between mr-5 bg-white mt-5">
 				<div>
-					<p className="text-secondary font-semibold text-xl">Assessment</p>
+					<p className="text-secondary font-semibold text-xl -mt-4 ml-2">Assessment</p>
 				</div>
 				<div>
 					<ExamsTypes />
 				</div>
 			</div>
 
+			<div className="flex bg-white p-2 -mt-14 w-full">
+				<div className="w-3/12">
+
+					<InputField
+						placeholder="Search student..."
+						value={query.search}
+						onChange={(e) => {
+							setQuery({ ...query, search: e.target.value });
+						}}
+						icon={<BsSearch className="mt-3 mr-4" />}
+					/>
+				</div>
+				{/* Filter */}
+				<div className="w-2/12 ml-2 mt-5">
+					<Select
+						placeholder="Filter by Class"
+						options={classOptions}
+						onChange={(e) => {
+							setQuery({ ...query, studentClass: e.class });
+						}}
+
+					/>
+				</div>
+				<div className="w-2/12 ml-2 mt-5">
+					<Select
+						placeholder="Select Stream"
+						options={classOptions}
+						onChange={(e) => {
+							setQuery({ ...query, studentClass: e.class });
+						}}
+					/>
+				</div>
+				<div className="w-1/12 ml-5 mt-4">
+
+					<span onClick={(e) => {
+						setQuery({
+							search: "",
+							studentClass: "",
+						})
+					}} ><Button value={"Clear"} /></span>
+				</div>
+
+			</div>
 			<div className="w-full flex overflow-y-auto">
 				<div className="w-4/12 bg-white p-3">
 					<div className="bg-white p-3 overflow-y-auto h-[83vh]">
-						<div >
-							<InputField
-								placeholder="Search student..."
-								value={query.search}
-								onChange={(e) => {
-									setQuery({ ...query, search: e.target.value });
-								}}
-								icon={<BsSearch className="mt-3 mr-4" />}
-							/>
 
-							{/* Filter */}
-							<div className="flex justify-between mt-5">
-								<Select
-									className="w-32"
-									placeholder="Filter by Class"
-									options={classOptions}
-									onChange={(e) => {
-										setQuery({ ...query, studentClass: e.class });
-									}}
-
-								/>
-								<span onClick={(e) => {
-									setQuery({
-										search: "",
-										studentClass: "",
-									})
-								}} ><Button value={"Clear Filters"} /></span>
-
-							</div>
-
-						</div>
 						<table className="mt-4 w-full table-auto">
 							<thead style={{ backgroundColor: "#0d6dfd10" }}>
 								<th className="p-2 text-primary text-sm text-left">Full Name</th>
