@@ -123,7 +123,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 
 	return (
 		<>
-			<div className="absolute bg-black/50 w-full h-screen top-0 left-0 z-50">
+			<div className="absolute bg-black/50 w-full overflow-hidden h-screen top-0 left-0 z-50">
 				<div className="flex justify-between mt-2">
 					<div></div>
 					<div onClick={handleGeneratePDF}>
@@ -137,8 +137,8 @@ function ReportCardTemplate({ closeCard, studentData }) {
 					<div></div>
 				</div>
 
-				<div >
-					<div className="bg-white w-[80vw] h-[90vh] mt-2 ml-[5vw] overflow-y-auto">
+				<div className="flex justify-center">
+					<div className="bg-white w-[80vw] h-[90vh] mt-2  overflow-y-auto">
 						<div className="flex bg-primary text-white py-5 px-6">
 							<div className="flex w-full">
 								<div className="w-28">
@@ -290,6 +290,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 						</div>
 					</div>
 				</div>
+
 				<div id="ledger-table">
 					<div className="bg-white w-[100vw] mt-2">
 						<div className="bg-primary text-white p-2">

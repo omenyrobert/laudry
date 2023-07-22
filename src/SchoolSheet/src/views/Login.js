@@ -212,7 +212,7 @@ const Login = () => {
 								/>
 							</div>
 							{
-								activating ? <ButtonLoader /> : <div onClick={validateToken} className="w-[20%] ml-5 mt-5">
+								activating ?  <div className="w-[20%] ml-5 mt-5"> <ButtonLoader /> </div> : <div onClick={validateToken} className="w-[20%] ml-5 mt-5">
 									<Button value={"Submit"} />
 								</div>
 							}

@@ -14,6 +14,7 @@ const Navbar = () => {
 	const dispatch = useDispatch();
 	const { token } = useSelector((state) => state.schoolStore);
 	const [expiryDate, setExpiryDate] = useState(null);
+	const [days, setDays] = useState(null);
 	const toggleLog = () => {
 		setLog(!log);
 	};
@@ -40,9 +41,13 @@ const Navbar = () => {
 	useEffect(() => {
 		if (token) {
 			const date = new Date(token).toLocaleDateString()
-			const time = new Date(token).toLocaleTimeString()
+			// const time = new Date(token).toLocaleTimeString()
 
-			setExpiryDate(date + " at " + time)
+			const days = Math.floor((new Date(token) - new Date()) / (1000 * 60 * 60 * 24));
+			setExpiryDate(date)
+			setDays(days);
+
+
 
 		}
 	}, [token])
@@ -68,14 +73,18 @@ const Navbar = () => {
 	return (
 		<div className="mt-2 h-12 flex justify-between">
 			<div></div>
-			<div className="bg-white p-2 rounded-md">
+			{days < 15 ? <div className="bg-white py-2 px-5 rounded-md flex">
 
-				<p className="text-red text-sm">
+				<p className="text-red text-sm mt-1">
 					{
 						"The Activation Key Expires on " + expiryDate
 					}
 				</p>
-			</div>
+				<p className="p-1 rounded text-sm ml-2 bg-primary3 text-primary">
+					{days} Days Left
+				</p>
+			</div> : null}
+
 			<div className="flex" onClick={toggleLog}>
 				<div className="ml-2 relative cursor-pointer">
 					<p className="font-bold">{firstName + " " + lastName}</p>

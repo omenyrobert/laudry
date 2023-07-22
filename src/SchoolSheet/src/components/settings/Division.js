@@ -164,19 +164,20 @@ function Division() {
 					<div className="w-2/5 p-2">
 						<InputField
 							type="text"
-							placeholder="Enter Maximum Points"
-							label="Maximum Points"
-							value={upperLimit}
-							onChange={(e) => setUpperLimit(e.target.value)}
+							placeholder="Enter Minimum Points"
+							label="from"
+							value={lowerLimit}
+							onChange={(e) => setLowerLimit(e.target.value)}
 						/>
+
 					</div>
 					<div className="w-2/5 p-2">
 						<InputField
 							type="text"
-							placeholder="Enter Minimum Points"
-							label="Minimum Points"
-							value={lowerLimit}
-							onChange={(e) => setLowerLimit(e.target.value)}
+							placeholder="Enter Maximum Points"
+							label="To"
+							value={upperLimit}
+							onChange={(e) => setUpperLimit(e.target.value)}
 						/>
 					</div>
 
@@ -195,8 +196,8 @@ function Division() {
 					<table className=" w-[98%] table-auto">
 						<thead style={{ backgroundColor: "#0d6dfd10" }}>
 							<th className="p-2 text-primary text-sm text-left">Division</th>
-							<th className="p-2 text-primary text-sm text-left">Maximum</th>
-							<th className="p-2 text-primary text-sm text-left">Minimum</th>
+							<th className="p-2 text-primary text-sm text-left">from</th>
+							<th className="p-2 text-primary text-sm text-left">to</th>
 							<th className="p-2 text-primary text-sm text-left">Action</th>
 						</thead>
 						<tbody>
@@ -245,8 +246,8 @@ function Division() {
 										key={div.id}
 									>
 										<td className="text-xs p-3 text-gray5">{div.division}</td>
-										<td className="text-xs p-3 text-gray5">{div.upperLimit}</td>
 										<td className="text-xs p-3 text-gray5">{div.lowerLimit}</td>
+										<td className="text-xs p-3 text-gray5">{div.upperLimit}</td>
 										<td className="text-xs p-3 text-gray5 flex">
 											<MdDeleteOutline
 												onClick={() => deleteDivision(div)}

@@ -17,7 +17,7 @@ function ReportCards(props) {
   const { students, streams } = useSelector((state) => state.schoolStore);
 
   useEffect(() => {
-    const _streams = streams.map((res) => ({
+    const _streams = streams?.map((res) => ({
       value: res.stream,
       label: res.stream,
       ...res
@@ -33,7 +33,7 @@ function ReportCards(props) {
 
   useEffect(() => {
     if (students) {
-      const _classes = students.map((student) => {
+      const _classes = students?.map((student) => {
         return {
           value: student?.classes[0]?.class,
           label: student?.classes[0]?.class,
@@ -41,11 +41,11 @@ function ReportCards(props) {
       });
 
       // remove duplicates
-      const uniqueClasses = [...new Set(_classes.map((item) => item.value))];
+      const uniqueClasses = [...new Set(_classes?.map((item) => item.value))];
       uniqueClasses.splice(uniqueClasses.indexOf(null), 1);
       uniqueClasses.splice(uniqueClasses.indexOf(undefined), 1);
 
-      const finalClasses = uniqueClasses.map((item) => {
+      const finalClasses = uniqueClasses?.map((item) => {
         return {
           value: item,
           label: item,
@@ -106,65 +106,60 @@ function ReportCards(props) {
   return (
     <div>
       <div className="flex bg-white">
-        <div className="w-10/12 ">
-          <div className="flex">
-            <div className="w-6/12 px-2">
-              <InputField
-                placeholder="Search for Income"
-                type="search"
-                icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
-                onChange={(e) => {
-                  setQuery({ ...query, search: e.target.value });
-                }}
-                value={query.search}
-              />
-            </div>
-            <div className="w-3/12 px-2">
-              <div className="mt-5">
-                <Select
-                  placeholder={"Filter By Class"}
-                  name="class"
-                  onChange={(e) => {
-                    setQuery({
-                      ...query,
-                      class: e.value
-                    });
-                  }}
-                  options={classes}
-                />
-              </div>
-            </div>
-            <div className="w-3/12 px-2">
-              <div className="mt-5">
-                <Select
-                  placeholder={"Filter By Stream"}
-                  name="stream"
-                  onChange={(e) => {
-                    setQuery({
-                      ...query,
-                      stream: e.value
-                    });
-                  }}
-                  options={streamOpts}
-                />
-              </div>
-
-            </div>
-            <div className="mt-5">
-              <span onClick={(e) => {
+        <div className="w-6/12 px-2">
+          <InputField
+            placeholder="Search for Income"
+            type="search"
+            icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+            onChange={(e) => {
+              setQuery({ ...query, search: e.target.value });
+            }}
+            value={query.search}
+          />
+        </div>
+        <div className="w-3/12 px-2">
+          <div className="mt-5">
+            <Select
+              placeholder={"Filter By Class"}
+              name="class"
+              onChange={(e) => {
                 setQuery({
-                  search: "",
-                  class: "",
-                  stream: "",
-                })
-              }}>
-                <Button value={"Clear Filters"} />
-              </span>
-
-            </div>
+                  ...query,
+                  class: e.value
+                });
+              }}
+              options={classes}
+            />
           </div>
         </div>
+        <div className="w-3/12 px-2">
+          <div className="mt-5">
+            <Select
+              placeholder={"Filter By Stream"}
+              name="stream"
+              onChange={(e) => {
+                setQuery({
+                  ...query,
+                  stream: e.value
+                });
+              }}
+              options={streamOpts}
+            />
+          </div>
 
+        </div>
+        <div className="mt-5 ml-5">
+          <span onClick={(e) => {
+            setQuery({
+              search: "",
+              class: "",
+              stream: "",
+            })
+          }}>
+            <Button value={"Clear"} />
+          </span>
+
+        </div>
       </div>
 
 
@@ -175,6 +170,8 @@ function ReportCards(props) {
           studentData={studentInfo}
         />
       ) : null}
+      <div className="h-[70vh] overflow-y-auto">
+
       <table className='mt-4 w-full table-auto'>
         <thead style={{ backgroundColor: '#0d6dfd10' }}>
           <th className='p-2 text-primary text-sm text-left'>
@@ -203,7 +200,7 @@ function ReportCards(props) {
           </th>
         </thead>
         <tbody>
-          {students ? filteredStudents.map((student) => {
+          {students ? filteredStudents?.map((student) => {
             const studentType = student?.student_types[0];
 
             const _class = student?.classes[0]
@@ -249,8 +246,8 @@ function ReportCards(props) {
 
                 <td className='text-xs p-3 text-gray5 flex justify-between'>
                   <div onClick={() => openCard(student)}>
-                    <p className='p-2 rounded text-primary'>
-                      Generate Report Card
+                    <p className='p-2 bg-white rounded text-primary'>
+                      Print
                     </p>
                   </div>
                 </td>
@@ -259,6 +256,7 @@ function ReportCards(props) {
           }) : null}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

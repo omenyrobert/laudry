@@ -48,7 +48,7 @@ function Assessment() {
 		setStudentId(student.id);
 		setStudentInfo(student);
 		setSelectedSubject(student.selectedSubject);
-		setStream(streams && __streams.length > 0 ? __streams[0].stream : "");
+		setStream(streams && __streams?.length > 0 ? __streams[0]?.stream : "");
 	};
 
 	const closeAdd = () => {
