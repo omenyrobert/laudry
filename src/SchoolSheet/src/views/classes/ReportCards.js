@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import '../../assets/styles/main.css';
 import { useDispatch, useSelector } from "react-redux";
 import ReportCardTemplate from '../../components/classes/ReportCardTemplate';
-import { getStudents } from "../../store/schoolSheetSlices/schoolStore"
+import { getStudents, getStreams } from "../../store/schoolSheetSlices/schoolStore"
 import InputField from "../../components/InputField";
 import { BsSearch } from "react-icons/bs";
 import Select from "react-select";
@@ -12,13 +12,23 @@ function ReportCards(props) {
   const dispatch = useDispatch();
   const [studentInfo, setStudentInfo] = useState();
   const [classes, setClasses] = useState([]);
-  const [streams, setStreams] = useState([]);
+  const [streamOpts, setStreamOpts] = useState([]);
 
-  const { students } = useSelector((state) => state.schoolStore);
+  const { students, streams } = useSelector((state) => state.schoolStore);
+
+  useEffect(() => {
+    const _streams = streams.map((res) => ({
+      value: res.stream,
+      label: res.stream,
+      ...res
+    }));
+    setStreamOpts(_streams);
+  }, [streams])
 
   // get students
   useEffect(() => {
     dispatch(getStudents());
+    dispatch(getStreams());
   }, [dispatch]);
 
   useEffect(() => {
@@ -29,20 +39,11 @@ function ReportCards(props) {
           label: student?.classes[0]?.class,
         };
       });
-      const _streams = students.map((student) => {
-        return {
-          value: student?.streams[0]?.stream,
-          label: student?.streams[0]?.stream,
-        };
-      }
-      );
+
       // remove duplicates
       const uniqueClasses = [...new Set(_classes.map((item) => item.value))];
-      const uniqueStreams = [...new Set(_streams.map((item) => item.value))];
       uniqueClasses.splice(uniqueClasses.indexOf(null), 1);
       uniqueClasses.splice(uniqueClasses.indexOf(undefined), 1);
-      uniqueStreams.splice(uniqueStreams.indexOf(null), 1);
-      uniqueStreams.splice(uniqueStreams.indexOf(undefined), 1);
 
       const finalClasses = uniqueClasses.map((item) => {
         return {
@@ -50,15 +51,8 @@ function ReportCards(props) {
           label: item,
         };
       });
-      const finalStreams = uniqueStreams.map((item) => {
-        return {
-          value: item,
-          label: item,
-        };
-      });
 
       setClasses(finalClasses);
-      setStreams(finalStreams);
     }
   }, [students]);
 
@@ -151,7 +145,7 @@ function ReportCards(props) {
                       stream: e.value
                     });
                   }}
-                  options={streams}
+                  options={streamOpts}
                 />
               </div>
 
