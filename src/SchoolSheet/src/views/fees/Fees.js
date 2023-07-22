@@ -5,16 +5,26 @@ import Button from '../../components/Button';
 import { BsSearch } from 'react-icons/bs';
 import FeesTable from '../../components/fees/FeesTable';
 import { useSelector, useDispatch } from 'react-redux';
-import { getStudents, getClasses } from '../../store/schoolSheetSlices/schoolStore';
+import { getStudents, getClasses, getStreams } from '../../store/schoolSheetSlices/schoolStore';
 import { extraLatestArrayIndex } from '../../utils/global';
 import Select from 'react-select';
 import { usePrint } from "../../hooks/print"
 
 const Fees = () => {
     const dispatch = useDispatch();
-    const { students, classes } = useSelector((state) => state.schoolStore)
+    const { students, classes, streams } = useSelector((state) => state.schoolStore)
     const [classOpts, setClassOpts] = useState([]);
     const { printContent } = usePrint();
+    const [streamOpts, setStreamOpts] = useState([]);
+
+    useEffect(() => {
+        const _streams = streams.map((res) => ({
+            value: res.stream,
+            label: res.stream,
+            ...res
+        }));
+        setStreamOpts(_streams);
+    }, [streams])
 
     useEffect(() => {
         if (classes) {
@@ -33,6 +43,7 @@ const Fees = () => {
     useEffect(() => {
         dispatch(getStudents());
         dispatch(getClasses());
+        dispatch(getStreams());
     }, [dispatch]);
 
     // search by class filter:
@@ -96,13 +107,14 @@ const Fees = () => {
         percentage: {
             percent: null,
             checkInput: null,
-        }
+        },
+        stream: '',
 
     });
     const [searchResults, setSearchResults] = useState([]);
 
     useEffect(() => {
-        if (query.name === '' && query.class === '' && query.percentage.percent === null) {
+        if (query.name === '' && query.class === '' && query.percentage.percent === null && query.stream === '') {
             setSearchResults(students);
             return;
         }
@@ -112,6 +124,10 @@ const Fees = () => {
             const isNameValid = fullName.toLowerCase().includes(query.name.toLowerCase());
             const className = student?.classes[0]?.class;
             const isClassValid = className ? className.toLowerCase().includes(query.class.toLowerCase()) : false;
+            const StreamName = student?.streams[0]?.stream;
+            const isStreamValid = StreamName ? StreamName.toLowerCase().includes(query.stream.toLowerCase()) : false;
+
+
             const percentage = handleFilter(student?.feesBalance, student?.fees);
             let isPercentageValid = false;
             if (query.percentage.checkInput === 'below') {
@@ -121,7 +137,7 @@ const Fees = () => {
             } else {
                 isPercentageValid = true;
             }
-            return isNameValid && isClassValid && isPercentageValid;
+            return isNameValid && isClassValid && isPercentageValid && isStreamValid;
         });
         setSearchResults(results);
 
@@ -156,7 +172,7 @@ const Fees = () => {
                         />
                     </div>
                     <div className='w-1/2'>
-                    <div className='flex ml-4 mt-5'>
+                        <div className='flex ml-4 mt-5'>
                             <p className='text-xs'>Above</p>
                             <input
                                 type='radio'
@@ -196,7 +212,7 @@ const Fees = () => {
                                 }}
                             />
                         </div>
-                       
+
                     </div>
 
                 </div>
@@ -238,9 +254,9 @@ const Fees = () => {
                         placeholder={'Select Stream'}
                         name='class'
                         className='mt-6'
-                        options={classOpts}
+                        options={streamOpts}
                         onChange={(e) => {
-                            setQuery({ ...query, class: e.class });
+                            setQuery({ ...query, stream: e.stream });
                         }}
                     />
 
@@ -256,7 +272,8 @@ const Fees = () => {
                             percentage: {
                                 percent: null,
                                 checkInput: null,
-                            }
+                            },
+                            stream: '',
                         })
                     }} className='pl-2 pt-5'>
 

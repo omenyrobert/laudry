@@ -12,6 +12,7 @@ import {
 	getTerms,
 	getAssessmentsByTerm,
 	getClasses,
+	getStreams
 } from "../../store/schoolSheetSlices/schoolStore";
 import { assessSubjects } from "../../utils/assessment";
 import Select from "react-select";
@@ -27,16 +28,27 @@ function Assessment() {
 	const [term, setTerm] = useState(null);
 	const [stream, setStream] = useState("");
 	const [classOptions, setClassOptions] = useState([]);
+	const [streamOpts, setStreamOpts] = useState([]);
 
-	const { examTypes, subjects, students, terms, assessmentsByTerm, classes } = useSelector((state) => state.schoolStore);
+	const { examTypes, subjects, students, terms, assessmentsByTerm, classes, streams } = useSelector((state) => state.schoolStore);
+
+	useEffect(() => {
+		const _streams = streams.map((res) => ({
+			value: res.stream,
+			label: res.stream,
+			...res
+		}));
+		setStreamOpts(_streams);
+	}, [streams])
+
 
 	const openAdd = (student) => {
-		const { streams } = student;
+		const { __streams } = student;
 		setAdd(true);
 		setStudentId(student.id);
 		setStudentInfo(student);
 		setSelectedSubject(student.selectedSubject);
-		setStream(streams && streams.length > 0 ? streams[0].stream : "");
+		setStream(streams && __streams.length > 0 ? __streams[0].stream : "");
 	};
 
 	const closeAdd = () => {
@@ -58,6 +70,7 @@ function Assessment() {
 		dispatch(getStudents());
 		dispatch(getTerms());
 		dispatch(getClasses());
+		dispatch(getStreams());
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -146,19 +159,23 @@ function Assessment() {
 	const [query, setQuery] = useState({
 		search: "",
 		studentClass: "",
+		stream: ""
 	});
 
 	useEffect(() => {
-		if (query.search === "" && query.studentClass === "") {
+		if (query.search === "" && query.studentClass === "" && query.stream === "") {
 			setSearchedData(studentData);
 			return;
 		}
 		const data = studentData.filter((student) => {
+			console.log(student);
 			const fullName = `${student.firstName} ${student.middleName} ${student.lastName}`;
 			const classData = student.classes.length > 0 && student.classes[0].class;
 			const isClass = classData ? classData.includes(query.studentClass) : false;
 			const isNameValid = fullName.toLowerCase().includes(query.search.toLowerCase());
-			return isNameValid && isClass;
+			const studentStream = student.streams ? student.streams.length > 0 && student.streams[0].stream : null;
+			const isStream = studentStream ? studentStream.includes(query.stream) : false;
+			return isNameValid && isClass && isStream;
 		});
 		setSearchedData(data);
 	}, [query, studentData])
@@ -202,9 +219,9 @@ function Assessment() {
 				<div className="w-2/12 ml-2 mt-5">
 					<Select
 						placeholder="Select Stream"
-						options={classOptions}
+						options={streamOpts}
 						onChange={(e) => {
-							setQuery({ ...query, studentClass: e.class });
+							setQuery({ ...query, stream: e.stream });
 						}}
 					/>
 				</div>
