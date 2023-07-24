@@ -10,6 +10,8 @@ import {
   getStudentDocuments,
   deleteStudentDocument,
   searchStudents,
+  getNumberOfStudents,
+  getStudentsWithFeesBalanceLessThan50
 } from "../Entities/Student";
 import { getTermBySelect } from "../Entities/Term";
 
@@ -417,3 +419,44 @@ export const searchingStudents = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
+
+
+
+export const fetchNumberOfStudents = async (req: Request, res: Response) => {
+    const numberOfStudents = await getNumberOfStudents();
+    if (numberOfStudents) {
+      return res
+        .json(customPayloadResponse(true, numberOfStudents))
+        .status(200)
+        .end();
+    } else {
+      return res
+        .json(customPayloadResponse(false, "No Students Found"))
+        .status(404)
+        .end();
+    }
+  
+}
+
+export const fetchStudentsWithFeesBalanceLessThan50Controller = async (req: Request, res: Response) => {
+  try {
+    const students = await getStudentsWithFeesBalanceLessThan50();
+    if (students) {
+      return res
+        .json(customPayloadResponse(true, students))
+        .status(200)
+        .end();
+    } else {
+      return res
+        .json(customPayloadResponse(false, "No Students Found"))
+        .status(404)
+        .end();
+    }
+  } catch (error) {
+    console.log(error)
+    return res
+      .json(customPayloadResponse(false, "An Error Occured"))
+      .status(500)
+      .end();
+  }
+}

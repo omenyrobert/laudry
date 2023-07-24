@@ -6,7 +6,7 @@ import { join } from "path";
 import cookieParser from "cookie-parser";
 
 const app: Application = express();
-const PORT: string | 3001 = process.env.PORT || 3001;
+export const PORT: string | 3001 = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -26,6 +26,9 @@ app.get("*", (req: Request, res: Response) => {
   res.sendFile(join(__dirname, "SchoolSheet/build", "index.html"));
 });
 
+
+
+
 DatabaseConnection.initialize()
   .then(() => {
     console.log("Database Connection Successful");
@@ -37,3 +40,6 @@ DatabaseConnection.initialize()
 app.listen(PORT, () => {
   console.log(`Server Running on http://localhost:${PORT}`);
 });
+
+
+export const dataSource = DatabaseConnection

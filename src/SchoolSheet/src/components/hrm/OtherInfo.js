@@ -74,12 +74,15 @@ function OtherInfo({
 		}
 	}, [init, dispatch]);
 
-	const addClass = () => {
+	const [adding, setAdding] = useState(false);
+	const addClass = async () => {
+		setAdding(true)
 		if (!studentClass) {
 			toggleFeedback("error", {
 				title: "Oops...",
 				text: "Please fill all fields",
 			});
+			setAdding(false)
 			return;
 		}
 		const data = {
@@ -87,7 +90,7 @@ function OtherInfo({
 			staffId: staffId,
 		};
 
-		axiosInstance
+		await axiosInstance
 			.post("/class/add-class-to-staff", data)
 			.then((res) => {
 				const { status, payload } = res.data;
@@ -96,6 +99,7 @@ function OtherInfo({
 						title: "Oops...",
 						text: payload,
 					});
+					setAdding(false)
 					return;
 				}
 				toggleFeedback("success", {
@@ -104,10 +108,13 @@ function OtherInfo({
 				});
 				fetchStaffInfo();
 				setStudentClass("");
+				setAdding(false)
 			})
 			.catch((err) => {
 				console.log(err);
+				setAdding(false)
 			});
+		setAdding(false)
 	};
 
 	const removeClass = (id) => {
@@ -197,12 +204,15 @@ function OtherInfo({
 			});
 	};
 
-	const addSubject = () => {
+	const [adding2, setAdding2] = useState(false)
+	const addSubject = async () => {
+		setAdding2(true)
 		if (!subject) {
 			toggleFeedback("error", {
 				title: "Oops...",
 				text: "Please fill all fields",
 			});
+			setAdding2(false)
 			return;
 		}
 		const data = {
@@ -210,7 +220,7 @@ function OtherInfo({
 			staffId: staffId,
 		};
 
-		axiosInstance
+		await axiosInstance
 			.post("/subjects/add-subject-to-staff", data)
 			.then((res) => {
 				const { status, payload } = res.data;
@@ -219,6 +229,7 @@ function OtherInfo({
 						title: "Oops...",
 						text: payload,
 					});
+					setAdding2(false)
 					return;
 				}
 				toggleFeedback("success", {
@@ -227,22 +238,28 @@ function OtherInfo({
 				});
 				fetchStaffInfo();
 				setStudentClass("");
+				setAdding2(false)
 			})
 			.catch((err) => {
 				console.log(err);
+				setAdding2(false)
 			});
+		setAdding2(false)
 	};
 
 	function handleFileChange(e) {
 		setDocument(e.target.files[0]);
 	}
 
-	const addDocument = () => {
+	const [addingdoc, setAddingdoc] = useState(false);
+	const addDocument = async () => {
+		setAddingdoc(true)
 		if (!documentName || documentName === "") {
 			toggleFeedback("error", {
 				title: "Oops...",
 				text: "Please fill all fields",
 			});
+			setAddingdoc(false)
 			return;
 		}
 		if (!document) {
@@ -250,6 +267,7 @@ function OtherInfo({
 				title: "Oops...",
 				text: "Please select a document",
 			});
+			setAddingdoc(false)
 			return;
 		}
 
@@ -258,7 +276,7 @@ function OtherInfo({
 		formData.append("name", documentName);
 		formData.append("staff", staffId);
 
-		axiosInstance
+		await axiosInstance
 			.post("/staff-profile/document", formData)
 			.then((res) => {
 				const { status, payload } = res.data;
@@ -267,6 +285,7 @@ function OtherInfo({
 						title: "Oops...",
 						text: payload,
 					});
+					setAddingdoc(false)
 					return;
 				}
 				toggleFeedback("success", {
@@ -275,10 +294,13 @@ function OtherInfo({
 				});
 				fetchStaffProfile();
 				setStudentClass("");
+				setAddingdoc(false)
 			})
 			.catch((err) => {
 				console.log(err);
+				setAddingdoc(false)
 			});
+		setAddingdoc(false)
 	};
 
 	const [file, setFile] = useState(false);
@@ -314,10 +336,15 @@ function OtherInfo({
 						</div>
 
 						{/* Add button */}
+						<div className="ml-2">
+							{adding ? <ButtonLoader /> : <div onClick={addClass} className="">
+								<Button value={"+"} />
+							</div>}
 
-						<div onClick={addClass} className="ml-2">
-							<Button value={"+"} />
 						</div>
+
+
+
 					</div>
 
 					<br />
@@ -347,8 +374,14 @@ function OtherInfo({
 								options={subjects}
 							/>
 						</div>
-						<div onClick={addSubject} className="ml-2">
-							<Button value={"+"} />
+						<div className="ml-2">
+							{adding2 ? <ButtonLoader /> :
+								<div onClick={addSubject}>
+									<Button value={"+"} />
+								</div>}
+
+
+
 						</div>
 					</div>
 
@@ -397,8 +430,12 @@ function OtherInfo({
 						</div>
 
 						<br />
-						<div className="w-12 float-right" onClick={addDocument}>
-							<Button value={"+"} />
+						<div className="w-14" >
+							{addingdoc ? <ButtonLoader /> : <div onClick={addDocument}>
+								<Button value={"+"} />
+							</div>}
+
+
 						</div>
 					</div>
 					<br />

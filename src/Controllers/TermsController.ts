@@ -122,3 +122,23 @@ export const removeTerm = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
+
+
+// get selected term
+export const getSelectedTerm = async (req: Request, res: Response) => {
+  try {
+    const term = await getTermBySelect();
+    if (term) {
+      return res.json(customPayloadResponse(true, term)).status(200).end();
+    }
+    return res
+      .json(customPayloadResponse(false, "Term not Found"))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+        

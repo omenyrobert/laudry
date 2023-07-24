@@ -7,6 +7,7 @@ import Button from "../../components/Button";
 import InputField from "../../components/InputField";
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../../components/ButtonLoader";
+import { Link } from "react-router-dom";
 
 const Code = () => {
 	const navigate = useNavigate();
@@ -20,7 +21,7 @@ const Code = () => {
 	};
 
 	const [posting, setPosting] = useState(false);
-    const [errorMessage, setError] = useState("");
+	const [errorMessage, setError] = useState("");
 	const submitCode = async () => {
 		try {
 			setPosting(true);
@@ -32,10 +33,10 @@ const Code = () => {
 				localStorage.setItem("resetEmail", email);
 				navigate(`/passwordReset`);
 				setPosting(false);
-			} else{
-                setError(payload);
-                setPosting(false);
-            }
+			} else {
+				setError(payload);
+				setPosting(false);
+			}
 		} catch (error) {
 			console.log(error);
 			setPosting(false);
@@ -59,7 +60,7 @@ const Code = () => {
 						</h1>
 					</div>
 					<p className="text-center text-primary mt-2">Enter Code</p>
-                    <p className="text-center text-red text-sm mt-2">{errorMessage}</p>
+					<p className="text-center text-red text-sm mt-2">{errorMessage}</p>
 					<InputField
 						type="text"
 						placeholder="Enter Your Code"
@@ -68,6 +69,12 @@ const Code = () => {
 						icon={<MdAlternateEmail className="w-10 mt-3" />}
 						onChange={onChange}
 					/>
+					<div className="flex my-2 justify-between">
+						<div></div>
+						<div>
+							<Link to="/" className="text-secondary">Back to login</Link>
+						</div>
+					</div>
 					{posting ? (
 						<div>
 							<ButtonLoader />
@@ -77,6 +84,7 @@ const Code = () => {
 							<Button value={"Submit Code"} />
 						</div>
 					)}
+					
 				</div>
 			</div>
 		</div>

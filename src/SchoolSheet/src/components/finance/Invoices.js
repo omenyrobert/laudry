@@ -140,26 +140,25 @@ function Invoices() {
 			{/* 			<Sample /> */}
 
 			<div className="flex bg-white">
-				<div className="w-10/12 ">
-					<div className="flex">
-						<div className="w-8/12 px-2">
-							<InputField
-								placeholder="Search for Income"
-								type="search"
-								icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
-							/>
-						</div>
-
-						<div className="w-2/12 px-2">
-							<InputField type="date" />
-						</div>
-						<div className="w-2/12">
-							<InputField type="date" />
-						</div>
+				<div className="flex w-9/12">
+					<div className="w-6/12 px-2">
+						<InputField
+							placeholder="Search for Income"
+							type="search"
+							icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
+						/>
+					</div>
+					<div className="w-3/12 px-2">
+						<InputField type="date" />
+					</div>
+					<div className="w-3/12">
+						<InputField type="date" />
 					</div>
 				</div>
-				<div className="w-2/12 px-3 mt-5 flex">
-					<Link to="/addTransaction?transactionType=invoice&action=create">
+
+				<div className="w-3/12 px-3 mt-5 flex">
+
+					<Link className="ml-5" to="/addTransaction?transactionType=invoice&action=create">
 						<Button2 value={"invoice"} />
 					</Link>
 					<div onClick={() => {
@@ -195,7 +194,7 @@ function Invoices() {
 										{invoiceItem.title}
 									</td>
 									<td className="text-xs p-3 text-gray5">
-										{invoiceItem?.subType?.name}
+										{invoiceItem?.status}
 									</td>
 									<td className="text-xs p-3 text-gray5">
 										{Number(invoiceItem.transactionAmount).toLocaleString()}
@@ -210,7 +209,7 @@ function Invoices() {
 										{invoiceItem.contacts}
 									</td>
 									<td className="text-xs p-3 text-gray5 flex">
-										{invoiceItem.id === id ? (
+										{invoiceItem.id ? (
 											<div className="flex">
 												<MdDeleteOutline
 													onClick={() => deleteinvoice(invoiceItem)}

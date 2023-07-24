@@ -98,32 +98,32 @@ function ReportCardTemplate({ closeCard, studentData }) {
 	}, [reports, studentData, term]);
 
 	const handleGeneratePDF = () => {
-		const documentWindow = window.open("", "PRINT", "height=600,width=1000");
+		const documentWindow = window.open("", "PRINT", "height=600,width=1200");
 		const content = document.getElementById("ledger-table").outerHTML;
-	
+
 		documentWindow.document.write(content);
-	
+
 		// Get All stylesheets
 		const stylesheets = document.querySelectorAll("link");
 		// Append them to the head of the new window
 		stylesheets.forEach((stylesheet) => {
-		  documentWindow.document.write(stylesheet.outerHTML);
+			documentWindow.document.write(stylesheet.outerHTML);
 		});
 		// Get all style tags
 		const styleTags = document.querySelectorAll("style");
 		// Append them to the head of the new window
 		styleTags.forEach((styleTag) => {
-		  documentWindow.document.write(styleTag.outerHTML);
+			documentWindow.document.write(styleTag.outerHTML);
 		});
-	
+
 		setTimeout(() => {
-		  documentWindow.print();
+			documentWindow.print();
 		}, 1000);
-	  };
+	};
 
 	return (
 		<>
-			<div  className="absolute bg-black/50 w-[87vw] h-screen -mt-20 z-50">
+			<div className="absolute bg-black/50 w-full overflow-hidden h-screen top-0 left-0 z-50">
 				<div className="flex justify-between mt-2">
 					<div></div>
 					<div onClick={handleGeneratePDF}>
@@ -136,12 +136,12 @@ function ReportCardTemplate({ closeCard, studentData }) {
 					</div>
 					<div></div>
 				</div>
-				
-				<div >
-					<div  className="bg-white w-[70vw] h-[90vh] mt-2 ml-[5vw] overflow-y-auto">
+
+				<div className="flex justify-center">
+					<div className="bg-white w-[80vw] h-[90vh] mt-2  overflow-y-auto">
 						<div className="flex bg-primary text-white py-5 px-6">
-							<div className="flex w-10/12">
-								<div className="">
+							<div className="flex w-full">
+								<div className="w-28">
 									<img
 										src={
 											schools && schools.length > 0 && schools[0]?.logo
@@ -153,7 +153,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 									/>
 								</div>
 								<div className="ml-5 text-white">
-									<h1 className="text-2xl  font-semibold">{schools[0]?.name}</h1>
+									<h1 className="text-xl  font-semibold">{schools[0]?.name}</h1>
 									<h1 className="">{schools[0]?.motto}</h1>
 									<div className="flex mt-5 text-sm">
 										<div className="font-thin flex">
@@ -180,7 +180,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 							</div>
 
 							<div className="w-[300px]">
-								<h1 className="font-bold text-3xl text-center ">Report Card</h1>
+								<h1 className="font-bold text-xl text-center ">Report Card</h1>
 							</div>
 						</div>
 						<div className="flex p-5">
@@ -278,23 +278,25 @@ function ReportCardTemplate({ closeCard, studentData }) {
 						})}
 
 						<div className="mx-4  bg-gray1 font-medium mt-5">
-							<div className=" p-2 m-1 w-1/2 text-primary text-lg font-bold">Division: { points &&  findDivision(points, divisions)?.division }</div>
+							<div className=" p-2 m-1 w-1/2 text-primary text-lg font-bold">Division: {points && findDivision(points, divisions)?.division}</div>
 							<div className=" p-2 mx-1 -mt-5 w-1/2 text-sm">{points} Points</div>
 						</div>
 						<div className="flex mx-4  bg-gray1 font-medium">
 							<div className=" p-2 m-1 w-1/2">Comments From Class Teacher
-							<p className="text-sm text-gray5">{report?.comment}</p></div>
+								<p className="text-sm text-gray5">{report?.comment}</p></div>
 							<div className=" p-2 m-1 w-1/2">Next Stream : <span className="text-primary">{report?.stream}</span></div>
 							<div className=" p-2 m-1 w-1/2">Next Class: <span className="text-primary">{report?.classField}</span></div>
-							
+
 						</div>
 					</div>
 				</div>
+
 				<div id="ledger-table">
-					<div  className="bg-white w-[100vw] mt-2">
-						<div className="flex bg-primary text-white py-5 px-6">
-							<div className="flex w-10/12">
-								<div className="">
+					<div className="bg-white w-[100vw] mt-2">
+						<div className="bg-primary text-white p-2">
+							<div className="flex">
+
+								<div className="w-[200px]">
 									<img
 										src={
 											schools && schools.length > 0 && schools[0]?.logo
@@ -305,37 +307,42 @@ function ReportCardTemplate({ closeCard, studentData }) {
 										alt="school_logo"
 									/>
 								</div>
-								<div className="ml-5 text-white">
-									<h1 className="text-2xl  font-semibold">{schools[0]?.name}</h1>
+								<div className="ml-5 w-full truncate text-white">
+									<h1 className="text-xl  font-semibold">{schools[0]?.name}</h1>
 									<h1 className="">{schools[0]?.motto}</h1>
-									<div className="flex mt-5 text-sm">
-										<div className="font-thin flex">
-											<div>
-												<BsTelephoneFill className="text-sm mt-1 flex" />
-											</div>{" "}
-											<div className="ml-1">{schools[0]?.phoneNumbers}</div>{" "}
-										</div>
-										<div className="font-thin ml-5 flex">
-											<div>
-												<BsEnvelopeFill className="text-sm mt-1" />
-											</div>
-											<div className="ml-1">{schools[0]?.emails}</div>
-										</div>
-										<div className=" ml-5 font-thin flex">
-											<div>
-												<MdLocationPin className="text-sm mt-1" />
-											</div>
-											<div className="ml-1">{schools[0]?.location}</div>
-										</div>
-										<h1 className=" ml-5 font-thin">{schools[0]?.sites}</h1>
-									</div>
+
+								</div>
+
+
+								<div className="w-[300px]">
+									<h1 className="font-bold text-2xl text-center ">Report Card</h1>
 								</div>
 							</div>
 
-							<div className="w-[300px]">
-								<h1 className="font-bold text-3xl text-center ">Report Card</h1>
+
+							<div className="flex mt-5 ml-[120px] -mt-[40px] text-sm">
+								<div className="font-thin flex">
+									<div>
+										<BsTelephoneFill className="text-sm mt-1 flex" />
+									</div>{" "}
+									<div className="ml-1">{schools[0]?.phoneNumbers}</div>{" "}
+								</div>
+								<div className="font-thin ml-5 flex">
+									<div>
+										<BsEnvelopeFill className="text-sm mt-1" />
+									</div>
+									<div className="ml-1">{schools[0]?.emails}</div>
+								</div>
+								<div className=" ml-5 font-thin flex">
+									<div>
+										<MdLocationPin className="text-sm mt-1" />
+									</div>
+									<div className="ml-1">{schools[0]?.location}</div>
+								</div>
+								<h1 className=" ml-5 font-thin">{schools[0]?.sites}</h1>
 							</div>
 						</div>
+
 						<div className="flex p-5">
 							<div className="">
 								<img
@@ -431,15 +438,15 @@ function ReportCardTemplate({ closeCard, studentData }) {
 						})}
 
 						<div className="mx-4  bg-gray1 font-medium mt-5">
-							<div className=" p-2 m-1 w-1/2 text-primary text-lg font-bold">Division: { points &&  findDivision(points, divisions)?.division }</div>
+							<div className=" p-2 m-1 w-1/2 text-primary text-lg font-bold">Division: {points && findDivision(points, divisions)?.division}</div>
 							<div className=" p-2 mx-1 -mt-5 w-1/2 text-sm">{points} Points</div>
 						</div>
 						<div className="flex mx-4  bg-gray1 font-medium">
 							<div className=" p-2 m-1 w-1/2">Comments From Class Teacher
-							<p className="text-sm text-gray5">{report?.comment}</p></div>
+								<p className="text-sm text-gray5">{report?.comment}</p></div>
 							<div className=" p-2 m-1 w-1/2">Next Stream : <span className="text-primary">{report?.stream}</span></div>
 							<div className=" p-2 m-1 w-1/2">Next Class: <span className="text-primary">{report?.classField}</span></div>
-							
+
 						</div>
 					</div>
 				</div>

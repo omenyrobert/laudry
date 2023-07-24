@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axios-instance";
+import Swal from "sweetalert2";
+import { useDispatch, useSelector } from "react-redux";
+import { getToken } from "../store/schoolSheetSlices/schoolStore"
 
 const Navbar = () => {
 	const navigate = useNavigate();
@@ -8,6 +11,10 @@ const Navbar = () => {
 	const [lastName, setLastName] = useState("");
 	const [email, setEmail] = useState("");
 	const [log, setLog] = useState(false);
+	const dispatch = useDispatch();
+	const { token } = useSelector((state) => state.schoolStore);
+	const [expiryDate, setExpiryDate] = useState(null);
+	const [days, setDays] = useState(null);
 	const toggleLog = () => {
 		setLog(!log);
 	};
@@ -24,13 +31,38 @@ const Navbar = () => {
 			console.log(error);
 		}
 	};
+
+
 	useEffect(() => {
-		const token = localStorage.getItem('schoolSoftToken');
+		dispatch(getToken())
+	}, [dispatch])
+
+
+	useEffect(() => {
+		if (token) {
+			const date = new Date(token).toLocaleDateString()
+			// const time = new Date(token).toLocaleTimeString()
+
+			const days = Math.floor((new Date(token) - new Date()) / (1000 * 60 * 60 * 24));
+			setExpiryDate(date)
+			setDays(days);
+
+
+
+		}
+	}, [token])
+
+
+
+
+
+	useEffect(() => {
+		const token = localStorage.getItem("schoolSoftToken");
 		const loggedInUser = JSON.parse(localStorage.getItem("schoolSoftUser"));
 		if (token === null || token === undefined) {
-			return navigate('/');
+			return navigate("/");
 		} else if (loggedInUser === null || loggedInUser === undefined) {
-			return navigate('/');
+			return navigate("/");
 		} else {
 			const { first_name, last_name, email } = loggedInUser;
 			setFirstName(first_name);
@@ -39,11 +71,23 @@ const Navbar = () => {
 		}
 	}, [navigate]);
 	return (
-		<div className="mt-2 h-12">
-			<div className=" flex float-right" onClick={toggleLog}>
+		<div className="mt-2 h-12 flex justify-between">
+			<div></div>
+			{days < 15 ? <div className="bg-white py-2 px-5 rounded-md flex">
 
+				<p className="text-red text-sm mt-1">
+					{
+						"The Activation Key Expires on " + expiryDate
+					}
+				</p>
+				<p className="p-1 rounded text-sm ml-2 bg-primary3 text-primary">
+					{days} Days Left
+				</p>
+			</div> : null}
+
+			<div className="flex" onClick={toggleLog}>
 				<div className="ml-2 relative cursor-pointer">
-					<p className="font-bold float-right">{firstName + " " + lastName}</p>
+					<p className="font-bold">{firstName + " " + lastName}</p>
 					<p className="text-xs -mt-1">{email}</p>
 				</div>
 				{log ? (

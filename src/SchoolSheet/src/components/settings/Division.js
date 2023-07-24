@@ -32,29 +32,45 @@ function Division() {
 	// posting division
 	const [isPosting, setIsPosting] = useState(false);
 	const [division, setDivision] = useState("");
-	const [points, setPoints] = useState("");
+	const [points, setPoints] = useState(0);
+	const [upperLimit, setUpperLimit] = useState(0);
+	const [lowerLimit, setLowerLimit] = useState(0);
+
 	const postDivision = async () => {
 		try {
 			setIsPosting(true);
 			let formData = {
 				division,
-				points: parseFloat(points),
+				points: 1,
+				upperLimit: parseFloat(upperLimit),
+				lowerLimit: parseFloat(lowerLimit),
 			};
 
 			const response = await axiosInstance.post("/divisions", formData);
 			const { data } = response;
-			const { status } = data;
+			const { status, payload } = data;
 
 			if (status) {
 				dispatch(getDivisions());
 				setDivision("");
 				setPoints("");
+				setUpperLimit("");
+				setLowerLimit("");
 				setIsPosting(false);
 				const MySwal = withReactContent(Swal);
 				MySwal.fire({
 					icon: "success",
 					showConfirmButton: false,
 					timer: 500,
+				});
+			} else {
+				setIsPosting(false);
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					showConfirmButton: false,
+					timer: 500,
+					title: payload,
 				});
 			}
 		} catch (error) {
@@ -148,10 +164,20 @@ function Division() {
 					<div className="w-2/5 p-2">
 						<InputField
 							type="text"
-							placeholder="Enter Points"
-							label="Points"
-							value={points}
-							onChange={(e) => setPoints(e.target.value)}
+							placeholder="Enter Minimum Points"
+							label="from"
+							value={lowerLimit}
+							onChange={(e) => setLowerLimit(e.target.value)}
+						/>
+
+					</div>
+					<div className="w-2/5 p-2">
+						<InputField
+							type="text"
+							placeholder="Enter Maximum Points"
+							label="To"
+							value={upperLimit}
+							onChange={(e) => setUpperLimit(e.target.value)}
 						/>
 					</div>
 
@@ -170,7 +196,8 @@ function Division() {
 					<table className=" w-[98%] table-auto">
 						<thead style={{ backgroundColor: "#0d6dfd10" }}>
 							<th className="p-2 text-primary text-sm text-left">Division</th>
-							<th className="p-2 text-primary text-sm text-left">Points</th>
+							<th className="p-2 text-primary text-sm text-left">from</th>
+							<th className="p-2 text-primary text-sm text-left">to</th>
 							<th className="p-2 text-primary text-sm text-left">Action</th>
 						</thead>
 						<tbody>
@@ -219,7 +246,8 @@ function Division() {
 										key={div.id}
 									>
 										<td className="text-xs p-3 text-gray5">{div.division}</td>
-										<td className="text-xs p-3 text-gray5">{div.points}</td>
+										<td className="text-xs p-3 text-gray5">{div.lowerLimit}</td>
+										<td className="text-xs p-3 text-gray5">{div.upperLimit}</td>
 										<td className="text-xs p-3 text-gray5 flex">
 											<MdDeleteOutline
 												onClick={() => deleteDivision(div)}

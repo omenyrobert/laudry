@@ -10,6 +10,7 @@ import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import Loader from "../Loader";
 import ButtonLoader from "../ButtonLoader";
+import ButtonSecondary from "../ButtonSecondary"
 
 function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 	const [staffType, setStaffType] = useState(staffInfo.staffType);
@@ -86,40 +87,37 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 
 	const [updating, setUpdating] = useState(false);
 
-	const updateBasicInfo = () => {
-		setUpdating(true);
-		const data = {
-			id: staffId,
-			staff_type: staffType?.id,
-			first_name: firstName,
-			middle_name: middleName,
-			last_name: lastName,
-			phone_number: phoneNumbers,
-			email: email,
-			address: residence,
-			nationality,
-			date_of_birth: dateOfBirth,
-			marital_status: maritalStatus?.value,
-		};
-		axiosInstance
-			.put(`/staff/profile/${staffId}`, data)
-			.then((res) => {
-				const { status, payload } = res.data;
-				if (status) {
-					fetchStaffInfo();
-					closeBasic();
-				} else {
-					Swal.fire({
-						icon: "error",
-						title: "Oops...",
-						text: payload,
-					});
-				}
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-		setUpdating(false);
+	const updateBasicInfo = async () => {
+		try {
+			const data = {
+				id: staffId,
+				staff_type: staffType?.id,
+				first_name: firstName,
+				middle_name: middleName,
+				last_name: lastName,
+				phone_number: phoneNumbers,
+				email: email,
+				address: residence,
+				nationality,
+				date_of_birth: dateOfBirth,
+				marital_status: maritalStatus?.value,
+			};
+			setUpdating(true);
+			let res = await axiosInstance.put(`/staff/profile/${staffId}`, data);
+			const { status, payload } = res.data;
+			if (status) {
+				setUpdating(false);
+				fetchStaffInfo();
+				closeBasic();
+			} else {
+				Swal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: payload,
+				});
+				setUpdating(false);
+			}
+		} catch (error) { }
 	};
 	return (
 		<>
@@ -139,8 +137,8 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 				</div>
 				{showBasic ? (
 					<div className=" bg-black/50 flex absolute h-full right-0 z-50 top-0 left-0">
-						<div onClick={closeBasic} className="w-3/12"></div>
-						<div className=" h-[80vh] overflow-y-auto bg-white w-6/12 rounded-md mt-[2vw]">
+						<div onClick={closeBasic} className="w-2/12"></div>
+						<div className="w-8/12 mt-[2vw]">
 							<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
 								<div>
 									<p>Edit Basic Info</p>
@@ -151,8 +149,8 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 									</p>
 								</div>
 							</div>
-							<div className="flex">
-								<div className="w-1/2 p-3">
+							<div className="flex bg-white">
+								<div className="w-1/3 p-2">
 									<label className="text-gray4">Staff Type</label>
 									<Select
 										placeholder={"Select Staff Type"}
@@ -185,6 +183,9 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 										onChange={(e) => setLastName(e.target.value)}
 										value={lastName}
 									/>
+
+								</div>
+								<div className="w-1/3 p-2 -mt-5">
 									<InputField
 										type="text"
 										placeholder="eg 0700000, 0780000000"
@@ -200,8 +201,6 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 										onChange={(e) => setDateOfBirth(e.target.value)}
 										value={dateOfBirth}
 									/>
-								</div>
-								<div className="w-1/2 p-3 -mt-5">
 									<InputField
 										type="email"
 										placeholder="Email Address"
@@ -218,6 +217,9 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 										onChange={(e) => setResidence(e.target.value)}
 										value={residence}
 									/>
+								</div>
+								<div className="w-1/3 p-2 -mt-5">
+
 									<InputField
 										type="text"
 										placeholder="Enter Nationality"
@@ -241,11 +243,19 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 										onChange={setGender}
 										className="mt-1"
 									/>
-									<div className="w-32 float-right">
+
+								</div>
+							</div>
+							<div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
+								<div onClick={closeBasic}>
+									<ButtonSecondary value={"Close"} />
+								</div>
+								<div>
+									<div className="w-32">
 										{updating ? (
 											<ButtonLoader />
 										) : (
-											<div onClick={updateBasicInfo} className="mt-14 w-auto">
+											<div onClick={updateBasicInfo} className=" w-auto">
 												<Button value={"Update "} />
 											</div>
 										)}
@@ -253,7 +263,7 @@ function BasicInfo({ staffInfo, staffId, fetchStaffInfo }) {
 								</div>
 							</div>
 						</div>
-						<div onClick={closeBasic} className="w-3/12"></div>
+						<div onClick={closeBasic} className="w-2/12"></div>
 					</div>
 				) : null}
 			</div>

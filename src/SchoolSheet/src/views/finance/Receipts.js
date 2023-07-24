@@ -135,7 +135,7 @@ function Receipts() {
 			{/* 			<Sample /> */}
 
 			<div className="flex bg-white">
-				<div className="w-10/12 ">
+				<div className="w-9/12 ">
 					<div className="flex">
 						<div className="w-6/12 px-2">
 							<InputField
@@ -155,7 +155,7 @@ function Receipts() {
 						</div>
 					</div>
 				</div>
-				<div className="w-2/12 px-3 mt-4 flex">
+				<div className="w-3/12 px-3 mt-6 ml-5 flex">
 					<Link to="/addTransaction?transactionType=receipt&action=create">
 						<Button2 value={"Receipt"} />
 					</Link>

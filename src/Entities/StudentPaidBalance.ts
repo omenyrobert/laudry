@@ -3,8 +3,9 @@ import {
   Entity,
   BaseEntity,
   PrimaryGeneratedColumn,
-} from "typeorm";
 
+} from "typeorm";
+import {getTermBySelect} from "./Term"
 @Entity()
 export class StudentPaidBalance extends BaseEntity {
   @PrimaryGeneratedColumn()

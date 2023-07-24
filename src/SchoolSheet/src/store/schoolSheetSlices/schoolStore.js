@@ -190,6 +190,14 @@ export const getReductions = createAsyncThunk("/schoolSheet/reductions", async (
 	if (status) return payload;
 });
 
+export const getToken = createAsyncThunk("/schoolSheet/token", async () => {
+	const token = await axiosInstance.get("/system");
+	console.log(token)
+	const { data } = token;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
 	initialState: {
@@ -219,6 +227,7 @@ export const schoolSheetSlices = createSlice({
 		stockTypes: [],
 		stockLevels: [],
 		reductions: [],
+		token: null,
 		loading: {
 			streams: false,
 			staffMembers: false,
@@ -246,6 +255,7 @@ export const schoolSheetSlices = createSlice({
 			stockTypes: false,
 			stockLevels: false,
 			reductions: false,
+			token: false,
 		},
 	},
 	extraReducers: {
@@ -523,6 +533,13 @@ export const schoolSheetSlices = createSlice({
 		[getReductions.rejected]: (state) => {
 			state.loading.reductions = false;
 		},
+		[getToken.pending]: (state) => {
+			state.loading.token = true;
+		},
+		[getToken.fulfilled]: (state, action) => {
+			state.loading.token = false;
+			state.token = action.payload;
+		}
 	},
 });
 

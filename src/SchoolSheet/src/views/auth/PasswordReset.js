@@ -7,6 +7,7 @@ import Button from "../../components/Button";
 import InputField from "../../components/InputField";
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../../components/ButtonLoader";
+import { Link } from "react-router-dom";
 
 const PasswordReset = () => {
 	const navigate = useNavigate();
@@ -24,7 +25,7 @@ const PasswordReset = () => {
 	const [errorMessage, setError] = useState("");
 	const submitPasswords = async () => {
 		try {
-			setPosting(true)
+			setPosting(true);
 			const response = await axiosInstance.post(
 				"/staff/reset-password",
 				formData
@@ -34,17 +35,17 @@ const PasswordReset = () => {
 			if (status) {
 				localStorage.removeItem("resetEmail");
 				navigate("/");
-				setPosting(false)
-			} else{
+				setPosting(false);
+			} else {
 				setError(data.payload);
-				console.log('data', data);
+				console.log("data", data);
 				setPosting(false);
 			}
 		} catch (error) {
 			console.log(error);
-			setPosting(false)
+			setPosting(false);
 		}
-		setPosting(false)
+		setPosting(false);
 	};
 	return (
 		<div className="flex overflow-hidden h-screen w-full bgdiv">
@@ -81,6 +82,14 @@ const PasswordReset = () => {
 						icon={<MdLockOutline className="w-10 mt-3" />}
 						onChange={onChange}
 					/>
+					<div className="flex justify-between my-2">
+						<div></div>
+						<div>
+							<Link to="/" className="text-secondary">
+								Back to login
+							</Link>
+						</div>
+					</div>
 					{posting ? (
 						<div>
 							<ButtonLoader />
