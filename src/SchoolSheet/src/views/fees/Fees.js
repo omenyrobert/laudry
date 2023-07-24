@@ -85,14 +85,14 @@ const Fees = () => {
                     return handleFilter(student?.feesBalance, student?.fees) < parseFloat(percent) ? student : null
                 })
             );
-            setPercent();
+            setPercent(0);
         } else if (checkInput === 'above') {
             setPercentResults(
                 students?.filter((student) => {
                     return handleFilter(student?.feesBalance, student?.fees) > parseFloat(percent) ? student : null
                 })
             );
-            setPercent();
+            setPercent(0);
         }
     };
 

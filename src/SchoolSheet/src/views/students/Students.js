@@ -22,13 +22,13 @@ const Students = () => {
 	const [search, setSearch] = useState(false);
 	const [student, setStudent] = useState(false);
 	const [filters, setFilters] = useState({
-		query: "",
 		type: "",
 		house: "",
 		studentClass: "",
 		section: "",
 		stream: "",
 	});
+	const [searchInput, setSearchInput] = useState("");
 
 	const [searching, setSearching] = useState(false)
 	const [searchedStudents, setSearchedStudents] = useState([]);
@@ -105,15 +105,6 @@ const Students = () => {
 		const studentData = student ? students?.students : searchedStudents;
 		const searchResults = studentData.filter((student) => {
 
-			const studentName =
-				student.firstName + " " + student.middleName + " " + student.lastName;
-			console.log(student)
-
-			const searchName = studentName
-				.toLowerCase()
-				.includes(filters.query.toLowerCase());
-			console.log("searchName", searchName)
-
 			let searchType = false;
 			if (student.student_types.length > 0) {
 				searchType = student.student_types[0].type
@@ -158,7 +149,6 @@ const Students = () => {
 
 
 			return (
-				searchName &&
 				searchType &&
 				searchHouse &&
 				searchClass &&
@@ -184,7 +174,6 @@ const Students = () => {
 
 	useEffect(() => {
 		if (
-			filters.query === "" &&
 			filters.type === "" &&
 			filters.house === "" &&
 			filters.studentClass === "" &&
@@ -251,11 +240,11 @@ const Students = () => {
 	};
 
 	const handleSearch = async () => {
-		if (filters.query) {
+		if (searchInput) {
 			setStudent(false);
 			setSearch(true);
 			setSearching(true);
-			const response = await axiosInstance.get(`/search/students?page=${searchPage}&keyword=${filters.query}`);
+			const response = await axiosInstance.get(`/search/students?page=${searchPage}&keyword=${searchInput}`);
 			const { payload, status } = response.data;
 			if (status) {
 				setSearchedStudents(payload.students);
@@ -343,14 +332,13 @@ const Students = () => {
 							<h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">Students</h1>
 						</div>
 						<div className="w-4/12 ">
-
 							<InputField
 								type="text"
 								placeholder="Search For Student ..."
 								name="lastName"
 								value={filters.query}
 								onChange={(e) =>
-									setFilters({ ...filters, query: e.target.value })
+									setSearchInput(e.target.value)
 								}
 								icon={<BsSearch className="w-3 -ml-7 mt-3 cursor-pointer" type="button" onClick={handleSearch} />}
 							/>
