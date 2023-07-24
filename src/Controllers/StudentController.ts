@@ -9,6 +9,7 @@ import {
   createDocument,
   getStudentDocuments,
   deleteStudentDocument,
+  searchStudents,
 } from "../Entities/Student";
 import { getTermBySelect } from "../Entities/Term";
 
@@ -20,9 +21,33 @@ import { getStudentTermPayments } from "../Entities/StudentPaidBalance";
 
 export const fetchStudents = async (req: Request, res: Response) => {
   try {
+    const { page } = req.query;
+    if (!page) {
+      return res
+        .json(customPayloadResponse(false, "Invalid Query Parameters"))
+        .status(400)
+        .end();
+    }
+
+    const pageInt = parseInt(page as string);
+
+    if (isNaN(pageInt)) {
+      return res
+        .json(customPayloadResponse(false, "Invalid Query Parameters"))
+        .status(400)
+        .end();
+    }
+
+    if (pageInt < 0) {
+      return res
+        .json(customPayloadResponse(false, "Invalid Query Parameters"))
+        .status(400)
+        .end();
+    }
+
     const activeTerm = await getTermBySelect();
     const termId = activeTerm !== null ? activeTerm.id : null;
-    const studentsToFetch = await getStudents();
+    const [studentsToFetch, studentCount] = await getStudents(pageInt);
     const students = await Promise.all(
       studentsToFetch.map(async (student) => {
         const studentPaymentsPerTerm = await getStudentTermPayments(
@@ -37,7 +62,13 @@ export const fetchStudents = async (req: Request, res: Response) => {
         return { ...student, feesBalance: JSON.stringify(balanceToReturn) };
       })
     );
-    return res.json(customPayloadResponse(true, students)).status(200).end();
+
+    return res
+      .json(
+        customPayloadResponse(true, { students: students, count: studentCount })
+      )
+      .status(200)
+      .end();
   } catch (error) {
     console.log(error);
     return res
@@ -219,38 +250,12 @@ export const fetchSingleStudent = async (req: Request, res: Response) => {
   }
 };
 
-export const fetchStudentsPaginated = async (req: Request, res: Response) => {
-  // console.log("=================================");
-  // console.log("Fetching paginated Students");
-  // console.log(req.query);
-  // console.log("=================================");
+export const updateStudentPhotoController = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const { page, limit } = req.query;
-    if (!page || !limit) {
-      return res
-        .json(customPayloadResponse(false, "Invalid Query Parameters"))
-        .status(400)
-        .end();
-    }
-    // console.log(page, limit);
-    const students = await getStudents(
-      parseInt(page as string),
-      parseInt(limit as string)
-    );
-    // console.log(students);
-    return res.json(customPayloadResponse(true, students)).status(200).end();
-  } catch (error) {
-    return res
-      .json(customPayloadResponse(false, "An Error Occured"))
-      .status(500)
-      .end();
-  }
-}
-
-
-export const updateStudentPhotoController = async (req: Request, res: Response) => {
-  try {
-    console.log("Uploading Files")
+    console.log("Uploading Files");
     const { id } = req.params;
     const photo = req.file ? req.file.filename : "";
     const student = await updateStudentPhoto(parseInt(id), photo);
@@ -271,8 +276,7 @@ export const updateStudentPhotoController = async (req: Request, res: Response) 
       .status(500)
       .end();
   }
-}
-
+};
 
 export const addStudentDocument = async (req: Request, res: Response) => {
   try {
@@ -285,10 +289,8 @@ export const addStudentDocument = async (req: Request, res: Response) => {
         .end();
     }
 
-
     const file = req.file ? req.file.filename : "";
     const filename = req.file ? req.file.originalname : "";
-    
 
     const document = await createDocument(parseInt(student), file, filename);
     if (document) {
@@ -304,24 +306,20 @@ export const addStudentDocument = async (req: Request, res: Response) => {
         .end();
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
       .end();
   }
-}
-
+};
 
 export const fetchStudentDocuments = async (req: Request, res: Response) => {
   try {
     const { student } = req.params;
     const documents = await getStudentDocuments(parseInt(student));
     if (documents) {
-      return res
-        .json(customPayloadResponse(true, documents))
-        .status(200)
-        .end();
+      return res.json(customPayloadResponse(true, documents)).status(200).end();
     } else {
       return res
         .json(customPayloadResponse(false, "Student Not Found"))
@@ -329,14 +327,13 @@ export const fetchStudentDocuments = async (req: Request, res: Response) => {
         .end();
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
       .end();
   }
-}
-
+};
 
 export const removeStudentDocument = async (req: Request, res: Response) => {
   try {
@@ -354,10 +351,69 @@ export const removeStudentDocument = async (req: Request, res: Response) => {
         .end();
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .json(customPayloadResponse(false, "An Error Occured"))
       .status(500)
       .end();
   }
-}
+};
+
+export const searchingStudents = async (req: Request, res: Response) => {
+  try {
+    const { page, keyword } = req.query;
+
+    if (!page || !keyword) {
+      return res
+        .json(customPayloadResponse(false, "Invalid Query Parameters"))
+        .status(400)
+        .end();
+    }
+
+    const pageInt = parseInt(page as string);
+
+    if (isNaN(pageInt)) {
+      return res
+        .json(customPayloadResponse(false, "Invalid Query Parameters"))
+        .status(400)
+        .end();
+    }
+
+    if (pageInt < 0) {
+      return res
+        .json(customPayloadResponse(false, "Invalid Query Parameters"))
+        .status(400)
+        .end();
+    }
+
+    const activeTerm = await getTermBySelect();
+    const termId = activeTerm !== null ? activeTerm.id : null;
+    const [studentsToFetch, studentCount] = await searchStudents(
+      keyword.toString(),
+      pageInt
+    );
+    const students = await Promise.all(
+      studentsToFetch.map(async (student) => {
+        const studentPaymentsPerTerm = await getStudentTermPayments(
+          student.id,
+          termId
+        );
+        const feesType = extraLatestArrayIndex(student.fees);
+        const balanceToReturn =
+          studentPaymentsPerTerm !== null
+            ? studentPaymentsPerTerm
+            : { balance: feesType?.amount, amount: 0 };
+        return { ...student, feesBalance: JSON.stringify(balanceToReturn) };
+      })
+    );
+
+    return res
+      .json(
+        customPayloadResponse(true, { students: students, count: studentCount })
+      )
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+};

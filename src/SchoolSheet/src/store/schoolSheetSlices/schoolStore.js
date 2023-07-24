@@ -43,8 +43,8 @@ export const getSubjects = createAsyncThunk("/schoolSheet/subjects", async () =>
 	if (status) return payload;
 });
 
-export const getStudents = createAsyncThunk("/schoolSheet/students", async () => {
-	const students = await axiosInstance.get("/students");
+export const getStudents = createAsyncThunk("/schoolSheet/students", async (page = 0) => {
+	const students = await axiosInstance.get(`/students?page=${page}`);
 	const { data } = students;
 	const { status, payload } = data;
 	if (status) return payload;

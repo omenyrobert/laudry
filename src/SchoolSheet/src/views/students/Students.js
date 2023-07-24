@@ -1,30 +1,26 @@
 import React, { useEffect, useState } from "react";
 import "../../assets/styles/main.css";
 import StudentsTable from "../../components/students/studentsTable";
-// import EditStudentsForm from "../../components/students/EditStudentsForm";
-// import ShowStudentsForm from "../../components/students/ShowStudentsForm";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import { BsSearch } from "react-icons/bs";
 import Select from "react-select";
 import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button2 from "../../components/Button2";
 import axiosInstance from "../../axios-instance";
 import withReactContent from "sweetalert2-react-content";
 // import { FaFilter } from "react-icons/fa";
 import ButtonAlt from "../../components/ButtonAlt";
 import { useDispatch, useSelector } from 'react-redux';
-import { getSections } from "../../store/schoolSheetSlices/schoolStore";
+import { getStudents, getSections, getStreams, getHouses, getClasses, getStudentTypes } from "../../store/schoolSheetSlices/schoolStore";
 import Loader from "../../components/Loader"
 
 const Students = () => {
 	const dispatch = useDispatch();
-	const [studentData, setStudentData] = useState([]);
+	const navigate = useNavigate();
 	const [search, setSearch] = useState(false);
-	const [studentTypes, setStudentTypes] = useState([]);
-	const [studentClasses, setStudentClasses] = useState([]);
-	const [studentHouses, setStudentHouses] = useState([]);
+	const [student, setStudent] = useState(false);
 	const [filters, setFilters] = useState({
 		query: "",
 		type: "",
@@ -33,12 +29,17 @@ const Students = () => {
 		section: "",
 		stream: "",
 	});
+
+	const [searching, setSearching] = useState(false)
 	const [searchedStudents, setSearchedStudents] = useState([]);
-	const [streams, setStreams] = useState([]);
-	const { sections } = useSelector((state) => state.schoolStore);
-	const [fetching, setFetching] = useState(false)
+	const { students, loading, sections, studentTypes, houses, streams, classes } = useSelector((state) => state.schoolStore);
+	const [studentTotalSearch, setStudentTotalSearch] = useState(0);
 
 	const sectionOptions = [];
+	const studentTypeOptions = [];
+	const houseOptions = [];
+	const streamOptions = [];
+	const classOptions = [];
 
 	sections.forEach((section) => {
 		let newSection = {};
@@ -46,101 +47,30 @@ const Students = () => {
 		newSection.label = section.section;
 		sectionOptions.push(newSection);
 	})
-
-	useEffect(() => {
-		const fetchData = async () => {
-			setFetching(true)
-
-			try {
-				await fetchStudentInfo();
-				await fetchStudentType();
-				await fetchSchoolClasses();
-				await fetchSchoolHouses();
-				await fetchStreams();
-				setFetching(false)
-			} catch (error) {
-				const MySwal = withReactContent(Swal);
-				MySwal.fire({
-					icon: "error",
-					title: "Oops...",
-					text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
-				});
-				setFetching(false)
-			}
-		}
-		fetchData();
-	}, []);
-
-	const fetchStudentType = async () => {
-		const response = await axiosInstance.get("/student-types")
-		//console.log("response", response)
-		const { payload } = response.data;
-
-		const studenttypesArr = [];
-		for (let i = 0; i < payload.length; i++) {
-			studenttypesArr.push({
-				label: payload[i].type,
-				value: payload[i].type,
-				...payload[i],
-			});
-		}
-		setStudentTypes(studenttypesArr);
-
-	};
-
-	const fetchSchoolClasses = async () => {
-		const response = await axiosInstance.get("/class")
-		const { payload } = response.data;
-		const studentClassesArr = [];
-		for (let i = 0; i < payload.length; i++) {
-			studentClassesArr.push({
-				label: payload[i].class,
-				value: payload[i].class,
-				...payload[i],
-			});
-		}
-		setStudentClasses(studentClassesArr);
-	};
-
-	const fetchStreams = async () => {
-		const response = await axiosInstance.get("/streams")
-		const { payload } = response.data;
-		const studentStreamsArr = [];
-		for (let i = 0; i < payload.length; i++) {
-			studentStreamsArr.push({
-				label: payload[i].stream,
-				value: payload[i].stream,
-				...payload[i],
-			});
-		}
-		setStreams(studentStreamsArr);
-
-	};
-
-	const fetchSchoolHouses = async () => {
-		const response = await axiosInstance.get("/houses")
-		const { payload } = response.data;
-		const studentHousesArr = [];
-
-		for (let i = 0; i < payload.length; i++) {
-			studentHousesArr.push({
-				label: payload[i].house,
-				value: payload[i].house,
-				...payload[i],
-			});
-		}
-		setStudentHouses(studentHousesArr);
-
-	};
-
-	// fetch student info
-	const fetchStudentInfo = async () => {
-		const response = await axiosInstance.get("/students")
-		const { payload } = response.data;
-		setStudentData(payload);
-		console.log("payload", payload)
-
-	};
+	studentTypes.forEach((studentType) => {
+		let newStudentType = {};
+		newStudentType.value = studentType.type;
+		newStudentType.label = studentType.type;
+		studentTypeOptions.push(newStudentType);
+	})
+	houses.forEach((house) => {
+		let newHouse = {};
+		newHouse.label = house.house;
+		newHouse.value = house.type;
+		houseOptions.push(newHouse);
+	})
+	streams.forEach((stream) => {
+		let newStream = {};
+		newStream.label = stream.stream;
+		newStream.value = stream.stream;
+		streamOptions.push(newStream);
+	})
+	classes.forEach((clas) => {
+		let newClass = {};
+		newClass.label = clas.class;
+		newClass.value = clas.class;
+		classOptions.push(newClass);
+	})
 
 	//deleting student
 	const deleteStudentInfo = (student) => {
@@ -158,11 +88,11 @@ const Students = () => {
 					.delete("/students/" + student.id)
 					.then((response) => {
 						// fetch after
-						fetchStudentInfo();
+						// fetchStudentInfo();
 						Swal.fire("Deleted!", "Student file has been deleted.", "success");
 					})
 					.catch((error) => {
-						//console.log(error);
+						console.log(error);
 					});
 			}
 		});
@@ -172,6 +102,7 @@ const Students = () => {
 		if (search === false) {
 			setSearch(true);
 		}
+		const studentData = student ? students?.students : searchedStudents;
 		const searchResults = studentData.filter((student) => {
 
 			const studentName =
@@ -248,10 +179,10 @@ const Students = () => {
 			stream: ""
 		});
 		setSearch(false);
+		navigate(0);
 	}
 
 	useEffect(() => {
-		dispatch(getSections());
 		if (
 			filters.query === "" &&
 			filters.type === "" &&
@@ -264,7 +195,7 @@ const Students = () => {
 		} else {
 			searchStudents();
 		}
-	}, [filters, dispatch]);
+	}, [filters]);
 
 	const printStudents = () => {
 		const documentWindow = window.open("");
@@ -294,29 +225,76 @@ const Students = () => {
 	};
 
 	// Pangination
-	const [page, setPage] = useState(1)
-	const [hasMore, setHasMore] = useState(true)
-	const [paginatedData, setPaginatedData] = useState([])
+	const [page, setPage] = useState(0);
+	const [searchPage, setSearchPage] = useState(0);
+
+	const nextPage = () => {
+		student ? setPage(page + 1) : setSearchPage(searchPage + 1);
+
+	}
+
+	const previousPage = () => {
+
+		student ? setPage(page - 1) : setSearchPage(searchPage - 1);
+
+	};
+
+	const canNextPage = () => {
+		const currentPage = student ? page + 1 : searchPage + 1;
+		const lastPage = student ? Math.ceil(students?.count / 20) : Math.ceil(studentTotalSearch / 20);
+		return currentPage !== lastPage;
+	};
+
+	const canPreviousPage = () => {
+		return student ? page !== 0 : searchPage !== 0;
+
+	};
+
+	const handleSearch = async () => {
+		if (filters.query) {
+			setStudent(false);
+			setSearch(true);
+			setSearching(true);
+			const response = await axiosInstance.get(`/search/students?page=${searchPage}&keyword=${filters.query}`);
+			const { payload, status } = response.data;
+			if (status) {
+				setSearchedStudents(payload.students);
+				setStudentTotalSearch(payload.count);
+				setSearching(false);
+			}
+		} else {
+			navigate(0);
+		}
+	}
 
 	useEffect(() => {
-		setPaginatedData(studentData.slice(0, page * 30))
-		// check if hasmore
-		if (studentData.length <= page * 30) {
-			setHasMore(false)
-		} else {
-			setHasMore(true)
-		}
+		const fetchData = async () => {
+			try {
+				setStudent(true);
+				dispatch(getStreams());
+				dispatch(getHouses());
+				dispatch(getClasses());
+				dispatch(getSections());
+				dispatch(getStudents(page));
+				dispatch(getStudentTypes());
+			} catch (error) {
+				console.log(error);
+				const MySwal = withReactContent(Swal);
+				MySwal.fire({
+					icon: "error",
+					title: "Oops...",
+					text: "An Error Occured while trying to fetch data for your Form. Please Refresh Page",
+				});
+			}
+		};
+		fetchData();
 
-	}, [page, studentData])
-
-
-
-
-
+	}, [page, dispatch]);
 
 	// Export `studentData` to csv
 	const exportToCSV = () => {
-		const csvRows = []
+		const csvRows = [];
+		const studentData = student ? students?.students : searchedStudents;
 		const headers = Object.keys(studentData[0])
 		csvRows.push(headers.join(","))
 		for (const row of studentData) {
@@ -354,8 +332,6 @@ const Students = () => {
 		link.click()
 	}
 
-
-
 	return (
 		<div className=" mt-2 w-full">
 
@@ -367,23 +343,17 @@ const Students = () => {
 							<h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">Students</h1>
 						</div>
 						<div className="w-4/12 ">
-							<form
-								className="w-full"
-								onSubmit={(e) => {
-									//
-								}}
-							>
-								<InputField
-									type="text"
-									placeholder="Search For Student ..."
-									name="lastName"
-									value={filters.query}
-									onChange={(e) =>
-										setFilters({ ...filters, query: e.target.value })
-									}
-									icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
-								/>
-							</form>
+
+							<InputField
+								type="text"
+								placeholder="Search For Student ..."
+								name="lastName"
+								value={filters.query}
+								onChange={(e) =>
+									setFilters({ ...filters, query: e.target.value })
+								}
+								icon={<BsSearch className="w-3 -ml-7 mt-3 cursor-pointer" type="button" onClick={handleSearch} />}
+							/>
 						</div>
 						<div className=""></div>
 						<div className="flex mt-5">
@@ -409,7 +379,7 @@ const Students = () => {
 											onChange={(e) => {
 												setFilters({ ...filters, house: e.value });
 											}}
-											options={studentHouses}
+											options={houseOptions}
 										/>
 
 										<br />
@@ -419,7 +389,7 @@ const Students = () => {
 											onChange={(opt) => {
 												setFilters({ ...filters, studentClass: opt.value });
 											}}
-											options={studentClasses}
+											options={classOptions}
 										/>
 
 										<br />
@@ -429,7 +399,7 @@ const Students = () => {
 											onChange={(opt) => {
 												setFilters({ ...filters, type: opt.value });
 											}}
-											options={studentTypes}
+											options={studentTypeOptions}
 										/>
 										<br />
 										<Select
@@ -438,7 +408,7 @@ const Students = () => {
 											onChange={(opt) => {
 												setFilters({ ...filters, stream: opt.value });
 											}}
-											options={streams}
+											options={streamOptions}
 										/>
 										<br />
 										<div
@@ -470,7 +440,7 @@ const Students = () => {
 						</div>
 					</div>
 				</div>
-				{fetching ? (
+				{loading.students || searching ? (
 					<div className="flex justify-center">
 						<Loader />
 					</div>
@@ -479,19 +449,23 @@ const Students = () => {
 					<StudentsTable
 						deleteStudentInfo={deleteStudentInfo}
 						studentData={searchedStudents}
-						setPage={setPage}
-						page={page}
+						nextPage={nextPage}
+						previousPage={previousPage}
+						canNextPage={canNextPage}
+						canPreviousPage={canPreviousPage}
 					/>
-				) : (
-					<StudentsTable
-						deleteStudentInfo={deleteStudentInfo}
-						studentData={paginatedData}
-						setPage={setPage}
-						page={page}
-						hasMore={hasMore}
-						length={studentData.length}
-					/>
-				)}
+				) : null}{
+					student ? (
+						<StudentsTable
+							deleteStudentInfo={deleteStudentInfo}
+							studentData={students?.students}
+							nextPage={nextPage}
+							previousPage={previousPage}
+							canNextPage={canNextPage}
+							canPreviousPage={canPreviousPage}
+						/>
+					) : null
+				}
 
 			</div>
 		</div>

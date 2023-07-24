@@ -5,11 +5,11 @@ import {
   editStudent,
   removeStudent,
   fetchSingleStudent,
-  fetchStudentsPaginated,
   updateStudentPhotoController,
   removeStudentDocument,
   addStudentDocument,
   fetchStudentDocuments,
+  searchingStudents
 } from "../Controllers/StudentController";
 import {validateStudentRequest} from "../Middlewares/StudentMiddleware";
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
@@ -34,11 +34,9 @@ export default (router: Router) => {
   router.post(`${studentRoutePrefix}`, JWTAuthMiddleWare, validateStudentRequest, addStudent);
   router.put(`${studentRoutePrefix}/edit`, JWTAuthMiddleWare, profilePictureUpload, validateStudentRequest, editStudent);
   router.delete(`${studentRoutePrefix}/:id`, JWTAuthMiddleWare, removeStudent);
-  router.get(`${studentRoutePrefix}/fetch/paginated`, JWTAuthMiddleWare, fetchStudentsPaginated);
-  router.get(`${studentRoutePrefix}/fetch/paginated`, JWTAuthMiddleWare, fetchStudentsPaginated);
   router.put(`${studentRoutePrefix}/photo/:id`, JWTAuthMiddleWare, profilePictureUpload, updateStudentPhotoController);
   router.post(`${studentRoutePrefix}/document`, JWTAuthMiddleWare, upload.single("document"), addStudentDocument);
   router.get(`${studentRoutePrefix}/documents/:student`, JWTAuthMiddleWare, fetchStudentDocuments);
   router.delete(`${studentRoutePrefix}/document/delete/:id`, JWTAuthMiddleWare, removeStudentDocument);
-
+  router.get(`/search${studentRoutePrefix}`, JWTAuthMiddleWare, searchingStudents);
 };

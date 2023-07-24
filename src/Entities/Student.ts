@@ -7,6 +7,7 @@ import {
   JoinTable,
   ManyToOne,
   OneToMany,
+  Like,
 } from "typeorm";
 import { House, getSelectedHouses } from "./House";
 import { StudentType, selectedType } from "./StudentType";
@@ -137,17 +138,19 @@ export class Student extends BaseEntity {
   @JoinTable({ name: "student_student_types" })
   student_types: StudentType[];
 
-  @OneToMany(() => StudentDocument, (studentDocument) => studentDocument.student,{
-    cascade: true,
-    eager: true,
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
-    nullable: true
-  })
+  @OneToMany(
+    () => StudentDocument,
+    (studentDocument) => studentDocument.student,
+    {
+      cascade: true,
+      eager: true,
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+      nullable: true,
+    }
+  )
   documents: StudentDocument[];
-
 }
-
 
 @Entity()
 export class StudentDocument extends BaseEntity {
@@ -163,7 +166,6 @@ export class StudentDocument extends BaseEntity {
   @Column()
   name!: string;
 }
-
 
 const extractArrays = (array: [], key: string, extraData: number) => {
   let newArray = array.map((a: any) => a[key]);
@@ -442,28 +444,29 @@ export const getSingleStudent = async (id: number) => {
   return student;
 };
 
-export const getStudents = async (page: number = 0, limit: number = 50) => {
-  const students = await Student.find({
+export const getStudents = async (page: number = 0, count: number = 20) => {
+  const students = await Student.findAndCount({
     order: {
       id: "DESC",
     },
-    take: limit,
-    skip: page * limit,
+    take: count,
+    skip: page * count,
   });
   return students;
 };
-
-
 
 export const updateStudentPhoto = async (id: number, photo: string) => {
   await Student.update(id, {
     photo: photo,
   });
   return true;
-}
+};
 
-export const createDocument = async (studentId: number, url: string, name: string) => {
-  
+export const createDocument = async (
+  studentId: number,
+  url: string,
+  name: string
+) => {
   const student = await Student.findOne({ where: { id: studentId } });
 
   if (!student) {
@@ -473,14 +476,13 @@ export const createDocument = async (studentId: number, url: string, name: strin
   const document = await StudentDocument.save({
     url: url,
     name: name,
-    student: student
+    student: student,
   });
 
   return document;
 };
 
 export const getStudentDocuments = async (studentId: number) => {
-
   const student = await Student.findOne({ where: { id: studentId } });
 
   if (!student) {
@@ -497,6 +499,41 @@ export const deleteStudentDocument = async (id: number) => {
   } else {
     return false;
   }
-}
+};
 
-
+export const searchStudents = async (
+  keyword: string,
+  page: number = 0,
+  count: number = 20
+) => {
+  // Like(`%${firstName}%`)
+  //   let users = await user.find({
+  //     where: [
+  //         { email: Like(%${query}%) },
+  //         { skillsets: Like(%${query}%) },
+  //         { username: Like(%${query}%) }
+  //     ]
+  // });
+  // if (query) {
+  //   users
+  //     .where('user.email LIKE :query')
+  //     .orWhere('user.username LIKE :query')
+  //     .orWhere('user.phone_number LIKE :query')
+  //     .orWhere('user.skillsets LIKE :query')
+  //     .orWhere('user.hobby LIKE :query')
+  //     .setParameter('query', `%${query}%`);
+  // }
+  const searchStudents = await Student.findAndCount({
+    order: {
+      id: "DESC",
+    },
+    where: [
+      { firstName: Like(`%${keyword}%`) },
+      { lastName: Like(`%${keyword}`) },
+      { email: Like(`%${keyword}`) },
+    ],
+    take: count,
+    skip: page * count,
+  });
+  return searchStudents;
+};
