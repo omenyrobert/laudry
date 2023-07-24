@@ -1,7 +1,17 @@
 import { DataSource } from "typeorm";
 import { join } from "path";
 
-export const DatabaseConnection = new DataSource({
+
+export let DatabaseConnection: DataSource
+
+if (process.versions?.electron) {
+  DatabaseConnection = new DataSource({
+  type:"sqlite",
+  database: "db.sqlite3",
+  entities: [join(__dirname, "..", "Entities/*.ts")],
+});
+} else {
+  DatabaseConnection = new DataSource({
   host: "sql865.main-hosting.eu",
   type: "mysql",
   username: "u848751863_school",
@@ -11,6 +21,9 @@ export const DatabaseConnection = new DataSource({
   synchronize: true,
   entities: [join(__dirname, "..", "Entities/*.ts")],
 });
+}
+
+
 // host: "sql865.main-hosting.eu",
 // type: "mysql",
 // username: "u848751863_school",
