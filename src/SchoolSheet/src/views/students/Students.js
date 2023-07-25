@@ -13,7 +13,7 @@ import withReactContent from "sweetalert2-react-content";
 // import { FaFilter } from "react-icons/fa";
 import ButtonAlt from "../../components/ButtonAlt";
 import { useDispatch, useSelector } from 'react-redux';
-import { getStudents, getSections, getStreams, getHouses, getClasses, getStudentTypes } from "../../store/schoolSheetSlices/schoolStore";
+import { getStudents, getSections, getStreams, getHouses, getClasses, getStudentTypes, getSearchStudents } from "../../store/schoolSheetSlices/schoolStore";
 import Loader from "../../components/Loader"
 
 const Students = () => {
@@ -29,11 +29,8 @@ const Students = () => {
 		stream: "",
 	});
 	const [searchInput, setSearchInput] = useState("");
-
-	const [searching, setSearching] = useState(false)
 	const [searchedStudents, setSearchedStudents] = useState([]);
-	const { students, loading, sections, studentTypes, houses, streams, classes } = useSelector((state) => state.schoolStore);
-	const [studentTotalSearch, setStudentTotalSearch] = useState(0);
+	const { students, loading, sections, studentTypes, houses, streams, classes, searchingStudents } = useSelector((state) => state.schoolStore);
 
 	const sectionOptions = [];
 	const studentTypeOptions = [];
@@ -86,9 +83,8 @@ const Students = () => {
 			if (result.isConfirmed) {
 				axiosInstance
 					.delete("/students/" + student.id)
-					.then((response) => {
-						// fetch after
-						// fetchStudentInfo();
+					.then(() => {
+						setPage(0);
 						Swal.fire("Deleted!", "Student file has been deleted.", "success");
 					})
 					.catch((error) => {
@@ -102,7 +98,7 @@ const Students = () => {
 		if (search === false) {
 			setSearch(true);
 		}
-		const studentData = student ? students?.students : searchedStudents;
+		const studentData = student ? students?.students : searchedStudents.length === 0 ? searchingStudents?.students : searchedStudents;
 		const searchResults = studentData.filter((student) => {
 
 			let searchType = false;
@@ -230,7 +226,7 @@ const Students = () => {
 
 	const canNextPage = () => {
 		const currentPage = student ? page + 1 : searchPage + 1;
-		const lastPage = student ? Math.ceil(students?.count / 20) : Math.ceil(studentTotalSearch / 20);
+		const lastPage = student ? Math.ceil(students?.count / 20) : Math.ceil(searchingStudents?.count / 20);
 		return currentPage !== lastPage;
 	};
 
@@ -243,14 +239,8 @@ const Students = () => {
 		if (searchInput) {
 			setStudent(false);
 			setSearch(true);
-			setSearching(true);
-			const response = await axiosInstance.get(`/search/students?page=${searchPage}&keyword=${searchInput}`);
-			const { payload, status } = response.data;
-			if (status) {
-				setSearchedStudents(payload.students);
-				setStudentTotalSearch(payload.count);
-				setSearching(false);
-			}
+			let data = { searchPage: searchPage, searchInput: searchInput }
+			dispatch(getSearchStudents(data));
 		} else {
 			navigate(0);
 		}
@@ -428,7 +418,7 @@ const Students = () => {
 						</div>
 					</div>
 				</div>
-				{loading.students || searching ? (
+				{loading.students || loading.searchStudents ? (
 					<div className="flex justify-center">
 						<Loader />
 					</div>
@@ -436,7 +426,7 @@ const Students = () => {
 				{search ? (
 					<StudentsTable
 						deleteStudentInfo={deleteStudentInfo}
-						studentData={searchedStudents}
+						studentData={searchedStudents.length === 0 ? searchingStudents?.students : searchedStudents}
 						nextPage={nextPage}
 						previousPage={previousPage}
 						canNextPage={canNextPage}

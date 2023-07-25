@@ -198,6 +198,14 @@ export const getToken = createAsyncThunk("/schoolSheet/token", async () => {
 	if (status) return payload;
 });
 
+export const getSearchStudents = createAsyncThunk('/schoolSheet/searchStudent', async (searchData) => {
+	console.log('keyword', searchData)
+	const response = await axiosInstance.get(`/search/students?page=${searchData?.searchPage}&keyword=${searchData?.searchInput}`);
+	const { data } = response;
+	const { payload, status } = data;
+	if (status) return payload
+})
+
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
 	initialState: {
@@ -227,6 +235,7 @@ export const schoolSheetSlices = createSlice({
 		stockTypes: [],
 		stockLevels: [],
 		reductions: [],
+		searchStudents: [],
 		token: null,
 		loading: {
 			streams: false,
@@ -256,6 +265,7 @@ export const schoolSheetSlices = createSlice({
 			stockLevels: false,
 			reductions: false,
 			token: false,
+			searchingStudents: false,
 		},
 	},
 	extraReducers: {
@@ -539,6 +549,16 @@ export const schoolSheetSlices = createSlice({
 		[getToken.fulfilled]: (state, action) => {
 			state.loading.token = false;
 			state.token = action.payload;
+		},
+		[getSearchStudents.rejected]: (state) => {
+			state.loading.searchStudents = false;
+		},
+		[getSearchStudents.pending]: (state) => {
+			state.loading.searchStudents = true;
+		},
+		[getSearchStudents.fulfilled]: (state, action) => {
+			state.loading.searchStudents = false;
+			state.searchingStudents = action.payload;
 		}
 	},
 });
