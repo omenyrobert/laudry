@@ -270,7 +270,7 @@ const FeesTable = (props) => {
 
 	return (
 		<div>
-			<div className="h-[65vh] bg-white overflow-y-auto">
+			<div className="h-[75vh] bg-white overflow-y-auto">
 				<table className="mt-4 w-full table-auto">
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Full Name</th>

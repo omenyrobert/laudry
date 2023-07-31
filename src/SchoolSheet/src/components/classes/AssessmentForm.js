@@ -15,7 +15,7 @@ import {
 	getStreams,
 	getStudents,
 	getDivisions,
-	getAssessmentsByTerm
+	getAssessmentsByTerm,
 } from "../../store/schoolSheetSlices/schoolStore";
 import ButtonLoader from "../ButtonLoader";
 import axiosInstance from "../../axios-instance";
@@ -24,10 +24,9 @@ import { assignGrade } from "../../utils/assessment";
 
 const actions = [
 	{ label: "Promote", value: "promoted" },
-	{ label: "Repeat", value: 'repeated' },
-	{ label: "Promoted on probation", value: "promoted_on_probation" }
-]
-
+	{ label: "Repeat", value: "repeated" },
+	{ label: "Promoted on probation", value: "promoted_on_probation" },
+];
 
 function AssessmentForm({
 	closeAdd,
@@ -56,7 +55,9 @@ function AssessmentForm({
 	const [streamProm, setStreamProm] = useState(null);
 	const [generalComment, setGeneralComment] = useState("");
 	const [isPosting, setIsPosting] = useState(false);
-	const { grades, classes, streams, } = useSelector((state) => state.schoolStore);
+	const { grades, classes, streams } = useSelector(
+		(state) => state.schoolStore
+	);
 
 	const [formData, setFormData] = useState({
 		mark: "",
@@ -69,7 +70,9 @@ function AssessmentForm({
 			setFinalMark(finalMk);
 		}
 	};
+	const [asessing, setAssessing] = useState(false);
 	const postAssessment = async (e) => {
+		setAssessing(true);
 		e.preventDefault();
 		const _finalMark = (formData.mark / 100) * selectedExam.percent;
 
@@ -112,6 +115,7 @@ function AssessmentForm({
 		} catch (error) {
 			console.log(error);
 		}
+		setAssessing(false);
 	};
 
 	const deleteAssess = (item) => {
@@ -156,15 +160,22 @@ function AssessmentForm({
 
 	// get classes
 	useEffect(() => {
-		const data = classes.map(_class => ({ label: _class.class, value: _class.class }));
+		const data = classes.map((_class) => ({
+			label: _class.class,
+			value: _class.class,
+		}));
 		setClassOptions(data);
-	}, [classes])
+	}, [classes]);
 
 	// get Stream options
 	useEffect(() => {
-		const data = streams.map(_stream => ({ label: _stream.stream, value: _stream.stream, id: _stream.id }));
+		const data = streams.map((_stream) => ({
+			label: _stream.stream,
+			value: _stream.stream,
+			id: _stream.id,
+		}));
 		setStreamOptions(data);
-	}, [streams])
+	}, [streams]);
 
 	// update student on promotion
 	const updateStudent = async () => {
@@ -189,7 +200,7 @@ function AssessmentForm({
 				let formData = {
 					id: studentId,
 					studentClass: _class.value,
-					studentStream: streamProm.value
+					studentStream: streamProm.value,
 				};
 				const student = await axiosInstance.put("/students/edit", formData);
 
@@ -204,7 +215,7 @@ function AssessmentForm({
 					MySwal.fire({
 						icon: "success",
 						showConfirmButton: false,
-						timer: 500
+						timer: 500,
 					});
 					closeAdd();
 					setIsPosting(false);
@@ -229,7 +240,6 @@ function AssessmentForm({
 					</div>
 					<div>
 						<Select
-
 							placeholder="Select Subject"
 							label="Subject"
 							onChange={(e) => {
@@ -257,7 +267,6 @@ function AssessmentForm({
 					</div>
 					<div className="w-3/12 p-1">
 						<InputField
-
 							placeholder="Enter Marks in %"
 							name="mark"
 							value={formData.mark}
@@ -266,15 +275,20 @@ function AssessmentForm({
 					</div>
 					<div className="w-3/12 p-1">
 						<InputField
-
 							placeholder="Enter Comment"
 							name="comment"
 							value={formData.comment}
 							onChange={onChange}
 						/>
 					</div>
-					<div className="w-2/12 mt-6 ml-1" onClick={postAssessment}>
-						<Button value={"Add"} />
+					<div className="w-2/12 mt-6 ml-1">
+						{asessing ? (
+							<ButtonLoader />
+						) : (
+							<div onClick={postAssessment}>
+								<Button value={"Add"} />
+							</div>
+						)}
 					</div>
 				</div>
 
@@ -319,38 +333,35 @@ function AssessmentForm({
 					return null;
 				})}
 
-
-
 				<div className="overflow-x-auto w-[50vw]">
 					{assessAll.map((data) => {
 						const { examTypes } = data;
 						const gradeObj = assignGrade(data.markGrade, grades);
 						return (
-
 							<div className=" w-[75vw] flex text-sm bg-gray1 cursor-pointer">
-								<div className="w-2/12   border-gray2 border p-2">{data.subject}</div>
-								{
-									examTypes.map(examType => (
-										<div className="w-2/12  flex  border-gray2 p-2 border">
-											<div className="p-1">{examType.type}</div> <div className="p-1">{examType.markPercent}</div>
-										</div>
-									))
-								}
+								<div className="w-2/12   border-gray2 border p-2">
+									{data.subject}
+								</div>
+								{examTypes.map((examType) => (
+									<div className="w-2/12  flex  border-gray2 p-2 border">
+										<div className="p-1">{examType.type}</div>{" "}
+										<div className="p-1">{examType.markPercent}</div>
+									</div>
+								))}
 								<div className="w-2/12 flex  border-gray2 p-2 border">
-									<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div> <div className="p-1">{gradeObj.grade}</div>
+									<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div>{" "}
+									<div className="p-1">{gradeObj.grade}</div>
 								</div>
 								<div className="w-2/12 flex  border-gray2 p-2 border">
-									<div className="p-1">Pts</div> <div className="p-1">{gradeObj.points}</div>
+									<div className="p-1">Pts</div>{" "}
+									<div className="p-1">{gradeObj.points}</div>
 								</div>
 							</div>
-
 						);
 					})}
 				</div>
 				<div className="flex justify-between mt-2">
-					<div>
-
-					</div>
+					<div></div>
 					<div className="w-20 ">
 						{isPosting ? (
 							<ButtonLoader />
@@ -361,7 +372,6 @@ function AssessmentForm({
 							</div>
 						)}
 					</div>
-
 				</div>
 
 				<div className="flex">
