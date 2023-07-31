@@ -570,7 +570,7 @@ export const getStudentsWithFeesBalanceLessThan50 = async () => {
         const balance = parseFloat(feesBalance.balance);
         const amount = parseFloat(feesBalance.amount);
         const percentage = (balance / amount) * 100;
-        if (percentage < 50) {
+        if (percentage <= 50) {
           return true;
         } else {
           return false;

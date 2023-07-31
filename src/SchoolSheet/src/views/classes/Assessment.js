@@ -29,6 +29,7 @@ function Assessment() {
 	const [stream, setStream] = useState("");
 	const [classOptions, setClassOptions] = useState([]);
 	const [streamOpts, setStreamOpts] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	const { examTypes, subjects, students, terms, assessmentsByTerm, classes, streams } = useSelector((state) => state.schoolStore);
 
@@ -58,7 +59,10 @@ function Assessment() {
 	const [studentData, setStudentData] = useState([]);
 
 	useEffect(() => {
-		setStudentData(students);
+		setStudentData(students.students);
+		if (students.students) {
+			setLoading(false);
+		}
 	}, [students]);
 
 	// fetch exams and subjects
@@ -248,6 +252,10 @@ function Assessment() {
 
 								<th className="p-2 text-primary text-sm text-left">Action</th>
 							</thead>
+
+							{
+								loading ? <div className="loader2"></div> : null
+							}
 							<tbody>
 								{searchedData?.length > 0 && searchedData?.map((student) => {
 									const { classes } = student;

@@ -81,14 +81,14 @@ const Fees = () => {
         e.preventDefault();
         if (checkInput === 'below') {
             setPercentResults(
-                students?.filter((student) => {
+                students?.students?.filter((student) => {
                     return handleFilter(student?.feesBalance, student?.fees) < parseFloat(percent) ? student : null
                 })
             );
             setPercent(0);
         } else if (checkInput === 'above') {
             setPercentResults(
-                students?.filter((student) => {
+                students?.students?.filter((student) => {
                     return handleFilter(student?.feesBalance, student?.fees) > parseFloat(percent) ? student : null
                 })
             );
@@ -115,11 +115,11 @@ const Fees = () => {
 
     useEffect(() => {
         if (query.name === '' && query.class === '' && query.percentage.percent === null && query.stream === '') {
-            setSearchResults(students);
+            setSearchResults(students.students);
             return;
         }
 
-        const results = students?.filter((student) => {
+        const results = students?.students?.filter((student) => {
             const fullName = `${student.firstName} ${student.middleName} ${student.lastName}`;
             const isNameValid = fullName.toLowerCase().includes(query.name.toLowerCase());
             const className = student?.classes[0]?.class;
