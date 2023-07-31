@@ -32,12 +32,6 @@ export const addReport = async (req: Request, res: Response) => {
         .status(200)
         .end();
     }
-    if (!comment) {
-      return res
-        .json(customPayloadResponse(false, "Comment Required"))
-        .status(200)
-        .end();
-    }
     if (!classField) {
       return res
         .json(customPayloadResponse(false, "Class Required"))
@@ -85,12 +79,6 @@ export const modifyReport = async (req: Request, res: Response) => {
     if (!stream) {
       return res
         .json(customPayloadResponse(false, "Stream Required"))
-        .status(200)
-        .end();
-    }
-    if (!comment) {
-      return res
-        .json(customPayloadResponse(false, "Comment Required"))
         .status(200)
         .end();
     }
