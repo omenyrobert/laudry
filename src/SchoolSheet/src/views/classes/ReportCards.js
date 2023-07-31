@@ -33,7 +33,7 @@ function ReportCards(props) {
 
   useEffect(() => {
     if (students) {
-      const _classes = students?.map((student) => {
+      const _classes = students?.students?.map((student) => {
         return {
           value: student?.classes[0]?.class,
           label: student?.classes[0]?.class,
@@ -79,9 +79,9 @@ function ReportCards(props) {
       query.class === "" &&
       query.stream === ""
     ) {
-      setFilteredStudents(students);
+      setFilteredStudents(students.students);
     } else {
-      const _filteredStudents = students.filter((student) => {
+      const _filteredStudents = students?.students?.filter((student) => {
         const fullName = `${student.firstName} ${student.middleName} ${student.lastName}`;
         const studentClass = student?.classes[0] ? student?.classes[0]?.class : "";
         const stream = student?.streams[0] ? student?.streams[0]?.stream : "";
@@ -172,90 +172,90 @@ function ReportCards(props) {
       ) : null}
       <div className="h-[70vh] overflow-y-auto">
 
-      <table className='mt-4 w-full table-auto'>
-        <thead style={{ backgroundColor: '#0d6dfd10' }}>
-          <th className='p-2 text-primary text-sm text-left'>
-            Full Name
-          </th>
+        <table className='mt-4 w-full table-auto'>
+          <thead style={{ backgroundColor: '#0d6dfd10' }}>
+            <th className='p-2 text-primary text-sm text-left'>
+              Full Name
+            </th>
 
-          <th className='p-2 text-primary text-sm text-left'>
-            Gender
-          </th>
-          <th className='p-2 text-primary text-sm text-left'>
-            Student Type
-          </th>
-          <th className='p-2 text-primary text-sm text-left'>
-            Parents
-          </th>
-          <th className='p-2 text-primary text-sm text-left'>
-            Contacts
-          </th>
+            <th className='p-2 text-primary text-sm text-left'>
+              Gender
+            </th>
+            <th className='p-2 text-primary text-sm text-left'>
+              Student Type
+            </th>
+            <th className='p-2 text-primary text-sm text-left'>
+              Parents
+            </th>
+            <th className='p-2 text-primary text-sm text-left'>
+              Contacts
+            </th>
 
-          <th className='p-2 text-primary text-sm text-left'>
-            Class
-          </th>
+            <th className='p-2 text-primary text-sm text-left'>
+              Class
+            </th>
 
-          <th className='p-2 text-primary text-sm text-left'>
-            Action
-          </th>
-        </thead>
-        <tbody>
-          {students ? filteredStudents?.map((student) => {
-            const studentType = student?.student_types[0];
+            <th className='p-2 text-primary text-sm text-left'>
+              Action
+            </th>
+          </thead>
+          <tbody>
+            {students.students ? filteredStudents?.map((student) => {
+              const studentType = student?.student_types[0];
 
-            const _class = student?.classes[0]
+              const _class = student?.classes[0]
 
-            return (
-              <tr
-                className='shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md'
-                key={student.id}
-              >
-                <td className='flex mx-4'>
-                  <div className='rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3'>
-                    {student.firstName[0]}{' '}
-                    {student.lastName[0]}
-                  </div>
-                  <div>
-                    <p className='text-sm p-3 -mt-1 text-gray5'>
-                      {student.firstName}{' '}
-                      {student?.middleName}{' '}
-                      {student.lastName}
-                    </p>
-                    <p className='text-red text-xs -mt-3 ml-3'>
-                      {student?.nin}
-                    </p>
-                  </div>
-                </td>
+              return (
+                <tr
+                  className='shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md'
+                  key={student.id}
+                >
+                  <td className='flex mx-4'>
+                    <div className='rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3'>
+                      {student.firstName[0]}{' '}
+                      {student.lastName[0]}
+                    </div>
+                    <div>
+                      <p className='text-sm p-3 -mt-1 text-gray5'>
+                        {student.firstName}{' '}
+                        {student?.middleName}{' '}
+                        {student.lastName}
+                      </p>
+                      <p className='text-red text-xs -mt-3 ml-3'>
+                        {student?.nin}
+                      </p>
+                    </div>
+                  </td>
 
-                <td className='text-xs p-3 text-gray5'>
-                  {student.gender}
-                </td>
-                <td className='text-xs p-3 text-gray5'>
-                  {studentType?.type}
-                </td>
-                <td className='text-xs p-3 text-gray5'>
-                  {student.fatherContact}
-                </td>
-                <td className='text-xs p-3 text-gray5'>
-                  {student.motherContact}
-                </td>
+                  <td className='text-xs p-3 text-gray5'>
+                    {student.gender}
+                  </td>
+                  <td className='text-xs p-3 text-gray5'>
+                    {studentType?.type}
+                  </td>
+                  <td className='text-xs p-3 text-gray5'>
+                    {student.fatherContact}
+                  </td>
+                  <td className='text-xs p-3 text-gray5'>
+                    {student.motherContact}
+                  </td>
 
-                <td className='text-xs p-3 text-gray5'>
-                  {_class?.class}
-                </td>
+                  <td className='text-xs p-3 text-gray5'>
+                    {_class?.class}
+                  </td>
 
-                <td className='text-xs p-3 text-gray5 flex justify-between'>
-                  <div onClick={() => openCard(student)}>
-                    <p className='p-2 bg-white rounded text-primary'>
-                      Print
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            );
-          }) : null}
-        </tbody>
-      </table>
+                  <td className='text-xs p-3 text-gray5 flex justify-between'>
+                    <div onClick={() => openCard(student)}>
+                      <p className='p-2 bg-white rounded text-primary'>
+                        Print
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              );
+            }) : null}
+          </tbody>
+        </table>
       </div>
     </div>
   );
