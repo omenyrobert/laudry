@@ -11,7 +11,9 @@ export class Report extends BaseEntity {
   @Column()
   stream!: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   comment!: string;
 
   @Column()
@@ -37,14 +39,23 @@ export const createReport =
 async (
     action: string,
     stream: string,
-    comment: string,
+    comment: string | null,
     classField: string,
     term: number,
     studentId: number,
 ) => {
   console.log("term", term);
   console.log("studentId", studentId);
-  const reportToInsert = await Report.insert({ action, stream, comment, classField, term, studentId });
+  const reportToInsert = new Report();
+  reportToInsert.action = action;
+  reportToInsert.stream = stream;
+  reportToInsert.classField = classField;
+  reportToInsert.term = term;
+  reportToInsert.studentId = studentId;
+  if (comment) {
+    reportToInsert.comment = comment;
+  }
+  await reportToInsert.save();
   return reportToInsert;
 };
 
