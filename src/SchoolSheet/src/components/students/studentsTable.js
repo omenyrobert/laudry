@@ -6,12 +6,12 @@ import { Link } from "react-router-dom";
 import Pagination from "../Pagination";
 
 const StudentsTable = (props) => {
-	const { studentData, deleteStudentInfo, nextPage, previousPage, canNextPage, canPreviousPage } = props;
+	const { studentData, deleteStudentInfo, nextPage, previousPage, canNextPage, canPreviousPage, searchPage } = props;
 
 	return (
 		<div id="studentTable">
 			<div className="h-[70vh] overflow-y-auto">
-				<table className="mt-4 w-full table-auto" >
+				<table id="dmsk" className="mt-4 w-full table-auto" >
 					<thead style={{ backgroundColor: "#0d6dfd10" }}>
 						<th className="p-2 text-primary text-sm text-left">Full Name</th>
 						<th className="p-2 text-primary text-sm text-left">Gender</th>
@@ -80,7 +80,13 @@ const StudentsTable = (props) => {
 				</table>
 			</div>
 			{/* Pagination */}
-			<Pagination previousPage={previousPage} nextPage={nextPage} canNextPage={canNextPage} canPrevPage={canPreviousPage} />
+			<Pagination
+				previousPage={previousPage}
+				nextPage={nextPage}
+				canNextPage={canNextPage}
+				canPrevPage={canPreviousPage}
+				searchPage={searchPage}
+			/>
 		</div>
 
 	);

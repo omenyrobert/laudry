@@ -431,6 +431,7 @@ const Students = () => {
 						previousPage={previousPage}
 						canNextPage={canNextPage}
 						canPreviousPage={canPreviousPage}
+						searchPage={page}
 					/>
 				) : null}{
 					student ? (
@@ -441,6 +442,7 @@ const Students = () => {
 							previousPage={previousPage}
 							canNextPage={canNextPage}
 							canPreviousPage={canPreviousPage}
+							searchPage={page}
 						/>
 					) : null
 				}

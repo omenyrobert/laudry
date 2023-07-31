@@ -200,7 +200,9 @@ export const getToken = createAsyncThunk("/schoolSheet/token", async () => {
 
 export const getSearchStudents = createAsyncThunk('/schoolSheet/searchStudent', async (searchData) => {
 	console.log('keyword', searchData)
-	const response = await axiosInstance.get(`/search/students?page=${searchData?.searchPage}&keyword=${searchData?.searchInput}`);
+	const response = await axiosInstance.get(
+		`/search/students?page=${searchData?.searchPage}&keyword=${searchData?.searchInput}`
+	);
 	const { data } = response;
 	const { payload, status } = data;
 	if (status) return payload

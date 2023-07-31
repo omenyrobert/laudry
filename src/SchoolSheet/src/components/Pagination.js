@@ -1,5 +1,5 @@
 // import { useEffect } from "react";
-const Pagination = ({ nextPage, previousPage, canNextPage, canPrevPage }) => {
+const Pagination = ({ nextPage, previousPage, canNextPage, canPrevPage, searchPage }) => {
 
     return <div className="p-1 bg-white flex justify-center">
         <div className="flex text-primary text-sm">
@@ -19,9 +19,7 @@ const Pagination = ({ nextPage, previousPage, canNextPage, canPrevPage }) => {
             >
                 Prev
             </button>
-            {/* {pageNumbers.map((pageNumber) => {
-                return <div className="py-1 px-3 bg-primary text-white" onClick={paginate(pageNumber)}>{pageNumber}</div>
-            })} */}
+            <button className="py-1 px-3 bg-primary text-white" >{searchPage}</button>
             {/* <div
                 className={`py-1 px-3 border border-gray2 ${page === 1 ? "bg-primary text-white" : ""} `}
                 onClick={() => {
