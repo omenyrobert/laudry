@@ -40,7 +40,10 @@ function AssessmentForm({
 	subjectsData,
 	assessAll,
 	term,
-	stream
+	stream,
+	setSelectedSubject,
+	selectedSubject,
+	subjects,
 }) {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -224,7 +227,17 @@ function AssessmentForm({
 						{studentData.firstName} {studentData.middleName}
 						{studentData.lastName}
 					</div>
-					<div>{assessSubject}</div>
+					<div>
+						<Select
+
+							placeholder="Select Subject"
+							label="Subject"
+							onChange={(e) => {
+								setSelectedSubject(e.value);
+							}}
+							options={subjectsData}
+						/>
+					</div>
 					<div>{term?.term}</div>
 
 					<div className="cursor-pointer" onClick={closeAdd}>
