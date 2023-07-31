@@ -168,7 +168,6 @@ function Assessment() {
 			return;
 		}
 		const data = studentData.filter((student) => {
-			console.log(student);
 			const fullName = `${student.firstName} ${student.middleName} ${student.lastName}`;
 			const classData = student.classes.length > 0 && student.classes[0].class;
 			const isClass = classData ? classData.includes(query.studentClass) : false;
@@ -231,6 +230,7 @@ function Assessment() {
 						setQuery({
 							search: "",
 							studentClass: "",
+							stream: ""
 						})
 					}} ><Button value={"Clear"} /></span>
 				</div>
@@ -278,20 +278,10 @@ function Assessment() {
 											<td className="text-sm p-3">
 												<p
 													className="p-2 relative rounded assess bg-primary3 text-primary"
+													onClick={() => openAdd({ ...student })}
 												>
 													Assess
 												</p>
-												<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 -mt-5 z-50">
-
-													{subjects && subjects.length > 0 && subjects.map((subject) => {
-														return (
-															<div className="p-2 hover:bg-gray1"
-																onClick={() => openAdd({ ...student, selectedSubject: subject.subject })}
-															>
-																{subject.subject}
-															</div>);
-													})}
-												</div>
 											</td>
 										</tr>
 									);
@@ -315,6 +305,9 @@ function Assessment() {
 							assessAll={assessAll}
 							term={term}
 							stream={stream}
+							subjects={subjects}
+							setSelectedSubject={setSelectedSubject}
+							selectedSubject={selectedSubject}
 						/>
 					) : null}
 				</div>
@@ -335,3 +328,20 @@ function Assessment() {
 }
 
 export default Assessment;
+
+
+/**
+ * 
+ * 
+												<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 -mt-5 z-50">
+
+													{subjects && subjects.length > 0 && subjects.map((subject) => {
+														return (
+															<div className="p-2 hover:bg-gray1"
+																onClick={() => openAdd({ ...student })}
+															>
+																{subject.subject}
+															</div>);
+													})}
+												</div>
+ */
