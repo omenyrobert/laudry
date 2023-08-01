@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "server": "nodemon ./src/index.ts",
-    "client": "npm start --prefix ./src/SchoolSheet",
+    "client": "npm run start:vite --prefix ./src/SchoolSheet",
+    "client:vite": "npm run start:vite --prefix ./src/SchoolSheet",
     "client:install": "npm install --prefix ./src/SchoolSheet",
     "build": "tsc --build",
     "start": "ts-node ./src/index.ts",
@@ -41,6 +42,7 @@
     "nodemailer-express-handlebars": "^6.1.0",
     "nodemon": "^2.0.22",
     "npm": "^9.6.5",
+    "ordered-uuid": "^1.1.0",
     "react-modal": "^3.16.1",
     "reflect-metadata": "^0.1.13",
     "source-map-loader": "^4.0.1",

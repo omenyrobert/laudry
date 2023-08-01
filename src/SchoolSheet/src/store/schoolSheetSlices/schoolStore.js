@@ -198,6 +198,15 @@ export const getToken = createAsyncThunk("/schoolSheet/token", async () => {
 	if (status) return payload;
 });
 
+export const getStudentCount = createAsyncThunk("/schoolSheet/studentCount", async () => {
+	const studentCount = await axiosInstance.get("/students/studentCount/count");
+	const { data } = studentCount;
+	const { status, payload } = data;
+	console.log('studentCount', payload)
+	console.log('studentCount', payload)
+	if (status) return payload;
+});
+
 export const getSearchStudents = createAsyncThunk('/schoolSheet/searchStudent', async (searchData) => {
 	console.log('keyword', searchData)
 	const response = await axiosInstance.get(
@@ -207,6 +216,7 @@ export const getSearchStudents = createAsyncThunk('/schoolSheet/searchStudent', 
 	const { payload, status } = data;
 	if (status) return payload
 })
+
 
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
@@ -239,6 +249,7 @@ export const schoolSheetSlices = createSlice({
 		reductions: [],
 		searchStudents: [],
 		token: null,
+		studentsCount: null,
 		loading: {
 			streams: false,
 			staffMembers: false,
@@ -268,6 +279,7 @@ export const schoolSheetSlices = createSlice({
 			reductions: false,
 			token: false,
 			searchingStudents: false,
+			studentsCount: false,
 		},
 	},
 	extraReducers: {
@@ -561,6 +573,13 @@ export const schoolSheetSlices = createSlice({
 		[getSearchStudents.fulfilled]: (state, action) => {
 			state.loading.searchStudents = false;
 			state.searchingStudents = action.payload;
+		},
+		[getStudentCount.pending]: (state) => {
+			state.loading.studentsCount = true;
+		},
+		[getStudentCount.fulfilled]: (state, action) => {
+			state.loading.studentsCount = false;
+			state.studentsCount = action.payload;
 		}
 	},
 });

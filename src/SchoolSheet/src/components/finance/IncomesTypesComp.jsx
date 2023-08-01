@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import InputField from "../InputField";
@@ -186,7 +185,7 @@ function IncomesTypeComp() {
 									label="Income Type"
 									value={incomeType}
 									onChange={(e) => setIncomeType(e.target.value)}
-									
+
 								/>
 							</div>
 
@@ -213,7 +212,7 @@ function IncomesTypeComp() {
 												label="Income Type"
 												value={incomeTypeEdit}
 												onChange={(e) => setincomeTypeEdit(e.target.value)}
-												
+
 											/>
 										</div>
 										<div className="flex justify-between w-1/3 mt-[55px]">

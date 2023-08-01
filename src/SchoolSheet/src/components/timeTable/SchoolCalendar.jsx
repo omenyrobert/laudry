@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import Button2 from "../../components/Button2";
-import Button from "../../components/Button";
+import Button2 from "../Button2";
+import Button from "../Button";
 import { GoPrimitiveDot } from "react-icons/go";
-import InputField from "../../components/InputField";
-import SelectComp from "../../components/SelectComp";
-import ButtonSecondary from "../../components/ButtonSecondary";
+import InputField from "../InputField";
+import SelectComp from "../SelectComp";
+import ButtonSecondary from "../ButtonSecondary";
 import FullCalendar from "@fullcalendar/react"; // must go before plugins
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import bootstrap5Plugin from "@fullcalendar/bootstrap5";
@@ -69,7 +69,7 @@ function Lessons() {
 					<div className="flex justify-between">
 						<div>
 							<p className="text-secondary text-2xl font-medium">
-								Time Table For Exams
+								School Calendar
 							</p>
 						</div>
 						<div onClick={openAdd}>

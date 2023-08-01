@@ -4,7 +4,7 @@ import Button from "../Button";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getTransactionsByAccountId } from "../../store/schoolSheetSlices/schoolStore";
-import Loader from "../../components/Loader";
+import Loader from "../Loader";
 
 function Ledger() {
   const { accountId } = useParams();
@@ -25,7 +25,7 @@ function Ledger() {
         const transactionDate = new Date(transaction.date);
         const fromDateObj = new Date(fromDate);
         const toDateObj = new Date(toDate);
-        const transactionMonth = transactionDate.getMonth() + 1; 
+        const transactionMonth = transactionDate.getMonth() + 1;
         const selectedMonthValue = parseInt(selectedMonth.split("-")[1]);
 
         return (
@@ -41,20 +41,20 @@ function Ledger() {
         return transactionDate >= fromDateObj && transactionDate <= toDateObj;
       } else if (selectedMonth) {
         const transactionDate = new Date(transaction.date);
-        const transactionMonth = transactionDate.getMonth() + 1; 
+        const transactionMonth = transactionDate.getMonth() + 1;
         const selectedMonthValue = parseInt(selectedMonth.split("-")[1]);
 
         return transactionMonth === selectedMonthValue;
       }
       return true;
-    },[]);
+    }, []);
 
     setFilteredTransactions(filtered);
   }, [transactionsByAccountId, fromDate, toDate, selectedMonth]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(); 
+    return date.toLocaleDateString();
   };
 
   const handleGeneratePDF = () => {
@@ -64,7 +64,7 @@ function Ledger() {
     documentWindow.document.write(
       content
     );
-    
+
     // Get All stylesheets
     const stylesheets = document.querySelectorAll("link");
     // Append them to the head of the new window
@@ -119,8 +119,8 @@ function Ledger() {
           </div>
         </div>
 
-        <div  id="ledger-table">
-          <div  className="flex border-b border-gray1 bg-primary3 text-primary font-medium mt-3">
+        <div id="ledger-table">
+          <div className="flex border-b border-gray1 bg-primary3 text-primary font-medium mt-3">
             <div className="w-1/4 p-2">Date</div>
             <div className="w-1/4 p-2">Transaction Type</div>
             <div className="w-1/4 p-2">Transaction No</div>
