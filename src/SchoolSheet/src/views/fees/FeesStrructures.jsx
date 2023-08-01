@@ -7,7 +7,6 @@ import Button from "../../components/Button";
 import ButtonSecondary from "../../components/ButtonSecondary";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-//import { v4 as uuid } from 'uuid';
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../../components/ButtonLoader";
 
@@ -165,7 +164,7 @@ function FeesStrructures() {
 					name="feesName"
 					value={fees.feesName}
 					onChange={onChange}
-					
+
 				/>
 				<InputField
 					type="text"
@@ -174,7 +173,7 @@ function FeesStrructures() {
 					name="feesAmount"
 					value={fees.feesAmount}
 					onChange={onChange}
-					
+
 				/>
 				{isposting ? (
 					<ButtonLoader />
@@ -209,7 +208,7 @@ function FeesStrructures() {
 										name="feesNameEdit"
 										value={feesNameEdit}
 										onChange={(e) => setFeesNameEdit(e.target.value)}
-										
+
 									/>
 									<InputField
 										type="text"
@@ -218,7 +217,7 @@ function FeesStrructures() {
 										name="feesAmountEdit"
 										value={feesAmountEdit}
 										onChange={(e) => setFeesAmountEdit(e.target.value)}
-										
+
 									/>
 
 									<div onClick={updateFeesInfo}>

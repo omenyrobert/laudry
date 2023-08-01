@@ -11,7 +11,6 @@ import { FaPen } from "react-icons/fa";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Localbase from "localbase";
-import { v4 as uuid } from "uuid";
 import Button2 from "../../components/Button2";
 import Modal from "react-modal";
 let db = new Localbase("db");
@@ -48,7 +47,8 @@ function StudentAttendance() {
 	};
 
 	const postType = () => {
-		let stId = uuid();
+		// generate random id
+		let stId = Math.random().toString(10)
 		let formData = {
 			id: stId,
 			attendanceType: type.attendanceType,
@@ -253,7 +253,7 @@ function StudentAttendance() {
 											name="attendanceType"
 											onChange={(e) => setTypeEdit(e.target.value)}
 											value={typeEdit}
-											
+
 										/>
 										<InputField
 											type="time"
@@ -262,7 +262,7 @@ function StudentAttendance() {
 											name="arrival"
 											onChange={(e) => setArrivalEdit(e.target.value)}
 											value={arrivalEdit}
-											
+
 										/>
 										<InputField
 											type="time"
@@ -270,7 +270,7 @@ function StudentAttendance() {
 											name="departure"
 											onChange={(e) => setDepartureEdit(e.target.value)}
 											value={departureEdit}
-											
+
 										/>
 										<div onClick={updateType}>
 											<ButtonSecondary value={"Update"} />

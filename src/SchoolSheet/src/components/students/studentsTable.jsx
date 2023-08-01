@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import Pagination from "../Pagination";
 
 const StudentsTable = (props) => {
-	const { studentData, deleteStudentInfo, nextPage, previousPage, canNextPage, canPreviousPage, searchPage } = props;
+	const { setPage, count, studentData, deleteStudentInfo, nextPage, previousPage, canNextPage, canPreviousPage, searchPage, page } = props;
 
 	return (
 		<div id="studentTable">
@@ -86,6 +86,9 @@ const StudentsTable = (props) => {
 				canNextPage={canNextPage}
 				canPrevPage={canPreviousPage}
 				searchPage={searchPage}
+				count={count}
+				page={page}
+				setPage={setPage}
 			/>
 		</div>
 

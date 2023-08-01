@@ -21,6 +21,7 @@
     "chart.js": "^4.1.2",
     "localbase": "^0.7.5",
     "moment": "^2.29.4",
+    "ordered-uuid": "^1.1.0",
     "pdfmake": "^0.2.7",
     "react": "^18.2.0",
     "react-calendar": "^4.0.0",
@@ -37,16 +38,19 @@
     "sweetalert2": "^11.7.3",
     "sweetalert2-react-content": "^5.0.7",
     "uuidv4": "^6.2.13",
+    "vite-plugin-svgr": "^3.2.0",
     "web-vitals": "^2.1.4"
   },
-  "main": "public/electron.js",
   "scripts": {
     "start": "react-scripts start",
+    "start:vite": "vite",
     "build": "react-scripts build",
+    "build:vite": "vite build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\"",
-    "electron": "wait-on tcp:3000 && electron ."
+    "electron": "wait-on tcp:3000 && electron .",
+    "serve": "vite preview"
   },
   "eslintConfig": {
     "extends": [
@@ -67,12 +71,17 @@
     ]
   },
   "devDependencies": {
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
+    "@vitejs/plugin-legacy": "^4.1.1",
+    "@vitejs/plugin-react": "^4.0.4",
     "autoprefixer": "^10.4.13",
     "concurrently": "^7.6.0",
     "electron-is-dev": "^2.0.0",
     "postcss": "^8.4.21",
     "source-map-loader": "^4.0.1",
     "tailwindcss": "^3.2.4",
+    "vite": "^4.4.7",
+    "vite-plugin-require-transform": "^1.0.21",
     "wait-on": "^7.0.1"
   }
 }

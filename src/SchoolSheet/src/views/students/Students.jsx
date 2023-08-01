@@ -13,7 +13,7 @@ import withReactContent from "sweetalert2-react-content";
 // import { FaFilter } from "react-icons/fa";
 import ButtonAlt from "../../components/ButtonAlt";
 import { useDispatch, useSelector } from 'react-redux';
-import { getStudents, getSections, getStreams, getHouses, getClasses, getStudentTypes, getSearchStudents } from "../../store/schoolSheetSlices/schoolStore";
+import { getStudents, getSections, getStreams, getHouses, getClasses, getStudentTypes, getSearchStudents, getStudentCount } from "../../store/schoolSheetSlices/schoolStore";
 import Loader from "../../components/Loader"
 
 const Students = () => {
@@ -30,7 +30,7 @@ const Students = () => {
 	});
 	const [searchInput, setSearchInput] = useState("");
 	const [searchedStudents, setSearchedStudents] = useState([]);
-	const { students, loading, sections, studentTypes, houses, streams, classes, searchingStudents } = useSelector((state) => state.schoolStore);
+	const { studentsCount, students, loading, sections, studentTypes, houses, streams, classes, searchingStudents } = useSelector((state) => state.schoolStore);
 
 	const sectionOptions = [];
 	const studentTypeOptions = [];
@@ -256,6 +256,7 @@ const Students = () => {
 				dispatch(getSections());
 				dispatch(getStudents(page));
 				dispatch(getStudentTypes());
+				dispatch(getStudentCount());
 			} catch (error) {
 				console.log(error);
 				const MySwal = withReactContent(Swal);
@@ -432,10 +433,14 @@ const Students = () => {
 						canNextPage={canNextPage}
 						canPreviousPage={canPreviousPage}
 						searchPage={page}
+						count={studentsCount}
+						page={page}
+						setPage={setPage}
 					/>
 				) : null}{
 					student ? (
 						<StudentsTable
+							page={page}
 							deleteStudentInfo={deleteStudentInfo}
 							studentData={students?.students}
 							nextPage={nextPage}
@@ -443,6 +448,8 @@ const Students = () => {
 							canNextPage={canNextPage}
 							canPreviousPage={canPreviousPage}
 							searchPage={page}
+							count={studentsCount}
+							setPage={setPage}
 						/>
 					) : null
 				}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { TbCheck } from "react-icons/tb";
 import { RxCross1 } from "react-icons/rx";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";

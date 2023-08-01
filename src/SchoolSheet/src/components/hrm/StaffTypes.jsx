@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../../assets/styles/main.css";
-import InputField from "../../components/InputField";
-import Button from "../../components/Button";
-import ButtonSecondary from "../../components/ButtonSecondary";
+import InputField from "../InputField";
+import Button from "../Button";
+import ButtonSecondary from "../ButtonSecondary";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import { FaPen } from "react-icons/fa";
