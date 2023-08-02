@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import '../../assets/styles/main.css';
 import { useDispatch, useSelector } from "react-redux";
 import ReportCardTemplate from '../../components/classes/ReportCardTemplate';
-import { getStudents, getStreams } from "../../store/schoolSheetSlices/schoolStore"
+import { getStudents, getStreams, getStudentCount } from "../../store/schoolSheetSlices/schoolStore"
 import InputField from "../../components/InputField";
 import { BsSearch } from "react-icons/bs";
 import Select from "react-select";
 import Button from "../../components/Button";
+import Pagination from "../../components/Pagination";
 
 function ReportCards(props) {
   const dispatch = useDispatch();
@@ -14,7 +15,7 @@ function ReportCards(props) {
   const [classes, setClasses] = useState([]);
   const [streamOpts, setStreamOpts] = useState([]);
 
-  const { students, streams } = useSelector((state) => state.schoolStore);
+  const { studentsCount, students, streams, loading } = useSelector((state) => state.schoolStore);
 
   useEffect(() => {
     const _streams = streams?.map((res) => ({
@@ -25,11 +26,6 @@ function ReportCards(props) {
     setStreamOpts(_streams);
   }, [streams])
 
-  // get students
-  useEffect(() => {
-    dispatch(getStudents());
-    dispatch(getStreams());
-  }, [dispatch]);
 
   useEffect(() => {
     if (students) {
@@ -102,6 +98,32 @@ function ReportCards(props) {
   }, [query, students]);
 
 
+  // implement pangination
+  const [page, setPage] = useState(0);
+
+
+  useEffect(() => {
+    dispatch(getStudents(page));
+    dispatch(getStreams());
+    dispatch(getStudentCount());
+  }, [dispatch, page]);
+
+  const nextPage = () => {
+    setPage(page + 1);
+  };
+
+  const previousPage = () => {
+    setPage(page - 1);
+  };
+
+  const canNextPage = () => {
+    return true
+  };
+
+  const canPreviousPage = () => {
+    return page > 0;
+  };
+
 
   return (
     <div>
@@ -171,6 +193,9 @@ function ReportCards(props) {
         />
       ) : null}
       <div className="h-[70vh] overflow-y-auto">
+        <div className="flex justify-center mt-2">
+          {loading.students || loading.searchStudents ? <div className="loader"></div> : null}
+        </div>
 
         <table className='mt-4 w-full table-auto'>
           <thead style={{ backgroundColor: '#0d6dfd10' }}>
@@ -257,6 +282,15 @@ function ReportCards(props) {
           </tbody>
         </table>
       </div>
+      <Pagination
+        previousPage={previousPage}
+        nextPage={nextPage}
+        canNextPage={canNextPage}
+        canPrevPage={canPreviousPage}
+        count={studentsCount}
+        page={page}
+        setPage={setPage}
+      />
     </div>
   );
 }

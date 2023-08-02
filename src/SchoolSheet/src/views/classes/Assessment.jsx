@@ -13,10 +13,13 @@ import {
 	getAssessmentsByTerm,
 	getClasses,
 	getStreams,
+	getStudentCount
 } from "../../store/schoolSheetSlices/schoolStore";
 import { assessSubjects } from "../../utils/assessment";
 import Select from "react-select";
 import Button from "../../components/Button";
+import Pagination from "../../components/Pagination";
+
 
 function Assessment() {
 	const dispatch = useDispatch();
@@ -29,7 +32,7 @@ function Assessment() {
 	const [stream, setStream] = useState("");
 	const [classOptions, setClassOptions] = useState([]);
 	const [streamOpts, setStreamOpts] = useState([]);
-	const [loading, setLoading] = useState(true);
+	//const [loading, setLoading] = useState(true);
 
 	const {
 		examTypes,
@@ -39,6 +42,8 @@ function Assessment() {
 		assessmentsByTerm,
 		classes,
 		streams,
+		studentsCount,
+		loading
 	} = useSelector((state) => state.schoolStore);
 
 	useEffect(() => {
@@ -67,22 +72,12 @@ function Assessment() {
 
 	useEffect(() => {
 		setStudentData(students.students);
-		if (students.students) {
-			setLoading(false);
-		}
 	}, [students]);
 
 	// fetch exams and subjects
 	const [examTypesData, setExamTypesData] = useState([]);
 	const [subjectsData, setSubjectsData] = useState([]);
 
-	useEffect(() => {
-		dispatch(getSubjects());
-		dispatch(getStudents());
-		dispatch(getTerms());
-		dispatch(getClasses());
-		dispatch(getStreams());
-	}, [dispatch]);
 
 	useEffect(() => {
 		const _classes = classes.map((res) => ({
@@ -200,6 +195,34 @@ function Assessment() {
 		setSearchedData(data);
 	}, [query, studentData]);
 
+	// implement pangination
+	const [page, setPage] = useState(0);
+
+
+	useEffect(() => {
+		dispatch(getStudents(page));
+		dispatch(getSubjects());
+		dispatch(getTerms());
+		dispatch(getClasses());
+		dispatch(getStreams());
+		dispatch(getStudentCount());
+	}, [dispatch, page]);
+
+	const nextPage = () => {
+		setPage(page + 1);
+	};
+
+	const previousPage = () => {
+		setPage(page - 1);
+	};
+
+	const canNextPage = () => {
+		return true
+	};
+
+	const canPreviousPage = () => {
+		return page > 0;
+	};
 	return (
 		<div>
 			<div className="flex justify-between mr-5 bg-white mt-5">
@@ -271,7 +294,7 @@ function Assessment() {
 								<th className="p-2 text-primary text-sm text-left">Action</th>
 							</thead>
 							<div className="flex justify-center mt-2">
-								{loading ? <div className="loader"></div> : null}
+								{loading.students || loading.searchStudents ? <div className="loader"></div> : null}
 							</div>
 
 							<tbody>
@@ -316,7 +339,17 @@ function Assessment() {
 							</tbody>
 						</table>
 					</div>
+					<Pagination
+						previousPage={previousPage}
+						nextPage={nextPage}
+						canNextPage={canNextPage}
+						canPrevPage={canPreviousPage}
+						count={studentsCount}
+						page={page}
+						setPage={setPage}
+					/>
 				</div>
+
 				<div className="w-8/12 ml-5">
 					{add ? (
 						<AssessmentForm
@@ -337,6 +370,7 @@ function Assessment() {
 						/>
 					) : null}
 				</div>
+
 			</div>
 
 			{editData ? (
