@@ -33,9 +33,9 @@ function ElearningLinks() {
 			{link ? (
 				<div className="ml-4">
 						<Link
-						to="/studentAttendance"
+						to="#"
 						className={
-							location.pathname === "/studentAttendance"
+							location.pathname === "#"
 								? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
 								: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
 						}
@@ -44,7 +44,7 @@ function ElearningLinks() {
 							<MdHowToVote className="w-5 mt-[3px]" />
 							<p
 								className={
-									location.pathname === "/studentAttendance"
+									location.pathname === "#"
 										? "text-sm font-light text-white ml-5"
 										: "text-sm font-light linktext ml-5"
 								}
@@ -54,9 +54,9 @@ function ElearningLinks() {
 						</div>
 					</Link>
                     <Link
-						to="/studentAttendance"
+						to="#"
 						className={
-							location.pathname === "/studentAttendance"
+							location.pathname === "#"
 								? "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 bg-primary cursor-pointer text-white"
 								: "flex w-[80%] ml-5 mt-1 linkdiv rounded-md p-2 cursor-pointer"
 						}
@@ -65,7 +65,7 @@ function ElearningLinks() {
 							<HiOutlineArrowSmRight className="w-5 mt-[3px]" />
 							<p
 								className={
-									location.pathname === "/studentAttendance"
+									location.pathname === "#"
 										? "text-sm font-light text-white ml-5"
 										: "text-sm font-light linktext ml-5"
 								}

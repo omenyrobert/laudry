@@ -259,7 +259,7 @@ function Assessment() {
 			</div>
 			<div className="w-full flex overflow-y-auto">
 				<div className="w-4/12 bg-white p-3">
-					<div className="bg-white p-3 overflow-y-auto h-[83vh]">
+					<div className="bg-white p-3 overflow-y-auto h-[78vh]">
 						<table className="mt-4 w-full table-auto">
 							<thead style={{ backgroundColor: "#0d6dfd10" }}>
 								<th className="p-2 text-primary text-sm text-left">
