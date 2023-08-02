@@ -5,14 +5,15 @@ import Button from '../../components/Button';
 import { BsSearch } from 'react-icons/bs';
 import FeesTable from '../../components/fees/FeesTable';
 import { useSelector, useDispatch } from 'react-redux';
-import { getStudents, getClasses, getStreams } from '../../store/schoolSheetSlices/schoolStore';
+import { getStudents, getClasses, getStreams, getStudentCount } from '../../store/schoolSheetSlices/schoolStore';
 import { extraLatestArrayIndex } from '../../utils/global';
 import Select from 'react-select';
 import { usePrint } from "../../hooks/print"
+import Loader from "../../components/Loader"
 
 const Fees = () => {
     const dispatch = useDispatch();
-    const { students, classes, streams } = useSelector((state) => state.schoolStore)
+    const { studentsCount, students, classes, streams, loading } = useSelector((state) => state.schoolStore)
     const [classOpts, setClassOpts] = useState([]);
     const { printContent } = usePrint();
     const [streamOpts, setStreamOpts] = useState([]);
@@ -40,11 +41,7 @@ const Fees = () => {
     }, [classes]);
 
 
-    useEffect(() => {
-        dispatch(getStudents());
-        dispatch(getClasses());
-        dispatch(getStreams());
-    }, [dispatch]);
+
 
     // search by class filter:
     const [allStudents, setAllStudents] = useState(true);
@@ -144,6 +141,32 @@ const Fees = () => {
     }, [students, query]);
 
 
+    // implement pangination
+    const [page, setPage] = useState(0);
+
+
+    useEffect(() => {
+        dispatch(getStudents(page));
+        dispatch(getClasses());
+        dispatch(getStreams());
+        dispatch(getStudentCount());
+    }, [dispatch, page]);
+
+    const nextPage = () => {
+        setPage(page + 1);
+    };
+
+    const previousPage = () => {
+        setPage(page - 1);
+    };
+
+    const canNextPage = () => {
+        return true
+    };
+
+    const canPreviousPage = () => {
+        return page > 0;
+    };
 
     return (
         <>
@@ -287,7 +310,22 @@ const Fees = () => {
                     </div>
                 </div>
             </div>
-            {searchResults ? <FeesTable studentData={searchResults} /> : null}
+            {loading.students || loading.searchStudents ? (
+                <div className="flex justify-center">
+                    <Loader />
+                </div>
+            ) : null}
+            {searchResults ? <FeesTable
+                studentData={searchResults}
+                nextPage={nextPage}
+                previousPage={previousPage}
+                canNextPage={canNextPage}
+                canPreviousPage={canPreviousPage}
+                searchPage={page}
+                count={studentsCount}
+                setPage={setPage}
+                page={page}
+            /> : null}
         </>
     );
 }

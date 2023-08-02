@@ -6,9 +6,10 @@ import Button from "../Button";
 import axiosInstance from "../../axios-instance";
 import { useNavigate } from "react-router-dom";
 import ButtonLoader from "../ButtonLoader";
+import Pagination from "../Pagination";
 
 const FeesTable = (props) => {
-	const { studentData } = props;
+	const { studentData, setPage, count, nextPage, previousPage, canNextPage, canPreviousPage, searchPage, page } = props;
 	const [cash, setCash] = useState(false);
 	const [bankslip, setBankslip] = useState(false);
 	const [cheque, setCheque] = useState(false);
@@ -267,6 +268,8 @@ const FeesTable = (props) => {
 			console.log(error);
 		}
 	};
+
+
 
 	return (
 		<div>
@@ -894,7 +897,19 @@ const FeesTable = (props) => {
 						})}
 					</tbody>
 				</table>
+				{/* Pagination */}
+
 			</div>
+			<Pagination
+				previousPage={previousPage}
+				nextPage={nextPage}
+				canNextPage={canNextPage}
+				canPrevPage={canPreviousPage}
+				searchPage={searchPage}
+				count={count}
+				page={page}
+				setPage={setPage}
+			/>
 			<table id="fees-table-1" className="mt-20 w-full table-auto">
 				<thead style={{ backgroundColor: "#0d6dfd10" }}>
 					<th className="p-2 text-primary text-sm text-left">Full Name</th>

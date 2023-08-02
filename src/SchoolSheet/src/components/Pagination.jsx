@@ -47,7 +47,7 @@ const Pagination = ({ setPage, page, count, nextPage, previousPage, canNextPage,
                     if (page === 0) return;
                     previousPage()
                 }}
-                disabled={!canPrevPage()}
+                disabled={page === 0}
             >
                 Prev
             </button>
@@ -68,7 +68,7 @@ const Pagination = ({ setPage, page, count, nextPage, previousPage, canNextPage,
 
                         }}
                     >
-                        {p}
+                        {p + 1}
                     </button>
                 }
                 )
@@ -87,7 +87,7 @@ const Pagination = ({ setPage, page, count, nextPage, previousPage, canNextPage,
                     cursor: hasMore === false ? "not-allowed" : "pointer",
                     color: hasMore === false ? "gray" : "inherit",
                 }}
-                disabled={!canNextPage()}
+                disabled={hasMore === false}
             >
                 Next
             </button>
