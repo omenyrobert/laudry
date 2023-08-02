@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "server": "nodemon ./src/index.ts",
-    "client": "npm run start:vite --prefix ./src/SchoolSheet",
+    "client": "npm run start --prefix ./src/SchoolSheet",
     "client:vite": "npm run start:vite --prefix ./src/SchoolSheet",
     "client:install": "npm install --prefix ./src/SchoolSheet",
     "build": "tsc --build",
