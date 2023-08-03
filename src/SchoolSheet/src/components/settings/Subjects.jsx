@@ -8,27 +8,41 @@ import { BsPencilSquare } from 'react-icons/bs'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useDispatch, useSelector } from 'react-redux'
-import { getSubjects } from '../../store/schoolSheetSlices/schoolStore'
+import { getSubjects, getClassLevels } from '../../store/schoolSheetSlices/schoolStore'
 import axiosInstance from '../../axios-instance'
 import ButtonLoader from '../ButtonLoader'
 import Select from 'react-select'
 
 function Subject() {
   const dispatch = useDispatch()
+  const { subjects, classLevels } = useSelector((state) => state.schoolStore)
   const [editData, setEditData] = useState(false)
   const [editSubject, setEditSubject] = useState('')
   const [subjectId, setSubjectId] = useState('')
+  const [classLevelOpts, setClassLevelOpts] = useState([])
+  const [selectedClassLevels, setSelectedClassLevels] = useState([])
+  const [selectedEditClassLevels, setSelectedEditClassLevels] = useState([])
+
+  useEffect(() => {
+    const classLevelOpts = classLevels.map((classLevel) => {
+      return {
+        value: classLevel.id,
+        label: classLevel.name,
+        ...classLevel,
+      }
+    })
+    setClassLevelOpts(classLevelOpts)
+  }, [classLevels])
+
+
+
+
+
 
   const closeEditData = () => {
     setEditData(false)
   }
 
-  const options = [
-    { label: 'Nursery', value: 'Nursery' },
-    { label: 'Primary', value: 'Primary' },
-    { label: 'Olv', value: 'ol' },
-    { label: 'Art', value: 'Art' },
-  ]
 
   const openEditData = (subject) => {
     setEditData(true)
@@ -44,6 +58,7 @@ function Subject() {
       setIsPosting(false)
       let formData = {
         subject: subject,
+        classLevels: selectedClassLevels
       }
 
       const response = await axiosInstance.post('/subjects', formData)
@@ -53,6 +68,7 @@ function Subject() {
       if (status) {
         dispatch(getSubjects())
         setSubject('')
+        setSelectedClassLevels([])
         setIsPosting(false)
         const MySwal = withReactContent(Swal)
         MySwal.fire({
@@ -70,6 +86,7 @@ function Subject() {
   // fetching subject
   useEffect(() => {
     dispatch(getSubjects())
+    dispatch(getClassLevels())
   }, [dispatch])
 
   //deleting subject
@@ -109,6 +126,7 @@ function Subject() {
       let formData = {
         subjectId: subjectId,
         subject: editSubject,
+        classLevels: selectedEditClassLevels
       }
       const subject = await axiosInstance.put('/subjects', formData)
       const { data } = subject
@@ -116,6 +134,7 @@ function Subject() {
       if (status) {
         dispatch(getSubjects())
         setEditSubject('')
+        setSelectedEditClassLevels([])
         const MySwal = withReactContent(Swal)
         MySwal.fire({
           icon: 'success',
@@ -129,7 +148,7 @@ function Subject() {
     }
   }
 
-  const { subjects } = useSelector((state) => state.schoolStore)
+
 
   return (
     <div className=" bg-white pl-5 shadow-lg rounded-md h-auto p-3">
@@ -149,7 +168,10 @@ function Subject() {
             <Select
               placeholder={'Select class Levels'}
               className="text-sm"
-              options={options}
+              options={classLevelOpts}
+              onChange={(e) => setSelectedClassLevels(e)}
+              value={selectedClassLevels}
+              isMulti
             />
           </div>
         </div>
@@ -202,7 +224,9 @@ function Subject() {
                       <Select
                         placeholder={'Select class Levels'}
                         className="text-sm"
-                        options={options}
+                        options={classLevelOpts}
+                        onChange={(e) => setSelectedEditClassLevels(e)}
+                        isMulti
                       />
                     </div>
                     <div className=" w-2/12 mt-[55px] ml-4">
@@ -222,7 +246,17 @@ function Subject() {
                     key={subject.id}
                   >
                     <td className="text-xs p-3 text-gray5">
-                      {subject.subject}
+                      {subject.subject}{" "}
+                      {
+                        subject.classLevels?.map((classLevel) => {
+                          return (
+                            <span className="text-xs text-gray5">
+                              {classLevel.name},
+                            </span>
+                          )
+                        }
+                        )
+                      }
                     </td>
 
                     <td className="text-xs p-3 text-gray5 flex">

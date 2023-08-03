@@ -21,14 +21,14 @@ export const fetchSubjects = async (req: Request, res: Response) => {
 
 export const addSubject = async (req: Request, res: Response) => {
 	try {
-		const { subject } = req.body;
+		const { subject, classLevels } = req.body;
 		if (!subject) {
 			return res
 				.json(customPayloadResponse(false, "Subject Required"))
 				.status(200)
 				.end();
 		}
-		await createSubject(subject);
+		await createSubject(subject, classLevels);
 		return res
 			.json(customPayloadResponse(true, "Subject Added"))
 			.status(200)
@@ -40,7 +40,7 @@ export const addSubject = async (req: Request, res: Response) => {
 
 export const modifySubject = async (req: Request, res: Response) => {
 	try {
-		const { subjectId, subject } = req.body;
+		const { subjectId, subject, classLevels } = req.body;
 		if (!subject) {
 			return res
 				.json(customPayloadResponse(false, "Subject Required"))
@@ -55,7 +55,7 @@ export const modifySubject = async (req: Request, res: Response) => {
 		}
 		const subjectToUpdate = await getSingleSubject(subjectId);
 		if (subjectToUpdate) {
-			await updateSubject(subjectId, subject);
+			await updateSubject(subjectId, subject, classLevels);
 			return res
 				.json(customPayloadResponse(true, "Subject Updated"))
 				.status(200)
