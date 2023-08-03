@@ -12,7 +12,7 @@ function studentsTable2({ students }) {
 				<th className="p-2 text-primary text-sm text-left">Balance</th>
 			</thead>
 			<tbody>
-				{students.map((patient) => {
+				{Array.isArray(students) && students.map((patient) => {
 					return (
 						<tr
 							className="shadow-sm border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"
