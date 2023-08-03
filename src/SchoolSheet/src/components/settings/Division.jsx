@@ -8,7 +8,7 @@ import { BsPencilSquare } from 'react-icons/bs'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useDispatch, useSelector } from 'react-redux'
-import { getDivisions } from '../../store/schoolSheetSlices/schoolStore'
+import { getDivisions, getClassLevels } from '../../store/schoolSheetSlices/schoolStore'
 import axiosInstance from '../../axios-instance'
 import ButtonLoader from '../ButtonLoader'
 import Select from 'react-select'
@@ -19,6 +19,24 @@ function Division() {
   const [editDivision, setEditDivision] = useState('')
   const [editPoints, setEditPoints] = useState('')
   const [divisionId, setDivisionId] = useState('')
+  const { divisions, classLevels } = useSelector((state) => state.schoolStore)
+  const [classLevelOpts, setClassLevelOpts] = useState([])
+  const [selectedClassLevel, setSelectedClassLevel] = useState([])
+  const [selectedEditClassLevel, setSelectedEditClassLevel] = useState([])
+
+  useEffect(() => {
+    let classLevelOpts = classLevels.map((level) => {
+      return {
+        value: level.id,
+        label: level.name,
+        ...level,
+      }
+    })
+
+
+    setClassLevelOpts(classLevelOpts)
+  }, [classLevels])
+
 
   const closeEditData = () => {
     setEditData(false)
@@ -45,6 +63,7 @@ function Division() {
         points: 1,
         upperLimit: parseFloat(upperLimit),
         lowerLimit: parseFloat(lowerLimit),
+        classLevels: selectedClassLevel
       }
 
       const response = await axiosInstance.post('/divisions', formData)
@@ -57,6 +76,7 @@ function Division() {
         setPoints('')
         setUpperLimit('')
         setLowerLimit('')
+        setSelectedClassLevel([])
         setIsPosting(false)
         const MySwal = withReactContent(Swal)
         MySwal.fire({
@@ -83,6 +103,7 @@ function Division() {
   // fetching divisions
   useEffect(() => {
     dispatch(getDivisions())
+    dispatch(getClassLevels())
   }, [dispatch])
 
   //deleting Division
@@ -123,6 +144,7 @@ function Division() {
         id: divisionId,
         division: editDivision,
         points: parseFloat(editPoints),
+        classLevels: selectedEditClassLevel
       }
       const subject = await axiosInstance.put('/divisions', formData)
       const { data } = subject
@@ -131,6 +153,7 @@ function Division() {
         dispatch(getDivisions())
         setEditDivision('')
         setEditPoints('')
+        setSelectedEditClassLevel([])
         const MySwal = withReactContent(Swal)
         MySwal.fire({
           icon: 'success',
@@ -144,16 +167,7 @@ function Division() {
     }
   }
 
-  const { divisions } = useSelector((state) => state.schoolStore)
 
-  console.log('divisions', divisions)
-
-  const options = [
-    { label: 'Nursery', value: 'Nursery' },
-    { label: 'Primary', value: 'Primary' },
-    { label: 'Olv', value: 'ol' },
-    { label: 'Art', value: 'Art' },
-  ]
 
   return (
     <div className=" h-[95vh] overflow-y-auto p-2">
@@ -191,7 +205,9 @@ function Division() {
             <Select
               placeholder={'Select class Levels'}
               className="text-sm"
-              options={options}
+              options={classLevelOpts}
+              onChange={(e) => setSelectedClassLevel(e)}
+              isMulti
             />
             <br />
             {isPosting ? (
@@ -231,6 +247,15 @@ function Division() {
                       label="Points"
                       onChange={(e) => setEditPoints(e.target.value)}
                       value={editPoints}
+                    />
+                  </div>
+                  <div className="w-2/5 pr-2">
+                    <Select
+                      placeholder={'Select class Levels'}
+                      className="text-sm"
+                      options={classLevelOpts}
+                      onChange={(e) => setSelectedEditClassLevel(e)}
+                      isMulti
                     />
                   </div>
                   <div className="flex justify-between w-1/5 mt-[55px]">
