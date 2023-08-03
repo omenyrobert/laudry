@@ -136,6 +136,7 @@ const ClassLevels = () => {
             {isposting ? (
               <ButtonLoader />
             ) : (
+
               <div onClick={postClassLevel}>
                 <Button value={'Add  Class Level'} />
               </div>
