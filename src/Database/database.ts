@@ -1,3 +1,4 @@
+require("dotenv").config();
 import { DataSource } from "typeorm";
 import { join } from "path";
 
@@ -12,11 +13,11 @@ if (process.versions?.electron) {
 });
 } else {
   DatabaseConnection = new DataSource({
-  host: "sql865.main-hosting.eu",
+  host: process.env.DB_HOST,
   type: "mysql",
-  username: "u848751863_school",
-  password: "@Jollyjoe123",
-  database: "u848751863_school",
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
   logging: false,
   synchronize: true,
   entities: [join(__dirname, "..", "Entities/*.ts")],
