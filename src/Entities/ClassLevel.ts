@@ -33,6 +33,13 @@ export const addLevel = async (name: string, classIds: any) => {
   return levelToInsert;
 };
 
+export const createLevel = async (name: string) => {
+  const level =  new ClassLevel();
+  level.name = name;
+  await level.save();
+  return level;
+};
+
 export const fetchLevels = async () => {
   const levels = await ClassLevel.find({
     order: {

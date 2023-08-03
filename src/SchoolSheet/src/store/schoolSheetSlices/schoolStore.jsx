@@ -210,13 +210,19 @@ export const getStudentCount = createAsyncThunk("/schoolSheet/studentCount", asy
 export const getSearchStudents = createAsyncThunk('/schoolSheet/searchStudent', async (searchData) => {
 	console.log('keyword', searchData)
 	const response = await axiosInstance.get(
-		`/search/students?page=${searchData?.searchPage}&keyword=${searchData?.searchInput}`
+		"/search/students?page=" + searchData?.searchPage + "&keyword=" + searchData?.searchInput
 	);
 	const { data } = response;
 	const { payload, status } = data;
 	if (status) return payload
 })
 
+export const getClassLevels = createAsyncThunk("/schoolSheet/classLevels", async () => {
+	const classLevels = await axiosInstance.get("/class-levels");
+	const { data } = classLevels;
+	const { status, payload } = data;
+	if (status) return payload;
+})
 
 export const schoolSheetSlices = createSlice({
 	name: "SchoolSheetSlices",
@@ -250,6 +256,7 @@ export const schoolSheetSlices = createSlice({
 		searchStudents: [],
 		token: null,
 		studentsCount: null,
+		classLevels: [],
 		loading: {
 			streams: false,
 			staffMembers: false,
@@ -280,6 +287,7 @@ export const schoolSheetSlices = createSlice({
 			token: false,
 			searchingStudents: false,
 			studentsCount: false,
+			classLevels: false,
 		},
 	},
 	extraReducers: {
@@ -580,8 +588,24 @@ export const schoolSheetSlices = createSlice({
 		[getStudentCount.fulfilled]: (state, action) => {
 			state.loading.studentsCount = false;
 			state.studentsCount = action.payload;
+		},
+		[getStudentCount.rejected]: (state) => {
+			state.loading.studentsCount = false;
+		},
+		[getClassLevels.pending]: (state) => {
+			state.loading.classLevels = true;
+		},
+		[getClassLevels.fulfilled]: (state, action) => {
+			state.loading.classLevels = false;
+			state.classLevels = action.payload;
+		},
+		[getClassLevels.rejected]: (state) => {
+			state.loading.classLevels = false;
 		}
 	},
 });
+
+
+
 
 export default schoolSheetSlices.reducer;
