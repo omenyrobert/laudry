@@ -181,7 +181,7 @@ const ClassLevels = () => {
               ) : null}
               {/* edit popup end */}
 
-              {classLevels.map((classLevel) => {
+              {classLevels?.map((classLevel) => {
                 return (
                   <ClassLevel key={classLevel.id} classLevel={classLevel} classes={classes} />
                 )
@@ -208,7 +208,7 @@ function ClassLevel({ classLevel, classes }) {
   const [isUpdating, setIsUpdating] = useState(false)
 
   useEffect(() => {
-    const options = classes.map((sclass) => {
+    const options = classes?.map((sclass) => {
       return {
         value: sclass.id,
         label: sclass.class,
@@ -253,7 +253,7 @@ function ClassLevel({ classLevel, classes }) {
 
   const updateClassLevel = async () => {
     // get ids of selected classes
-    const classIds = selectedClasses.map((sclass) => sclass.id)
+    const classIds = selectedClasses?.map((sclass) => sclass.id)
     const formData = {
       name: classLevelName,
       classes: classIds,
