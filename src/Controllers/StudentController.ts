@@ -102,6 +102,7 @@ export const addStudent = async (req: Request, res: Response) => {
       studentClass,
       feesCategory,
       studentStream,
+      studentLevel
     } = req.body;
 
     const student = await createStudent(
@@ -123,7 +124,8 @@ export const addStudent = async (req: Request, res: Response) => {
       studentHouse,
       studentClass,
       feesCategory,
-      studentStream
+      studentStream,
+      studentLevel
     );
 
     return res.json(customPayloadResponse(true, student)).status(200).end();
@@ -183,6 +185,7 @@ export const editStudent = async (req: Request, res: Response) => {
       studentClass,
       feesCategory,
       studentStream,
+      studentLevel
     } = req.body;
 
     const photo = req.file ? req.file.filename : "";
@@ -208,7 +211,8 @@ export const editStudent = async (req: Request, res: Response) => {
       studentHouse,
       studentClass,
       feesCategory,
-      studentStream
+      studentStream,
+      studentLevel
     );
 
     if (student) {
