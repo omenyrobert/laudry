@@ -176,7 +176,7 @@ function Subject() {
             <tbody>
               {/* edit popup start */}
               {editData ? (
-                <div className="absolute shadow-2xl rounded w-[30vw] bg-white">
+                <div className="absolute z-50 shadow-2xl rounded w-[30vw] bg-white">
                   <div className="flex justify-between p-2 bg-gray1 text-primary font-bold">
                     <div>Edit Subject</div>
                     <div>

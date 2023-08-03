@@ -150,7 +150,7 @@ function Grades() {
   ]
 
   return (
-    <div className=" bg-white shadow-lg rounded-md p-2 h-[90vh] overflow-y-auto">
+    <div className=" bg-white shadow-lg rounded-md p-5">
       <h5 className="text-xl font-medium text-secondary my-2">Grading</h5>
       <div className="w-full">
         <div className="flex justify-between -mt-5">

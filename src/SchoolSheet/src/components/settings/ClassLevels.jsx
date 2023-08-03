@@ -140,7 +140,7 @@ const ClassLevels = () => {
               <ButtonLoader />
             ) : (
               <div onClick={postStream}>
-                <Button value={'Add  Class Level'} />
+                <Button value={'Add '} />
               </div>
             )}
           </div>
