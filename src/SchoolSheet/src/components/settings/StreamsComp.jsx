@@ -125,7 +125,7 @@ const StreamsComp = () => {
 			<h5 className="text-xl font-medium text-secondary">Streams</h5>
 			<div className="w-full">
 				<div className="flex justify-between bg-white pl-4 shadow-lg">
-					<div className="w-1/2">
+					<div className="w-[65%]">
 						<InputField
 							type="text"
 							placeholder="Enter Stream name"
@@ -207,7 +207,7 @@ const StreamsComp = () => {
 					</table>
 				</div>
 
-				<Loader />
+				{streams.length === 0 ? <Loader /> : null}
 			</div>
 		</>
 	);
