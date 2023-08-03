@@ -139,7 +139,22 @@ function ReportCards(props) {
             value={query.search}
           />
         </div>
-        <div className="w-3/12 px-2">
+        <div className="w-2/12 px-2">
+          <div className="mt-5">
+            <Select
+              placeholder={"Filter By Class Level"}
+              name="class"
+              onChange={(e) => {
+                setQuery({
+                  ...query,
+                  class: e.value
+                });
+              }}
+              options={classes}
+            />
+          </div>
+        </div>
+        <div className="w-2/12 px-2">
           <div className="mt-5">
             <Select
               placeholder={"Filter By Class"}
@@ -154,7 +169,7 @@ function ReportCards(props) {
             />
           </div>
         </div>
-        <div className="w-3/12 px-2">
+        <div className="w-2/12 px-2">
           <div className="mt-5">
             <Select
               placeholder={"Filter By Stream"}
