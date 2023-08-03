@@ -31,6 +31,7 @@ import StockTypeRoutes from "./StockTypeRoutes";
 import StockLevelRoutes from "./StockLevelRoutes";
 import ReductionRoutes from "./ReductionRoutes";
 import SystemRoutes from "./SystemRoutes";
+import ClassLevelRoutes from "./ClassLevelRoutes";
 
 const router = Router();
 
@@ -67,6 +68,7 @@ export default (): Router => {
   StockLevelRoutes(router);
   ReductionRoutes(router);
   SystemRoutes(router);
+  ClassLevelRoutes(router);
 
   return router;
 };
