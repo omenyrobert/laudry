@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SmallCalendar from "../components/dashboard/SmallCalendar";
 // import Loader from "../components/Loader"
-import PatientTable2 from "../components/students/studentsTable2";
+import StudentsTable2 from "../components/students/studentsTable2";
 import "../assets/styles/main.css";
 import "../assets/styles/dashboard.css";
 import BarGraph from "../components/dashboard/BarGraph";
@@ -56,7 +56,10 @@ const Dashboard = () => {
 
 	function fetchStudetsWithLowBalance() {
 		axiosInstance.get("/students/balance/lessThan50").then((res) => {
-			setStudentsWithLowBalance(res?.data?.payload);
+			const { data } = res;
+			const { status, payload } = data;
+			// if (status)
+			status ? setStudentsWithLowBalance(payload) : setStudentsWithLowBalance([]);
 			//console.log(res.data.payload)
 		});
 	}
@@ -91,7 +94,7 @@ const Dashboard = () => {
 						<p className="text-xl text-primary font-semibold">
 							Students With Lowest Payments
 						</p>
-						<PatientTable2 students={studentsWithLowBalance} />
+						<StudentsTable2 students={studentsWithLowBalance} />
 					</div>
 				</div>
 				<div className="w-4/12 rounded-md shadow-md bg-white ml-2 overflow-y-auto h-[125vh] p-2">
