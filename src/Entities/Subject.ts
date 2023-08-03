@@ -7,6 +7,7 @@ import {
   JoinTable,
 } from "typeorm";
 import  {Staff} from "./Staff";
+import { ClassLevel } from "./ClassLevel";
 
 @Entity()
 export class Subject extends BaseEntity {
@@ -26,6 +27,19 @@ export class Subject extends BaseEntity {
   @JoinTable({ name: "staff_subjects" })
   staff: Staff[];
 
+  @ManyToMany(() => ClassLevel, {
+    cascade: true,
+    eager: true,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+    nullable: true,
+  })
+  @JoinTable({ name: "class_level_subjects" })
+  classLevels: ClassLevel[];
+
+
+
+
 
 }
 
@@ -38,8 +52,25 @@ export const getSubjects = async () => {
   return subjects;
 };
 
-export const createSubject = async (subject: string) => {
-  const subjectToInsert = await Subject.insert({ subject: subject });
+export const createSubject = async (
+  subject: string, 
+  classLevels: any[] | null | undefined = null
+) => {
+  const subjectToInsert = new Subject();
+  subjectToInsert.subject = subject;
+  let levels: ClassLevel[] = []
+  if (classLevels) {
+    classLevels.forEach(async (classLevel) => {
+      const level = await  ClassLevel.findOne({ where: { id: classLevel.id } });
+      if (level) {
+        levels.push(level);
+      }
+    });
+  }
+  subjectToInsert.classLevels = levels;
+  await subjectToInsert.save();
+
+
   return subjectToInsert;
 };
 
@@ -50,8 +81,28 @@ export const deleteSubject = async (id: number) => {
   }
 };
 
-export const updateSubject = async (id: number, subject: string) => {
-  const SubjectToUpdate = await Subject.update(id, { subject: subject });
+export const updateSubject = async (
+  id: number, 
+  subject: string,
+  classLevels: any[] | null | undefined = null
+) => {
+  const SubjectToUpdate = await Subject.findOne({ where: { id: id } });
+  if (SubjectToUpdate === null) {
+    throw new Error("Subject not found");
+  }
+  SubjectToUpdate.subject = subject;
+  let levels: ClassLevel[] = []
+  if (classLevels) {
+    classLevels.forEach(async (classLevel) => {
+      const level = await  ClassLevel.findOne({ where: { id: classLevel.id } });
+      if (level) {
+        levels.push(level);
+      }
+    });
+  }
+  SubjectToUpdate.classLevels = levels;
+  await SubjectToUpdate.save();
+
   return SubjectToUpdate;
 };
 
