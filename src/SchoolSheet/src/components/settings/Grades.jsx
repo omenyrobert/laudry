@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import axiosInstance from '../../axios-instance'
 import { getGrades } from '../../store/schoolSheetSlices/schoolStore'
 import ButtonLoader from '../ButtonLoader'
+import Select from 'react-select'
 
 function Grades() {
   const dispatch = useDispatch()
@@ -141,17 +142,18 @@ function Grades() {
 
   const { grades } = useSelector((state) => state.schoolStore)
 
-  return (
-    <div className=" bg-white pl-5 shadow-lg rounded-md p-3 h-auto">
-      <div className="flex justify-between">
-        <div>
-          <h5 className="text-xl font-medium text-secondary">Grading</h5>
-        </div>
-        <div></div>
-      </div>
+  const options = [
+    { label: 'Nursery', value: 'Nursery' },
+    { label: 'Primary', value: 'Primary' },
+    { label: 'Olv', value: 'ol' },
+    { label: 'Art', value: 'Art' },
+  ]
 
+  return (
+    <div className=" bg-white shadow-lg rounded-md p-2 h-[90vh] overflow-y-auto">
+      <h5 className="text-xl font-medium text-secondary my-2">Grading</h5>
       <div className="w-full">
-        <div className="flex justify-between">
+        <div className="flex justify-between -mt-5">
           <div className="w-1/4">
             <InputField
               type="number"
@@ -159,6 +161,12 @@ function Grades() {
               label="From"
               value={from}
               onChange={(e) => setFrom(e.target.value)}
+            />
+
+            <Select
+              placeholder={'Select class Levels'}
+              className="text-sm"
+              options={options}
             />
           </div>
           <div className="w-1/4 ml-2">
@@ -168,6 +176,12 @@ function Grades() {
               label="To"
               value={to}
               onChange={(e) => setTo(e.target.value)}
+            />
+
+            <Select
+              placeholder={'Select Subjects'}
+              className="text-sm"
+              options={options}
             />
           </div>
           <div className="w-1/4 ml-2">
@@ -187,19 +201,18 @@ function Grades() {
               value={points}
               onChange={(e) => setPoints(e.target.value)}
             />
-          </div>
-          <div className="mt-8 mr-5 w-1/4 ml-2">
-            <br />
-            {isPosting ? (
-              <ButtonLoader />
-            ) : (
-              <div onClick={postGrade}>
-                <Button value={'Add'} />
-              </div>
-            )}
+            <div className="w-20 ml-2">
+              {isPosting ? (
+                <ButtonLoader />
+              ) : (
+                <div onClick={postGrade}>
+                  <Button value={'Add'} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        <div className="h-[25vh] overflow-y-auto">
+        <div className="h-[65vh] mt-5 overflow-y-auto">
           <table className="w-[98%] table-auto">
             <thead style={{ backgroundColor: '#0d6dfd10' }}>
               <th className="p-2 text-primary text-sm text-left">From</th>
