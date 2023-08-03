@@ -44,6 +44,7 @@ const ClassLevels = () => {
       name: classLevel,
     }
     try {
+      setIsPosting(true)
       const response = await axiosInstance.post("/class-levels", formData)
       const { data } = response
       const { status, payload } = data
@@ -122,7 +123,7 @@ const ClassLevels = () => {
       <h5 className="text-xl font-medium text-secondary">Class Levels</h5>
       <div className="w-full">
         <div className="flex justify-between bg-white pl-4 shadow-lg">
-          <div className="w-[65%]">
+          <div className="w-[80%]">
             <InputField
               type="text"
               placeholder="Enter Class Level"
@@ -138,7 +139,7 @@ const ClassLevels = () => {
             ) : (
 
               <div onClick={postClassLevel}>
-                <Button value={'Add  Class Level'} />
+                <Button value={'Add'} />
               </div>
             )}
           </div>

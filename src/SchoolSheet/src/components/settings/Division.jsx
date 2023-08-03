@@ -8,7 +8,10 @@ import { BsPencilSquare } from 'react-icons/bs'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useDispatch, useSelector } from 'react-redux'
-import { getDivisions, getClassLevels } from '../../store/schoolSheetSlices/schoolStore'
+import {
+  getDivisions,
+  getClassLevels,
+} from '../../store/schoolSheetSlices/schoolStore'
 import axiosInstance from '../../axios-instance'
 import ButtonLoader from '../ButtonLoader'
 import Select from 'react-select'
@@ -33,10 +36,8 @@ function Division() {
       }
     })
 
-
     setClassLevelOpts(classLevelOpts)
   }, [classLevels])
-
 
   const closeEditData = () => {
     setEditData(false)
@@ -63,7 +64,7 @@ function Division() {
         points: 1,
         upperLimit: parseFloat(upperLimit),
         lowerLimit: parseFloat(lowerLimit),
-        classLevels: selectedClassLevel
+        classLevels: selectedClassLevel,
       }
 
       const response = await axiosInstance.post('/divisions', formData)
@@ -144,7 +145,7 @@ function Division() {
         id: divisionId,
         division: editDivision,
         points: parseFloat(editPoints),
-        classLevels: selectedEditClassLevel
+        classLevels: selectedEditClassLevel,
       }
       const subject = await axiosInstance.put('/divisions', formData)
       const { data } = subject
@@ -167,10 +168,8 @@ function Division() {
     }
   }
 
-
-
   return (
-    <div className=" h-[95vh] overflow-y-auto p-2">
+    <div className=" p-2">
       <div className="w-full">
         <div className="flex justify-between -mt-5">
           <div className="w-2/5 p-1">
@@ -219,18 +218,21 @@ function Division() {
             )}
           </div>
         </div>
-        <div className="h-[25vh] overflow-y-auto">
-          <table className=" w-[98%] table-auto">
+        <div className="h-[75vh] overflow-y-auto">
+          <table className=" w-[98%] table-auto relative">
             <thead style={{ backgroundColor: '#0d6dfd10' }}>
               <th className="p-2 text-primary text-sm text-left">Division</th>
               <th className="p-2 text-primary text-sm text-left">from</th>
               <th className="p-2 text-primary text-sm text-left">to</th>
+              <th className="p-2 text-primary text-sm text-left">
+                Class Levels
+              </th>
               <th className="p-2 text-primary text-sm text-left">Action</th>
             </thead>
             <tbody>
               {/* edit popup start */}
               {editData ? (
-                <div className="absolute shadow-2xl rounded flex w-[40vw] p-5 bg-white">
+                <div className="absolute shadow-2xl rounded flex w-full p-5 bg-white">
                   <div className="w-2/5 pr-2">
                     <InputField
                       type="text"
@@ -249,7 +251,7 @@ function Division() {
                       value={editPoints}
                     />
                   </div>
-                  <div className="w-2/5 pr-2">
+                  <div className="w-2/5 pr-2 mt-14">
                     <Select
                       placeholder={'Select class Levels'}
                       className="text-sm"
@@ -284,6 +286,17 @@ function Division() {
                     <td className="text-xs p-3 text-gray5">{div.division}</td>
                     <td className="text-xs p-3 text-gray5">{div.lowerLimit}</td>
                     <td className="text-xs p-3 text-gray5">{div.upperLimit}</td>
+                    <td className="text-xs p-3 text-gray5">
+                      <div className="flex">
+                        {div.classLevels.map((clas) => {
+                          return (
+                            <div className="p-1 bg-gray1 rounded border border-gray2 m-1">
+                              {clas.name}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </td>
                     <td className="text-xs p-3 text-gray5 flex">
                       <MdDeleteOutline
                         onClick={() => deleteDivision(div)}

@@ -8,7 +8,10 @@ import { BsPencilSquare } from 'react-icons/bs'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useDispatch, useSelector } from 'react-redux'
-import { getSubjects, getClassLevels } from '../../store/schoolSheetSlices/schoolStore'
+import {
+  getSubjects,
+  getClassLevels,
+} from '../../store/schoolSheetSlices/schoolStore'
 import axiosInstance from '../../axios-instance'
 import ButtonLoader from '../ButtonLoader'
 import Select from 'react-select'
@@ -34,15 +37,9 @@ function Subject() {
     setClassLevelOpts(classLevelOpts)
   }, [classLevels])
 
-
-
-
-
-
   const closeEditData = () => {
     setEditData(false)
   }
-
 
   const openEditData = (subject) => {
     setEditData(true)
@@ -55,10 +52,10 @@ function Subject() {
   const [subject, setSubject] = useState('')
   const postSubject = async () => {
     try {
-      setIsPosting(false)
+      setIsPosting(true)
       let formData = {
         subject: subject,
-        classLevels: selectedClassLevels
+        classLevels: selectedClassLevels,
       }
 
       const response = await axiosInstance.post('/subjects', formData)
@@ -126,7 +123,7 @@ function Subject() {
       let formData = {
         subjectId: subjectId,
         subject: editSubject,
-        classLevels: selectedEditClassLevels
+        classLevels: selectedEditClassLevels,
       }
       const subject = await axiosInstance.put('/subjects', formData)
       const { data } = subject
@@ -148,14 +145,12 @@ function Subject() {
     }
   }
 
-
-
   return (
     <div className=" bg-white pl-5 shadow-lg rounded-md h-auto p-3">
       <h5 className="text-xl font-medium ml-5 text-secondary">Subject</h5>
       <div className="w-full">
         <div className="flex justify-between ">
-          <div className="w-1/2">
+          <div className="w-2/3">
             <InputField
               type="text"
               placeholder="Enter Subject"
@@ -164,31 +159,20 @@ function Subject() {
               onChange={(e) => setSubject(e.target.value)}
             />
           </div>
-          <div className="w-1/2 ml-2 mt-14 ">
-            <Select
-              placeholder={'Select class Levels'}
-              className="text-sm"
-              options={classLevelOpts}
-              onChange={(e) => setSelectedClassLevels(e)}
-              value={selectedClassLevels}
-              isMulti
-            />
+          <div className="w-1/3 ml-2 mt-8 ">
+            <div className="w-[100px]">
+              <br />
+              {isposting ? (
+                <ButtonLoader />
+              ) : (
+                <div onClick={postSubject}>
+                  <Button value={'Add'} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        <div className="flex justify-between -mt-5">
-          <div></div>
 
-          <div className="w-[100px]">
-            <br />
-            {isposting ? (
-              <ButtonLoader />
-            ) : (
-              <div onClick={postSubject}>
-                <Button value={'Add'} />
-              </div>
-            )}
-          </div>
-        </div>
         <div className="h-[70vh] overflow-y-auto">
           <table className="mt-10 w-[98%] table-auto">
             <thead style={{ backgroundColor: '#0d6dfd10' }}>
@@ -246,17 +230,14 @@ function Subject() {
                     key={subject.id}
                   >
                     <td className="text-xs p-3 text-gray5">
-                      {subject.subject}{" "}
-                      {
-                        subject.classLevels?.map((classLevel) => {
-                          return (
-                            <span className="text-xs text-gray5">
-                              {classLevel.name},
-                            </span>
-                          )
-                        }
+                      {subject.subject}{' '}
+                      {subject.classLevels?.map((classLevel) => {
+                        return (
+                          <span className="text-xs text-gray5">
+                            {classLevel.name},
+                          </span>
                         )
-                      }
+                      })}
                     </td>
 
                     <td className="text-xs p-3 text-gray5 flex">
