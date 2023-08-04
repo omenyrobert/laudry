@@ -143,16 +143,16 @@ const Fees = () => {
       const isNameValid = fullName
         .toLowerCase()
         .includes(query.name.toLowerCase())
-      const className = student?.classes[0]?.class
+      const className = student?.classes[0]?.class || ''
       const isClassValid = className
         ? className.toLowerCase().includes(query.class.toLowerCase())
         : false
-      const StreamName = student?.streams[0]?.stream
+      const StreamName = student?.streams[0]?.stream || ''
       const isStreamValid = StreamName
         ? StreamName.toLowerCase().includes(query.stream.toLowerCase())
         : false
 
-      const classLevelName = student?.student_levels ? student?.student_levels[0]?.name : ''
+      const classLevelName = student?.student_levels?.length > 0 ? student?.student_levels[0]?.name : ''
       const isClassLevelValid = classLevelName
         ? classLevelName.toLowerCase().includes(query.classLevel.toLowerCase())
         : false

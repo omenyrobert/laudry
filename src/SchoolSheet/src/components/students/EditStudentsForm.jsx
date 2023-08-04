@@ -11,6 +11,8 @@ import axiosInstance from '../../axios-instance'
 import { useNavigate } from 'react-router-dom'
 import ButtonLoader from '../ButtonLoader'
 import { extraLatestArrayIndex } from '../../utils/global'
+import { useDispatch, useSelector } from 'react-redux'
+import { getClassLevels, getFeesStructure, getStreams } from "../../store/schoolSheetSlices/schoolStore"
 
 const EditStudentsForm = (props) => {
   const location = useLocation()
@@ -18,7 +20,6 @@ const EditStudentsForm = (props) => {
   const studentId = searchParams.get('student')
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-
   const [firstName, setFirstName] = useState('')
   const [middleName, setMiddleName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -44,6 +45,53 @@ const EditStudentsForm = (props) => {
   const [classes, setStudentClasses] = useState([])
   const [houses, setStudentHouses] = useState([])
   const [init] = useState(true)
+  const dispatch = useDispatch()
+  const {
+    classLevels,
+    fees,
+    streams
+  } = useSelector(state => state.schoolStore)
+  const [classLevelOpts, setClassLevelOpts] = useState([])
+  const [classLevel, setClassLevel] = useState(null)
+  const [stream, setStream] = useState(null)
+  const [feesData, setFeesData] = useState([])
+  const [streamOpts, setStreamOpts] = useState([])
+
+  useEffect(() => {
+    const opts = fees.map((fee) => ({
+      label: fee.name,
+      value: fee.name,
+      ...fee,
+    }))
+    setFeesData(opts)
+  }, [fees])
+
+  useEffect(() => {
+    const opts = streams.map((stream) => ({
+      label: stream.name,
+      value: stream.name,
+      ...stream,
+    }))
+    setStreamOpts(opts)
+  }, [streams])
+
+  useEffect(() => {
+    const opts = classLevels?.map((level) => ({
+      label: level.name,
+      value: level.name,
+      ...level,
+    }))
+    setClassLevelOpts(opts)
+  }, [classLevels])
+
+
+
+  useEffect(() => {
+    dispatch(getClassLevels())
+    dispatch(getFeesStructure())
+    dispatch(getStreams())
+  }, [dispatch])
+
 
   useEffect(() => {
     try {
@@ -178,6 +226,14 @@ const EditStudentsForm = (props) => {
         value: section?.section,
         ...section,
       })
+
+      if (payload.student_levels?.length > 0) {
+        setClassLevel({
+          label: payload.student_levels[0]?.name,
+          value: payload.student_levels[0]?.name,
+          ...payload.student_levels[0],
+        })
+      }
     })
   }
 
@@ -210,6 +266,7 @@ const EditStudentsForm = (props) => {
       studentHouse: studentHouse.id,
       studentClass: studentClass.id,
       feesCategory: feesCategory.id,
+      studentLevel: classLevel.id,
     }
 
     const formdata = new FormData()
@@ -426,15 +483,15 @@ const EditStudentsForm = (props) => {
           Academic Section
         </p>
 
-        {/* <div className="flex">
+        <div className="flex">
           <div className="w-1/4 p-2">
             <label className="text-gray4 mt-2">Class Level</label>
             <Select
-              placeholder={'Select Stream'}
-              defaultValue={studentStream}
+              placeholder={'Select Class Level'}
               name="studentStream"
-              onChange={setStudentStream}
-              options={streams}
+              options={classLevelOpts}
+              onChange={setClassLevel}
+              value={classLevel}
             />
           </div>
           <div className="w-1/4 p-2">
@@ -445,17 +502,17 @@ const EditStudentsForm = (props) => {
               defaultValue={studentClass}
               name="studentClass"
               onChange={setStudentClass}
-              options={studentClass}
+              options={classes}
             />
           </div>
           <div className="w-1/4 p-2">
             <label className="text-gray4 mt-2">Stream</label>
             <Select
               placeholder={'Select Stream'}
-              defaultValue={studentStream}
+              defaultValue={stream}
               name="studentStream"
               onChange={setStream}
-              options={streams}
+              options={streamOpts}
             />
           </div>
           <div className="w-1/4 p-2">
@@ -488,7 +545,7 @@ const EditStudentsForm = (props) => {
               defaultValue={studentSection}
               name="studentSection"
               onChange={setStudentSection}
-              options={sectionOptions}
+              options={sections}
             />
             <br />
           </div>
@@ -499,10 +556,10 @@ const EditStudentsForm = (props) => {
               defaultValue={studentHouse}
               name="studentHouse"
               onChange={setStudentHouse}
-              options={studentHouse}
+              options={houses}
             />
           </div>
-        </div> */}
+        </div>
       </div>
       <div className="flex justify-between p-2">
         <div></div>

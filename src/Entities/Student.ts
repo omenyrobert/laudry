@@ -286,7 +286,7 @@ const studentExtraData = async (
   //levels
 
   const studentLevelQuery = await queryRunner.manager.query(
-    `SELECT * student_levels WHERE studentId = '${studentId}`
+    `SELECT * FROM student_levels WHERE studentId = ${studentId}`
   );
 
   const levelIds = extractArrays(studentLevelQuery, "classLevelId", levelId);

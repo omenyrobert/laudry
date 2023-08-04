@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import '../../assets/styles/main.css';
 import { useDispatch, useSelector } from "react-redux";
 import ReportCardTemplate from '../../components/classes/ReportCardTemplate';
-import { getStudents, getStreams, getStudentCount } from "../../store/schoolSheetSlices/schoolStore"
+import { getStudents, getStreams, getStudentCount, getClassLevels } from "../../store/schoolSheetSlices/schoolStore"
 import InputField from "../../components/InputField";
 import { BsSearch } from "react-icons/bs";
 import Select from "react-select";
@@ -14,8 +14,18 @@ function ReportCards(props) {
   const [studentInfo, setStudentInfo] = useState();
   const [classes, setClasses] = useState([]);
   const [streamOpts, setStreamOpts] = useState([]);
+  const [classLevelOpts, setClassLevelOpts] = useState([]);
 
-  const { studentsCount, students, streams, loading } = useSelector((state) => state.schoolStore);
+  const { studentsCount, students, streams, loading, classLevels } = useSelector((state) => state.schoolStore);
+
+  useEffect(() => {
+    const _classLevels = classLevels?.map((res) => ({
+      value: res.name,
+      label: res.name,
+      ...res
+    }));
+    setClassLevelOpts(_classLevels);
+  }, [classLevels])
 
   useEffect(() => {
     const _streams = streams?.map((res) => ({
@@ -66,6 +76,7 @@ function ReportCards(props) {
     search: "",
     class: "",
     stream: "",
+    classLevel: "",
   });
   const [filteredStudents, setFilteredStudents] = useState([]);
 
@@ -73,7 +84,8 @@ function ReportCards(props) {
     if (
       query.search === "" &&
       query.class === "" &&
-      query.stream === ""
+      query.stream === "" &&
+      query.classLevel === ""
     ) {
       setFilteredStudents(students.students);
     } else {
@@ -81,6 +93,7 @@ function ReportCards(props) {
         const fullName = `${student.firstName} ${student.middleName} ${student.lastName}`;
         const studentClass = student?.classes[0] ? student?.classes[0]?.class : "";
         const stream = student?.streams[0] ? student?.streams[0]?.stream : "";
+        const classLevelName = student?.student_levels?.length > 0 ? student?.student_levels[0]?.name : ''
         const searchIsValid = fullName
           .toLowerCase()
           .includes(query.search.toLowerCase());
@@ -90,7 +103,11 @@ function ReportCards(props) {
         const streamIsValid = stream
           .toLowerCase()
           .includes(query.stream.toLowerCase());
-        return searchIsValid && classIsValid && streamIsValid;
+        const classLevelIsValid = classLevelName
+          .toLowerCase()
+          .includes(query.classLevel.toLowerCase());
+
+        return searchIsValid && classIsValid && streamIsValid && classLevelIsValid;
       }
       );
       setFilteredStudents(_filteredStudents);
@@ -106,6 +123,7 @@ function ReportCards(props) {
     dispatch(getStudents(page));
     dispatch(getStreams());
     dispatch(getStudentCount());
+    dispatch(getClassLevels());
   }, [dispatch, page]);
 
   const nextPage = () => {
@@ -143,14 +161,14 @@ function ReportCards(props) {
           <div className="mt-5">
             <Select
               placeholder={"Filter By Class Level"}
-              name="class"
+              name="classlevel"
               onChange={(e) => {
                 setQuery({
                   ...query,
-                  class: e.value
+                  classLevel: e.value
                 });
               }}
-              options={classes}
+              options={classLevelOpts}
             />
           </div>
         </div>
@@ -191,6 +209,7 @@ function ReportCards(props) {
               search: "",
               class: "",
               stream: "",
+              classLevel: "",
             })
           }}>
             <Button value={"Clear"} />

@@ -201,9 +201,11 @@ function Assessment() {
         ? studentStream.includes(query.stream)
         : false
 
-      const classLevelName = student?.student_levels ? student?.student_levels[0]?.name : ''
+      const classLevelName = student?.student_levels?.length > 0 ? student?.student_levels[0]?.name : ''
+      console.log(classLevelName, student.student_levels)
       const isClassLevelValid = classLevelName
-        ? classLevelName.toLowerCase().includes(query.classLevel.toLowerCase())
+        ? classLevelName.toLowerCase()
+          .includes(query.classLevel.toLowerCase())
         : false
 
       return isNameValid && isClass && isStream && isClassLevelValid
@@ -289,7 +291,7 @@ function Assessment() {
                 className="mt-6"
                 options={classLevelOpts}
                 onChange={(e) => {
-                  setQuery({ ...query, classLevel: e.class })
+                  setQuery({ ...query, classLevel: e.value })
                 }}
               />
               <br />
@@ -329,6 +331,7 @@ function Assessment() {
                 search: '',
                 studentClass: '',
                 stream: '',
+                classLevel: ''
               })
             }}
           >

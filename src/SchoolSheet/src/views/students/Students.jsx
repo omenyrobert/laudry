@@ -132,62 +132,45 @@ const Students = () => {
     if (search === false) {
       setSearch(true)
     }
+    /** @type any[] */
     const studentData = student
       ? students?.students
       : searchedStudents.length === 0
         ? searchingStudents?.students
         : searchedStudents
     const searchResults = studentData.filter((student) => {
-      let searchType = false
-      if (student.student_types.length > 0) {
-        searchType = student.student_types[0].type
-          .toLowerCase()
-          .includes(filters.type.toLowerCase())
-      }
+      const classLevelName = student?.student_levels?.length > 0 ? student?.student_levels[0]?.name : ''
+      const isClassLevelValid = classLevelName
+        ? classLevelName.includes(filters.classLevel)
+        : false;
 
-      let searchHouse = false
-      if (student.houses.length > 0) {
-        searchHouse = student.houses[0].house
-          .toLowerCase()
-          .includes(filters.house.toLowerCase())
-      }
+      const houseName = student?.houses?.length > 0 ? student.houses[0]?.house : "";
+      const isHouseValid = houseName
+        ? houseName.includes(filters.house)
+        : false;
 
-      let searchClass = false
-      if (student.classes.length > 0) {
-        searchClass = student.classes[0].class
-          .toLowerCase()
-          .includes(filters.studentClass.toLowerCase())
-      }
+      const studentTypeName = student?.student_types?.length > 0 ? student.student_types[0]?.type : "";
+      const isStudentTypeValid = studentTypeName
+        ? studentTypeName.includes(filters.type)
+        : false;
 
-      let searchSection = false
-      if (student.sections.length > 0) {
-        searchSection = student.sections[0].section
-          .toLowerCase()
-          .includes(filters.section.toLowerCase())
-      }
+      const className = student?.classes?.length > 0 ? student.classes[0]?.class : "";
+      const isClassValid = className
+        ? className.includes(filters.studentClass)
+        : false;
+
+      const sectionName = student?.sections?.length > 0 ? student.sections[0]?.section : "";
+      const isSectionValid = sectionName
+        ? sectionName.includes(filters.section)
+        : false;
+
+      const streamName = student?.streams?.length > 0 ? student.streams[0]?.stream : "";
+      const isStreamValid = streamName
+        ? streamName.includes(filters.stream)
+        : false;
 
 
-      let searchStream = false
-      if (student.streams.length > 0) {
-        searchStream = student.streams[0].stream
-          .toLowerCase()
-          .includes(filters.stream.toLowerCase())
-      }
-      let searchClassLevel = false
-      if (student.student_levels?.length > 0) {
-        searchClassLevel = student.student_levels[0].class_level
-          .toLowerCase()
-          .includes(filters.classLevel.toLowerCase())
-      }
-
-      return (
-        searchType &&
-        searchHouse &&
-        searchClass &&
-        searchSection &&
-        searchStream &&
-        searchClassLevel
-      )
+      return isClassLevelValid && isHouseValid && isStudentTypeValid && isClassValid && isSectionValid && isStreamValid
     })
     setSearchedStudents(searchResults)
   }
@@ -200,6 +183,7 @@ const Students = () => {
       studentClass: '',
       section: '',
       stream: '',
+      classLevel: '',
     })
     setSearch(false)
     navigate(0)

@@ -227,6 +227,7 @@ export const editStudent = async (req: Request, res: Response) => {
         .end();
     }
   } catch (error) {
+    console.log(error)
     return res
       .json(customPayloadResponse(false, "An Error Occurred"))
       .status(500)
