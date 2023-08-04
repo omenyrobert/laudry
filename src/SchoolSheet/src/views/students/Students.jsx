@@ -22,6 +22,7 @@ import {
   getStudentTypes,
   getSearchStudents,
   getStudentCount,
+  getClassLevels
 } from '../../store/schoolSheetSlices/schoolStore'
 import Loader from '../../components/Loader'
 
@@ -36,9 +37,11 @@ const Students = () => {
     studentClass: '',
     section: '',
     stream: '',
+    classLevel: '',
   })
   const [searchInput, setSearchInput] = useState('')
   const [searchedStudents, setSearchedStudents] = useState([])
+  const [classLevelOpts, setClassLevelOpts] = useState([])
   const {
     studentsCount,
     students,
@@ -49,7 +52,19 @@ const Students = () => {
     streams,
     classes,
     searchingStudents,
+    classLevels
   } = useSelector((state) => state.schoolStore)
+
+  useEffect(() => {
+    const ppts = classLevels.map((level) => {
+      return {
+        label: level.name,
+        value: level.name,
+        ...level
+      }
+    })
+    setClassLevelOpts(ppts)
+  }, [classLevels])
 
   const sectionOptions = []
   const studentTypeOptions = []
@@ -120,8 +135,8 @@ const Students = () => {
     const studentData = student
       ? students?.students
       : searchedStudents.length === 0
-      ? searchingStudents?.students
-      : searchedStudents
+        ? searchingStudents?.students
+        : searchedStudents
     const searchResults = studentData.filter((student) => {
       let searchType = false
       if (student.student_types.length > 0) {
@@ -129,7 +144,6 @@ const Students = () => {
           .toLowerCase()
           .includes(filters.type.toLowerCase())
       }
-      console.log('searchType', searchType)
 
       let searchHouse = false
       if (student.houses.length > 0) {
@@ -137,7 +151,6 @@ const Students = () => {
           .toLowerCase()
           .includes(filters.house.toLowerCase())
       }
-      console.log('searchHouse', searchHouse)
 
       let searchClass = false
       if (student.classes.length > 0) {
@@ -145,7 +158,6 @@ const Students = () => {
           .toLowerCase()
           .includes(filters.studentClass.toLowerCase())
       }
-      console.log('searchClass', searchClass)
 
       let searchSection = false
       if (student.sections.length > 0) {
@@ -154,7 +166,6 @@ const Students = () => {
           .includes(filters.section.toLowerCase())
       }
 
-      console.log('searchSection', searchSection)
 
       let searchStream = false
       if (student.streams.length > 0) {
@@ -162,14 +173,20 @@ const Students = () => {
           .toLowerCase()
           .includes(filters.stream.toLowerCase())
       }
-      console.log('searchStream', searchStream)
+      let searchClassLevel = false
+      if (student.student_levels?.length > 0) {
+        searchClassLevel = student.student_levels[0].class_level
+          .toLowerCase()
+          .includes(filters.classLevel.toLowerCase())
+      }
 
       return (
         searchType &&
         searchHouse &&
         searchClass &&
         searchSection &&
-        searchStream
+        searchStream &&
+        searchClassLevel
       )
     })
     setSearchedStudents(searchResults)
@@ -194,7 +211,8 @@ const Students = () => {
       filters.house === '' &&
       filters.studentClass === '' &&
       filters.section === '' &&
-      filters.stream === ''
+      filters.stream === '' &&
+      filters.classLevel === ''
     ) {
       setSearch(false)
     } else {
@@ -275,6 +293,7 @@ const Students = () => {
         dispatch(getStudents(page))
         dispatch(getStudentTypes())
         dispatch(getStudentCount())
+        dispatch(getClassLevels())
       } catch (error) {
         console.log(error)
         const MySwal = withReactContent(Swal)
@@ -370,9 +389,9 @@ const Students = () => {
                       placeholder={'Select class Levels'}
                       className="text-sm"
                       onChange={(opt) => {
-                        setFilters({ ...filters, studentClass: opt.value })
+                        setFilters({ ...filters, classLevel: opt.value })
                       }}
-                      options={classOptions}
+                      options={classLevelOpts}
                     />
                     <br />
                     <Select

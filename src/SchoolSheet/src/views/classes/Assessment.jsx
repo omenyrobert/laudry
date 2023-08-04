@@ -14,6 +14,7 @@ import {
   getClasses,
   getStreams,
   getStudentCount,
+  getClassLevels
 } from '../../store/schoolSheetSlices/schoolStore'
 import { assessSubjects } from '../../utils/assessment'
 import Select from 'react-select'
@@ -31,7 +32,7 @@ function Assessment() {
   const [stream, setStream] = useState('')
   const [classOptions, setClassOptions] = useState([])
   const [streamOpts, setStreamOpts] = useState([])
-  //const [loading, setLoading] = useState(true);
+  const [classLevelOpts, setClassLevelOpts] = useState([])
 
   const {
     examTypes,
@@ -43,6 +44,7 @@ function Assessment() {
     streams,
     studentsCount,
     loading,
+    classLevels
   } = useSelector((state) => state.schoolStore)
 
   useEffect(() => {
@@ -53,6 +55,16 @@ function Assessment() {
     }))
     setStreamOpts(_streams)
   }, [streams])
+
+
+  useEffect(() => {
+    const _classLevels = classLevels.map((res) => ({
+      value: res.name,
+      label: res.name,
+      ...res,
+    }))
+    setClassLevelOpts(_classLevels)
+  }, [classLevels])
 
   const openAdd = (student) => {
     const { __streams } = student
@@ -162,13 +174,15 @@ function Assessment() {
     search: '',
     studentClass: '',
     stream: '',
+    classLevel: ''
   })
 
   useEffect(() => {
     if (
       query.search === '' &&
       query.studentClass === '' &&
-      query.stream === ''
+      query.stream === '' &&
+      query.classLevel === ''
     ) {
       setSearchedData(studentData)
       return
@@ -186,7 +200,13 @@ function Assessment() {
       const isStream = studentStream
         ? studentStream.includes(query.stream)
         : false
-      return isNameValid && isClass && isStream
+
+      const classLevelName = student?.student_levels ? student?.student_levels[0]?.name : ''
+      const isClassLevelValid = classLevelName
+        ? classLevelName.toLowerCase().includes(query.classLevel.toLowerCase())
+        : false
+
+      return isNameValid && isClass && isStream && isClassLevelValid
     })
     setSearchedData(data)
   }, [query, studentData])
@@ -201,6 +221,7 @@ function Assessment() {
     dispatch(getClasses())
     dispatch(getStreams())
     dispatch(getStudentCount())
+    dispatch(getClassLevels())
   }, [dispatch, page])
 
   const nextPage = () => {
@@ -266,9 +287,9 @@ function Assessment() {
                 placeholder={'Select Class Level'}
                 name="class"
                 className="mt-6"
-                options={classOptions}
+                options={classLevelOpts}
                 onChange={(e) => {
-                  setQuery({ ...query, class: e.class })
+                  setQuery({ ...query, classLevel: e.class })
                 }}
               />
               <br />
@@ -428,15 +449,15 @@ export default Assessment
 /**
  * 
  * 
-												<div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 -mt-5 z-50">
+                        <div className="absolute subjects bg-white h-40 overflow-y-auto w-32 shadow-md -ml-5 -mt-5 z-50">
 
-													{subjects && subjects.length > 0 && subjects.map((subject) => {
-														return (
-															<div className="p-2 hover:bg-gray1"
-																onClick={() => openAdd({ ...student })}
-															>
-																{subject.subject}
-															</div>);
-													})}
-												</div>
+                          {subjects && subjects.length > 0 && subjects.map((subject) => {
+                            return (
+                              <div className="p-2 hover:bg-gray1"
+                                onClick={() => openAdd({ ...student })}
+                              >
+                                {subject.subject}
+                              </div>);
+                          })}
+                        </div>
  */

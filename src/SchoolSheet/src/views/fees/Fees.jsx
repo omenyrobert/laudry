@@ -10,6 +10,7 @@ import {
   getClasses,
   getStreams,
   getStudentCount,
+  getClassLevels,
 } from '../../store/schoolSheetSlices/schoolStore'
 import { extraLatestArrayIndex } from '../../utils/global'
 import Select from 'react-select'
@@ -18,12 +19,23 @@ import Loader from '../../components/Loader'
 
 const Fees = () => {
   const dispatch = useDispatch()
-  const { studentsCount, students, classes, streams, loading } = useSelector(
+  const { studentsCount, students, classes, streams, loading, classLevels } = useSelector(
     (state) => state.schoolStore,
   )
   const [classOpts, setClassOpts] = useState([])
   const { printContent } = usePrint()
   const [streamOpts, setStreamOpts] = useState([])
+  const [classLevelOpts, setClassLevelOpts] = useState([])
+
+
+  useEffect(() => {
+    const _classLevels = classLevels.map((res) => ({
+      value: res.name,
+      label: res.name,
+      ...res,
+    }))
+    setClassLevelOpts(_classLevels)
+  }, [classLevels])
 
   useEffect(() => {
     const _streams = streams.map((res) => ({
@@ -110,6 +122,7 @@ const Fees = () => {
       checkInput: null,
     },
     stream: '',
+    classLevel: '',
   })
   const [searchResults, setSearchResults] = useState([])
 
@@ -118,7 +131,8 @@ const Fees = () => {
       query.name === '' &&
       query.class === '' &&
       query.percentage.percent === null &&
-      query.stream === ''
+      query.stream === '' &&
+      query.classLevel === ''
     ) {
       setSearchResults(students.students)
       return
@@ -138,6 +152,12 @@ const Fees = () => {
         ? StreamName.toLowerCase().includes(query.stream.toLowerCase())
         : false
 
+      const classLevelName = student?.student_levels ? student?.student_levels[0]?.name : ''
+      const isClassLevelValid = classLevelName
+        ? classLevelName.toLowerCase().includes(query.classLevel.toLowerCase())
+        : false
+
+
       const percentage = handleFilter(student?.feesBalance, student?.fees)
       let isPercentageValid = false
       if (query.percentage.checkInput === 'below') {
@@ -147,7 +167,7 @@ const Fees = () => {
       } else {
         isPercentageValid = true
       }
-      return isNameValid && isClassValid && isPercentageValid && isStreamValid
+      return isNameValid && isClassValid && isPercentageValid && isStreamValid && isClassLevelValid
     })
     setSearchResults(results)
   }, [students, query])
@@ -279,9 +299,9 @@ const Fees = () => {
                 placeholder={'Select Class Level'}
                 name="class"
                 className="mt-6"
-                options={classOpts}
+                options={classLevelOpts}
                 onChange={(e) => {
-                  setQuery({ ...query, class: e.class })
+                  setQuery({ ...query, classLevel: e.value })
                 }}
               />
               <br />
@@ -328,6 +348,7 @@ const Fees = () => {
                   checkInput: null,
                 },
                 stream: '',
+                classLevel: '',
               })
             }}
             className="pl-2 pt-5"
