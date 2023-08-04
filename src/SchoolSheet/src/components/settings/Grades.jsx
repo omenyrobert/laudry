@@ -10,13 +10,47 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useDispatch, useSelector } from 'react-redux'
 import axiosInstance from '../../axios-instance'
-import { getGrades } from '../../store/schoolSheetSlices/schoolStore'
+import { getGrades, getSubjects, getClassLevels } from '../../store/schoolSheetSlices/schoolStore'
 import ButtonLoader from '../ButtonLoader'
 import Select from 'react-select'
 
 function Grades() {
   const dispatch = useDispatch()
   const [editData, setEditData] = useState(false)
+  const { grades, subjects, classLevels } = useSelector((state) => state.schoolStore)
+  const [classLevelOpts, setClassLevelOpts] = useState([])
+  const [subjectOpts, setSubjectOpts] = useState([])
+  const [selectedClassLevels, setSelectedClassLevels] = useState([])
+  const [selectedSubjects, setSelectedSubjects] = useState([])
+
+  useEffect(() => {
+    const classLevelOptions = classLevels.map((classLevel) => {
+      return {
+        value: classLevel.id,
+        label: classLevel.name,
+        ...classLevel,
+      }
+    })
+    setClassLevelOpts(classLevelOptions)
+  }, [classLevels])
+
+  useEffect(() => {
+    const subjectOptions = subjects.map((subject) => {
+      return {
+        value: subject.id,
+        label: subject.subject,
+        ...subject,
+      }
+    })
+    setSubjectOpts(subjectOptions)
+  }, [subjects])
+
+
+  useEffect(() => {
+    dispatch(getGrades())
+    dispatch(getSubjects())
+    dispatch(getClassLevels())
+  }, [dispatch])
 
   const closeEditData = () => {
     setEditData(false)
@@ -36,6 +70,8 @@ function Grades() {
         to: to,
         grade: grade,
         points,
+        classLevels: selectedClassLevels,
+        subjects: selectedSubjects,
       }
       const response = await axiosInstance.post('/grades', formData)
       const { data } = response
@@ -46,6 +82,8 @@ function Grades() {
         setTo('')
         setGrade('')
         setPoints('')
+        setSelectedClassLevels([])
+        setSelectedSubjects([])
         setIsPosting(false)
         const MySwal = withReactContent(Swal)
         MySwal.fire({
@@ -60,10 +98,7 @@ function Grades() {
     }
   }
 
-  // fetching grade
-  useEffect(() => {
-    dispatch(getGrades())
-  }, [dispatch])
+
 
   //deleting grade
   const deleteGrade = (grade) => {
@@ -102,6 +137,8 @@ function Grades() {
   const [fromEdit, setFromEdit] = useState('')
   const [gradeId, setGradeId] = useState('')
   const [pointsEdit, setPointsEdit] = useState('')
+  const [selectedEditClassLevels, setSelectedEditClassLevels] = useState([])
+  const [selectedEditSubjects, setSelectedEditSubjects] = useState([])
 
   const openEditData = (grade) => {
     setEditData(true)
@@ -110,6 +147,25 @@ function Grades() {
     setFromEdit(grade.from)
     setGradeId(grade.id)
     setPointsEdit(grade.points)
+    setSelectedEditClassLevels(
+      grade.classLevels.map((classLevel) => {
+        return {
+          value: classLevel.id,
+          label: classLevel.name,
+          ...classLevel,
+        }
+      })
+    )
+    setSelectedEditSubjects(
+      grade.subjects.map((subject) => {
+        return {
+          value: subject.id,
+          label: subject.subject,
+          ...subject,
+        }
+      }
+      )
+    )
   }
   const updateGrade = async () => {
     try {
@@ -118,6 +174,8 @@ function Grades() {
         to: toEdit,
         grade: gradeEdit,
         points: pointsEdit,
+        classLevels: selectedEditClassLevels,
+        subjects: selectedEditSubjects,
       }
       const grade = await axiosInstance.put(`/grades/${gradeId}`, formData)
       const { data } = grade
@@ -127,6 +185,9 @@ function Grades() {
         setGradeEdit('')
         setToEdit('')
         setFromEdit('')
+        setPointsEdit('')
+        setSelectedEditClassLevels([])
+        setSelectedEditSubjects([])
         const MySwal = withReactContent(Swal)
         MySwal.fire({
           icon: 'success',
@@ -140,14 +201,7 @@ function Grades() {
     }
   }
 
-  const { grades } = useSelector((state) => state.schoolStore)
 
-  const options = [
-    { label: 'Nursery', value: 'Nursery' },
-    { label: 'Primary', value: 'Primary' },
-    { label: 'Olv', value: 'ol' },
-    { label: 'Art', value: 'Art' },
-  ]
 
   return (
     <div className=" bg-white shadow-lg rounded-md p-5">
@@ -166,8 +220,12 @@ function Grades() {
             <Select
               placeholder={'Select class Levels'}
               className="text-sm"
-              options={options}
+              options={classLevelOpts}
+              onChange={(e) => setSelectedClassLevels(e)}
+              value={selectedClassLevels}
+              isMulti
             />
+
           </div>
           <div className="w-1/4 ml-2">
             <InputField
@@ -181,7 +239,10 @@ function Grades() {
             <Select
               placeholder={'Select Subjects'}
               className="text-sm"
-              options={options}
+              options={subjectOpts}
+              onChange={(e) => setSelectedSubjects(e)}
+              value={selectedSubjects}
+              isMulti
             />
           </div>
           <div className="w-1/4 ml-2">
@@ -259,6 +320,27 @@ function Grades() {
                       label="Points"
                       value={pointsEdit}
                       onChange={(e) => setPointsEdit(e.target.value)}
+                    />
+                  </div>
+                  <br />
+                  <div className="w-3/12 pr-2">
+                    <Select
+                      placeholder={'Select class Levels'}
+                      className="text-sm"
+                      options={classLevelOpts}
+                      onChange={(e) => setSelectedEditClassLevels(e)}
+                      value={selectedEditClassLevels}
+                      isMulti
+                    />
+                  </div>
+                  <div className="w-3/12 pr-2">
+                    <Select
+                      placeholder={'Select Subjects'}
+                      className="text-sm"
+                      options={subjectOpts}
+                      onChange={(e) => setSelectedEditSubjects(e)}
+                      value={selectedEditSubjects}
+                      isMulti
                     />
                   </div>
                   <div className="flex justify-between w-3/12 mt-[55px]">
