@@ -10,14 +10,20 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useDispatch, useSelector } from 'react-redux'
 import axiosInstance from '../../axios-instance'
-import { getGrades, getSubjects, getClassLevels } from '../../store/schoolSheetSlices/schoolStore'
+import {
+  getGrades,
+  getSubjects,
+  getClassLevels,
+} from '../../store/schoolSheetSlices/schoolStore'
 import ButtonLoader from '../ButtonLoader'
 import Select from 'react-select'
 
 function Grades() {
   const dispatch = useDispatch()
   const [editData, setEditData] = useState(false)
-  const { grades, subjects, classLevels } = useSelector((state) => state.schoolStore)
+  const { grades, subjects, classLevels } = useSelector(
+    (state) => state.schoolStore,
+  )
   const [classLevelOpts, setClassLevelOpts] = useState([])
   const [subjectOpts, setSubjectOpts] = useState([])
   const [selectedClassLevels, setSelectedClassLevels] = useState([])
@@ -44,7 +50,6 @@ function Grades() {
     })
     setSubjectOpts(subjectOptions)
   }, [subjects])
-
 
   useEffect(() => {
     dispatch(getGrades())
@@ -97,8 +102,6 @@ function Grades() {
       setIsPosting(false)
     }
   }
-
-
 
   //deleting grade
   const deleteGrade = (grade) => {
@@ -154,7 +157,7 @@ function Grades() {
           label: classLevel.name,
           ...classLevel,
         }
-      })
+      }),
     )
     setSelectedEditSubjects(
       grade.subjects.map((subject) => {
@@ -163,12 +166,14 @@ function Grades() {
           label: subject.subject,
           ...subject,
         }
-      }
-      )
+      }),
     )
   }
+  const [updating, setUpdating] = useState(false)
+
   const updateGrade = async () => {
     try {
+      setUpdating(true)
       let formData = {
         from: fromEdit,
         to: toEdit,
@@ -195,13 +200,14 @@ function Grades() {
           timer: 500,
         })
         closeEditData()
+        setUpdating(false)
       }
     } catch (error) {
       console.log(error)
+      setUpdating(false)
     }
+    setUpdating(false)
   }
-
-
 
   return (
     <div className=" bg-white shadow-lg rounded-md p-5">
@@ -225,7 +231,6 @@ function Grades() {
               value={selectedClassLevels}
               isMulti
             />
-
           </div>
           <div className="w-1/4 ml-2">
             <InputField
@@ -273,11 +278,16 @@ function Grades() {
             </div>
           </div>
         </div>
-        <div className="h-[65vh] mt-5 overflow-y-auto">
+        <div className="h-[65vh] mt-5 overflow-y-auto relative">
           <table className="w-[98%] table-auto">
             <thead style={{ backgroundColor: '#0d6dfd10' }}>
+              <th className="p-2 text-primary text-sm text-left">
+                Class Level
+              </th>
+              <th className="p-2 text-primary text-sm text-left">Subjects</th>
               <th className="p-2 text-primary text-sm text-left">From</th>
               <th className="p-2 text-primary text-sm text-left">To</th>
+
               <th className="p-2 text-primary text-sm text-left">Grade</th>
               <th className="p-2 text-primary text-sm text-left">Points</th>
               <th className="p-2 text-primary text-sm text-left">Action</th>
@@ -285,75 +295,91 @@ function Grades() {
             <tbody>
               {/* edit popup start */}
               {editData ? (
-                <div className="absolute shadow-2xl rounded flex w-[50vw] md:w-[45vw] p-5 bg-white">
-                  <div className="w-3/12 pr-2">
-                    <InputField
-                      type="number"
-                      placeholder="Enter starting marks"
-                      label="From"
-                      value={fromEdit}
-                      onChange={(e) => setFromEdit(e.target.value)}
-                    />
-                  </div>
-                  <div className="w-3/12 pr-2">
-                    <InputField
-                      type="number"
-                      placeholder="Enter end marks"
-                      label="To"
-                      value={toEdit}
-                      onChange={(e) => setToEdit(e.target.value)}
-                    />
-                  </div>
-                  <div className="w-3/12 pr-2">
-                    <InputField
-                      type="text"
-                      placeholder="Enter grade"
-                      label="Grade"
-                      value={gradeEdit}
-                      onChange={(e) => setGradeEdit(e.target.value)}
-                    />
-                  </div>
-                  <div className="w-3/12 pr-2">
-                    <InputField
-                      type="text"
-                      placeholder="Enter points"
-                      label="Points"
-                      value={pointsEdit}
-                      onChange={(e) => setPointsEdit(e.target.value)}
-                    />
-                  </div>
-                  <br />
-                  <div className="w-3/12 pr-2">
-                    <Select
-                      placeholder={'Select class Levels'}
-                      className="text-sm"
-                      options={classLevelOpts}
-                      onChange={(e) => setSelectedEditClassLevels(e)}
-                      value={selectedEditClassLevels}
-                      isMulti
-                    />
-                  </div>
-                  <div className="w-3/12 pr-2">
-                    <Select
-                      placeholder={'Select Subjects'}
-                      className="text-sm"
-                      options={subjectOpts}
-                      onChange={(e) => setSelectedEditSubjects(e)}
-                      value={selectedEditSubjects}
-                      isMulti
-                    />
-                  </div>
-                  <div className="flex justify-between w-3/12 mt-[55px]">
-                    <div onClick={updateGrade}>
-                      <ButtonSecondary value={'Update'} />
-                    </div>
+                <div className="absolute shadow-2xl rounded  w-full bg-white">
+                  <div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
+                    <div>Edit Grade</div>
                     <div>
-                      <p
-                        className="text-black text-lg cursor-pointer"
-                        onClick={closeEditData}
-                      >
+                      <p className="cursor-pointer" onClick={closeEditData}>
                         X
                       </p>
+                    </div>
+                  </div>
+                  <div className="flex p-3">
+                    <div className="w-1/4 pr-2">
+                      <InputField
+                        type="number"
+                        placeholder="Enter starting marks"
+                        label="From"
+                        value={fromEdit}
+                        onChange={(e) => setFromEdit(e.target.value)}
+                      />
+                    </div>
+                    <div className="w-1/4 pr-2">
+                      <InputField
+                        type="number"
+                        placeholder="Enter end marks"
+                        label="To"
+                        value={toEdit}
+                        onChange={(e) => setToEdit(e.target.value)}
+                      />
+                    </div>
+                    <div className="w-1/4 pr-2">
+                      <InputField
+                        type="text"
+                        placeholder="Enter grade"
+                        label="Grade"
+                        value={gradeEdit}
+                        onChange={(e) => setGradeEdit(e.target.value)}
+                      />
+                    </div>
+                    <div className="w-1/4 pr-2">
+                      <InputField
+                        type="text"
+                        placeholder="Enter points"
+                        label="Points"
+                        value={pointsEdit}
+                        onChange={(e) => setPointsEdit(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex p-3">
+                    <div className="w-4/12 pr-2">
+                      <Select
+                        placeholder={'Select class Levels'}
+                        className="text-sm"
+                        options={classLevelOpts}
+                        onChange={(e) => setSelectedEditClassLevels(e)}
+                        value={selectedEditClassLevels}
+                        isMulti
+                      />
+                    </div>
+                    <div className="w-4/12 pr-2">
+                      <Select
+                        placeholder={'Select Subjects'}
+                        className="text-sm"
+                        options={subjectOpts}
+                        onChange={(e) => setSelectedEditSubjects(e)}
+                        value={selectedEditSubjects}
+                        isMulti
+                      />
+                    </div>
+                    <div className="w-2/12"></div>
+                    <div className="w-2/12"></div>
+                  </div>
+                  <div className="flex justify-between p-3 bg-gray1 text-primary font-semibold">
+                    <div>
+                      <div onClick={closeEditData}>
+                        <ButtonSecondary value={'Update'} />
+                      </div>
+                    </div>
+                    <div className="w-32">
+                      {updating ? (
+                        <ButtonLoader />
+                      ) : (
+                        <div onClick={updateGrade}>
+                          <Button value={'Update'} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -366,6 +392,28 @@ function Grades() {
                     className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
                     key={grade.id}
                   >
+                    <td className="text-xs p-3 text-gray5  ">
+                      <div className="max-w-56 overflow-x-auto flex">
+                        {grade.classLevels.map((classl) => {
+                          return (
+                            <div className="bg-gray1 shadow border border-gray2 rounded p-1 m-1">
+                              {classl.name}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </td>
+                    <td className="text-xs p-3 text-gray5">
+                      <div className="max-w-56 overflow-x-auto flex">
+                        {grade.subjects.map((subject) => {
+                          return (
+                            <div className="bg-gray1 shadow border border-gray2 rounded p-1 m-1">
+                              {subject.subject}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </td>
                     <td className="text-xs p-3 text-gray5">{grade.from}</td>
                     <td className="text-xs p-3 text-gray5">{grade.to}</td>
                     <td className="text-xs p-3 text-gray5">{grade.grade}</td>
