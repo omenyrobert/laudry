@@ -219,20 +219,17 @@ function ReportCards(props) {
             </th>
 
             <th className='p-2 text-primary text-sm text-left'>
-              Gender
+              Residence
             </th>
             <th className='p-2 text-primary text-sm text-left'>
-              Student Type
+              Class Level
             </th>
-            <th className='p-2 text-primary text-sm text-left'>
-              Parents
-            </th>
-            <th className='p-2 text-primary text-sm text-left'>
-              Contacts
-            </th>
-
+           
             <th className='p-2 text-primary text-sm text-left'>
               Class
+            </th>
+            <th className='p-2 text-primary text-sm text-left'>
+              Stream
             </th>
 
             <th className='p-2 text-primary text-sm text-left'>
@@ -262,22 +259,20 @@ function ReportCards(props) {
                         {student.lastName}
                       </p>
                       <p className='text-red text-xs -mt-3 ml-3'>
-                        {student?.nin}
+                        00{student?.id}
                       </p>
                     </div>
                   </td>
 
                   <td className='text-xs p-3 text-gray5'>
-                    {student.gender}
+                    {student.residence}
                   </td>
-                  <td className='text-xs p-3 text-gray5'>
-                    {studentType?.type}
+                  <td className="text-xs p-3 text-gray5">
+                    {student.student_levels[0]?.name}
                   </td>
-                  <td className='text-xs p-3 text-gray5'>
-                    {student.fatherContact}
-                  </td>
-                  <td className='text-xs p-3 text-gray5'>
-                    {student.motherContact}
+                
+                  <td className="text-xs p-3 text-gray5">
+                    {student.streams[0]?.stream}
                   </td>
 
                   <td className='text-xs p-3 text-gray5'>
