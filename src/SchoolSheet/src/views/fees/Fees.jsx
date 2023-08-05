@@ -27,6 +27,10 @@ const Fees = () => {
   const [streamOpts, setStreamOpts] = useState([])
   const [classLevelOpts, setClassLevelOpts] = useState([])
 
+  useEffect(() => {
+    dispatch(getClassLevels())
+  }, [dispatch])
+
 
   useEffect(() => {
     const _classLevels = classLevels.map((res) => ({
@@ -334,23 +338,23 @@ const Fees = () => {
           ) : null}
         </div>
 
-        <div className="w-[10%] mt-6 ml-3">
+        <div onClick={() => {
+          setQuery({
+            class: '',
+            name: '',
+            percentage: {
+              percent: null,
+              checkInput: null,
+            },
+            stream: '',
+            classLevel: '',
+          })
+        }} className="w-[10%] mt-6 ml-3">
           <Button value={'Clear'} />
         </div>
         <div className="w-[10%]">
           <div
-            onClick={() => {
-              setQuery({
-                class: '',
-                name: '',
-                percentage: {
-                  percent: null,
-                  checkInput: null,
-                },
-                stream: '',
-                classLevel: '',
-              })
-            }}
+
             className="pl-2 pt-5"
           ></div>
           <div
