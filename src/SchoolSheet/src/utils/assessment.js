@@ -1,5 +1,16 @@
-export function assignGrade(finalMark, gradesArray) {
-  const gradeObj = gradesArray.find(obj => finalMark >= obj.from && finalMark <= obj.to);
+export function assignGrade(finalMark, gradesArray, subjectName) {
+  const gradeObj = gradesArray.find(grade => {
+    const { from, to } = grade;
+    /** @type any[] */
+    const subjects = grade.subjects;
+    const isSubject = subjects.find((subject) => {
+      return subject.subject === subjectName;
+    })
+    if (isSubject) {
+      return finalMark >= from && finalMark <= to;
+    }
+    return false;
+  });
   return gradeObj ? gradeObj : "No Grade Found";
 }
 

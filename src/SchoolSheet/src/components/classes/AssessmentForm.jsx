@@ -72,11 +72,11 @@ function AssessmentForm({
 	};
 	const [asessing, setAssessing] = useState(false);
 	const postAssessment = async (e) => {
-		setAssessing(true);
+		//setAssessing(true);
 		e.preventDefault();
 		const _finalMark = (formData.mark / 100) * selectedExam.percent;
 
-		const gradeObj = assignGrade(formData.mark, grades);
+		const gradeObj = assignGrade(formData.mark, grades, selectedSubject);
 
 		try {
 			let body = {

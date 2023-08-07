@@ -8,9 +8,9 @@
     "client": "npm run start --prefix ./src/SchoolSheet",
     "client:vite": "npm run start:vite --prefix ./src/SchoolSheet",
     "client:install": "npm install --prefix ./src/SchoolSheet",
-    "build": "tsc --build",
+    "build:node": "tsc --build",
     "start": "ts-node ./src/index.ts",
-    "build:client": "npm run build --prefix ./src/SchoolSheet",
+    "build": "npm install --prefix ./src/SchoolSheet && npm run build --prefix ./src/SchoolSheet",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "electron": "electron .",
     "token": "ts-node ./src/token.ts"
