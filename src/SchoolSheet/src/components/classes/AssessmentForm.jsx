@@ -77,6 +77,8 @@ function AssessmentForm({
 		const _finalMark = (formData.mark / 100) * selectedExam.percent;
 
 		const gradeObj = assignGrade(formData.mark, grades, selectedSubject);
+		console.log(gradeObj)
+
 
 		try {
 			let body = {

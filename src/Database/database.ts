@@ -24,7 +24,6 @@ if (process.versions?.electron) {
 });
 }
 
-
 // host: "sql865.main-hosting.eu",
 // type: "mysql",
 // username: "u848751863_school",

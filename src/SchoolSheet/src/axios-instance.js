@@ -1,10 +1,10 @@
 import axios from "axios";
 
 
-const HOST_URL = "https://schoolsoftapp-3432013afef6.herokuapp.com";
+//const HOST_URL = "https://schoolsoftapp-3432013afef6.herokuapp.com";
 //const HOST_URL = "https://school-app-gvvr.onrender.com";
 
-//const HOST_URL = "http://localhost:3001";
+const HOST_URL = "http://localhost:3001";
 
 
 export const UPLOADS_URL = HOST_URL + "/useruploads/";
