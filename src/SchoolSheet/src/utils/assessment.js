@@ -1,5 +1,16 @@
-export function assignGrade(finalMark, gradesArray) {
-  const gradeObj = gradesArray.find(obj => finalMark >= obj.from && finalMark <= obj.to);
+export function assignGrade(finalMark, gradesArray, subjectName) {
+  const gradeObj = gradesArray.find(grade => {
+    const { from, to } = grade;
+    /** @type any[] */
+    const subjects = grade.subjects;
+    const isSubject = subjects.find((subject) => {
+      return subject.subject === subjectName;
+    })
+    if (isSubject) {
+      return finalMark >= from && finalMark <= to;
+    }
+    return false;
+  });
   return gradeObj ? gradeObj : "No Grade Found";
 }
 
@@ -40,8 +51,12 @@ export function assessSubjects(data) {
   return Object.values(groupedData);
 }
 
-export const findDivision = (points, divisions) => divisions.find((division, index, arr) => {
-  const max = division.upperLimit;
-  const min = division.lowerLimit;
-  return points >= min && points <= max;
-});
+export const findDivision = (points, divisions) => {
+  console.log(points, divisions)
+  return divisions.find((division, index, arr) => {
+    console.log(points, division, divisions)
+    const max = division.upperLimit;
+    const min = division.lowerLimit;
+    return points >= min && points <= max;
+  });
+}

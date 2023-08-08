@@ -90,12 +90,6 @@ export const addAssessment = async (req: Request, res: Response) => {
           .end();
     }
 
-    if (!grade) {
-      return res
-        .json(customPayloadResponse(false, "Grade Required"))
-        .status(200)
-        .end();
-    }
 
     if (!examPercent) {
       return res

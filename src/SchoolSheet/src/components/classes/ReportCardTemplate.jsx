@@ -58,10 +58,13 @@ function ReportCardTemplate({ closeCard, studentData }) {
 			const data = assessmentsByTerm.filter((assessment) => {
 				return assessment.studentId === studentData.id.toString();
 			});
+			console.log(data)
 			const _data = assessSubjects(data);
+			console.log(_data)
 			const pointsData = _data.map(
-				(dt) => assignGrade(dt.markGrade, grades).points
+				(dt) => assignGrade(dt.markGrade, grades, dt.subject).points
 			);
+			console.log(pointsData)
 			const sumOfPoints = pointsData.reduce(
 				(accumulator, currentValue) => accumulator + currentValue,
 				0
