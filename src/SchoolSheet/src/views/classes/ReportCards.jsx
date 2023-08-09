@@ -87,7 +87,7 @@ function ReportCards(props) {
       query.stream === "" &&
       query.classLevel === ""
     ) {
-      setFilteredStudents(students.students);
+      setFilteredStudents(students?.students);
     } else {
       const _filteredStudents = students?.students?.filter((student) => {
         const fullName = `${student.firstName} ${student.middleName} ${student.lastName}`;
@@ -228,7 +228,7 @@ function ReportCards(props) {
       ) : null}
       <div className="h-[70vh] overflow-y-auto">
         <div className="flex justify-center mt-2">
-          {loading.students || loading.searchStudents ? <div className="loader"></div> : null}
+          {loading?.students || loading?.searchStudents ? <div className="loader"></div> : null}
         </div>
 
         <table className='mt-4 w-full table-auto'>
@@ -243,7 +243,7 @@ function ReportCards(props) {
             <th className='p-2 text-primary text-sm text-left'>
               Class Level
             </th>
-           
+
             <th className='p-2 text-primary text-sm text-left'>
               Class
             </th>
@@ -256,7 +256,7 @@ function ReportCards(props) {
             </th>
           </thead>
           <tbody>
-            {students.students ? filteredStudents?.map((student) => {
+            {students?.students ? filteredStudents?.map((student) => {
               const studentType = student?.student_types[0];
 
               const _class = student?.classes[0]
@@ -289,7 +289,7 @@ function ReportCards(props) {
                   <td className="text-xs p-3 text-gray5">
                     {student.student_levels[0]?.name}
                   </td>
-                
+
                   <td className="text-xs p-3 text-gray5">
                     {student.streams[0]?.stream}
                   </td>
