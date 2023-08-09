@@ -1,6 +1,6 @@
 import { decrypt, encrypt } from "./Helpers/Hash";
-import * as readline from 'node:readline/promises';
-import { stdin as input, stdout as output } from 'node:process';
+import * as readline from "readline/promises";
+import { stdin as input, stdout as output } from 'process';
 import chalk from "chalk"
 
 const log = console.log;
