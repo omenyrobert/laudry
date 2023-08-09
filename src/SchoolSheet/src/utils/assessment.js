@@ -52,11 +52,11 @@ export function assessSubjects(data) {
 }
 
 export const findDivision = (points, divisions) => {
-  console.log(points, divisions)
   return divisions.find((division, index, arr) => {
-    console.log(points, division, divisions)
+    console.log("division", division)
     const max = division.upperLimit;
     const min = division.lowerLimit;
+    console.log(points >= min && points <= max)
     return points >= min && points <= max;
   });
 }

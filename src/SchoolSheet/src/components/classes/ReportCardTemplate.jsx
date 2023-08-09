@@ -60,15 +60,20 @@ function ReportCardTemplate({ closeCard, studentData }) {
 			});
 			console.log(data)
 			const _data = assessSubjects(data);
-			console.log(_data)
+			console.log("Assesed subects", _data)
 			const pointsData = _data.map(
 				(dt) => assignGrade(dt.markGrade, grades, dt.subject).points
 			);
-			console.log(pointsData)
-			const sumOfPoints = pointsData.reduce(
+			// remove undefined and and null
+			const filteredPoints = pointsData.filter((point) => {
+				return point !== undefined && point !== null;
+			});
+			console.log("points data", pointsData)
+			const sumOfPoints = filteredPoints.reduce(
 				(accumulator, currentValue) => accumulator + currentValue,
 				0
 			);
+			console.log("sum of points", sumOfPoints)
 			setPoints(sumOfPoints);
 			setAssessData(_data);
 		}
@@ -259,7 +264,8 @@ function ReportCardTemplate({ closeCard, studentData }) {
 						{/* {assessData} */}
 						{assessData.map((data) => {
 							const { examTypes } = data;
-							const gradeObj = assignGrade(data.markGrade, grades);
+							const gradeObj = assignGrade(data.markGrade, grades, data.subject);
+							console.log("gradeObj", gradeObj, data.subject)
 							return (
 								<div className=" flex text-sm border-b text-gray5 border-gray1 mx-2 px-2 cursor-pointer">
 									<div className="w-1/4 p-2">{data.subject}</div>
@@ -270,7 +276,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 									))}
 									<div className="w-1/4 flex  ">
 										<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div>{" "}
-										<div className="p-1">{gradeObj.grade}</div>
+										<div className="p-1">{gradeObj.grade ? gradeObj.grade : "No Grade"}</div>
 									</div>
 									<div className="w-1/4 flex  ">
 										<div className="p-1">Points</div>{" "}
