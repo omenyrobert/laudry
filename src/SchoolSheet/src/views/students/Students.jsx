@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../../assets/styles/main.css'
-import StudentsTable from '../../components/students/studentsTable'
+import StudentsTable from '../../components/students/StudentsTable'
 import InputField from '../../components/InputField'
 import Button from '../../components/Button'
 import { BsSearch } from 'react-icons/bs'

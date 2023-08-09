@@ -359,7 +359,9 @@ function ReportCardTemplate({ closeCard, studentData }) {
 							</div>
 						</div>
 						<br />
-						<p className="m-5 uppercase font-semibold text-lg">progressive assessment record</p>
+						<p className="m-5 uppercase font-semibold text-lg">
+							progressive assessment record
+						</p>
 						<div className=" flex text-sm border-b text-white bg-primary border-gray1 mx-2 px-2 cursor-pointer">
 							<div className="w-1/4 p-2">Subjects</div>
 							{examTypes?.map((type) => {
@@ -385,33 +387,47 @@ function ReportCardTemplate({ closeCard, studentData }) {
 								<div className=" flex text-sm border-b text-gray5 border-gray1 mx-2 px-2 cursor-pointer">
 									<div className="w-1/4 p-1">{data.subject}</div>
 									{examTypes.map((examType) => (
-										<div className="w-1/4 p-1">
-											{examType.markPercent}
-										</div>
+										<div className="w-1/4 p-1">{examType.markPercent}</div>
 									))}
 									<div className="w-1/4 p-1">
-									{`${Math.floor(
-											data.markGrade
-										)}%`}
-									
+										{`${Math.floor(data.markGrade)}%`}
 									</div>
 									<div className="w-1/4 p-1">
-									{gradeObj.grade ? gradeObj.grade : "No Grade"}
+										{gradeObj.grade ? gradeObj.grade : "No Grade"}
 									</div>
-									<div className="w-1/4 p-1">
-			
-									{gradeObj.points}
-									</div>
+									<div className="w-1/4 p-1">{gradeObj.points}</div>
 								</div>
 							);
 						})}
-					<br/>
-					<br/>
-					</div>
-					
-				</div>
+						<div className=" bg-gray1 m-3 p-5">
+							<p>Class Teacher's comment</p>
+							<p className="mt-2">Class Teacher's signiture</p>
+						
+							<hr className="text-gray4 my-4"/>
+							<p>Head Teacher's comment</p>
+						<p className="mt-2">Head Teacher's signiture</p>
+						</div>
 
-				
+						
+						<br />
+						<div className="flex m-5 justify-between">
+							<p>Next Term Begins</p>
+							<p>Next Term Ends</p>
+							<p>Next term's fees</p>
+						</div>
+						<div className="flex m-5 justify-between">
+							<p>Next Class</p>
+							<p>Next Streams</p>
+						</div>
+						<div className="p-5 w-full bg-primary">
+
+						<p className="text-center text-white text-2xl font-bold">See You Next Term</p>
+						</div>
+
+						<br />
+						<br />
+					</div>
+				</div>
 			</div>
 		</>
 	);

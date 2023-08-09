@@ -1,300 +1,506 @@
-import React, { useState, useEffect } from "react";
-import { TbCheck } from "react-icons/tb";
-import { RxCross1 } from "react-icons/rx";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { BsSearch } from "react-icons/bs";
-import InputField from "../InputField";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import Localbase from "localbase";
-import "../../assets/styles/main.css";
-import Button from "../Button";
-import StudentAttendance from "../../views/classes/StudentAttendance";
+import React, { useEffect, useState } from 'react'
+import '../../assets/styles/main.css'
+import StudentsTableAttendance from '../students/StudentsTableAttendance'
+import InputField from '../../components/InputField'
+import Button from '../../components/Button'
+import { BsSearch } from 'react-icons/bs'
+import Select from 'react-select'
+import Swal from 'sweetalert2'
+import { Link, useNavigate } from 'react-router-dom'
+import Button2 from '../../components/Button2'
+import axiosInstance from '../../axios-instance'
+import withReactContent from 'sweetalert2-react-content'
+// import { FaFilter } from "react-icons/fa";
+import ButtonAlt from '../../components/ButtonAlt'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  getStudents,
+  getSections,
+  getStreams,
+  getHouses,
+  getClasses,
+  getStudentTypes,
+  getSearchStudents,
+  getStudentCount,
+  getClassLevels,
+} from '../../store/schoolSheetSlices/schoolStore'
+import Loader from '../../components/Loader'
 
-let db = new Localbase("db");
+const StudentAttendanceComp = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [search, setSearch] = useState(false)
+  const [student, setStudent] = useState(false)
+  const [filters, setFilters] = useState({
+    type: '',
+    house: '',
+    studentClass: '',
+    section: '',
+    stream: '',
+    classLevel: '',
+  })
+  const [searchInput, setSearchInput] = useState('')
+  const [searchedStudents, setSearchedStudents] = useState([])
+  const [classLevelOpts, setClassLevelOpts] = useState([])
+  const {
+    studentsCount,
+    students,
+    loading,
+    sections,
+    studentTypes,
+    houses,
+    streams,
+    classes,
+    searchingStudents,
+    classLevels,
+  } = useSelector((state) => state.schoolStore)
 
-function StudentAttendanceComp() {
-	const [studentsInfo, setStudentInfo] = useState([]);
-	// fetch student info
-	const fetchStudentsInfo = () => {
-		db.collection("studentInfo")
-			.get()
-			.then((student) => {
-				const newData = student;
-				setStudentInfo(newData);
-			});
-	};
+  useEffect(() => {
+    const ppts = classLevels.map((level) => {
+      return {
+        label: level.name,
+        value: level.name,
+        ...level,
+      }
+    })
+    setClassLevelOpts(ppts)
+  }, [classLevels])
 
-	const [attendanceList, setAttendanceList] = useState([]);
-	// fetch student info
-	const fetchCheckInList = () => {
-		db.collection("studentCheckInTbl")
-			.get()
-			.then((attendance) => {
-				const newData = attendance;
-				setAttendanceList(newData);
-			});
-	};
+  const sectionOptions = []
+  const studentTypeOptions = []
+  const houseOptions = []
+  const streamOptions = []
+  const classOptions = []
 
-	const fetchCheckOutList = () => {
-		db.collection("studentCheckOutTbl")
-			.get()
-			.then((attendance) => {
-				const newData = attendance;
-				setAttendanceList(newData);
-			});
-	};
+  sections.forEach((section) => {
+    let newSection = {}
+    newSection.value = section.section
+    newSection.label = section.section
+    sectionOptions.push(newSection)
+  })
+  studentTypes.forEach((studentType) => {
+    let newStudentType = {}
+    newStudentType.value = studentType.type
+    newStudentType.label = studentType.type
+    studentTypeOptions.push(newStudentType)
+  })
+  houses.forEach((house) => {
+    let newHouse = {}
+    newHouse.label = house.house
+    newHouse.value = house.type
+    houseOptions.push(newHouse)
+  })
+  streams.forEach((stream) => {
+    let newStream = {}
+    newStream.label = stream.stream
+    newStream.value = stream.stream
+    streamOptions.push(newStream)
+  })
+  classes.forEach((clas) => {
+    let newClass = {}
+    newClass.label = clas.class
+    newClass.value = clas.class
+    classOptions.push(newClass)
+  })
 
-	useEffect(() => {
-		fetchStudentsInfo();
-		fetchCheckInList();
-		fetchCheckOutList();
-	}, []);
+  //deleting student
+  const deleteStudentInfo = (student) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosInstance
+          .delete('/students/' + student.id)
+          .then(() => {
+            setPage(0)
+            Swal.fire('Deleted!', 'Student file has been deleted.', 'success')
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      }
+    })
+  }
 
-	const [checktime, setCheckTime] = useState("");
+  const searchStudents = () => {
+    if (search === false) {
+      setSearch(true)
+    }
+    /** @type any[] */
+    const studentData = student
+      ? students?.students
+      : searchedStudents.length === 0
+      ? searchingStudents?.students
+      : searchedStudents
+    const searchResults = studentData.filter((student) => {
+      const classLevelName =
+        student?.student_levels?.length > 0
+          ? student?.student_levels[0]?.name
+          : ''
+      const isClassLevelValid = classLevelName
+        ? classLevelName.includes(filters.classLevel)
+        : false
 
-	const [studentId, setStudentId] = useState("");
+      const houseName =
+        student?.houses?.length > 0 ? student.houses[0]?.house : ''
+      const isHouseValid = houseName ? houseName.includes(filters.house) : false
 
-	const [timeBox, setTimeBox] = useState(false);
+      const studentTypeName =
+        student?.student_types?.length > 0 ? student.student_types[0]?.type : ''
+      const isStudentTypeValid = studentTypeName
+        ? studentTypeName.includes(filters.type)
+        : false
 
-	const openTimeBox = (student) => {
-		setStudentId(student.id);
-		setTimeBox(true);
-	};
-	const closeTimeBox = () => {
-		setTimeBox(false);
-	};
+      const className =
+        student?.classes?.length > 0 ? student.classes[0]?.class : ''
+      const isClassValid = className
+        ? className.includes(filters.studentClass)
+        : false
 
-	const checkIn = () => {
-		if (checktime) {
-			let formData = {
-				studentId: studentId,
-				checkIn: checktime,
-			};
-			db.collection("studentCheckInTbl")
-				.add(formData)
-				.then((response) => {
-					setCheckTime("");
-					fetchCheckInList();
-					closeTimeBox();
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
-				.catch(console.error());
-		}
-	};
+      const sectionName =
+        student?.sections?.length > 0 ? student.sections[0]?.section : ''
+      const isSectionValid = sectionName
+        ? sectionName.includes(filters.section)
+        : false
 
-	const checkOut = () => {
-		if (checktime) {
-			let formData = {
-				studentId: studentId,
-				checkIn: checktime,
-			};
-			db.collection("studentCheckOutTbl")
-				.add(formData)
-				.then((response) => {
-					setCheckTime("");
-					fetchCheckOutList();
-					closeTimeBox();
-					const MySwal = withReactContent(Swal);
-					MySwal.fire({
-						icon: "success",
-						showConfirmButton: false,
-						timer: 500,
-					});
-				})
-				.catch(console.error());
-		}
-	};
+      const streamName =
+        student?.streams?.length > 0 ? student.streams[0]?.stream : ''
+      const isStreamValid = streamName
+        ? streamName.includes(filters.stream)
+        : false
 
-	const [studentList, setStudentList] = useState(false);
+      return (
+        isClassLevelValid &&
+        isHouseValid &&
+        isStudentTypeValid &&
+        isClassValid &&
+        isSectionValid &&
+        isStreamValid
+      )
+    })
+    setSearchedStudents(searchResults)
+  }
 
-	const openStudentList = () => {
-		setStudentList(true);
-	};
+  function clearFilters() {
+    setFilters({
+      query: '',
+      type: '',
+      house: '',
+      studentClass: '',
+      section: '',
+      stream: '',
+      classLevel: '',
+    })
+    setSearch(false)
+    navigate(0)
+  }
 
-	const closeStudentList = () => {
-		setStudentList(false);
-	};
+  useEffect(() => {
+    if (
+      filters.type === '' &&
+      filters.house === '' &&
+      filters.studentClass === '' &&
+      filters.section === '' &&
+      filters.stream === '' &&
+      filters.classLevel === ''
+    ) {
+      setSearch(false)
+    } else {
+      searchStudents()
+    }
+  }, [filters])
 
-	return (
-		<>
-			{studentList ? (
-				<div className="w-[600px] border border-gray1 absolute bg-white h-[80vh] overflow-y-auto shadow-2xl  z-50">
-					<div className="bg-primary p-3 text-white rounded flex justify-between">
-						<div>Students</div>
-						<div>
-							<p className="cursor-pointer" onClick={closeStudentList}>
-								X
-							</p>
-						</div>
-					</div>
-					<table className="mt-10 w-[95%] ml-3 table-auto">
-						<thead style={{ backgroundColor: "#0d6dfd10" }}>
-							<th className="p-2 text-primary text-sm text-left">Full Name</th>
+  const printStudents = () => {
+    const documentWindow = window.open('')
+    const studentSheet = document.getElementById('studentTable')
+    const styles = document.querySelectorAll('style')
+    const links = document.querySelectorAll('link')
+    // Write n links
+    links.forEach((element, _) => {
+      documentWindow.document.writeln(element.outerHTML)
+    })
+    // Write n styles
+    styles.forEach((element, _) => {
+      documentWindow.document.writeln(element.outerHTML)
+    })
+    documentWindow.document.writeln(studentSheet.innerHTML)
 
-							<th className="p-2 text-primary text-sm text-left">
-								Student Type
-							</th>
+    setTimeout(() => {
+      documentWindow.print()
+    }, 1000)
+  }
 
-							<th className="p-2 text-primary text-sm text-left">Action</th>
-						</thead>
-						<tbody>
-							{timeBox ? (
-								<div className="absolute w-[350px] ml-28 z-30 shadow-2xl bg-white p-5 border border-gray2 rounded">
-									<div className="flex justify-between">
-										<div>Attedance</div>
-										<div>
-											<p className=" cursor-pointer" onClick={closeTimeBox}>
-												X
-											</p>
-										</div>
-									</div>
+  //toggle filter
+  const [showFilter, setShowFilter] = useState(false)
 
-									<InputField
-										value={checktime}
-										onChange={(e) => setCheckTime(e.target.value)}
-										type="time"
-									/>
-									<div className="flex justify-between">
-										<div className="w-[100px]" onClick={checkIn}>
-											<Button value={"Check In"} />
-										</div>
-										<div className="w-[120px]" onClick={checkOut}>
-											<Button value={"Check Out"} />
-										</div>
-									</div>
-								</div>
-							) : null}
+  const toggleFilter = () => {
+    setShowFilter(!showFilter)
+  }
 
-							{studentsInfo.map((student) => {
-								return (
-									<tr
-										className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-										key={student.id}
-									>
-										<td className="flex">
-											<div className="rounded-full h-8 w-8 py-1 my-2 text-center text-sm font-semibold  text-primary bg-primary3">
-												{student.firstName[0]} {student.lastName[0]}
-											</div>
-											<div>
-												<p className="text-sm p-3 -mt-1 text-gray5">
-													{student.firstName} {student.middleName}{" "}
-													{student.lastName}
-												</p>
-											</div>
-										</td>
+  // Pangination
+  const [page, setPage] = useState(0)
+  const [searchPage, setSearchPage] = useState(0)
 
-										<td className="text-xs p-3 text-gray5">
-											{student.studentType.value}
-										</td>
+  const nextPage = () => {
+    student ? setPage(page + 1) : setSearchPage(searchPage + 1)
+  }
 
-										<td className="text-xs text-gray5 flex justify-between">
-											<div
-												onClick={() => openTimeBox(student)}
-												className="text-primary p-2 m-1 bg-primary3 rounded"
-											>
-												Register
-											</div>
-										</td>
-									</tr>
-								);
-							})}
-						</tbody>
-					</table>
-				</div>
-			) : null}
+  const previousPage = () => {
+    student ? setPage(page - 1) : setSearchPage(searchPage - 1)
+  }
 
-			<div className="flex justify-between  p-5">
-				<div className="flex">
-					<div onClick={openStudentList}>
-						<Button value={"Register"} />
-					</div>
-					<div className="ml-20">
-						<p className="text-secondary text-xl mt-2  font-semibold">
-							Students
-						</p>
-					</div>
-				</div>
-				<div>
-					<StudentAttendance />
-				</div>
-			</div>
+  const canNextPage = () => {
+    const currentPage = student ? page + 1 : searchPage + 1
+    const lastPage = student
+      ? Math.ceil(students?.count / 20)
+      : Math.ceil(searchingStudents?.count / 20)
+    return currentPage !== lastPage
+  }
 
-			<div className="flex justify-between bg-white  px-3">
-				<div className="flex">
-					<div className="text-sm">
-						<InputField label="From Date" type="date" />
-					</div>
-					<div className="text-sm ml-5">
-						<InputField label="To Date" type="date" />
-					</div>
-				</div>
-				<div className="w-[300px] ml-2 mt-7">
-					<InputField
-						placeholder="Search for Income"
-						type="search"
-						icon={<BsSearch className="w-3 -ml-7 mt-3" type="submit" />}
-					/>
-				</div>
+  const canPreviousPage = () => {
+    return student ? page !== 0 : searchPage !== 0
+  }
 
-				<div>
-					<div className="flex mt-14">
-						<div className="ml-10 p-2 text-sm text-secondary flex rounded-md cursor-pointer">
-							<FaChevronLeft className="w-4 h-4 mt-[2px] mr-2 " />
-							Prev
-						</div>
-						<div className="text-primary w-[90px] ml-5 p-2 text-sm font-medium">
-							11th - 17th
-						</div>
+  const handleSearch = async () => {
+    if (searchInput) {
+      setStudent(false)
+      setSearch(true)
+      let data = { searchPage: searchPage, searchInput: searchInput }
+      dispatch(getSearchStudents(data))
+    } else {
+      navigate(0)
+    }
+  }
 
-						<div className="ml-10 p-2 text-sm text-primary flex rounded-md cursor-pointer">
-							Next <FaChevronRight className="w-4 h-4 mt-[3px] ml-1" />
-						</div>
-					</div>
-				</div>
-			</div>
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setStudent(true)
+        dispatch(getStreams())
+        dispatch(getHouses())
+        dispatch(getClasses())
+        dispatch(getSections())
+        dispatch(getStudents(page))
+        dispatch(getStudentTypes())
+        dispatch(getStudentCount())
+        dispatch(getClassLevels())
+      } catch (error) {
+        console.log(error)
+        const MySwal = withReactContent(Swal)
+        MySwal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text:
+            'An Error Occured while trying to fetch data for your Form. Please Refresh Page',
+        })
+      }
+    }
+    fetchData()
+  }, [page, dispatch])
 
-			<div className="flex bg-secondary p-2 text-sm mt-5">
-				<div className="w-1/4">Student</div>
-				<div className="w-1/4">Monday</div>
-				<div className="w-1/4">Tuesday </div>
-				<div className="w-1/4">Wednesday</div>
-				<div className="w-1/4">Thursday</div>
-				<div className="w-1/4">Friday</div>
-				<div className="w-1/4">Saturday</div>
-			</div>
-			<div className="flex border-b border-gray2 p-2 bg-white ">
-				<div className="w-1/4 text-sm">Omeny Robert</div>
-				<div className="w-1/4 flex">
-					<TbCheck className="w-5  h-5 text-green" />
-					<div className="text-xs text-gray5 ml-5">8:00am - 6:00pm</div>
-				</div>
-				<div className="w-1/4 flex">
-					<TbCheck className="w-5 h-5 text-green" />
-					<div className="text-xs text-gray5 ml-5">8:00am - 6:00pm</div>
-				</div>
-				<div className="w-1/4">
-					<RxCross1 className="w-5 h-5 text-red" />
-				</div>
-				<div className="w-1/4 flex">
-					<TbCheck className="w-5 h-5 text-green" />
-					<div className="text-xs text-gray5 ml-5">8:00am - 6:00pm</div>
-				</div>
-				<div className="w-1/4 flex">
-					<TbCheck className="w-5 h-5 text-green" />
-					<div className="text-xs text-gray5 ml-5">8:00am - 6:00pm</div>
-				</div>
-				<div className="w-1/4 flex">
-					<TbCheck className="w-5 h-5 text-green" />
-					<div className="text-xs text-gray5 ml-5">8:00am - 6:00pm</div>
-				</div>
-			</div>
-		</>
-	);
+  // Export `studentData` to csv
+  const exportToCSV = () => {
+    const csvRows = []
+    const studentData = student ? students?.students : searchedStudents
+    const headers = Object.keys(studentData[0])
+    csvRows.push(headers.join(','))
+    for (const row of studentData) {
+      const values = headers.map((header) => {
+        const value = row[header]
+        console.log(value, header, row)
+        if (header === 'studentType') {
+          const escaped = ('' + value.type).replace(/"/g, '\\"')
+          return `"${escaped}"`
+        } else if (header === 'studentHouse') {
+          const escaped = ('' + value.house).replace(/"/g, '\\"')
+          return `"${escaped}"`
+        } else if (header === 'studentClass') {
+          const escaped = ('' + value.class).replace(/"/g, '\\"')
+          return `"${escaped}"`
+        } else if (header === 'studentStream') {
+          if (value) {
+            const escaped = ('' + value.stream).replace(/"/g, '\\"')
+            return `"${escaped}"`
+          }
+          const escaped = 'null'.replace(/"/g, '\\"')
+          return `"${escaped}"`
+        }
+        const escaped = ('' + row[header]).replace(/"/g, '\\"')
+        return `"${escaped}"`
+      })
+      csvRows.push(values.join(','))
+    }
+    const csvData = csvRows.join('\n')
+    const blob = new Blob([csvData], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.setAttribute('href', url)
+    link.setAttribute('download', 'students.csv')
+    link.click()
+  }
+
+  return (
+    <div className=" mt-2 w-full">
+      <div className="">
+        <div className="p-3 bg-white shadow-md border border-gray2">
+          <div className="flex justify-between">
+            <div>
+              <h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">
+                Students Attendance
+              </h1>
+            </div>
+            <div className="w-4/12 ">
+              <InputField
+                type="text"
+                placeholder="Search For Student ..."
+                name="lastName"
+                value={filters.query}
+                onChange={(e) => setSearchInput(e.target.value)}
+                icon={
+                  <BsSearch
+                    className="w-3 -ml-7 mt-3 cursor-pointer"
+                    type="button"
+                    onClick={handleSearch}
+                  />
+                }
+              />
+            </div>
+            <div className=""></div>
+            <div className="flex mt-5">
+              <div className="w-1/3"></div>
+              <div className="w-1/3 relative mt">
+                <div className="w-20" onClick={toggleFilter}>
+                  <ButtonAlt value={'Filter'} />
+                </div>
+                {showFilter ? (
+                  <div className="bg-white shadow-lg mt-2 border border-gray2 z-50 rounded-md absolute w-56 p-3 h-auto">
+                    <br />
+                    <Select
+                      placeholder={'Select class Levels'}
+                      className="text-sm"
+                      onChange={(opt) => {
+                        setFilters({ ...filters, classLevel: opt.value })
+                      }}
+                      options={classLevelOpts}
+                    />
+                    <br />
+                    <Select
+                      placeholder={'Select class'}
+                      className="text-sm"
+                      onChange={(opt) => {
+                        setFilters({ ...filters, studentClass: opt.value })
+                      }}
+                      options={classOptions}
+                    />
+                    <br />
+{/* 
+                    <Select
+                      placeholder={'Sections'}
+                      className="text-sm"
+                      onChange={(opt) => {
+                        setFilters({ ...filters, section: opt.value })
+                      }}
+                      options={sectionOptions}
+                    />
+                    <br />
+                    <Select
+                      placeholder={'Student House'}
+                      className="text-sm"
+                      onChange={(e) => {
+                        setFilters({ ...filters, house: e.value })
+                      }}
+                      options={houseOptions}
+                    />
+
+                    <br />
+                    <Select
+                      placeholder={'Student Type'}
+                      className="text-sm"
+                      onChange={(opt) => {
+                        setFilters({ ...filters, type: opt.value })
+                      }}
+                      options={studentTypeOptions}
+                    />
+                    <br /> */}
+                    <Select
+                      placeholder={'Select Stream '}
+                      className="text-sm"
+                      onChange={(opt) => {
+                        setFilters({ ...filters, stream: opt.value })
+                      }}
+                      options={streamOptions}
+                    />
+                    <br />
+                    <div
+                      className=""
+                      onClick={() => {
+                        clearFilters()
+                      }}
+                    >
+                      <Button value={'Clear Filters'} />
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+              <div className="w-1/3 mx-5">
+                <div onClick={printStudents} className="w-20">
+                  <Button value={'Pdf'} />
+                </div>
+              </div>
+              <div className="w-1/3 mx-5">
+                <div onClick={exportToCSV} className="w-20">
+                  <Button value={'CSV'} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {loading.students || loading.searchStudents ? (
+          <div className="flex justify-center">
+            <Loader />
+          </div>
+        ) : null}
+        {search ? (
+          <StudentsTableAttendance
+            deleteStudentInfo={deleteStudentInfo}
+            studentData={
+              searchedStudents.length === 0
+                ? searchingStudents?.students
+                : searchedStudents
+            }
+            nextPage={nextPage}
+            previousPage={previousPage}
+            canNextPage={canNextPage}
+            canPreviousPage={canPreviousPage}
+            searchPage={page}
+            count={studentsCount}
+            page={page}
+            setPage={setPage}
+          />
+        ) : null}
+        {student ? (
+          <StudentsTableAttendance
+            page={page}
+            deleteStudentInfo={deleteStudentInfo}
+            studentData={students?.students}
+            nextPage={nextPage}
+            previousPage={previousPage}
+            canNextPage={canNextPage}
+            canPreviousPage={canPreviousPage}
+            searchPage={page}
+            count={studentsCount}
+            setPage={setPage}
+          />
+        ) : null}
+      </div>
+    </div>
+  )
 }
-export default StudentAttendanceComp;
+
+export default StudentAttendanceComp
