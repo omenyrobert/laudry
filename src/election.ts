@@ -3,6 +3,9 @@ import "./index"
 import { PORT, dataSource } from "./index";
 import { join } from "path";
 
+if (require('electron-squirrel-startup')) electronApp.quit();
+
+
 let mainWindow : BrowserWindow | null;
 
 
