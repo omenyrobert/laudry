@@ -58,9 +58,9 @@ function ReportCardTemplate({ closeCard, studentData }) {
 			const data = assessmentsByTerm.filter((assessment) => {
 				return assessment.studentId === studentData.id.toString();
 			});
-			console.log(data)
+			console.log(data);
 			const _data = assessSubjects(data);
-			console.log("Assesed subects", _data)
+			console.log("Assesed subects", _data);
 			const pointsData = _data.map(
 				(dt) => assignGrade(dt.markGrade, grades, dt.subject).points
 			);
@@ -68,12 +68,12 @@ function ReportCardTemplate({ closeCard, studentData }) {
 			const filteredPoints = pointsData.filter((point) => {
 				return point !== undefined && point !== null;
 			});
-			console.log("points data", pointsData)
+			console.log("points data", pointsData);
 			const sumOfPoints = filteredPoints.reduce(
 				(accumulator, currentValue) => accumulator + currentValue,
 				0
 			);
-			console.log("sum of points", sumOfPoints)
+			console.log("sum of points", sumOfPoints);
 			setPoints(sumOfPoints);
 			setAssessData(_data);
 		}
@@ -131,7 +131,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 
 	return (
 		<>
-			<div className="absolute bg-black/50 w-full overflow-hidden h-screen top-0 left-0 z-50">
+			<div className="absolute bg-black/50 w-full top-0 left-0 z-50">
 				<div className="flex justify-between mt-2">
 					<div></div>
 					<div onClick={handleGeneratePDF}>
@@ -145,9 +145,11 @@ function ReportCardTemplate({ closeCard, studentData }) {
 					<div></div>
 				</div>
 
-				<div className="flex justify-center">
-					<div className="bg-white w-[80vw] h-[90vh] mt-2  overflow-y-auto">
-					<h1 className="text-3xl text-primary text-center mt-5 uppercase font-bold">{schools[0]?.name} report card</h1>
+				<div className="flex justify-center" id="ledger-table">
+					<div className="bg-white w-[100vw]  mt-2 ">
+						<h1 className="text-2xl text-primary text-center mt-5 uppercase font-bold">
+							{schools[0]?.name} report card
+						</h1>
 						<div className="flex text-white py-5 px-6">
 							<div className="flex justify-between w-full">
 								<div className="w-28">
@@ -162,112 +164,114 @@ function ReportCardTemplate({ closeCard, studentData }) {
 									/>
 								</div>
 								<div className="ml-5">
-									
-									<h1 className="text-black text-center text-lg -mt-3">{schools[0]?.motto}</h1>
+									<h1 className="text-black text-center text-lg -mt-3">
+										{schools[0]?.motto}
+									</h1>
 									<div className=" text-black">
-									<div className="font-thin flex justify-center">
+										<div className="font-thin flex justify-center">
 											<div>
 												<MdLocationPin className="text-sm mt-1" />
 											</div>
 											<div className="ml-1">{schools[0]?.location}</div>
 										</div>
 										<div className="flex justify-between">
-
-										<div className="font-thin flex justify-center">
-											<div>
-												<BsTelephoneFill className="text-sm mt-1 flex" />
-											</div>{" "}
-											<div className="ml-1">{schools[0]?.phoneNumbers}</div>{" "}
-										</div>
-										<div className="font-thin justify-center ml-5 flex">
-											<div>
-												<BsEnvelopeFill className="text-sm mt-1" />
+											<div className="font-thin flex justify-center">
+												<div>
+													<BsTelephoneFill className="text-sm mt-1 flex" />
+												</div>{" "}
+												<div className="ml-1">{schools[0]?.phoneNumbers}</div>{" "}
 											</div>
-											<div className="ml-2">{schools[0]?.emails}</div>
+											<div className="font-thin justify-center ml-5 flex">
+												<div>
+													<BsEnvelopeFill className="text-sm mt-1" />
+												</div>
+												<div className="ml-2">{schools[0]?.emails}</div>
+											</div>
 										</div>
-										</div>
-										
-										<h1 className="font-thin text-center">{schools[0]?.sites}</h1>
-										<h1 className="font-bold text-2xl mt-5 text-primary text-center">Termly Report</h1>
+
+										<h1 className="font-thin text-center">
+											{schools[0]?.sites}
+										</h1>
+										<h1 className="font-bold text-2xl mt-5 text-primary text-center">
+											Termly Report
+										</h1>
 									</div>
 								</div>
-                              <div>
-                                 <img
-									className="w-32 h-32 object-cover rounded-md border border-gray1"
-									src={
-										studentData?.photo
-											? UPLOADS_URL + studentData?.photo
-											: "avata.jpeg"
-									}
-									alt="student_image"
-								/>
-                               </div>
+								<div>
+									<img
+										className="w-32 h-32 object-cover rounded-md border border-gray1"
+										src={
+											studentData?.photo
+												? UPLOADS_URL + studentData?.photo
+												: "avata.jpeg"
+										}
+										alt="student_image"
+									/>
+								</div>
 							</div>
-
-							
 						</div>
 						<hr className="text-primary" />
-						
-							
-							<div className="m-5">
-								<h1 className=" text-lg">
-									Student's Name: {studentData.firstName} {studentData.middleName}{" "}
-									{studentData.lastName}
-								</h1>
-								<div className="flex mt-2">
-									<div className="w-1/4 flex">
-										<h1 className="">Class:</h1>
-										<h1 className="text-gray5 ml-5">
-											{studentData?.classes[0]?.class}
-										</h1>
-									</div>
-									<div className="w-1/4 flex">
-									<h1 className="">Term:</h1>
-										<h1 className="text-gray5 ml-5">
-											{studentData?.terms[0]?.term}
-										</h1>
-									</div>
-									<div className="w-1/4 flex">
-									<h1 className="">Year:</h1>
-										<h1 className="text-gray5 ml-5">
-											{new Date().getFullYear()}
-										</h1>
-									</div>
-									<div className="w-1/4 flex">
-									<h1 className="">Date:</h1>
-										<h1 className="text-gray5 ml-5">
-										{new Date().getDay()}-{new Date().getMonth()}-{new Date().getFullYear()}
-										</h1>
-									</div>
+
+						<div className="m-5">
+							<h1 className=" text-lg">
+								Student's Name: {studentData.firstName} {studentData.middleName}{" "}
+								{studentData.lastName}
+							</h1>
+							<div className="flex mt-2">
+								<div className="w-1/4 flex">
+									<h1 className="">Class:</h1>
+									<h1 className="text-gray5 ml-5">
+										{studentData?.classes[0]?.class}
+									</h1>
 								</div>
-								<div className="flex mt-2">
-									<div className="w-1/4 flex">
-										<h1 className="">Admission no:</h1>
-										<h1 className="text-gray5 ml-5">
+								<div className="w-1/4 flex">
+									<h1 className="">Term:</h1>
+									<h1 className="text-gray5 ml-5">
+										{studentData?.terms[0]?.term}
+									</h1>
+								</div>
+								<div className="w-1/4 flex">
+									<h1 className="">Year:</h1>
+									<h1 className="text-gray5 ml-5">
+										{new Date().getFullYear()}
+									</h1>
+								</div>
+								<div className="w-1/4 flex">
+									<h1 className="">Date:</h1>
+									<h1 className="text-gray5 ml-5">
+										{new Date().getDay()}-{new Date().getMonth()}-
+										{new Date().getFullYear()}
+									</h1>
+								</div>
+							</div>
+							<div className="flex mt-2">
+								<div className="w-1/4 flex">
+									<h1 className="">Admission no:</h1>
+									<h1 className="text-gray5 ml-5">
 										{schools[0]?.name[0]}00{studentData?.id}
-										</h1>
-									</div>
-									{/* <div className="w-1/4 flex">
+									</h1>
+								</div>
+								{/* <div className="w-1/4 flex">
 									<h1 className="">Class:</h1>
 										<h1 className="text-gray5 ml-5">
 											{studentData?.classes[0]?.class}
 										</h1>
 									</div> */}
-									<div className="w-1/4 flex">
+								<div className="w-1/4 flex">
 									<h1 className="">Stream:</h1>
-										<h1 className="text-gray5 ml-5">
-											{studentData?.streams[0]?.stream}
-										</h1>
-									</div>
-									{/* <div className="w-1/4 flex">
+									<h1 className="text-gray5 ml-5">
+										{studentData?.streams[0]?.stream}
+									</h1>
+								</div>
+								{/* <div className="w-1/4 flex">
 									<h1 className="">Section:</h1>
 										<h1 className="text-gray5 ml-5">
 											{studentData?.sections[0]?.section}
 										</h1>
 									</div> */}
-								</div>
-								
-								{/* <div className="flex text-sm ">
+							</div>
+
+							{/* <div className="flex text-sm ">
 									<div className="w-1/4 flex">
 										<h1 className="">Student Type:</h1>
 										<h1 className="text-gray5 ml-5">
@@ -281,10 +285,9 @@ function ReportCardTemplate({ closeCard, studentData }) {
 										</h1>
 									</div>
 								</div> */}
-								
-							</div>
-							<p className="text-lg font-medium ml-5">END OF TERM PERFORMANCE</p>
-						
+						</div>
+						<p className="text-lg font-medium ml-5">END OF TERM PERFORMANCE</p>
+
 						<div className=" flex text-sm border-b text-white bg-primary border-gray1 mx-5 px-2 cursor-pointer">
 							<div className="w-1/4 p-2">Subjects</div>
 							{/* {examTypes?.map((type) => {
@@ -303,158 +306,60 @@ function ReportCardTemplate({ closeCard, studentData }) {
 						{/* {assessData} */}
 						{assessData.map((data) => {
 							const { examTypes } = data;
-							const gradeObj = assignGrade(data.markGrade, grades, data.subject);
+							const gradeObj = assignGrade(
+								data.markGrade,
+								grades,
+								data.subject
+							);
 							// console.log("gradeObj", gradeObj, data.subject)
 							return (
 								<div className=" flex text-sm border-b text-gray5 border-gray1 mx-2 px-2 cursor-pointer">
 									<div className="w-1/4 p-2">{data.subject}</div>
-								
-									
-										<div className="p-2 w-1/4">{`${Math.floor(data.markGrade)}%`}</div>{" "}
-										<div className="p-2 w-1/4">{gradeObj.grade ? gradeObj.grade : "No Grade"}</div>
-										<div className="p-2 w-1/4">{gradeObj.points}</div>
-										<div className="p-2 w-1/4">{data.markGrade <= 35 ? "Poor" : null}
-										 {data.markGrade <= 60 && data.markGrade >= 36 ? "Fair" : null}
-										{data.markGrade <= 85 && data.markGrade >= 61 ? "Good" : null}
+									<div className="p-2 w-1/4">{`${Math.floor(
+										data.markGrade
+									)}%`}</div>{" "}
+									<div className="p-2 w-1/4">
+										{gradeObj.grade ? gradeObj.grade : "No Grade"}
+									</div>
+									<div className="p-2 w-1/4">{gradeObj.points}</div>
+									<div className="p-2 w-1/4">
+										{data.markGrade <= 35 ? "Poor" : null}
+										{data.markGrade <= 60 && data.markGrade >= 36
+											? "Fair"
+											: null}
+										{data.markGrade <= 85 && data.markGrade >= 61
+											? "Good"
+											: null}
 										{data.markGrade >= 86 ? "Excellent" : null}
-										 </div>
-									
+									</div>
 								</div>
 							);
 						})}
 						<div className=" flex text-sm border-b text-primary font-semibold bg-gray1 border-gray1 mx-5 px-2 cursor-pointer">
 							<div className="w-1/4 p-1">Total</div>
-						
+
 							<div className="w-1/4 p-1"> 400</div>
-							<div className="w-1/4 p-1">GRADE</div>
+							<div className="w-1/4 p-1"></div>
 							<div className="w-1/4 p-1">POINTS</div>
-							<div className="w-1/4 p-1">REMARKS</div>
+							<div className="w-1/4 p-1"></div>
 						</div>
 
-						<div className="mx-4  bg-gray1 font-medium mt-5">
-							<div className=" p-2 m-1 w-1/2 text-primary text-lg font-bold">Division: {points && findDivision(points, divisions)?.division}</div>
-							<div className=" p-2 mx-1 -mt-5 w-1/2 text-sm">{points} Points</div>
-						</div>
-						<div className="flex mx-4  bg-gray1 font-medium">
-							<div className=" p-2 m-1 w-1/2">Comments From Class Teacher
-								<p className="text-sm text-gray5">{report?.comment}</p></div>
-							<div className=" p-2 m-1 w-1/2">Next Stream : <span className="text-primary">{report?.stream}</span></div>
-							<div className=" p-2 m-1 w-1/2">Next Class: <span className="text-primary">{report?.classField}</span></div>
-
-						</div>
-					</div>
-				</div>
-
-				<div id="ledger-table">
-					<div className="bg-white w-[100vw] mt-2">
-					<h1 className="text-3xl text-primary text-center mt-5 uppercase font-bold">{schools[0]?.name} report card</h1>
-					<div className="flex text-white py-5 px-6">
-							<div className="flex justify-between w-full">
-								<div className="w-28">
-									<img
-										src={
-											schools && schools.length > 0 && schools[0]?.logo
-												? UPLOADS_URL + schools[0]?.logo
-												: "avatar.jpeg"
-										}
-										className="w-28 h-28 object-cover rounded"
-										alt="school_logo"
-									/>
-								</div>
-								<div className="ml-5">
-									
-									<h1 className="text-black text-center text-lg -mt-3">{schools[0]?.motto}</h1>
-									<div className=" text-black">
-									<div className="font-thin flex justify-center">
-											<div>
-												<MdLocationPin className="text-sm mt-1" />
-											</div>
-											<div className="ml-1">{schools[0]?.location}</div>
-										</div>
-										<div className="flex justify-between">
-
-<div className="font-thin flex justify-center">
-	<div>
-		<BsTelephoneFill className="text-sm mt-1 flex" />
-	</div>{" "}
-	<div className="ml-1">{schools[0]?.phoneNumbers}</div>{" "}
-</div>
-<div className="font-thin justify-center ml-5 flex">
-	<div>
-		<BsEnvelopeFill className="text-sm mt-1" />
-	</div>
-	<div className="ml-2">{schools[0]?.emails}</div>
-</div>
-</div>
-										
-										<h1 className=" ml-5 font-thin justify-center">{schools[0]?.sites}</h1>
-									</div>
-								</div>
-                              <div>
-                                 <img
-									className="w-32 h-32 object-cover rounded-md border border-gray1"
-									src={
-										studentData?.photo
-											? UPLOADS_URL + studentData?.photo
-											: "avata.jpeg"
-									}
-									alt="student_image"
-								/>
-                               </div>
+						<div className="mx-4  bg-gray2 font-medium mt-5 flex">
+							<div className=" p-2 mx-1 w-1/3 ">
+								AVERAGE MARK: <span className="text-gray5">her</span>{" "}
 							</div>
-
-							
-						</div>
-
-						<div className="flex p-5">
-							<div className="">
-							
+							<div className=" p-2 mx-1  w-1/3 ">
+								TOTAL POINTS: <span className="text-gray5">{points}</span>{" "}
 							</div>
-							<div className="ml-5 w-1/4">
-								<h1 className="text-primary font-bold text-2xl">
-									{studentData.firstName} {studentData.middleName}{" "}
-									{studentData.lastName}
-								</h1>
-								<div className="flex text-sm">
-									<div className="w-1/2">
-										<h1 className="">Class:</h1>
-									</div>
-									<div className="w-1/2">
-										<h1 className="text-gray5 ">
-											{studentData?.classes[0]?.class}
-										</h1>
-									</div>
-								</div>
-								<div className="flex text-sm">
-									<div className="w-1/2">
-										<h1 className="text-black">Section:</h1>
-									</div>
-									<div className="w-1/2">
-										<h1 className="text-gray5 ">Boarding</h1>
-									</div>
-								</div>
-								<div className="flex text-sm ">
-									<div className="w-1/2">
-										<h1 className="">Student Type:</h1>
-									</div>
-									<div className="w-1/2">
-										<h1 className="text-gray5 ">
-											{studentData?.student_types[0]?.type}
-										</h1>
-									</div>
-								</div>
-								<div className="flex text-sm">
-									<div className="w-1/2">
-										<h1 className="">House:</h1>
-									</div>
-									<div className="w-1/2">
-										<h1 className="text-gray5 ">
-											{studentData?.houses[0]?.house}
-										</h1>
-									</div>
-								</div>
+							<div className=" p-2 mx-1 w-1/3 ">
+								DIVISION:{" "}
+								<span className="text-gray5">
+									{points && findDivision(points, divisions)?.division}{" "}
+								</span>
 							</div>
 						</div>
+						<br />
+						<p className="m-5 uppercase font-semibold text-lg">progressive assessment record</p>
 						<div className=" flex text-sm border-b text-white bg-primary border-gray1 mx-2 px-2 cursor-pointer">
 							<div className="w-1/4 p-2">Subjects</div>
 							{examTypes?.map((type) => {
@@ -465,46 +370,48 @@ function ReportCardTemplate({ closeCard, studentData }) {
 								);
 							})}
 							<div className="w-1/4 p-2">Total</div>
+							<div className="w-1/4 p-2">Grade</div>
 							<div className="w-1/4 p-2">Point</div>
 						</div>
-
 						{/* {assessData} */}
 						{assessData.map((data) => {
 							const { examTypes } = data;
-							const gradeObj = assignGrade(data.markGrade, grades);
+							const gradeObj = assignGrade(
+								data.markGrade,
+								grades,
+								data.subject
+							);
 							return (
 								<div className=" flex text-sm border-b text-gray5 border-gray1 mx-2 px-2 cursor-pointer">
-									<div className="w-1/4 p-2">{data.subject}</div>
+									<div className="w-1/4 p-1">{data.subject}</div>
 									{examTypes.map((examType) => (
-										<div className="w-1/4 flex  ">
-											<div className="p-1">{examType.markPercent}</div>
+										<div className="w-1/4 p-1">
+											{examType.markPercent}
 										</div>
 									))}
-									<div className="w-1/4 flex  ">
-										<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div>{" "}
-										<div className="p-1">{gradeObj.grade}</div>
+									<div className="w-1/4 p-1">
+									{`${Math.floor(
+											data.markGrade
+										)}%`}
+									
 									</div>
-									<div className="w-1/4 flex  ">
-										<div className="p-1">Points</div>{" "}
-										<div className="p-1">{gradeObj.points}</div>
+									<div className="w-1/4 p-1">
+									{gradeObj.grade ? gradeObj.grade : "No Grade"}
+									</div>
+									<div className="w-1/4 p-1">
+			
+									{gradeObj.points}
 									</div>
 								</div>
 							);
 						})}
-
-						<div className="mx-4  bg-gray1 font-medium mt-5">
-							<div className=" p-2 m-1 w-1/2 text-primary text-lg font-bold">Division: {points && findDivision(points, divisions)?.division}</div>
-							<div className=" p-2 mx-1 -mt-5 w-1/2 text-sm">{points} Points</div>
-						</div>
-						<div className="flex mx-4  bg-gray1 font-medium">
-							<div className=" p-2 m-1 w-1/2">Comments From Class Teacher
-								<p className="text-sm text-gray5">{report?.comment}</p></div>
-							<div className=" p-2 m-1 w-1/2">Next Stream : <span className="text-primary">{report?.stream}</span></div>
-							<div className=" p-2 m-1 w-1/2">Next Class: <span className="text-primary">{report?.classField}</span></div>
-
-						</div>
+					<br/>
+					<br/>
 					</div>
+					
 				</div>
+
+				
 			</div>
 		</>
 	);
