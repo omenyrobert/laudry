@@ -19,7 +19,6 @@ import Select from 'react-select'
 function Division() {
   const dispatch = useDispatch()
   const [editData, setEditData] = useState(false)
-  const [editDivision, setEditDivision] = useState('')
   const [editPoints, setEditPoints] = useState('')
   const [divisionId, setDivisionId] = useState('')
   const { divisions, classLevels } = useSelector((state) => state.schoolStore)
@@ -39,16 +38,7 @@ function Division() {
     setClassLevelOpts(classLevelOpts)
   }, [classLevels])
 
-  const closeEditData = () => {
-    setEditData(false)
-  }
-  
-  const openEditData = (div) => {
-    setEditData(true)
-    setEditDivision(div?.division)
-    setEditPoints(div.points)
-    setDivisionId(div.id)
-  }
+
 
   // posting division
   const [isPosting, setIsPosting] = useState(false)
@@ -139,13 +129,39 @@ function Division() {
     })
   }
 
+
+  const closeEditData = () => {
+    setEditData(false)
+  }
+  const [editDivision, setEditDivision] = useState('')
+  const [editFrom, setEditFrom] = useState('')
+  const [editTo, setEditTo] = useState('')
+  const openEditData = (div) => {
+    console.log('divs', div)
+    setEditData(true)
+    setEditDivision(div?.division)
+    setEditFrom(div.lowerLimit)
+    setEditTo(div.upperLimit)
+    setDivisionId(div.id)
+    // setClassLevelOpts(div.classLevels);
+    // let classLevelOpts = classLevels.map((level) => {
+    //   return {
+    //     value: level.id,
+    //     label: level.name,
+    //     ...level,
+    //   }
+    // })
+    // setClassLevelOpts(classLevelOpts)
+  }
+
   // updating division
   const updateDivision = async () => {
     try {
       let formData = {
         id: divisionId,
         division: editDivision,
-        points: parseFloat(editPoints),
+        from: parseFloat(editFrom),
+        to: parseFloat(editTo),
         classLevels: selectedEditClassLevel,
       }
       const subject = await axiosInstance.put('/divisions', formData)
@@ -247,18 +263,18 @@ function Division() {
                     <InputField
                       type="text"
                       placeholder="Enter Points"
-                      label="Points"
-                      onChange={(e) => setEditPoints(e.target.value)}
-                      value={editPoints}
+                      label="From"
+                      onChange={(e) => setEditFrom(e.target.value)}
+                      value={editFrom}
                     />
                   </div>
                   <div className="w-2/5 pr-2">
                     <InputField
                       type="text"
                       placeholder="Enter Points"
-                      label="Points"
-                      onChange={(e) => setEditPoints(e.target.value)}
-                      value={editPoints}
+                      label="To"
+                      onChange={(e) => setEditTo(e.target.value)}
+                      value={editTo}
                     />
                   </div>
                   <div className="w-2/5 pr-2 mt-14">

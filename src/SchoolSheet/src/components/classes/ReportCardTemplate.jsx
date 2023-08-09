@@ -147,8 +147,9 @@ function ReportCardTemplate({ closeCard, studentData }) {
 
 				<div className="flex justify-center">
 					<div className="bg-white w-[80vw] h-[90vh] mt-2  overflow-y-auto">
-						<div className="flex bg-primary text-white py-5 px-6">
-							<div className="flex w-full">
+					<h1 className="text-3xl text-primary text-center mt-5 uppercase font-bold">{schools[0]?.name} report card</h1>
+						<div className="flex text-white py-5 px-6">
+							<div className="flex justify-between w-full">
 								<div className="w-28">
 									<img
 										src={
@@ -160,40 +161,38 @@ function ReportCardTemplate({ closeCard, studentData }) {
 										alt="school_logo"
 									/>
 								</div>
-								<div className="ml-5 text-white">
-									<h1 className="text-xl  font-semibold">{schools[0]?.name}</h1>
-									<h1 className="">{schools[0]?.motto}</h1>
-									<div className="flex mt-5 text-sm">
-										<div className="font-thin flex">
-											<div>
-												<BsTelephoneFill className="text-sm mt-1 flex" />
-											</div>{" "}
-											<div className="ml-1">{schools[0]?.phoneNumbers}</div>{" "}
-										</div>
-										<div className="font-thin ml-5 flex">
-											<div>
-												<BsEnvelopeFill className="text-sm mt-1" />
-											</div>
-											<div className="ml-1">{schools[0]?.emails}</div>
-										</div>
-										<div className=" ml-5 font-thin flex">
+								<div className="ml-5">
+									
+									<h1 className="text-black text-center text-lg -mt-3">{schools[0]?.motto}</h1>
+									<div className=" text-black">
+									<div className="font-thin flex justify-center">
 											<div>
 												<MdLocationPin className="text-sm mt-1" />
 											</div>
 											<div className="ml-1">{schools[0]?.location}</div>
 										</div>
-										<h1 className=" ml-5 font-thin">{schools[0]?.sites}</h1>
+										<div className="flex justify-between">
+
+										<div className="font-thin flex justify-center">
+											<div>
+												<BsTelephoneFill className="text-sm mt-1 flex" />
+											</div>{" "}
+											<div className="ml-1">{schools[0]?.phoneNumbers}</div>{" "}
+										</div>
+										<div className="font-thin justify-center ml-5 flex">
+											<div>
+												<BsEnvelopeFill className="text-sm mt-1" />
+											</div>
+											<div className="ml-2">{schools[0]?.emails}</div>
+										</div>
+										</div>
+										
+										<h1 className="font-thin text-center">{schools[0]?.sites}</h1>
+										<h1 className="font-bold text-2xl mt-5 text-primary text-center">Termly Report</h1>
 									</div>
 								</div>
-							</div>
-
-							<div className="w-[300px]">
-								<h1 className="font-bold text-xl text-center ">Report Card</h1>
-							</div>
-						</div>
-						<div className="flex p-5">
-							<div className="">
-								<img
+                              <div>
+                                 <img
 									className="w-32 h-32 object-cover rounded-md border border-gray1"
 									src={
 										studentData?.photo
@@ -202,89 +201,135 @@ function ReportCardTemplate({ closeCard, studentData }) {
 									}
 									alt="student_image"
 								/>
+                               </div>
 							</div>
-							<div className="ml-5 w-1/4">
-								<h1 className="text-primary font-bold text-2xl">
-									{studentData.firstName} {studentData.middleName}{" "}
+
+							
+						</div>
+						<hr className="text-primary" />
+						
+							
+							<div className="m-5">
+								<h1 className=" text-lg">
+									Student's Name: {studentData.firstName} {studentData.middleName}{" "}
 									{studentData.lastName}
 								</h1>
-								<div className="flex text-sm">
-									<div className="w-1/2">
+								<div className="flex mt-2">
+									<div className="w-1/4 flex">
 										<h1 className="">Class:</h1>
-									</div>
-									<div className="w-1/2">
-										<h1 className="text-gray5 ">
+										<h1 className="text-gray5 ml-5">
 											{studentData?.classes[0]?.class}
 										</h1>
 									</div>
-								</div>
-								<div className="flex text-sm">
-									<div className="w-1/2">
-										<h1 className="text-black">Section:</h1>
+									<div className="w-1/4 flex">
+									<h1 className="">Term:</h1>
+										<h1 className="text-gray5 ml-5">
+											{studentData?.terms[0]?.term}
+										</h1>
 									</div>
-									<div className="w-1/2">
-										<h1 className="text-gray5 ">Boarding</h1>
+									<div className="w-1/4 flex">
+									<h1 className="">Year:</h1>
+										<h1 className="text-gray5 ml-5">
+											{new Date().getFullYear()}
+										</h1>
+									</div>
+									<div className="w-1/4 flex">
+									<h1 className="">Date:</h1>
+										<h1 className="text-gray5 ml-5">
+										{new Date().getDay()}-{new Date().getMonth()}-{new Date().getFullYear()}
+										</h1>
 									</div>
 								</div>
-								<div className="flex text-sm ">
-									<div className="w-1/2">
+								<div className="flex mt-2">
+									<div className="w-1/4 flex">
+										<h1 className="">Admission no:</h1>
+										<h1 className="text-gray5 ml-5">
+										{schools[0]?.name[0]}00{studentData?.id}
+										</h1>
+									</div>
+									{/* <div className="w-1/4 flex">
+									<h1 className="">Class:</h1>
+										<h1 className="text-gray5 ml-5">
+											{studentData?.classes[0]?.class}
+										</h1>
+									</div> */}
+									<div className="w-1/4 flex">
+									<h1 className="">Stream:</h1>
+										<h1 className="text-gray5 ml-5">
+											{studentData?.streams[0]?.stream}
+										</h1>
+									</div>
+									{/* <div className="w-1/4 flex">
+									<h1 className="">Section:</h1>
+										<h1 className="text-gray5 ml-5">
+											{studentData?.sections[0]?.section}
+										</h1>
+									</div> */}
+								</div>
+								
+								{/* <div className="flex text-sm ">
+									<div className="w-1/4 flex">
 										<h1 className="">Student Type:</h1>
-									</div>
-									<div className="w-1/2">
-										<h1 className="text-gray5 ">
+										<h1 className="text-gray5 ml-5">
 											{studentData?.student_types[0]?.type}
 										</h1>
 									</div>
-								</div>
-								<div className="flex text-sm">
-									<div className="w-1/2">
-										<h1 className="">House:</h1>
-									</div>
-									<div className="w-1/2">
-										<h1 className="text-gray5 ">
-											{studentData?.houses[0]?.house}
+									<div className="w-1/4 flex">
+									<h1 className="">House:</h1>
+										<h1 className="text-gray5 ml-5">
+										{studentData?.houses[0]?.house}
 										</h1>
 									</div>
-								</div>
+								</div> */}
+								
 							</div>
-						</div>
-						<div className=" flex text-sm border-b text-white bg-primary border-gray1 mx-2 px-2 cursor-pointer">
+							<p className="text-lg font-medium ml-5">END OF TERM PERFORMANCE</p>
+						
+						<div className=" flex text-sm border-b text-white bg-primary border-gray1 mx-5 px-2 cursor-pointer">
 							<div className="w-1/4 p-2">Subjects</div>
-							{examTypes?.map((type) => {
+							{/* {examTypes?.map((type) => {
 								return (
 									<>
 										<div className="w-1/4 p-2">{type.examType}</div>
 									</>
 								);
-							})}
-							<div className="w-1/4 p-2">Total</div>
-							<div className="w-1/4 p-2">Point</div>
+							})} */}
+							<div className="w-1/4 p-2">FULL MARKS</div>
+							<div className="w-1/4 p-2">GRADE</div>
+							<div className="w-1/4 p-2">POINTS</div>
+							<div className="w-1/4 p-2">REMARKS</div>
 						</div>
 
 						{/* {assessData} */}
 						{assessData.map((data) => {
 							const { examTypes } = data;
 							const gradeObj = assignGrade(data.markGrade, grades, data.subject);
-							console.log("gradeObj", gradeObj, data.subject)
+							// console.log("gradeObj", gradeObj, data.subject)
 							return (
 								<div className=" flex text-sm border-b text-gray5 border-gray1 mx-2 px-2 cursor-pointer">
 									<div className="w-1/4 p-2">{data.subject}</div>
-									{examTypes.map((examType) => (
-										<div className="w-1/4 flex  ">
-											<div className="p-1">{examType.markPercent}</div>
-										</div>
-									))}
-									<div className="w-1/4 flex  ">
-										<div className="p-1">{`${Math.floor(data.markGrade)}%`}</div>{" "}
-										<div className="p-1">{gradeObj.grade ? gradeObj.grade : "No Grade"}</div>
-									</div>
-									<div className="w-1/4 flex  ">
-										<div className="p-1">Points</div>{" "}
-										<div className="p-1">{gradeObj.points}</div>
-									</div>
+								
+									
+										<div className="p-2 w-1/4">{`${Math.floor(data.markGrade)}%`}</div>{" "}
+										<div className="p-2 w-1/4">{gradeObj.grade ? gradeObj.grade : "No Grade"}</div>
+										<div className="p-2 w-1/4">{gradeObj.points}</div>
+										<div className="p-2 w-1/4">{data.markGrade <= 35 ? "Poor" : null}
+										 {data.markGrade <= 60 && data.markGrade >= 36 ? "Fair" : null}
+										{data.markGrade <= 85 && data.markGrade >= 61 ? "Good" : null}
+										{data.markGrade >= 86 ? "Excellent" : null}
+										 </div>
+									
 								</div>
 							);
 						})}
+						<div className=" flex text-sm border-b text-primary font-semibold bg-gray1 border-gray1 mx-5 px-2 cursor-pointer">
+							<div className="w-1/4 p-1">Total</div>
+						
+							<div className="w-1/4 p-1"> 400</div>
+							<div className="w-1/4 p-1">GRADE</div>
+							<div className="w-1/4 p-1">POINTS</div>
+							<div className="w-1/4 p-1">REMARKS</div>
+						</div>
 
 						<div className="mx-4  bg-gray1 font-medium mt-5">
 							<div className=" p-2 m-1 w-1/2 text-primary text-lg font-bold">Division: {points && findDivision(points, divisions)?.division}</div>
@@ -302,10 +347,10 @@ function ReportCardTemplate({ closeCard, studentData }) {
 
 				<div id="ledger-table">
 					<div className="bg-white w-[100vw] mt-2">
-						<div className="bg-primary text-white p-2">
-							<div className="flex">
-
-								<div className="w-[200px]">
+					<h1 className="text-3xl text-primary text-center mt-5 uppercase font-bold">{schools[0]?.name} report card</h1>
+					<div className="flex text-white py-5 px-6">
+							<div className="flex justify-between w-full">
+								<div className="w-28">
 									<img
 										src={
 											schools && schools.length > 0 && schools[0]?.logo
@@ -316,45 +361,37 @@ function ReportCardTemplate({ closeCard, studentData }) {
 										alt="school_logo"
 									/>
 								</div>
-								<div className="ml-5 w-full truncate text-white">
-									<h1 className="text-xl  font-semibold">{schools[0]?.name}</h1>
-									<h1 className="">{schools[0]?.motto}</h1>
+								<div className="ml-5">
+									
+									<h1 className="text-black text-center text-lg -mt-3">{schools[0]?.motto}</h1>
+									<div className=" text-black">
+									<div className="font-thin flex justify-center">
+											<div>
+												<MdLocationPin className="text-sm mt-1" />
+											</div>
+											<div className="ml-1">{schools[0]?.location}</div>
+										</div>
+										<div className="flex justify-between">
 
-								</div>
-
-
-								<div className="w-[300px]">
-									<h1 className="font-bold text-2xl text-center ">Report Card</h1>
-								</div>
-							</div>
-
-
-							<div className="flex mt-5 ml-[120px] -mt-[40px] text-sm">
-								<div className="font-thin flex">
-									<div>
-										<BsTelephoneFill className="text-sm mt-1 flex" />
-									</div>{" "}
-									<div className="ml-1">{schools[0]?.phoneNumbers}</div>{" "}
-								</div>
-								<div className="font-thin ml-5 flex">
-									<div>
-										<BsEnvelopeFill className="text-sm mt-1" />
+<div className="font-thin flex justify-center">
+	<div>
+		<BsTelephoneFill className="text-sm mt-1 flex" />
+	</div>{" "}
+	<div className="ml-1">{schools[0]?.phoneNumbers}</div>{" "}
+</div>
+<div className="font-thin justify-center ml-5 flex">
+	<div>
+		<BsEnvelopeFill className="text-sm mt-1" />
+	</div>
+	<div className="ml-2">{schools[0]?.emails}</div>
+</div>
+</div>
+										
+										<h1 className=" ml-5 font-thin justify-center">{schools[0]?.sites}</h1>
 									</div>
-									<div className="ml-1">{schools[0]?.emails}</div>
 								</div>
-								<div className=" ml-5 font-thin flex">
-									<div>
-										<MdLocationPin className="text-sm mt-1" />
-									</div>
-									<div className="ml-1">{schools[0]?.location}</div>
-								</div>
-								<h1 className=" ml-5 font-thin">{schools[0]?.sites}</h1>
-							</div>
-						</div>
-
-						<div className="flex p-5">
-							<div className="">
-								<img
+                              <div>
+                                 <img
 									className="w-32 h-32 object-cover rounded-md border border-gray1"
 									src={
 										studentData?.photo
@@ -363,6 +400,15 @@ function ReportCardTemplate({ closeCard, studentData }) {
 									}
 									alt="student_image"
 								/>
+                               </div>
+							</div>
+
+							
+						</div>
+
+						<div className="flex p-5">
+							<div className="">
+							
 							</div>
 							<div className="ml-5 w-1/4">
 								<h1 className="text-primary font-bold text-2xl">
