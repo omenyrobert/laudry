@@ -223,14 +223,14 @@ function Grades() {
               onChange={(e) => setFrom(e.target.value)}
             />
 
-            <Select
+            {/* <Select
               placeholder={'Select class Levels'}
               className="text-sm"
               options={classLevelOpts}
               onChange={(e) => setSelectedClassLevels(e)}
               value={selectedClassLevels}
               isMulti
-            />
+            /> */}
           </div>
           <div className="w-1/4 ml-2">
             <InputField
@@ -241,14 +241,14 @@ function Grades() {
               onChange={(e) => setTo(e.target.value)}
             />
 
-            <Select
+            {/* <Select
               placeholder={'Select Subjects'}
               className="text-sm"
               options={subjectOpts}
               onChange={(e) => setSelectedSubjects(e)}
               value={selectedSubjects}
               isMulti
-            />
+            /> */}
           </div>
           <div className="w-1/4 ml-2">
             <InputField

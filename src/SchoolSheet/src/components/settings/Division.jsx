@@ -42,6 +42,7 @@ function Division() {
   const closeEditData = () => {
     setEditData(false)
   }
+  
   const openEditData = (div) => {
     setEditData(true)
     setEditDivision(div?.division)
@@ -201,14 +202,14 @@ function Division() {
           </div>
 
           <div className="mt-14 mr-5 w-1/3 p-1 ">
-            <Select
+            {/* <Select
               placeholder={'Select class Levels'}
               className="text-sm"
               options={classLevelOpts}
               onChange={(e) => setSelectedClassLevel(e)}
               isMulti
             />
-            <br />
+            <br /> */}
             {isPosting ? (
               <ButtonLoader />
             ) : (
@@ -240,6 +241,15 @@ function Division() {
                       label="Division"
                       onChange={(e) => setEditDivision(e.target.value)}
                       value={editDivision}
+                    />
+                  </div>
+                  <div className="w-2/5 pr-2">
+                    <InputField
+                      type="text"
+                      placeholder="Enter Points"
+                      label="Points"
+                      onChange={(e) => setEditPoints(e.target.value)}
+                      value={editPoints}
                     />
                   </div>
                   <div className="w-2/5 pr-2">
