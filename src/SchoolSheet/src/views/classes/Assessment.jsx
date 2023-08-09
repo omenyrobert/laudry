@@ -82,7 +82,7 @@ function Assessment() {
   const [studentData, setStudentData] = useState([])
 
   useEffect(() => {
-    setStudentData(students.students)
+    setStudentData(students?.students ? students.students : [])
   }, [students])
 
   // fetch exams and subjects
