@@ -368,7 +368,7 @@ export const removeStudentDocument = async (req: Request, res: Response) => {
 
 export const searchingStudents = async (req: Request, res: Response) => {
   try {
-    const { page, keyword } = req.query;
+    const { page, keyword, count } = req.query;
 
     if (!page || !keyword) {
       return res
@@ -395,9 +395,11 @@ export const searchingStudents = async (req: Request, res: Response) => {
 
     const activeTerm = await getTermBySelect();
     const termId = activeTerm !== null ? activeTerm.id : null;
+    let stuCount = count as string
     const [studentsToFetch, studentCount] = await searchStudents(
       keyword.toString(),
-      pageInt
+      pageInt,
+      count ? parseInt(stuCount) : 20
     );
     const students = await Promise.all(
       studentsToFetch.map(async (student) => {
