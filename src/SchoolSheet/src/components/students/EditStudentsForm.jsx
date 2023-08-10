@@ -262,7 +262,7 @@ const EditStudentsForm = (props) => {
       motherName: motherName,
       motherContact: motherContact,
       studentType: studentType.id,
-      studentSection: studentSection.value,
+      studentSection: studentSection.id,
       studentHouse: studentHouse.id,
       studentClass: studentClass.id,
       feesCategory: feesCategory.id,

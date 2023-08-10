@@ -13,7 +13,11 @@
     "build": "npm install --prefix ./src/SchoolSheet && npm run build --prefix ./src/SchoolSheet",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "electron": "electron .",
-    "token": "ts-node ./src/token.ts"
+    "token": "ts-node ./src/token.ts",
+    "start:forge": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
   },
   "author": "Robert",
   "license": "ISC",
@@ -33,6 +37,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
+    "electron-squirrel-startup": "^1.0.0",
     "express": "^4.18.2",
     "express-handlebars": "^7.0.7",
     "jsonwebtoken": "^9.0.0",
