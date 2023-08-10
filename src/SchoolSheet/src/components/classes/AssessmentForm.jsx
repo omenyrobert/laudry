@@ -56,6 +56,9 @@ function AssessmentForm({
   const [generalComment, setGeneralComment] = useState('')
   const [isPosting, setIsPosting] = useState(false)
   const { grades, classes, streams } = useSelector((state) => state.schoolStore)
+  const [classTeachersSignature, setClassTeachersSignature] = useState(null)
+  const [headTeachersSignature, setHeadTeachersSignature] = useState(null)
+  const [headTeachersComment, setHeadTeachersComment] = useState('')
 
   const [formData, setFormData] = useState({
     mark: '',
@@ -178,16 +181,34 @@ function AssessmentForm({
   const updateStudent = async () => {
     try {
       setIsPosting(true)
-      let reportData = {
+      /* let reportData = {
         action: action.value,
         stream: streamProm.value,
         comment: generalComment,
         classField: _class.value,
         term: term.id,
         studentId: parseFloat(studentId),
-      }
+        classTeachersComment: generalComment,
+      } */
+      const reportData = new FormData()
+      reportData.append('action', action.value)
+      reportData.append('stream', streamProm.value)
+      reportData.append('comment', generalComment)
+      reportData.append('classField', _class.value)
+      reportData.append('term', term.id)
+      reportData.append('studentId', parseFloat(studentId))
+      reportData.append('classTeachersComment', generalComment)
+      reportData.append('classTeachersSignature', classTeachersSignature)
+      reportData.append('headTeachersSignature', headTeachersSignature)
+      reportData.append('headTeachersComment', headTeachersComment)
 
-      const report = await axiosInstance.post('/reports', reportData)
+
+
+      const report = await axiosInstance.post('/reports', reportData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
 
       const { data } = report
       const { status } = data
@@ -411,7 +432,15 @@ function AssessmentForm({
             />
           </div>
           <div className="p-2 w-1/2 ml-5 mt-5">
-            <InputField label="Class Teacher's Signiture" type="file" />
+            <InputField
+              label="Class Teacher's Signiture"
+              type="file"
+              onChange={(e) => {
+                // console.log(e.target.files[0])
+                // set the file 
+                setClassTeachersSignature(e.target.files[0])
+              }}
+            />
           </div>
         </div>
         <div className="flex">
@@ -420,10 +449,20 @@ function AssessmentForm({
               label="Head Master's Comment"
               placeholder="Head Master's Comment"
               type="text"
+              value={headTeachersComment}
+              onChange={(e) => setHeadTeachersComment(e.target.value)}
             />
           </div>
           <div className="w-1/2 ml-5">
-            <InputField label="Head Master's Signiture" type="file" />
+            <InputField
+              label="Head Master's Signiture"
+              type="file"
+              onChange={(e) => {
+                console.log(e.target.files[0])
+                // set the file 
+                setHeadTeachersSignature(e.target.files[0])
+              }}
+            />
           </div>
         </div>
       </div>

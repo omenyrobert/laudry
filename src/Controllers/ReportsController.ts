@@ -19,7 +19,36 @@ export const fetchReports = async (req: Request, res: Response) => {
 
 export const addReport = async (req: Request, res: Response) => {
   try {
-    const { action, stream, comment, classField, term, studentId } = req.body;
+    const { action, stream, comment, classField, term, studentId, headTeachersComment, classTeachersComment } = req.body;
+    if (!req.files) {
+      return res
+        .json(customPayloadResponse(false, "Files Required"))
+        .status(200)
+        .end();
+    }
+    const files = req.files as Express.Multer.File[];
+    const headTeachersSignature = files.find(
+      (file) => file.fieldname === "headTeachersSignature"
+    );
+    const classTeachersSignature = files.find(
+      (file) => file.fieldname === "classTeachersSignature"
+    );
+
+    if (!classTeachersSignature) {
+      return res
+        .json(customPayloadResponse(false, "Class Teachers Signature Required"))
+        .status(200)
+        .end();
+    }
+    if (!headTeachersSignature) {
+      return res
+        .json(customPayloadResponse(false, "Head Teachers Signature Required"))
+        .status(200)
+        .end();
+    }
+
+
+
     if (!action) {
       return res
         .json(customPayloadResponse(false, "Action Required"))
@@ -50,7 +79,18 @@ export const addReport = async (req: Request, res: Response) => {
         .status(200)
         .end();
     }
-    await createReport(action, stream, comment, classField, term, studentId);
+    await createReport(
+      action, 
+      stream, 
+      comment, 
+      classField, 
+      term, 
+      studentId,
+      headTeachersComment,
+      classTeachersComment,
+      headTeachersSignature.filename,
+      classTeachersSignature.filename
+      );
     return res
       .json(customPayloadResponse(true, "Report Added"))
       .status(200)
@@ -63,7 +103,33 @@ export const addReport = async (req: Request, res: Response) => {
 export const modifyReport = async (req: Request, res: Response) => {
   try {
     const reportId = parseInt(req.params.id);
-    const { action, stream, comment, classField, term, studentId } = req.body;
+    const { action, stream, comment, classField, term, studentId,  headTeachersComment, classTeachersComment } = req.body;
+    if (!req.files) {
+      return res
+        .json(customPayloadResponse(false, "Files Required"))
+        .status(200)
+        .end();
+    }
+    const files = req.files as Express.Multer.File[];
+    const headTeachersSignature = files.find(
+      (file) => file.fieldname === "headTeachersSignature"
+    );
+    const classTeachersSignature = files.find(
+      (file) => file.fieldname === "classTeachersSignature"
+    );
+
+    if (!classTeachersSignature) {
+      return res
+        .json(customPayloadResponse(false, "Class Teachers Signature Required"))
+        .status(200)
+        .end();
+    }
+    if (!headTeachersSignature) {
+      return res
+        .json(customPayloadResponse(false, "Head Teachers Signature Required"))
+        .status(200)
+        .end();
+    }
     if (!action) {
       return res
         .json(customPayloadResponse(false, "Action Required"))
@@ -102,7 +168,19 @@ export const modifyReport = async (req: Request, res: Response) => {
     }
     const reportToUpdate = await getSingleReport(reportId);
     if (reportToUpdate) {
-      await updateReport(reportId, action, stream, comment, classField, term, studentId);
+      await updateReport(
+        reportId, 
+        action, 
+        stream, 
+        comment, 
+        classField, 
+        term, 
+        studentId,
+        headTeachersComment,
+        classTeachersComment,
+        headTeachersSignature.filename,
+        classTeachersSignature.filename
+        );
       return res
         .json(customPayloadResponse(true, "Report Updated"))
         .status(200)

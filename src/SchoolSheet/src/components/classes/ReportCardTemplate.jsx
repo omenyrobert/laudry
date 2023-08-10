@@ -28,6 +28,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 	// const [phones, setPhones] = useState("");
 	// const [emails, setEmails] = useState("");
 	const [term, setTerm] = useState(null);
+	const [nextTerm, setNextTerm] = useState(null);
 	const [assessData, setAssessData] = useState([]);
 	const [report, setReport] = useState(null);
 	const [points, setPoints] = useState(null);
@@ -58,9 +59,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 			const data = assessmentsByTerm.filter((assessment) => {
 				return assessment.studentId === studentData.id.toString();
 			});
-			console.log(data);
 			const _data = assessSubjects(data);
-			console.log("Assesed subects", _data);
 			const pointsData = _data.map(
 				(dt) => assignGrade(dt.markGrade, grades, dt.subject).points
 			);
@@ -68,12 +67,10 @@ function ReportCardTemplate({ closeCard, studentData }) {
 			const filteredPoints = pointsData.filter((point) => {
 				return point !== undefined && point !== null;
 			});
-			console.log("points data", pointsData);
 			const sumOfPoints = filteredPoints.reduce(
 				(accumulator, currentValue) => accumulator + currentValue,
 				0
 			);
-			console.log("sum of points", sumOfPoints);
 			setPoints(sumOfPoints);
 			setAssessData(_data);
 		}
@@ -84,7 +81,19 @@ function ReportCardTemplate({ closeCard, studentData }) {
 		const _term =
 			terms.length > 0 && terms.filter((term) => term.is_selected === 1)[0];
 		setTerm(_term);
+
+		const _termindex = terms.indexOf(_term);
+		let _nextTermIndex = _termindex - 1;
+		if (_nextTermIndex === -1) {
+			_nextTermIndex = terms.length - 1;
+		}
+		const _nextTerm = terms[_nextTermIndex];
+		setNextTerm(_nextTerm);
+		console.log("next term", _nextTerm);
+		console.log("next ]]]", _termindex, _nextTermIndex, terms.length);
+
 	}, [terms]);
+
 
 	useEffect(() => {
 		if (term && term.id) {
@@ -103,6 +112,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 				);
 			})[0];
 		setReport(report);
+		console.log("report", report);
 	}, [reports, studentData, term]);
 
 	const handleGeneratePDF = () => {
@@ -214,7 +224,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 
 						<div className="m-5">
 							<h1 className=" text-lg">
-								Student's Name: {studentData.firstName} {studentData.middleName}{" "}
+								Students Name: {studentData.firstName} {studentData.middleName}{" "}
 								{studentData.lastName}
 							</h1>
 							<div className="flex mt-2">
@@ -400,28 +410,72 @@ function ReportCardTemplate({ closeCard, studentData }) {
 							);
 						})}
 						<div className=" bg-gray1 m-3 p-5">
-							<p>Class Teacher's comment</p>
-							<p className="mt-2">Class Teacher's signiture</p>
-						
-							<hr className="text-gray4 my-4"/>
-							<p>Head Teacher's comment</p>
-						<p className="mt-2">Head Teacher's signiture</p>
+							<p>Class Teacher{"'"}s comment:{" "}
+								<span className="underline font-bold " >
+									{report?.classTeachersComment}
+								</span>
+							</p>
+							<p className="mt-2">Class Teacher{"'"}s signiture:
+								<img
+									src={UPLOADS_URL + report?.classTeachersSignature}
+									alt="class teachers signature"
+									width="60px"
+									height="50px"
+
+								/>
+							</p>
+
+							<hr className="text-gray4 my-4" />
+							<p>Head Teacher{"'"}s comment:{" "}
+								<span className="underline font-bold " >
+									{report?.headTeachersComment}
+								</span>
+							</p>
+							<p className="mt-2">Head Teacher{"'"}s signiture:
+
+								<img
+									src={UPLOADS_URL + report?.classTeachersSignature}
+									alt="class teachers signature"
+									width="60px"
+									height="50px"
+
+								/>
+							</p>
 						</div>
 
-						
+
 						<br />
 						<div className="flex m-5 justify-between">
-							<p>Next Term Begins</p>
-							<p>Next Term Ends</p>
-							<p>Next term's fees</p>
+							<p>Next Term Begins:
+								<span className="underline font-bold " >
+									{nextTerm?.from}
+								</span>
+							</p>
+							<p>Next Term Ends:
+								<span className="underline font-bold " >
+									{nextTerm?.to}
+								</span>
+
+							</p>
+							<p>Next term{"'"}s fees</p>
 						</div>
 						<div className="flex m-5 justify-between">
-							<p>Next Class</p>
-							<p>Next Streams</p>
+							<p>Next Class:
+								<span className="underline font-bold " >
+									{report?.classField}
+								</span>
+
+							</p>
+							<p>Next Streams:
+								<span className="underline font-bold " >
+									{report?.stream}
+								</span>
+
+							</p>
 						</div>
 						<div className="p-5 w-full bg-primary">
 
-						<p className="text-center text-white text-2xl font-bold">See You Next Term</p>
+							<p className="text-center text-white text-2xl font-bold">See You Next Term</p>
 						</div>
 
 						<br />

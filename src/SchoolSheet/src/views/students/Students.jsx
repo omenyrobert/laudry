@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../../assets/styles/main.css'
-import StudentsTable from '../../components/students/StudentsTable'
+import StudentsTable from '../../components/students/studentsTable'
 import InputField from '../../components/InputField'
 import Button from '../../components/Button'
 import { BsSearch } from 'react-icons/bs'
@@ -29,6 +29,7 @@ import Loader from '../../components/Loader'
 const Students = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [searchCount, setSearchCount] = useState(20)
   const [search, setSearch] = useState(false)
   const [student, setStudent] = useState(false)
   const [filters, setFilters] = useState({
@@ -259,7 +260,7 @@ const Students = () => {
     if (searchInput) {
       setStudent(false)
       setSearch(true)
-      let data = { searchPage: searchPage, searchInput: searchInput }
+      let data = { searchPage: searchPage, searchInput: searchInput, count: searchCount }
       dispatch(getSearchStudents(data))
     } else {
       navigate(0)
@@ -358,7 +359,25 @@ const Students = () => {
                   />
                 }
               />
+
             </div>
+            <InputField
+              type="text"
+              placeholder="Enter number of students to retrive"
+              name="lastName"
+              label={'Count (Press Enter to search)'}
+              value={searchCount}
+              onChange={(e) => setSearchCount(e.target.value)}
+              onKeyPress={(e) => {
+                console.log(e)
+                if (e.key === 'Enter') {
+                  setStudent(false)
+                  setSearch(true)
+                  let data = { searchPage: searchPage, searchInput: searchInput, count: searchCount }
+                  dispatch(getSearchStudents(data))
+                }
+              }}
+            />
             <div className=""></div>
             <div className="flex mt-5">
               <div className="w-1/3"></div>
@@ -425,6 +444,10 @@ const Students = () => {
                       options={streamOptions}
                     />
                     <br />
+
+
+
+
                     <div
                       className=""
                       onClick={() => {
