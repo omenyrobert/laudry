@@ -21,7 +21,7 @@ export class Stream extends BaseEntity {
   school_classes: SchoolClass[];
 
   @ManyToMany(() => Student, (student) => student.streams)
-  students: [];
+  students: Student[];
 }
 
 export const getStreams = async () => {

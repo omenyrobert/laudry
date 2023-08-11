@@ -8,6 +8,7 @@ import {
   ManyToOne,
   OneToMany,
   Like,
+  In,
 } from "typeorm";
 import { House, getSelectedHouses } from "./House";
 import { StudentType, selectedType } from "./StudentType";
@@ -605,3 +606,5 @@ export const getStudentsWithFeesBalanceLessThan50 = async () => {
 
   return studentsWithFeesBalanceLessThan50;
 };
+
+
