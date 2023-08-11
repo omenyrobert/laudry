@@ -174,9 +174,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 									/>
 								</div>
 								<div className="ml-5">
-									<h1 className="text-black text-center text-lg -mt-3">
-										{schools[0]?.motto}
-									</h1>
+				
 									<div className=" text-black">
 										<div className="font-thin flex justify-center">
 											<div>
@@ -202,14 +200,14 @@ function ReportCardTemplate({ closeCard, studentData }) {
 										<h1 className="font-thin text-center">
 											{schools[0]?.sites}
 										</h1>
-										<h1 className="font-bold text-2xl mt-5 text-primary text-center">
+										<h1 className="font-bold text-2xl mt-1 text-primary text-center">
 											Termly Report
 										</h1>
 									</div>
 								</div>
 								<div>
 									<img
-										className="w-32 h-32 object-cover rounded-md border border-gray1"
+										className="w-28 h-28 object-cover rounded-md border border-gray1"
 										src={
 											studentData?.photo
 												? UPLOADS_URL + studentData?.photo
@@ -220,7 +218,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 								</div>
 							</div>
 						</div>
-						<hr className="text-primary" />
+						<hr className="text-primary -mt-5" />
 
 						<div className="m-5">
 							<h1 className=" text-lg">
@@ -261,40 +259,17 @@ function ReportCardTemplate({ closeCard, studentData }) {
 										{schools[0]?.name[0]}00{studentData?.id}
 									</h1>
 								</div>
-								{/* <div className="w-1/4 flex">
-									<h1 className="">Class:</h1>
-										<h1 className="text-gray5 ml-5">
-											{studentData?.classes[0]?.class}
-										</h1>
-									</div> */}
+								
 								<div className="w-1/4 flex">
 									<h1 className="">Stream:</h1>
 									<h1 className="text-gray5 ml-5">
 										{studentData?.streams[0]?.stream}
 									</h1>
 								</div>
-								{/* <div className="w-1/4 flex">
-									<h1 className="">Section:</h1>
-										<h1 className="text-gray5 ml-5">
-											{studentData?.sections[0]?.section}
-										</h1>
-									</div> */}
+							
 							</div>
 
-							{/* <div className="flex text-sm ">
-									<div className="w-1/4 flex">
-										<h1 className="">Student Type:</h1>
-										<h1 className="text-gray5 ml-5">
-											{studentData?.student_types[0]?.type}
-										</h1>
-									</div>
-									<div className="w-1/4 flex">
-									<h1 className="">House:</h1>
-										<h1 className="text-gray5 ml-5">
-										{studentData?.houses[0]?.house}
-										</h1>
-									</div>
-								</div> */}
+							
 						</div>
 						<p className="text-lg font-medium ml-5">END OF TERM PERFORMANCE</p>
 
@@ -350,7 +325,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 
 							<div className="w-1/4 p-1"> 400</div>
 							<div className="w-1/4 p-1"></div>
-							<div className="w-1/4 p-1">POINTS</div>
+							<div className="w-1/4 p-1">{points}: POINTS</div>
 							<div className="w-1/4 p-1"></div>
 						</div>
 
@@ -473,9 +448,9 @@ function ReportCardTemplate({ closeCard, studentData }) {
 
 							</p>
 						</div>
-						<div className="p-5 w-full bg-primary">
-
-							<p className="text-center text-white text-2xl font-bold">See You Next Term</p>
+						<div className="p-2 w-full bg-primary">
+						
+							<p className="text-center text-white text-lg font-medium"> 	{schools[0]?.motto} - See You Next Term</p>
 						</div>
 
 						<br />
