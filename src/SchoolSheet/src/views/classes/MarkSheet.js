@@ -15,6 +15,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axiosInstance from "../../axios-instance";
 import { useFeedback } from "../../hooks/feedback"
 import { usePrint } from "../../hooks/print"
+import Pagination from '../../components/Pagination'
 
 function MarkSheet() {
 	const dispatch = useDispatch();
@@ -36,9 +37,14 @@ function MarkSheet() {
 	const [marks, setMarks] = useState([])
 	const { toggleFeedback } = useFeedback()
 	const { printContent } = usePrint()
+	const [allMarks, setAllMarks] = useState([])
+	const [filtered, setFiltered] = useState(false)
+	const [page, setPage] = useState(0)
+	const [pageMarks, setPageMarks] = useState([])
 
 
 	useEffect(() => {
+		fetchAllMarks()
 		dispatch(getClasses())
 		dispatch(getStreams())
 		dispatch(getExamTypes())
@@ -99,6 +105,7 @@ function MarkSheet() {
 		}
 		setLoading(true)
 		try {
+			setFiltered(true)
 			const data = {
 				classId: selectedClass.id,
 				streamId: selectedStream.id,
@@ -112,6 +119,7 @@ function MarkSheet() {
 					title: "Error",
 					text: payload
 				})
+				setFiltered(false)
 				return
 			}
 			setMarks(payload)
@@ -120,9 +128,41 @@ function MarkSheet() {
 				title: "Error",
 				text: "Something went wrong"
 			})
+			setFiltered(false)
 		}
 		setLoading(false)
 	}
+
+	async function fetchAllMarks() {
+		setLoading(true)
+		setFiltered(false)
+		try {
+			const response = await axiosInstance.get("/marksheet")
+			const { status, payload } = response.data
+			if (status === false) {
+				toggleFeedback("error", {
+					title: "Error",
+					text: payload
+				})
+				return
+			}
+			setAllMarks(payload)
+		} catch (error) {
+			toggleFeedback("error", {
+				title: "Error",
+				text: "Something went wrong"
+			})
+		}
+		setLoading(false)
+	}
+
+	useEffect(() => {
+		if (allMarks.length === 0) return
+		const marks = allMarks.slice(page * 20, page * 20 + 20)
+		console.log(marks)
+		setPageMarks(marks)
+	}, [page, allMarks])
+
 
 
 	return (
@@ -186,19 +226,45 @@ function MarkSheet() {
 					loading && <div className="flex justify-center items-center h-64"><div className="loader"></div></div>
 				}
 
-				{marks.map((mark) => {
-					return (
-						<div className="flex cursor-pointer hover:bg-gray1 border-b border-gray1 text-gray5 text-sm">
-							<div className="w-2/12 p-2">{mark.firstName} {mark.lastName}</div>
-							<div className="w-2/12 p-2">{mark.student_levels[0]?.name}</div>
-							<div className="w-2/12 p-2">{mark.classes[0]?.class}</div>
-							<div className="w-2/12 p-2">{mark.streams[0]?.stream}</div>
-							<div className="w-2/12 p-2">{mark.assessment.mark}</div>
-							<div className="w-2/12 p-2">{mark.assessment.grade}</div>
-						</div>
-					);
-				})}
+
+				{
+					filtered === false ? pageMarks.map((mark) => {
+						return (
+							<div className="flex cursor-pointer hover:bg-gray1 border-b border-gray1 text-gray5 text-sm">
+								<div className="w-2/12 p-2">{mark.firstName} {mark.lastName}</div>
+								<div className="w-2/12 p-2">{mark.student_levels[0]?.name}</div>
+								<div className="w-2/12 p-2">{mark.classes[0]?.class}</div>
+								<div className="w-2/12 p-2">{mark.streams[0]?.stream}</div>
+								<div className="w-2/12 p-2">{mark.assessment.mark}</div>
+								<div className="w-2/12 p-2">{mark.assessment.grade}</div>
+							</div>
+						);
+					}) : marks.map((mark) => {
+						return (
+							<div className="flex cursor-pointer hover:bg-gray1 border-b border-gray1 text-gray5 text-sm">
+								<div className="w-2/12 p-2">{mark.firstName} {mark.lastName}</div>
+								<div className="w-2/12 p-2">{mark.student_levels[0]?.name}</div>
+								<div className="w-2/12 p-2">{mark.classes[0]?.class}</div>
+								<div className="w-2/12 p-2">{mark.streams[0]?.stream}</div>
+								<div className="w-2/12 p-2">{mark.assessment?.mark}</div>
+								<div className="w-2/12 p-2">{mark.assessment?.grade ? mark.assessment?.grade : "No Grade"}</div>
+							</div>
+						);
+					})}
 			</div>
+			{
+				filtered === false && <Pagination
+					previousPage={() => {
+						setPage(page - 1)
+					}}
+					nextPage={() => {
+						setPage(page + 1)
+					}}
+					count={allMarks.length}
+					page={page}
+					setPage={setPage}
+				/>
+			}
 		</div>
 	);
 }
