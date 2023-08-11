@@ -20,7 +20,6 @@ const Pagination = ({ setPage, page, count, nextPage, previousPage, canNextPage,
             }
             setPages(_pages);
         }
-        console.log("count", count);
 
     }, [count])
 

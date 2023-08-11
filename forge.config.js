@@ -3,9 +3,19 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        authors: 'Alice and Bob',
-        description: 'An example Electron app'
+        authors: 'SoftwareWaffe',
+        description: 'School management system'
       }
-    }
+    },
+    /*
+    {
+      name: '@electron-forge/maker-dmg',
+      config: {
+        format: 'ULFO'
+      }
+    },
+    {
+      name: '@electron-forge/maker-zip'
+    } */
   ]
 };
