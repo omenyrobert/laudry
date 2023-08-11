@@ -251,3 +251,41 @@ export const getStudentsMarkSheet = async (
 
   return studentsWithAssessmentsAndMarks;
 }
+
+export const getAllStudentsMarkSheet = async () => {
+  const students = await Student.find({
+    order: {
+      id: "DESC",
+    }
+  });
+
+  const assessments = await Assessment.find({
+    order: {
+      id: "DESC",
+    },
+  });
+
+  const studentsWithAssessments = students.filter((student) => {
+    const studentAssessments = assessments.filter(
+      (assessment) => parseInt(assessment.studentId) === student.id
+    );
+    if (studentAssessments.length > 0) {
+      return true;
+    }
+    return false;
+  });
+
+  const studentsWithAssessmentsAndMarks = studentsWithAssessments.map(
+    (student) => {
+      const studentAssessments = assessments.filter(
+        (assessment) => parseInt(assessment.studentId) === student.id
+      );
+      return {
+        ...student,
+        assessment: studentAssessments[0],
+      };
+    }
+  );
+
+  return studentsWithAssessmentsAndMarks;
+}
