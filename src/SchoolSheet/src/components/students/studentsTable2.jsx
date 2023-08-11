@@ -1,7 +1,7 @@
 import * as React from "react";
 import "../../assets/styles/main.css";
 
-function studentsTable2({ students }) {
+function StudentsTable2({ students }) {
 
 	return (
 		<table className="mt-4 w-full table-auto">
@@ -48,4 +48,4 @@ function studentsTable2({ students }) {
 	);
 }
 
-export default studentsTable2;
+export default StudentsTable2;
