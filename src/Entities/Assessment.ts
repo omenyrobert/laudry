@@ -167,16 +167,16 @@ export const getStudentsMarkSheet = async (
 ) => {
   const studentClass = await SchoolClass.findOne({ where: { id: classId }, });
   const stream = await Stream.findOne({ where: { id: streamId } });
-  const examTypeSelected = await ExamType.findOne({ where: { id: examType } });
+  let examTypeSelected: ExamType | null = null 
+  if (examType) {
+    examTypeSelected = await ExamType.findOne({ where: { id: examType } });
+  }
   const subject = await Subject.findOne({ where: { id: subjectId } });
   if (!studentClass) {
     throw new Error("Class Not Found");
   }
   if (!stream) {
     throw new Error("Stream Not Found");
-  }
-  if (!examTypeSelected) {
-    throw new Error("Exam Type Not Found");
   }
   if (!subject) {
     throw new Error("Subject Not Found");
@@ -213,7 +213,10 @@ export const getStudentsMarkSheet = async (
   ];
 
 
-  const assessments = await Assessment.find({
+  let assessments: Assessment[] = [];
+
+  if (examTypeSelected) {
+    assessments= await Assessment.find({
     where: {
       examType: examTypeSelected.id.toString(),
       subject: subject?.subject,
@@ -222,6 +225,16 @@ export const getStudentsMarkSheet = async (
       id: "DESC",
     },
   });
+  } else {
+    assessments= await Assessment.find({
+    where: {
+      subject: subject?.subject,
+    },
+    order: {
+      id: "DESC",
+    },
+  });
+  }
 
 
 

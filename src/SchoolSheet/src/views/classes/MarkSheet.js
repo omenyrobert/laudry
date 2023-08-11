@@ -109,7 +109,7 @@ function MarkSheet() {
 			const data = {
 				classId: selectedClass.id,
 				streamId: selectedStream.id,
-				examTypeId: selectedExamType.id,
+				examTypeId: selectedExamType?.id,
 				subjectId: selectedSubject.id
 			}
 			const response = await axiosInstance.post("/marksheet", data)
@@ -159,7 +159,6 @@ function MarkSheet() {
 	useEffect(() => {
 		if (allMarks.length === 0) return
 		const marks = allMarks.slice(page * 20, page * 20 + 20)
-		console.log(marks)
 		setPageMarks(marks)
 	}, [page, allMarks])
 
