@@ -32,6 +32,8 @@ function ReportCardTemplate({ closeCard, studentData }) {
 	const [assessData, setAssessData] = useState([]);
 	const [report, setReport] = useState(null);
 	const [points, setPoints] = useState(null);
+	const [totalMarks, setTotalMarks] = useState(null);
+	const [avgPoints, setAvgPoints] = useState(null);
 
 	const {
 		schools,
@@ -61,8 +63,16 @@ function ReportCardTemplate({ closeCard, studentData }) {
 			});
 			const _data = assessSubjects(data);
 			const pointsData = _data.map(
-				(dt) => assignGrade(dt.markGrade, grades, dt.subject).points
+				(dt) => {
+
+					return assignGrade(dt.markGrade, grades, dt.subject).points
+				}
 			);
+			const totalMarkss = _data.reduce(
+				(accumulator, currentValue) => accumulator + currentValue.markGrade,
+				0
+			);
+			setTotalMarks(totalMarkss)
 			// remove undefined and and null
 			const filteredPoints = pointsData.filter((point) => {
 				return point !== undefined && point !== null;
@@ -71,6 +81,8 @@ function ReportCardTemplate({ closeCard, studentData }) {
 				(accumulator, currentValue) => accumulator + currentValue,
 				0
 			);
+			const averagePoints = sumOfPoints / filteredPoints.length;
+			setAvgPoints(averagePoints);
 			setPoints(sumOfPoints);
 			setAssessData(_data);
 		}
@@ -89,8 +101,6 @@ function ReportCardTemplate({ closeCard, studentData }) {
 		}
 		const _nextTerm = terms[_nextTermIndex];
 		setNextTerm(_nextTerm);
-		console.log("next term", _nextTerm);
-		console.log("next ]]]", _termindex, _nextTermIndex, terms.length);
 
 	}, [terms]);
 
@@ -112,7 +122,6 @@ function ReportCardTemplate({ closeCard, studentData }) {
 				);
 			})[0];
 		setReport(report);
-		console.log("report", report);
 	}, [reports, studentData, term]);
 
 	const handleGeneratePDF = () => {
@@ -348,7 +357,9 @@ function ReportCardTemplate({ closeCard, studentData }) {
 						<div className=" flex text-sm border-b text-primary font-semibold bg-gray1 border-gray1 mx-5 px-2 cursor-pointer">
 							<div className="w-1/4 p-1">Total</div>
 
-							<div className="w-1/4 p-1"> 400</div>
+							<div className="w-1/4 p-1"> {
+								totalMarks
+							} </div>
 							<div className="w-1/4 p-1"></div>
 							<div className="w-1/4 p-1">POINTS</div>
 							<div className="w-1/4 p-1"></div>
@@ -356,7 +367,7 @@ function ReportCardTemplate({ closeCard, studentData }) {
 
 						<div className="mx-4  bg-gray2 font-medium mt-5 flex">
 							<div className=" p-2 mx-1 w-1/3 ">
-								AVERAGE MARK: <span className="text-gray5">her</span>{" "}
+								AVERAGE MARK: <span className="text-gray5">{avgPoints}</span>{" "}
 							</div>
 							<div className=" p-2 mx-1  w-1/3 ">
 								TOTAL POINTS: <span className="text-gray5">{points}</span>{" "}
