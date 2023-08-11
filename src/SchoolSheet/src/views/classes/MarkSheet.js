@@ -73,13 +73,18 @@ function MarkSheet() {
 	}, [streams])
 
 	useEffect(() => {
-		setExamTypesOpts(examTypes.map((examType) => {
+		const examTypesOpts = examTypes.map((examType) => {
 			return {
 				value: examType.id,
 				label: examType.examType,
 				...examType
 			}
-		}))
+		})
+		examTypesOpts.push({
+			value: "all",
+			label: "All",
+		})
+		setExamTypesOpts(examTypesOpts)
 
 	}, [examTypes])
 
@@ -96,7 +101,7 @@ function MarkSheet() {
 
 
 	async function fetchMarks() {
-		if (!selectedClass || !selectedStream || !selectedExamType || !selectedSubject) {
+		if (!selectedClass || !selectedStream || !selectedSubject) {
 			toggleFeedback("error", {
 				title: "Error",
 				text: "Please select all fields"
