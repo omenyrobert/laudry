@@ -30,7 +30,7 @@ export class SchoolClass extends BaseEntity {
   streams: Stream[];
 
   @ManyToMany(() => Student, (student) => student.classes)
-  students: [];
+  students: Student[];
 
   @ManyToMany(() => Staff, {
     cascade: true,

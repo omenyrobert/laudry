@@ -5,6 +5,12 @@ import {
   BaseEntity,
   In,
 } from "typeorm";
+import { Student } from "./Student";
+import { SchoolClass } from "./SchoolClass";
+import { Stream } from "./Stream";
+import { ExamType } from "./ExamType";
+import { Subject } from "./Subject";
+import { DatabaseConnection } from "../Database/database";
 
 @Entity()
 export class Assessment extends BaseEntity {
@@ -148,3 +154,100 @@ export const getAssessmentsByTerm = async (term: number) => {
   });
   return assessments;
 };
+
+
+/**
+ * Get students Mark Sheet.
+ */
+export const getStudentsMarkSheet = async (
+  classId: number,
+  examType: number,
+  streamId: number,
+  subjectId: number,
+) => {
+  const studentClass = await SchoolClass.findOne({ where: { id: classId }, });
+  const stream = await Stream.findOne({ where: { id: streamId } });
+  const examTypeSelected = await ExamType.findOne({ where: { id: examType } });
+  const subject = await Subject.findOne({ where: { id: subjectId } });
+  if (!studentClass) {
+    throw new Error("Class Not Found");
+  }
+  if (!stream) {
+    throw new Error("Stream Not Found");
+  }
+  if (!examTypeSelected) {
+    throw new Error("Exam Type Not Found");
+  }
+  if (!subject) {
+    throw new Error("Subject Not Found");
+  }
+  
+  const studentObjs = await Student.find({
+    order: {
+      id: "DESC",
+    }
+  });
+
+
+  // get studentClass.students and stream.students and add them together to students and remove duplicates
+  const students: Student[] = [
+    ...new Set([
+      ...studentObjs.filter((student) => {
+        const stdClasess = student.classes
+        if ( stdClasess.length <=0) {
+          return false
+        }
+        const stdClass = stdClasess[0]
+        return stdClass.id === studentClass.id
+      }),
+      ...studentObjs.filter((student) => {
+        const stdStreams = student.streams
+        if ( stdStreams.length <=0) {
+          return false
+        }
+        const stdStream = stdStreams[0]
+        return stdStream.id === streamId
+      }
+      )
+    ])
+  ];
+
+
+  const assessments = await Assessment.find({
+    where: {
+      examType: examTypeSelected.id.toString(),
+      subject: subject?.subject,
+    },
+    order: {
+      id: "DESC",
+    },
+  });
+
+
+
+
+  const studentsWithAssessments = students.filter((student) => {
+    const studentAssessments = assessments.filter(
+      (assessment) => parseInt(assessment.studentId) === student.id
+    );
+    if (studentAssessments.length > 0) {
+      return true;
+    }
+    return false;
+  });
+
+  const studentsWithAssessmentsAndMarks = studentsWithAssessments.map(
+    (student) => {
+      const studentAssessments = assessments.filter(
+        (assessment) => parseInt(assessment.studentId) === student.id
+      );
+      return {
+        ...student,
+        assessment: studentAssessments[0],
+      };
+    }
+  );
+
+
+  return studentsWithAssessmentsAndMarks;
+}

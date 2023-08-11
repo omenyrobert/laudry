@@ -289,14 +289,14 @@ function ReportCards(props) {
                   <td className="text-xs p-3 text-gray5">
                     {student.student_levels[0]?.name}
                   </td>
+                  <td className='text-xs p-3 text-gray5'>
+                    {_class?.class}
+                  </td>
 
                   <td className="text-xs p-3 text-gray5">
                     {student.streams[0]?.stream}
                   </td>
 
-                  <td className='text-xs p-3 text-gray5'>
-                    {_class?.class}
-                  </td>
 
                   <td className='text-xs p-3 text-gray5 flex justify-between'>
                     <div onClick={() => openCard(student)}>
