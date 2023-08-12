@@ -178,13 +178,17 @@ const Fees = () => {
 
   // implement pangination
   const [page, setPage] = useState(0)
+  const [searchCount, setSearchCount] = useState(20);
 
   useEffect(() => {
-    dispatch(getStudents(page))
+    dispatch(getStudents({
+      page,
+      count: searchCount,
+    }))
     dispatch(getClasses())
     dispatch(getStreams())
     dispatch(getStudentCount())
-  }, [dispatch, page])
+  }, [dispatch, page, searchCount])
 
   const nextPage = () => {
     setPage(page + 1)
@@ -383,6 +387,8 @@ const Fees = () => {
           count={studentsCount}
           setPage={setPage}
           page={page}
+          searchCount={searchCount}
+          setSearchCount={setSearchCount}
         />
       ) : null}
     </>
