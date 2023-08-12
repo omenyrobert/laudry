@@ -22,7 +22,7 @@ import {
   getStudentTypes,
   getSearchStudents,
   getStudentCount,
-  getClassLevels
+  getClassLevels,
 } from '../../store/schoolSheetSlices/schoolStore'
 import Loader from '../../components/Loader'
 
@@ -53,7 +53,7 @@ const Students = () => {
     streams,
     classes,
     searchingStudents,
-    classLevels
+    classLevels,
   } = useSelector((state) => state.schoolStore)
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const Students = () => {
       return {
         label: level.name,
         value: level.name,
-        ...level
+        ...level,
       }
     })
     setClassLevelOpts(ppts)
@@ -137,41 +137,53 @@ const Students = () => {
     const studentData = student
       ? students?.students
       : searchedStudents.length === 0
-        ? searchingStudents?.students
-        : searchedStudents
+      ? searchingStudents?.students
+      : searchedStudents
     const searchResults = studentData.filter((student) => {
-      const classLevelName = student?.student_levels?.length > 0 ? student?.student_levels[0]?.name : ''
+      const classLevelName =
+        student?.student_levels?.length > 0
+          ? student?.student_levels[0]?.name
+          : ''
       const isClassLevelValid = classLevelName
         ? classLevelName.includes(filters.classLevel)
-        : false;
+        : false
 
-      const houseName = student?.houses?.length > 0 ? student.houses[0]?.house : "";
-      const isHouseValid = houseName
-        ? houseName.includes(filters.house)
-        : false;
+      const houseName =
+        student?.houses?.length > 0 ? student.houses[0]?.house : ''
+      const isHouseValid = houseName ? houseName.includes(filters.house) : false
 
-      const studentTypeName = student?.student_types?.length > 0 ? student.student_types[0]?.type : "";
+      const studentTypeName =
+        student?.student_types?.length > 0 ? student.student_types[0]?.type : ''
       const isStudentTypeValid = studentTypeName
         ? studentTypeName.includes(filters.type)
-        : false;
+        : false
 
-      const className = student?.classes?.length > 0 ? student.classes[0]?.class : "";
+      const className =
+        student?.classes?.length > 0 ? student.classes[0]?.class : ''
       const isClassValid = className
         ? className.includes(filters.studentClass)
-        : false;
+        : false
 
-      const sectionName = student?.sections?.length > 0 ? student.sections[0]?.section : "";
+      const sectionName =
+        student?.sections?.length > 0 ? student.sections[0]?.section : ''
       const isSectionValid = sectionName
         ? sectionName.includes(filters.section)
-        : false;
+        : false
 
-      const streamName = student?.streams?.length > 0 ? student.streams[0]?.stream : "";
+      const streamName =
+        student?.streams?.length > 0 ? student.streams[0]?.stream : ''
       const isStreamValid = streamName
         ? streamName.includes(filters.stream)
-        : false;
+        : false
 
-
-      return isClassLevelValid && isHouseValid && isStudentTypeValid && isClassValid && isSectionValid && isStreamValid
+      return (
+        isClassLevelValid &&
+        isHouseValid &&
+        isStudentTypeValid &&
+        isClassValid &&
+        isSectionValid &&
+        isStreamValid
+      )
     })
     setSearchedStudents(searchResults)
   }
@@ -260,7 +272,11 @@ const Students = () => {
     if (searchInput) {
       setStudent(false)
       setSearch(true)
-      let data = { searchPage: searchPage, searchInput: searchInput, count: searchCount }
+      let data = {
+        searchPage: searchPage,
+        searchInput: searchInput,
+        count: searchCount,
+      }
       dispatch(getSearchStudents(data))
     } else {
       navigate(0)
@@ -359,9 +375,8 @@ const Students = () => {
                   />
                 }
               />
-
             </div>
-            <InputField
+            {/* <InputField
               type="text"
               placeholder="Enter number of students to retrive"
               name="lastName"
@@ -377,7 +392,7 @@ const Students = () => {
                   dispatch(getSearchStudents(data))
                 }
               }}
-            />
+            /> */}
             <div className=""></div>
             <div className="flex mt-5">
               <div className="w-1/3"></div>
@@ -444,9 +459,6 @@ const Students = () => {
                       options={streamOptions}
                     />
                     <br />
-
-
-
 
                     <div
                       className=""

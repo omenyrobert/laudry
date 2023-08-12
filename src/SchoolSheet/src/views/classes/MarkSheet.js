@@ -166,7 +166,7 @@ function MarkSheet() {
 
 
 	return (
-		<div className="bg-white p-5 h-full">
+		<div className="bg-white p-5 ">
 			<div className="flex justify-between">
 				<div className="text-xl text-secondary font-semibold">Mark Sheet</div>
 				<div onClick={(e) => {
@@ -212,7 +212,7 @@ function MarkSheet() {
 					<span onClick={fetchMarks}><Button value={"Search"} /></span>
 				</div>
 			</div>
-			<div id="mark-sheet-table">
+			<div className="h-[75vh] overflow-y-auto" id="mark-sheet-table">
 				<div className="flex bg-primary3 text-primary font-medium mt-5">
 					<div className="w-2/12 p-2">Full Name</div>
 					<div className="w-2/12 p-2">Class Level</div>

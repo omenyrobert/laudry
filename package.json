@@ -63,7 +63,7 @@
     "@electron-forge/maker-zip": "^6.3.0",
     "@electron-forge/plugin-auto-unpack-natives": "^6.3.0",
     "@types/electron": "^1.6.10",
-    "electron": "^25.3.1",
+    "electron": "^25.5.0",
     "webpack-cli": "^5.1.1"
   }
 }
