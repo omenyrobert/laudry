@@ -73,13 +73,18 @@ function MarkSheet() {
 	}, [streams])
 
 	useEffect(() => {
-		setExamTypesOpts(examTypes.map((examType) => {
+		const examTypesOpts = examTypes.map((examType) => {
 			return {
 				value: examType.id,
 				label: examType.examType,
 				...examType
 			}
-		}))
+		})
+		examTypesOpts.push({
+			value: "all",
+			label: "All",
+		})
+		setExamTypesOpts(examTypesOpts)
 
 	}, [examTypes])
 
@@ -96,7 +101,7 @@ function MarkSheet() {
 
 
 	async function fetchMarks() {
-		if (!selectedClass || !selectedStream || !selectedExamType || !selectedSubject) {
+		if (!selectedClass || !selectedStream || !selectedSubject) {
 			toggleFeedback("error", {
 				title: "Error",
 				text: "Please select all fields"
@@ -109,7 +114,7 @@ function MarkSheet() {
 			const data = {
 				classId: selectedClass.id,
 				streamId: selectedStream.id,
-				examTypeId: selectedExamType.id,
+				examTypeId: selectedExamType?.id,
 				subjectId: selectedSubject.id
 			}
 			const response = await axiosInstance.post("/marksheet", data)
@@ -159,7 +164,6 @@ function MarkSheet() {
 	useEffect(() => {
 		if (allMarks.length === 0) return
 		const marks = allMarks.slice(page * 20, page * 20 + 20)
-		console.log(marks)
 		setPageMarks(marks)
 	}, [page, allMarks])
 
