@@ -288,7 +288,7 @@ const ShowStudentsForm = () => {
 								<div className="bg-gray1 rounded-md p-2 flex mt-5">
 									<div className="w-1/2">
 										<p className="text-primary text-sm mt-10">
-											Term {term.term} from {term.from} to {term.to}
+											Term {term?.term} from {term?.from} to {term.to}
 										</p>
 									</div>
 									<div className="w-1/2 ml-2">

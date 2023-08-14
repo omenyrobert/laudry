@@ -10,17 +10,17 @@ function Cards({ studentCount, staffMembers, selectedTerm, studentsWithLowBalanc
 
 			<div className="w-1/4 my-2 mr-2 p-3 h-24  bg-primary text-white shadow  rounded-md">
 				<p className="text-lg font-semibold">
-					{selectedTerm.term}
+					{selectedTerm?.term}
 				</p>
 				<div className="flex justify-between mt-3 text-sm">
 					<div>
 						{
-							new Date(selectedTerm.from).toLocaleDateString()
+							new Date(selectedTerm?.from).toLocaleDateString()
 						}
 					</div>
 					<div>
 						{
-							new Date(selectedTerm.to).toLocaleDateString()
+							new Date(selectedTerm?.to).toLocaleDateString()
 						}
 					</div>
 				</div>
@@ -65,7 +65,7 @@ function Cards({ studentCount, staffMembers, selectedTerm, studentsWithLowBalanc
 				<div className="flex justify-between mt-12">
 					<div className="">
 						<p className="text-2xl">
-							{staffMembers.length}
+							{staffMembers?.length}
 						</p>
 					</div>
 					<div className="">
@@ -90,7 +90,7 @@ function Cards({ studentCount, staffMembers, selectedTerm, studentsWithLowBalanc
 				<div className="flex justify-between mt-12">
 					<div className="">
 						<p className="text-2xl">
-							{studentsWithLowBalance.length}
+							{studentsWithLowBalance?.length}
 						</p>
 					</div>
 					<div className="">

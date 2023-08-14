@@ -484,6 +484,7 @@ export const getStudents = async (page: number = 0, count: number = 20) => {
     take: count,
     skip: page * count,
   });
+  console.log(students[0].length)
   return students;
 };
 

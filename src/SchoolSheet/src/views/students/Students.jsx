@@ -268,6 +268,25 @@ const Students = () => {
     return student ? page !== 0 : searchPage !== 0
   }
 
+  const [init, setInit] = useState(true)
+
+  useEffect(() => {
+    if (init === false) {
+      //setStudent(false)
+      //setSearch(true)
+      let data = {
+        page: searchPage,
+        searchInput: searchInput,
+        count: searchCount,
+      }
+      dispatch(getStudents(data))
+
+    } else {
+      setInit(false)
+    }
+  }, [searchCount])
+
+
   const handleSearch = async () => {
     if (searchInput) {
       setStudent(false)
@@ -491,7 +510,7 @@ const Students = () => {
             </div>
           </div>
         </div>
-        {loading.students || loading.searchStudents ? (
+        {loading?.students || loading.searchStudents ? (
           <div className="flex justify-center">
             <Loader />
           </div>
