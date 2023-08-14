@@ -215,16 +215,20 @@ function Assessment() {
 
   // implement pangination
   const [page, setPage] = useState(0)
+  const [searchCount, setSearchCount] = useState(30)
 
   useEffect(() => {
-    dispatch(getStudents(page))
+    dispatch(getStudents({
+      page,
+      count: searchCount,
+    }))
     dispatch(getSubjects())
     dispatch(getTerms())
     dispatch(getClasses())
     dispatch(getStreams())
     dispatch(getStudentCount())
     dispatch(getClassLevels())
-  }, [dispatch, page])
+  }, [dispatch, page, searchCount])
 
   const nextPage = () => {
     setPage(page + 1)
@@ -408,6 +412,8 @@ function Assessment() {
             count={studentsCount}
             page={page}
             setPage={setPage}
+            searchCount={searchCount}
+            setSearchCount={setSearchCount}
           />
         </div>
 

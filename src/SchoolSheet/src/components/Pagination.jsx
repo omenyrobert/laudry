@@ -8,15 +8,18 @@ const Pagination = ({
   canNextPage,
   canPrevPage,
   searchPage,
+  searchCount,
+  setSearchCount,
 }) => {
   const [hasMore, setHasMore] = useState(false)
   const [pages, setPages] = useState([])
+  const [sCount, setSCount] = useState(searchCount ? searchCount : 20)
 
   useEffect(() => {
     if (count) {
       const _pages = []
-      const divison = Math.floor(count / 20)
-      const remainder = count % 20
+      const divison = Math.floor(count / sCount)
+      const remainder = count % sCount
       if (remainder > 0) {
         for (let i = 0; i < divison; i++) {
           _pages.push(i)
@@ -95,10 +98,18 @@ const Pagination = ({
         </button>
       </div>
       <div className="flex text-primary ">
-        <div className="mx-1 px-2 py-1 cursor-pointer border border-gray2">30</div>
-        <div className="mx-1 px-2 py-1 cursor-pointer border border-gray2">50</div>
-        <div className="mx-1 px-2 py-1 cursor-pointer border border-gray2">70</div>
-        <div className="mx-1 px-2 py-1 cursor-pointer border border-gray2">100</div>
+        <div onClick={(e) => {
+          setSearchCount(30)
+        }} className="mx-1 px-2 py-1 cursor-pointer border border-gray2">30</div>
+        <div onClick={(e) => {
+          setSearchCount(50)
+        }} className="mx-1 px-2 py-1 cursor-pointer border border-gray2">50</div>
+        <div onClick={(e) => {
+          setSearchCount(70)
+        }} className="mx-1 px-2 py-1 cursor-pointer border border-gray2">70</div>
+        <div onClick={(e) => {
+          setSearchCount(100)
+        }} className="mx-1 px-2 py-1 cursor-pointer border border-gray2">100</div>
       </div>
     </div>
   )

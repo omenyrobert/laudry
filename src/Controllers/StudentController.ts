@@ -23,7 +23,7 @@ import { getStudentTermPayments } from "../Entities/StudentPaidBalance";
 
 export const fetchStudents = async (req: Request, res: Response) => {
   try {
-    const { page } = req.query;
+    const { page, count } = req.query;
     if (!page) {
       return res
         .json(customPayloadResponse(false, "Invalid Query Parameters"))
@@ -31,9 +31,26 @@ export const fetchStudents = async (req: Request, res: Response) => {
         .end();
     }
 
+    if (!count) {
+      return res
+        .json(customPayloadResponse(false, "Invalid Query Parameters"))
+        .status(400)
+        .end();
+    }
+
+
+
     const pageInt = parseInt(page as string);
+    const countInt = parseInt(count as string);
 
     if (isNaN(pageInt)) {
+      return res
+        .json(customPayloadResponse(false, "Invalid Query Parameters"))
+        .status(400)
+        .end();
+    }
+
+    if (isNaN(countInt)) {
       return res
         .json(customPayloadResponse(false, "Invalid Query Parameters"))
         .status(400)
@@ -49,7 +66,7 @@ export const fetchStudents = async (req: Request, res: Response) => {
 
     const activeTerm = await getTermBySelect();
     const termId = activeTerm !== null ? activeTerm.id : null;
-    const [studentsToFetch, studentCount] = await getStudents(pageInt);
+    const [studentsToFetch, studentCount] = await getStudents(pageInt, countInt);
     const students = await Promise.all(
       studentsToFetch.map(async (student) => {
         const studentPaymentsPerTerm = await getStudentTermPayments(
