@@ -32,10 +32,10 @@ const Terms = () => {
 	const [activeTerm, setActiveTerm] = useState(false);
 	const openShowUpdate = (termItem) => {
 		setShowUpdate(true);
-		setEditTerm(termItem.term);
-		setFromEdit(termItem.from);
-		setToEdit(termItem.to);
-		setTermId(termItem.id);
+		setEditTerm(termItem?.term);
+		setFromEdit(termItem?.from);
+		setToEdit(termItem?.to);
+		setTermId(termItem?.id);
 	};
 	const { terms } = useSelector((state) => state.schoolStore);
 
@@ -274,25 +274,25 @@ const Terms = () => {
 												: "w-2/3 p-2 text-gray5"
 										}
 									>
-										{termItem.term}
+										{termItem?.term}
 									</div>
 									<div
 										className={
-											termItem.is_selected === 1
+											termItem?.is_selected === 1
 												? "bg-primary text-white w-2/3 p-2"
 												: "w-2/3 p-2 text-gray5"
 										}
 									>
-										{termItem.from}
+										{termItem?.from}
 									</div>
 									<div
 										className={
-											termItem.is_selected === 1
+											termItem?.is_selected === 1
 												? "bg-primary text-white w-2/3 p-2"
 												: "w-2/3 p-2 text-gray5"
 										}
 									>
-										{termItem.to}
+										{termItem?.to}
 									</div>
 									<div className="w-1/3 p-2 flex">
 										<MdDeleteOutline
