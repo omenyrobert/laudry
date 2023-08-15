@@ -136,8 +136,8 @@ const StudentAttendanceComp = () => {
     const studentData = student
       ? students?.students
       : searchedStudents.length === 0
-      ? searchingStudents?.students
-      : searchedStudents
+        ? searchingStudents?.students
+        : searchedStudents
     const searchResults = studentData.filter((student) => {
       const classLevelName =
         student?.student_levels?.length > 0
@@ -286,7 +286,9 @@ const StudentAttendanceComp = () => {
         dispatch(getHouses())
         dispatch(getClasses())
         dispatch(getSections())
-        dispatch(getStudents(page))
+        dispatch(getStudents({
+          page: page,
+        }))
         dispatch(getStudentTypes())
         dispatch(getStudentCount())
         dispatch(getClassLevels())
@@ -399,7 +401,7 @@ const StudentAttendanceComp = () => {
                       options={classOptions}
                     />
                     <br />
-{/* 
+                    {/* 
                     <Select
                       placeholder={'Sections'}
                       className="text-sm"

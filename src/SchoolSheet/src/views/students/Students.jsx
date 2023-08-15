@@ -29,7 +29,7 @@ import Loader from '../../components/Loader'
 const Students = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const [searchCount, setSearchCount] = useState(20)
+  const [searchCount, setSearchCount] = useState(30)
   const [search, setSearch] = useState(false)
   const [student, setStudent] = useState(false)
   const [filters, setFilters] = useState({
@@ -137,8 +137,8 @@ const Students = () => {
     const studentData = student
       ? students?.students
       : searchedStudents.length === 0
-      ? searchingStudents?.students
-      : searchedStudents
+        ? searchingStudents?.students
+        : searchedStudents
     const searchResults = studentData.filter((student) => {
       const classLevelName =
         student?.student_levels?.length > 0
@@ -268,6 +268,25 @@ const Students = () => {
     return student ? page !== 0 : searchPage !== 0
   }
 
+  const [init, setInit] = useState(true)
+
+  useEffect(() => {
+    if (init === false) {
+      //setStudent(false)
+      //setSearch(true)
+      let data = {
+        page: searchPage,
+        searchInput: searchInput,
+        count: searchCount,
+      }
+      dispatch(getStudents(data))
+
+    } else {
+      setInit(false)
+    }
+  }, [searchCount])
+
+
   const handleSearch = async () => {
     if (searchInput) {
       setStudent(false)
@@ -291,7 +310,9 @@ const Students = () => {
         dispatch(getHouses())
         dispatch(getClasses())
         dispatch(getSections())
-        dispatch(getStudents(page))
+        dispatch(getStudents({
+          page
+        }))
         dispatch(getStudentTypes())
         dispatch(getStudentCount())
         dispatch(getClassLevels())
@@ -489,7 +510,7 @@ const Students = () => {
             </div>
           </div>
         </div>
-        {loading.students || loading.searchStudents ? (
+        {loading?.students || loading.searchStudents ? (
           <div className="flex justify-center">
             <Loader />
           </div>
@@ -510,6 +531,8 @@ const Students = () => {
             count={studentsCount}
             page={page}
             setPage={setPage}
+            setSearchCount={setSearchCount}
+            searchCount={searchCount}
           />
         ) : null}
         {student ? (
@@ -524,6 +547,8 @@ const Students = () => {
             searchPage={page}
             count={studentsCount}
             setPage={setPage}
+            setSearchCount={setSearchCount}
+            searchCount={searchCount}
           />
         ) : null}
       </div>

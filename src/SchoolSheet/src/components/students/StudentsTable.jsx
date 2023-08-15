@@ -17,6 +17,8 @@ const StudentsTable = (props) => {
     canPreviousPage,
     searchPage,
     page,
+    searchCount,
+    setSearchCount
   } = props
 
   return (
@@ -70,7 +72,7 @@ const StudentsTable = (props) => {
                       {student.motherName} - {student.motherContact}{' '}
                     </span>{' '}
                   </td>
-				  <td className="text-xs p-3 text-gray5">
+                  <td className="text-xs p-3 text-gray5">
                     {student.gender}
                   </td>
                   <td className="text-xs p-3 text-gray5">
@@ -124,6 +126,8 @@ const StudentsTable = (props) => {
         count={count}
         page={page}
         setPage={setPage}
+        searchCount={searchCount}
+        setSearchCount={setSearchCount}
       />
     </div>
   )

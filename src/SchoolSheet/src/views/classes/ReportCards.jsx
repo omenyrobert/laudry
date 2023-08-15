@@ -117,14 +117,18 @@ function ReportCards(props) {
 
   // implement pangination
   const [page, setPage] = useState(0);
+  const [searchCount, setSearchCount] = useState(20);
 
 
   useEffect(() => {
-    dispatch(getStudents(page));
+    dispatch(getStudents({
+      page: page,
+      count: searchCount,
+    }));
     dispatch(getStreams());
     dispatch(getStudentCount());
     dispatch(getClassLevels());
-  }, [dispatch, page]);
+  }, [dispatch, page, searchCount]);
 
   const nextPage = () => {
     setPage(page + 1);
@@ -319,6 +323,8 @@ function ReportCards(props) {
         count={studentsCount}
         page={page}
         setPage={setPage}
+        searchCount={searchCount}
+        setSearchCount={setSearchCount}
       />
     </div>
   );

@@ -40,6 +40,7 @@ function MarkSheet() {
 	const [allMarks, setAllMarks] = useState([])
 	const [filtered, setFiltered] = useState(false)
 	const [page, setPage] = useState(0)
+	const [searchCount, setSearchCount] = useState(30)
 	const [pageMarks, setPageMarks] = useState([])
 
 
@@ -163,9 +164,10 @@ function MarkSheet() {
 
 	useEffect(() => {
 		if (allMarks.length === 0) return
-		const marks = allMarks.slice(page * 20, page * 20 + 20)
+		const marks = allMarks.slice(page * searchCount, page * searchCount + searchCount)
 		setPageMarks(marks)
-	}, [page, allMarks])
+	}, [page, allMarks, searchCount])
+
 
 
 
@@ -267,6 +269,8 @@ function MarkSheet() {
 					count={allMarks.length}
 					page={page}
 					setPage={setPage}
+					searchCount={searchCount}
+					setSearchCount={setSearchCount}
 				/>
 			}
 		</div>
