@@ -1,4 +1,10 @@
+const path = require('path');
+
 module.exports = {
+  packagerConfig: {
+    asar: true,
+    icon: path.join(process.cwd(), 'assets', 'favicon.ico')
+  },
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
