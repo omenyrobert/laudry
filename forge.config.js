@@ -17,5 +17,24 @@ module.exports = {
     {
       name: '@electron-forge/maker-zip'
     } */
+  ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'omenyrobert',
+          name: 'schoolSoftApp'
+        },
+        prerelease: true
+      }
+    }
+  ],
+  plugins: [
+    {
+      name: '@electron-forge/plugin-auto-unpack-natives',
+      config: {}
+    }
   ]
+
 };
