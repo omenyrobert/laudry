@@ -29,8 +29,8 @@ module.exports = {
       name: '@electron-forge/publisher-github',
       config: {
         repository: {
-          owner: 'omenyrobert',
-          name: 'schoolSoftApp'
+          owner: 'jim-junior',
+          name: 'schoolApp'
         },
         prerelease: true
       }
