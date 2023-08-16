@@ -9,6 +9,7 @@
     "client:vite": "npm run start:vite --prefix ./src/SchoolSheet",
     "client:install": "npm install --prefix ./src/SchoolSheet",
     "build:node": "tsc --build",
+    "build:client": "npm run build --prefix ./src/SchoolSheet",
     "start": "ts-node ./src/index.ts",
     "build": "npm install --prefix ./src/SchoolSheet && npm run build --prefix ./src/SchoolSheet",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
