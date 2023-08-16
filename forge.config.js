@@ -32,7 +32,8 @@ module.exports = {
           owner: 'jim-junior',
           name: 'schoolApp'
         },
-        prerelease: true
+        prerelease: false,
+        draft: true
       }
     }
   ],
