@@ -26,7 +26,7 @@ export const fetchDivisions = async (req: Request, res: Response) => {
 
 export const addDivision = async (req: Request, res: Response) => {
   try {
-    const { division, points, upperLimit, lowerLimit } = req.body;
+    const { division, points, upperLimit, lowerLimit, classLevels } = req.body;
 
     if (!division) {
       return res
@@ -42,7 +42,7 @@ export const addDivision = async (req: Request, res: Response) => {
         .end();
     }
 
-    await createDivision(division, points, upperLimit, lowerLimit);
+    await createDivision(division, points, upperLimit, lowerLimit, classLevels);
         
     return res
       .json(customPayloadResponse(true, "Division Added"))
@@ -59,7 +59,7 @@ export const addDivision = async (req: Request, res: Response) => {
 export const modifyDivision = async (req: Request, res: Response) => {
   try {
     const { id, division, points, 
-      upperLimit, lowerLimit
+      upperLimit, lowerLimit, classLevels
     } = req.body;
 
     const divisionId = id;
@@ -88,7 +88,7 @@ export const modifyDivision = async (req: Request, res: Response) => {
     const divisionToModify = await getSingleDivision(divisionId);
 
     if (divisionToModify) {
-      await updateDivision(divisionId, division, points, upperLimit, lowerLimit);
+      await updateDivision(divisionId, division, points, upperLimit, lowerLimit, classLevels);
 
       return res
         .json(customPayloadResponse(true, "Division Modified"))

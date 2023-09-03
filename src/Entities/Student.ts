@@ -7,6 +7,8 @@ import {
   JoinTable,
   ManyToOne,
   OneToMany,
+  Like,
+  In,
 } from "typeorm";
 import { House, getSelectedHouses } from "./House";
 import { StudentType, selectedType } from "./StudentType";
@@ -17,9 +19,8 @@ import { DatabaseConnection } from "../Database/database";
 import { Fee, selectedFee } from "./Fee";
 import { Term, selectedTermIds, getTermBySelect } from "./Term";
 import { SchoolClass } from "./SchoolClass";
-import {
-  extraLatestArrayIndex,
-} from "../Helpers/Helpers";
+import { ClassLevel, getSelectedLevels } from "./ClassLevel";
+import { extraLatestArrayIndex } from "../Helpers/Helpers";
 import { getStudentTermPayments } from "./StudentPaidBalance";
 
 @Entity()
@@ -141,17 +142,28 @@ export class Student extends BaseEntity {
   @JoinTable({ name: "student_student_types" })
   student_types: StudentType[];
 
-  @OneToMany(() => StudentDocument, (studentDocument) => studentDocument.student,{
+  @ManyToMany(() => ClassLevel, {
     cascade: true,
     eager: true,
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
-    nullable: true
   })
+  @JoinTable({ name: "student_levels" })
+  student_levels: ClassLevel[];
+
+  @OneToMany(
+    () => StudentDocument,
+    (studentDocument) => studentDocument.student,
+    {
+      cascade: true,
+      eager: true,
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+      nullable: true,
+    }
+  )
   documents: StudentDocument[];
-
 }
-
 
 @Entity()
 export class StudentDocument extends BaseEntity {
@@ -167,7 +179,6 @@ export class StudentDocument extends BaseEntity {
   @Column()
   name!: string;
 }
-
 
 const extractArrays = (array: [], key: string, extraData: number) => {
   let newArray = array.map((a: any) => a[key]);
@@ -189,7 +200,8 @@ const studentExtraData = async (
   studentTypeId: any = null,
   sectionId: any = null,
   feeId: any = null,
-  termId: any = null
+  termId: any = null,
+  levelId: any = null
 ) => {
   interface data {
     houses: any;
@@ -199,6 +211,7 @@ const studentExtraData = async (
     sections: any;
     fees: any;
     terms: any;
+    levels: any;
   }
 
   const queryRunner = DatabaseConnection.createQueryRunner();
@@ -271,6 +284,16 @@ const studentExtraData = async (
 
   const studentTerms = await selectedTermIds(termIds);
 
+  //levels
+
+  const studentLevelQuery = await queryRunner.manager.query(
+    `SELECT * FROM student_levels WHERE studentId = ${studentId}`
+  );
+
+  const levelIds = extractArrays(studentLevelQuery, "classLevelId", levelId);
+
+  const studentLevels = await getSelectedLevels(levelIds);
+
   const newData: data = {
     houses: studentHouses,
     classes: studentClasses,
@@ -279,6 +302,7 @@ const studentExtraData = async (
     sections: studentSections,
     fees: studentFees,
     terms: studentTerms,
+    levels: studentLevels,
   };
   return newData;
 };
@@ -302,7 +326,8 @@ export const createStudent = async (
   studentHouse: any,
   studentClass: any,
   feesCategory: any,
-  studentStream: any
+  studentStream: any,
+  studentLevel: any
 ) => {
   const student = await Student.save({
     firstName: firstName,
@@ -335,7 +360,8 @@ export const createStudent = async (
     studentType,
     studentSection,
     feesCategory,
-    termId
+    termId,
+    studentLevel
   );
 
   const loadStudentRelations = await Student.preload({
@@ -347,6 +373,7 @@ export const createStudent = async (
     sections: newData.sections,
     fees: newData.fees,
     terms: newData.terms,
+    student_levels: newData.levels,
   });
 
   if (loadStudentRelations) {
@@ -386,7 +413,8 @@ export const updateStudent = async (
   studentHouse: string,
   studentClass: string,
   feesCategory: string,
-  studentStream: string
+  studentStream: string,
+  studentLevel: string,
 ) => {
   await Student.update(id, {
     firstName: firstName,
@@ -420,7 +448,8 @@ export const updateStudent = async (
     studentType,
     studentSection,
     feesCategory,
-    termId
+    termId,
+    studentLevel
   );
 
   const loadStudentRelations = await Student.preload({
@@ -432,6 +461,7 @@ export const updateStudent = async (
     sections: newData.sections,
     fees: newData.fees,
     terms: newData.terms,
+    student_levels: newData.levels
   });
 
   if (loadStudentRelations) {
@@ -446,28 +476,30 @@ export const getSingleStudent = async (id: number) => {
   return student;
 };
 
-export const getStudents = async (page: number = 0, limit: number = 50) => {
-  const students = await Student.find({
+export const getStudents = async (page: number = 0, count: number = 20) => {
+  const students = await Student.findAndCount({
     order: {
       id: "DESC",
     },
-    take: limit,
-    skip: page * limit,
+    take: count,
+    skip: page * count,
   });
+  console.log(students[0].length)
   return students;
 };
-
-
 
 export const updateStudentPhoto = async (id: number, photo: string) => {
   await Student.update(id, {
     photo: photo,
   });
   return true;
-}
+};
 
-export const createDocument = async (studentId: number, url: string, name: string) => {
-  
+export const createDocument = async (
+  studentId: number,
+  url: string,
+  name: string
+) => {
   const student = await Student.findOne({ where: { id: studentId } });
 
   if (!student) {
@@ -477,14 +509,13 @@ export const createDocument = async (studentId: number, url: string, name: strin
   const document = await StudentDocument.save({
     url: url,
     name: name,
-    student: student
+    student: student,
   });
 
   return document;
 };
 
 export const getStudentDocuments = async (studentId: number) => {
-
   const student = await Student.findOne({ where: { id: studentId } });
 
   if (!student) {
@@ -501,23 +532,38 @@ export const deleteStudentDocument = async (id: number) => {
   } else {
     return false;
   }
-}
+};
 
-
-
+export const searchStudents = async (
+  keyword: string,
+  page: number = 0,
+  count: number = 20
+) => {
+  const searchStudents = await Student.findAndCount({
+    order: {
+      id: "DESC",
+    },
+    where: [
+      { firstName: Like(`%${keyword}%`) },
+      { lastName: Like(`%${keyword}`) },
+      { email: Like(`%${keyword}`) },
+    ],
+    take: count,
+    skip: page * count,
+  });
+  return searchStudents;
+};
 
 // Get nuber of students
 export const getNumberOfStudents = async () => {
-  const students = await Student.find()
-  
+  const students = await Student.find();
+
   return students.length;
-}
-
-
+};
 
 // get students with fees balance less than 50%
 export const getStudentsWithFeesBalanceLessThan50 = async () => {
-  const studentsToFetch = await Student.find()
+  const studentsToFetch = await Student.find();
   const activeTerm = await getTermBySelect();
 
   if (activeTerm === null) {
@@ -525,21 +571,19 @@ export const getStudentsWithFeesBalanceLessThan50 = async () => {
   }
 
   const students = await Promise.all(
-      studentsToFetch.map(async (student) => {
-        const studentPaymentsPerTerm = await getStudentTermPayments(
-          student.id,
-          activeTerm.id
-        );
-        const feesType = extraLatestArrayIndex(student.fees);
-        const balanceToReturn =
-          studentPaymentsPerTerm !== null
-            ? studentPaymentsPerTerm
-            : { balance: feesType?.amount, amount: 0 };
-        return { ...student, feesBalance: JSON.stringify(balanceToReturn) };
-      })
-    );
-
-
+    studentsToFetch.map(async (student) => {
+      const studentPaymentsPerTerm = await getStudentTermPayments(
+        student.id,
+        activeTerm.id
+      );
+      const feesType = extraLatestArrayIndex(student.fees);
+      const balanceToReturn =
+        studentPaymentsPerTerm !== null
+          ? studentPaymentsPerTerm
+          : { balance: feesType?.amount, amount: 0 };
+      return { ...student, feesBalance: JSON.stringify(balanceToReturn) };
+    })
+  );
 
   const studentsWithFeesBalanceLessThan50 = students.filter((student: any) => {
     if (student.feesBalance !== null) {
@@ -550,7 +594,7 @@ export const getStudentsWithFeesBalanceLessThan50 = async () => {
         const balance = parseFloat(feesBalance.balance);
         const amount = parseFloat(feesBalance.amount);
         const percentage = (balance / amount) * 100;
-        if (percentage < 50) {
+        if (percentage <= 50) {
           return true;
         } else {
           return false;
@@ -561,9 +605,7 @@ export const getStudentsWithFeesBalanceLessThan50 = async () => {
     }
   });
 
-  
   return studentsWithFeesBalanceLessThan50;
-}
-
+};
 
 

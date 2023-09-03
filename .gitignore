@@ -12,3 +12,6 @@ useruplods
 useruploads
 
 todos.txt
+todo.txt
+db.sqlite3
+*.zip

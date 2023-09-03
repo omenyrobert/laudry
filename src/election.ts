@@ -1,6 +1,9 @@
 import { app as electronApp, BrowserWindow } from "electron";
 import "./index"
 import { PORT, dataSource } from "./index";
+import { join } from "path";
+
+
 
 let mainWindow : BrowserWindow | null;
 
@@ -13,6 +16,16 @@ async function createWindow() {
     webPreferences: {
       nodeIntegration: true,
     },
+    frame: false,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: 'blue',
+      symbolColor: 'white',
+      height: 30
+    },
+    // icon in ../assets/favicon.ico
+    icon: join(__dirname, "..", "assets/favicon.ico"),
+
   });
 
   mainWindow.loadURL(`http://localhost:${PORT}/desktop-loading-page`);

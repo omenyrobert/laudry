@@ -1,5 +1,5 @@
 import { Router } from "express";
-
+import { fetchMarksheets, fetchAllMarksheets } from "../Controllers/MarkSheetController";
 import {
   fetchAssessments,
   addAssessment,
@@ -17,4 +17,6 @@ export default (router: Router) => {
   router.put(`${assessmentPrefix}`, JWTAuthMiddleWare, modifyAssessment);
   router.delete(`${assessmentPrefix}/:id`, JWTAuthMiddleWare, removeAssessment);
   router.get(`${assessmentPrefix}/term/:term`, JWTAuthMiddleWare, getAssessmentsByTermController);
+  router.post(`/marksheet`, fetchMarksheets);
+  router.get(`/marksheet`, fetchAllMarksheets);
 };

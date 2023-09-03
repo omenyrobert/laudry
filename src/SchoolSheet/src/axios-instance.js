@@ -1,7 +1,8 @@
 import axios from "axios";
 
 
-//const HOST_URL = "https://school-app-gvvr.onrender.com";
+//const HOST_URL = "https://schoolsoftapp-3432013afef6.herokuapp.com";
+// const HOST_URL = "https://reports.busiatrust.ac.ug";
 
 const HOST_URL = "http://localhost:3001";
 

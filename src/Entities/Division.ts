@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, In } from "typeorm";
+import { 
+  Entity, 
+  PrimaryGeneratedColumn, 
+  Column, 
+  BaseEntity, 
+  In,
+  ManyToMany,
+  JoinTable
+} from "typeorm";
+import { ClassLevel } from "./ClassLevel";
 
 @Entity()
 export class Division extends BaseEntity {
@@ -21,6 +30,17 @@ export class Division extends BaseEntity {
   })
   lowerLimit!: number;
 
+  @ManyToMany(() => ClassLevel, {
+    cascade: true,
+    eager: true,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+    nullable: true,
+  })
+  @JoinTable({ name: "class_level_divisions" })
+  classLevels: ClassLevel[];
+
+
 }
 
 export const getDivisions = async () => {
@@ -37,7 +57,8 @@ export const createDivision = async (
   division: string, 
   points: number,
   upperLimit: null | number = null,
-  lowerLimit: null | number = null
+  lowerLimit: null | number = null,
+  classLevels: any[] | null | undefined = null
 ) => {
   const divisionToInsert = new Division();
   divisionToInsert.division = division;
@@ -51,6 +72,18 @@ export const createDivision = async (
     divisionToInsert.lowerLimit = lowerLimit;
   }
 
+  let levels: ClassLevel[] = []
+  if (classLevels) {
+    classLevels.forEach(async (classLevel) => {
+      const level = await  ClassLevel.findOne({ where: { id: classLevel.id } });
+      if (level) {
+        levels.push(level);
+      }
+    });
+  }
+
+  divisionToInsert.classLevels = levels;
+
 
   await divisionToInsert.save();
   return divisionToInsert;
@@ -61,7 +94,8 @@ export const updateDivision = async (
   division: string, 
   points: number,
   upperLimit: null | number = null,
-  lowerLimit: null | number = null
+  lowerLimit: null | number = null,
+  classLevels: any[] | null | undefined = null
 ) => {
   const divisionToUpdate = await Division.findOne({ where: { id: id } })
 
@@ -79,6 +113,18 @@ export const updateDivision = async (
   if (lowerLimit) {
     divisionToUpdate.lowerLimit = lowerLimit;
   }
+
+  let levels: ClassLevel[] = []
+  if (classLevels) {
+    classLevels.forEach(async (classLevel) => {
+      const level = await  ClassLevel.findOne({ where: { id: classLevel.id } });
+      if (level) {
+        levels.push(level);
+      }
+    });
+  }
+
+  divisionToUpdate.classLevels = levels;
 
   await divisionToUpdate.save();
   return divisionToUpdate;

@@ -5,14 +5,20 @@
   "main": "index.js",
   "scripts": {
     "server": "nodemon ./src/index.ts",
-    "client": "npm start --prefix ./src/SchoolSheet",
+    "client": "npm run start --prefix ./src/SchoolSheet",
+    "client:vite": "npm run start:vite --prefix ./src/SchoolSheet",
     "client:install": "npm install --prefix ./src/SchoolSheet",
-    "build": "tsc --build",
-    "start": "ts-node ./src/index.ts",
+    "build:node": "tsc --build",
     "build:client": "npm run build --prefix ./src/SchoolSheet",
+    "start": "ts-node ./src/index.ts",
+    "build": "npm install --prefix ./src/SchoolSheet && npm run build --prefix ./src/SchoolSheet",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "electron": "electron .",
-    "token": "ts-node ./src/token.ts"
+    "token": "ts-node ./src/token.ts",
+    "start:forge": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
   },
   "author": "Robert",
   "license": "ISC",
@@ -32,6 +38,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
+    "electron-squirrel-startup": "^1.0.0",
     "express": "^4.18.2",
     "express-handlebars": "^7.0.7",
     "jsonwebtoken": "^9.0.0",
@@ -41,16 +48,24 @@
     "nodemailer-express-handlebars": "^6.1.0",
     "nodemon": "^2.0.22",
     "npm": "^9.6.5",
+    "ordered-uuid": "^1.1.0",
     "react-modal": "^3.16.1",
     "reflect-metadata": "^0.1.13",
     "source-map-loader": "^4.0.1",
+    "sqlite3": "^5.1.6",
     "ts-node": "^10.9.1",
     "typeorm": "^0.3.15",
     "typescript": "^5.0.4"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^6.3.0",
+    "@electron-forge/maker-deb": "^6.3.0",
+    "@electron-forge/maker-squirrel": "^6.3.0",
+    "@electron-forge/maker-zip": "^6.3.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.3.0",
+    "@electron-forge/publisher-github": "^6.3.0",
     "@types/electron": "^1.6.10",
-    "electron": "^25.3.1",
+    "electron": "^25.5.0",
     "webpack-cli": "^5.1.1"
   }
 }
