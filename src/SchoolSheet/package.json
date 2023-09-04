@@ -1,5 +1,5 @@
 {
-  "name": "clinify",
+  "name": "schoolsoftapp",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -78,6 +78,7 @@
     "concurrently": "^7.6.0",
     "electron-is-dev": "^2.0.0",
     "postcss": "^8.4.21",
+    "react-refresh": "^0.11.0",
     "source-map-loader": "^4.0.1",
     "tailwindcss": "^3.2.4",
     "vite": "^4.4.7",
