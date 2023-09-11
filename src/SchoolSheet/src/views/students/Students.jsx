@@ -491,17 +491,20 @@ const Students = () => {
                   </div>
                 ) : null}
               </div>
-              <div className="w-1/3 mx-5">
+              <div className="w-1/3 mx-3">
                 <div onClick={printStudents} className="w-20">
                   <Button value={'Pdf'} />
                 </div>
               </div>
-              <div className="w-1/3 mx-5">
+              <div className="w-1/3 mx-3">
                 <div onClick={exportToCSV} className="w-20">
                   <Button value={'CSV'} />
                 </div>
               </div>
-              <div className="w-2/5">
+              <div>
+                <Button value={"Import"}/>
+              </div>
+              <div className="w-2/5 ml-3">
                 <Link to="/addStudentForm">
                   <Button2 value={'Student'} />
                 </Link>
