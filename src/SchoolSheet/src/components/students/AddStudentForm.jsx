@@ -205,7 +205,7 @@ const AddStudentForm = (props) => {
       email: studentInfo.email,
       phoneNumber: studentInfo.phoneNumber,
       dateOfBirth: studentInfo.dateOfBirth,
-      gender: gender,
+      gender: gender.value,
       nationality: studentInfo.nationality,
       residence: studentInfo.residence,
       photo: studentInfo.photo,

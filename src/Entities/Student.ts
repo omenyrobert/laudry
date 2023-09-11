@@ -8,17 +8,14 @@ import {
   ManyToOne,
   OneToMany,
   Like,
-  In,
 } from "typeorm";
 import { House, getSelectedHouses } from "./House";
 import { StudentType, selectedType } from "./StudentType";
-import { getSelectedClasses } from "./SchoolClass";
 import { Stream, getSelectedStream } from "./Stream";
 import { Section, selectedSections } from "./Section";
-import { DatabaseConnection } from "../Database/database";
 import { Fee, selectedFee } from "./Fee";
 import { Term, selectedTermIds, getTermBySelect } from "./Term";
-import { SchoolClass } from "./SchoolClass";
+import { SchoolClass, getSelectedClasses } from "./SchoolClass";
 import { ClassLevel, getSelectedLevels } from "./ClassLevel";
 import { extraLatestArrayIndex } from "../Helpers/Helpers";
 import { getStudentTermPayments } from "./StudentPaidBalance";
@@ -180,131 +177,8 @@ export class StudentDocument extends BaseEntity {
   name!: string;
 }
 
-const extractArrays = (array: [], key: string, extraData: number) => {
-  let newArray = array.map((a: any) => a[key]);
-  if (newArray.length > 0 && extraData !== null) {
-    newArray.pop();
-    newArray.push(extraData);
-  }
-  if (newArray.length == 0 && extraData !== null) {
-    newArray.push(extraData);
-  }
-  return newArray;
-};
-
-const studentExtraData = async (
-  studentId: number,
-  house: any = null,
-  classId: any = null,
-  streamId: any = null,
-  studentTypeId: any = null,
-  sectionId: any = null,
-  feeId: any = null,
-  termId: any = null,
-  levelId: any = null
-) => {
-  interface data {
-    houses: any;
-    classes: any;
-    streams: any;
-    studentTypes: any;
-    sections: any;
-    fees: any;
-    terms: any;
-    levels: any;
-  }
-
-  const queryRunner = DatabaseConnection.createQueryRunner();
-
-  //houses
-  const houseStudentQuery = await queryRunner.manager.query(
-    `SELECT * FROM students_houses WHERE studentId = ${studentId}`
-  );
-
-  const houseIds = extractArrays(houseStudentQuery, "houseId", house);
-
-  const studentHouses = await getSelectedHouses(houseIds);
-
-  //classes
-  const classStudentQuery = await queryRunner.manager.query(
-    `SELECT * FROM student_classes WHERE studentId = ${studentId}`
-  );
-
-  const classIds = extractArrays(classStudentQuery, "schoolClassId", classId);
-
-  const studentClasses = await getSelectedClasses(classIds);
-
-  //streams
-  const streamStudentQuery = await queryRunner.manager.query(
-    `SELECT * FROM student_streams WHERE studentId = ${studentId}`
-  );
-
-  const streamIds = extractArrays(streamStudentQuery, "streamId", streamId);
-
-  const studentStreams = await getSelectedStream(streamIds);
-
-  //student types
-  const studentTypesQuery = await queryRunner.manager.query(
-    `SELECT * FROM student_student_types WHERE studentId = ${studentId}`
-  );
-
-  const studentTypesIds = extractArrays(
-    studentTypesQuery,
-    "studentTypeId",
-    studentTypeId
-  );
-
-  const studentTypes = await selectedType(studentTypesIds);
-
-  //sections
-  const studentSectionQuery = await queryRunner.manager.query(
-    `SELECT * FROM student_section WHERE studentId = ${studentId}`
-  );
-
-  const sectionIds = extractArrays(studentSectionQuery, "sectionId", sectionId);
-
-  const studentSections = await selectedSections(sectionIds);
-
-  //fees category
-  const feeStudentQuery = await queryRunner.manager.query(
-    `SELECT * FROM student_fees WHERE studentId = ${studentId}`
-  );
-
-  const feesIds = extractArrays(feeStudentQuery, "feeId", feeId);
-
-  const studentFees = await selectedFee(feesIds);
-
-  //terms
-
-  const studentTermsQuery = await queryRunner.manager.query(
-    `SELECT * FROM student_terms WHERE studentId = ${studentId}`
-  );
-
-  const termIds = extractArrays(studentTermsQuery, "termId", termId);
-
-  const studentTerms = await selectedTermIds(termIds);
-
-  //levels
-
-  const studentLevelQuery = await queryRunner.manager.query(
-    `SELECT * FROM student_levels WHERE studentId = ${studentId}`
-  );
-
-  const levelIds = extractArrays(studentLevelQuery, "classLevelId", levelId);
-
-  const studentLevels = await getSelectedLevels(levelIds);
-
-  const newData: data = {
-    houses: studentHouses,
-    classes: studentClasses,
-    streams: studentStreams,
-    studentTypes: studentTypes,
-    sections: studentSections,
-    fees: studentFees,
-    terms: studentTerms,
-    levels: studentLevels,
-  };
-  return newData;
+const parseToInt = (value: any): number => {
+  return parseInt(value, 10) ?? 0;
 };
 
 export const createStudent = async (
@@ -345,51 +219,30 @@ export const createStudent = async (
     motherContact: motherContact,
   });
 
-  let termId;
-  const currentTerm = await getTermBySelect();
+  const studentTypeId = parseToInt(studentType);
+  const studentSectionId = parseToInt(studentSection);
+  const studentHouseId = parseToInt(studentHouse);
+  const studentClassId = parseToInt(studentClass);
+  const studentFeeId = parseToInt(feesCategory);
+  const studentStreamId = parseToInt(studentStream);
+  const studentLevelId = parseToInt(studentLevel);
 
-  if (currentTerm !== null) {
-    termId = currentTerm.id;
-  }
-
-  const newData: any = await studentExtraData(
+  await loadStudentRelationships(
     student.id,
-    studentHouse,
-    studentClass,
-    studentStream,
-    studentType,
-    studentSection,
-    feesCategory,
-    termId,
-    studentLevel
+    studentTypeId,
+    studentLevelId,
+    studentHouseId,
+    studentStreamId,
+    studentClassId,
+    studentSectionId,
+    studentFeeId
   );
-
-  const loadStudentRelations = await Student.preload({
-    id: student.id,
-    houses: newData.houses,
-    classes: newData.classes,
-    streams: newData.streams,
-    student_types: newData.studentTypes,
-    sections: newData.sections,
-    fees: newData.fees,
-    terms: newData.terms,
-    student_levels: newData.levels,
-  });
-
-  if (loadStudentRelations) {
-    await Student.save(loadStudentRelations);
-  }
-
-  return loadStudentRelations;
+  return "Student Created";
 };
 
 export const deleteStudent = async (id: number) => {
   const student = await Student.delete(id);
-  if (student) {
-    return true;
-  } else {
-    return false;
-  }
+  return !!student;
 };
 
 export const updateStudent = async (
@@ -414,7 +267,7 @@ export const updateStudent = async (
   studentClass: string,
   feesCategory: string,
   studentStream: string,
-  studentLevel: string,
+  studentLevel: string
 ) => {
   await Student.update(id, {
     firstName: firstName,
@@ -433,42 +286,27 @@ export const updateStudent = async (
     motherContact: motherContact,
   });
 
-  let termId;
-  const currentTerm = await getTermBySelect();
+  const studentTypeId = parseToInt(studentType);
+  const studentSectionId = parseToInt(studentSection);
+  const studentHouseId = parseToInt(studentHouse);
+  const studentClassId = parseToInt(studentClass);
+  const studentFeeId = parseToInt(feesCategory);
+  const studentStreamId = parseToInt(studentStream);
+  const studentLevelId = parseToInt(studentLevel);
 
-  if (currentTerm !== null) {
-    termId = currentTerm.id;
-  }
-
-  const newData: any = await studentExtraData(
+  await loadStudentRelationships(
     id,
-    studentHouse,
-    studentClass,
-    studentStream,
-    studentType,
-    studentSection,
-    feesCategory,
-    termId,
-    studentLevel
+    studentTypeId,
+    studentLevelId,
+    studentHouseId,
+    studentStreamId,
+    studentClassId,
+    studentSectionId,
+    studentFeeId
   );
 
-  const loadStudentRelations = await Student.preload({
-    id: id,
-    houses: newData.houses,
-    classes: newData.classes,
-    streams: newData.streams,
-    student_types: newData.studentTypes,
-    sections: newData.sections,
-    fees: newData.fees,
-    terms: newData.terms,
-    student_levels: newData.levels
-  });
+  return "Student Updated";
 
-  if (loadStudentRelations) {
-    await Student.save(loadStudentRelations);
-  }
-
-  return loadStudentRelations;
 };
 
 export const getSingleStudent = async (id: number) => {
@@ -484,7 +322,7 @@ export const getStudents = async (page: number = 0, count: number = 20) => {
     take: count,
     skip: page * count,
   });
-  console.log(students[0].length)
+  console.log(students[0].length);
   return students;
 };
 
@@ -608,4 +446,71 @@ export const getStudentsWithFeesBalanceLessThan50 = async () => {
   return studentsWithFeesBalanceLessThan50;
 };
 
+const loadStudentRelationships = async (
+  student_id: number,
+  student_type: number,
+  student_level: number,
+  student_house: number,
+  student_stream: number,
+  student_class: number,
+  student_section: number,
+  student_fees: number
+) => {
+  const student = await getSingleStudent(student_id);
 
+  if (student === null) {
+    return null;
+  }
+
+  const term = await getTermBySelect();
+  const termId = term?.id ?? 0;
+
+  const studentTypeIds = student.student_types?.map((type) => type.id) || [];
+  studentTypeIds.push(student_type);
+
+  const studentLevelIds =
+    student.student_levels?.map((level) => level.id) || [];
+  studentLevelIds.push(student_level);
+
+  const studentHouseIds = student.houses?.map((house) => house.id) || [];
+  studentHouseIds.push(student_house);
+
+  const studentClassIds = student.classes?.map((classId) => classId.id) || [];
+  studentClassIds.push(student_class);
+
+  const studentFeeIds = student.fees?.map((fee) => fee.id) || [];
+  studentFeeIds.push(student_fees);
+
+  const studentStreamIds = student.streams?.map((stream) => stream.id) || [];
+  studentStreamIds.push(student_stream);
+
+  const studentSectionIds =
+    student.sections?.map((section) => section.id) || [];
+  studentSectionIds.push(student_section);
+
+  const studentTermIds = student.terms?.map((term) => term.id) || [];
+  studentTermIds.push(termId);
+
+  const dataToUpdate: Partial<typeof student> = {};
+
+  dataToUpdate.student_types = await selectedType(studentTypeIds);
+  dataToUpdate.student_levels = await getSelectedLevels(studentLevelIds);
+  dataToUpdate.houses = await getSelectedHouses(studentHouseIds);
+  dataToUpdate.classes = await getSelectedClasses(studentClassIds);
+  dataToUpdate.streams = await getSelectedStream(studentStreamIds);
+  dataToUpdate.fees = await selectedFee(studentFeeIds);
+  dataToUpdate.sections = await selectedSections(studentSectionIds);
+  dataToUpdate.terms = await selectedTermIds(studentTermIds);
+
+  if (Object.keys(dataToUpdate).length > 0) {
+    
+    const studentToUpdate = {
+      ...student,
+      ...dataToUpdate,
+    };
+
+    await Student.save(studentToUpdate);
+  }
+
+  return student;
+};
