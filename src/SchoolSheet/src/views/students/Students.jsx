@@ -11,6 +11,7 @@ import Button2 from '../../components/Button2'
 import axiosInstance from '../../axios-instance'
 import withReactContent from 'sweetalert2-react-content'
 import ButtonAlt from '../../components/ButtonAlt'
+import ButtonLoader from '../../components/ButtonLoader'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   getStudents,
@@ -499,6 +500,7 @@ const Students = () => {
               <div className="w-1/3 mx-3">
                 <div onClick={exportToCSV} className="w-20">
                   <Button value={'CSV'} />
+                  <ButtonLoader/>
                 </div>
               </div>
               <div>
