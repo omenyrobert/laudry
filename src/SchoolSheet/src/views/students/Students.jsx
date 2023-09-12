@@ -125,6 +125,7 @@ const Students = () => {
           .then(() => {
             setPage(0)
             Swal.fire('Deleted!', 'Student file has been deleted.', 'success')
+
           })
           .catch((error) => {
             console.log(error)
@@ -342,22 +343,25 @@ const Students = () => {
     for (const row of studentData) {
       const values = headers.map((header) => {
         const value = row[header]
-        if (header === 'studentType') {
-          const escaped = ('' + value.type).replace(/"/g, '\\"')
+        if (header === 'student_types') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.type).replace(/"/g, '\\"')
           return `"${escaped}"`
-        } else if (header === 'studentHouse') {
-          const escaped = ('' + value.house).replace(/"/g, '\\"')
+        } else if (header === 'houses') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.house).replace(/"/g, '\\"')
           return `"${escaped}"`
-        } else if (header === 'studentClass') {
-          const escaped = ('' + value.class).replace(/"/g, '\\"')
+        } else if (header === 'classes') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.class).replace(/"/g, '\\"')
           return `"${escaped}"`
-        } else if (header === 'studentStream') {
-          if (value) {
-            const escaped = ('' + value.stream).replace(/"/g, '\\"')
-            return `"${escaped}"`
-          }
-          const escaped = 'null'.replace(/"/g, '\\"')
+        } else if (header === 'streams') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.stream).replace(/"/g, '\\"')
           return `"${escaped}"`
+        } else if (header === 'feesBalance') {
+          return ''
+        } else if (header === 'student_levels') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.name).replace(/"/g, '\\"')
+          return `"${escaped}"`
+        } else if (Array.isArray(value)) {
+          return ""
         }
         const escaped = ('' + row[header]).replace(/"/g, '\\"')
         return `"${escaped}"`
@@ -417,6 +421,14 @@ const Students = () => {
             student.motherName = row[header]
           } else if (refinedHeader === "mothercontact") {
             student.motherContact = row[header]
+          } else if (refinedHeader === "class" || refinedHeader === "classes") {
+            student.class = row[header]
+          } else if (refinedHeader === "stream" || refinedHeader === "streams") {
+            student.stream = row[header]
+          } else if (refinedHeader === "house" || refinedHeader === "houses") {
+            student.house = row[header]
+          } else if (refinedHeader === "classlevel" || refinedHeader === "student_levels") {
+            student.classLevel = row[header]
           }
         }
         return student
@@ -430,13 +442,15 @@ const Students = () => {
 
     try {
       const res = await axiosInstance.post("/students/add/multiple", { students: data })
-      console.log(res)
+      dispatch(getStudents({
+        page
+      }))
       setLoading(false)
       toggleFeedback("success", {
         title: "Success",
         text: "Students Added Successfully",
       })
-      dispatch(getStudents())
+
     } catch (error) {
       console.log(error)
       setLoading(false)

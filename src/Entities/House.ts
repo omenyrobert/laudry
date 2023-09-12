@@ -65,3 +65,13 @@ export const getSelectedHouses = async (houses: any) => {
   const selectedHouses = await House.find({ where: { id: In(houses) } });
   return selectedHouses;
 };
+
+export const getHouseByName = async (house: string | null) => {
+  if (house === null) {
+    return null;
+  }
+  const HouseToFindByName = await House.findOne({
+    where: { house: house },
+  });
+  return HouseToFindByName;
+}

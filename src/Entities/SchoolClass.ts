@@ -148,3 +148,13 @@ export const getNumberOfStudentsPerClass = async () => {
   }))
   return numberOfStudentsPerClass;
 }
+
+export const getClassByName = async (name: string | null) => {
+  if (name !== null) {
+    const classToFind = await SchoolClass.findOne({
+      where: { class: name },
+    });
+    return classToFind;
+  }
+  return null;
+}
