@@ -11,7 +11,8 @@ import {
   fetchStudentDocuments,
   searchingStudents,
   fetchNumberOfStudents,
-  fetchStudentsWithFeesBalanceLessThan50Controller
+  fetchStudentsWithFeesBalanceLessThan50Controller,
+  addMultipleStudents,
 } from "../Controllers/StudentController";
 import {validateStudentRequest} from "../Middlewares/StudentMiddleware";
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
@@ -43,5 +44,6 @@ export default (router: Router) => {
   router.get(`/search${studentRoutePrefix}`, JWTAuthMiddleWare, searchingStudents);
   router.get(`${studentRoutePrefix}/studentCount/count`, JWTAuthMiddleWare, fetchNumberOfStudents);
   router.get(`${studentRoutePrefix}/balance/lessThan50`, JWTAuthMiddleWare, fetchStudentsWithFeesBalanceLessThan50Controller);
+  router.post(`${studentRoutePrefix}/add/multiple`, JWTAuthMiddleWare, addMultipleStudents);
 
 };

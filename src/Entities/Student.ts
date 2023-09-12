@@ -514,3 +514,36 @@ const loadStudentRelationships = async (
 
   return student;
 };
+
+export const createStudentWithMandatoryFields = async (
+  firstName: string,
+  middleName: string,
+  lastName: string,
+  gender: string,
+  dateOfBirth: string,
+  phoneNumber: string,
+  nationality: string,
+  residence: string,
+  fatherName: string,
+  fatherContact: string,
+  motherName: string,
+  motherContact: string,
+) => {
+  const student = new Student();
+  student.firstName = firstName;
+  student.middleName = middleName;
+  student.lastName = lastName;
+  student.gender = gender;
+  student.dateOfBirth = dateOfBirth;
+  student.phoneNumber = phoneNumber;
+  student.nationality = nationality
+  student.residence = residence
+  student.fatherName = fatherName
+  student.fatherContact = fatherContact
+  student.motherName = motherName
+  student.motherContact = motherContact
+
+  await Student.save(student);
+
+  return student;
+}

@@ -25,6 +25,8 @@ import {
   getClassLevels,
 } from '../../store/schoolSheetSlices/schoolStore'
 import Loader from '../../components/Loader'
+import * as XLSX from 'xlsx'
+import { useFeedback } from "../../hooks/feedback"
 
 const Students = () => {
   const dispatch = useDispatch()
@@ -55,6 +57,8 @@ const Students = () => {
     searchingStudents,
     classLevels,
   } = useSelector((state) => state.schoolStore)
+  const { toggleFeedback } = useFeedback()
+  const [load, setLoading] = useState(false)
 
   useEffect(() => {
     const ppts = classLevels.map((level) => {
@@ -317,7 +321,6 @@ const Students = () => {
         dispatch(getStudentCount())
         dispatch(getClassLevels())
       } catch (error) {
-        console.log(error)
         const MySwal = withReactContent(Swal)
         MySwal.fire({
           icon: 'error',
@@ -339,7 +342,6 @@ const Students = () => {
     for (const row of studentData) {
       const values = headers.map((header) => {
         const value = row[header]
-        console.log(value, header, row)
         if (header === 'studentType') {
           const escaped = ('' + value.type).replace(/"/g, '\\"')
           return `"${escaped}"`
@@ -370,6 +372,82 @@ const Students = () => {
     link.setAttribute('download', 'students.csv')
     link.click()
   }
+
+  // import data from xls
+  const importData = async (e) => {
+    setLoading(true)
+    const file = e.target.files[0]
+    // read and convert to json object
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      const text = e.target.result
+      const workbook = XLSX.read(text, { type: 'binary' })
+      const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])
+
+      // convert to server json
+      const data = rows.map((row) => {
+        const headers = Object.keys(row)
+        let student = {}
+        for (const header of headers) {
+          // trim and convert to lowercase and remove spaces
+          const refinedHeader = header.trim().toLowerCase().replace(/\s/g, '')
+          if (refinedHeader === 'firstname') {
+            student.firstName = row[header]
+          } else if (refinedHeader === 'lastname') {
+            student.lastName = row[header]
+          } else if (refinedHeader === 'middlename') {
+            student.middleName = row[header]
+          } else if (refinedHeader === "phonenumber") {
+            student.phoneNumber = row[header]
+          } else if (refinedHeader === 'email') {
+            student.email = row[header]
+          } else if (refinedHeader === "dateofbirth") {
+            student.dateOfBirth = row[header]
+          } else if (refinedHeader === "gender") {
+            student.gender = row[header]
+          } else if (refinedHeader === "nationality") {
+            student.nationality = row[header]
+          } else if (refinedHeader === "residence") {
+            student.residence = row[header]
+          } else if (refinedHeader === "fathername") {
+            student.fatherName = row[header]
+          } else if (refinedHeader === "fathercontact") {
+            student.fatherContact = row[header]
+          } else if (refinedHeader === "mothername") {
+            student.motherName = row[header]
+          } else if (refinedHeader === "mothercontact") {
+            student.motherContact = row[header]
+          }
+        }
+        return student
+      })
+      postMultipleStudents(data)
+    }
+    reader.readAsBinaryString(file)
+  }
+
+  const postMultipleStudents = async (data) => {
+
+    try {
+      const res = await axiosInstance.post("/students/add/multiple", { students: data })
+      console.log(res)
+      setLoading(false)
+      toggleFeedback("success", {
+        title: "Success",
+        text: "Students Added Successfully",
+      })
+      dispatch(getStudents())
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+      toggleFeedback("error", {
+        title: "Error",
+        text: "An Error Occured while trying to add students. Please try again",
+      })
+    }
+  }
+
+
 
   return (
     <div className=" mt-2 w-full">
@@ -500,11 +578,25 @@ const Students = () => {
               <div className="w-1/3 mx-3">
                 <div onClick={exportToCSV} className="w-20">
                   <Button value={'CSV'} />
-                  <ButtonLoader/>
+                  <ButtonLoader />
                 </div>
               </div>
-              <div>
-                <Button value={"Import"}/>
+              <input
+                type="file"
+                name="file"
+                id="file"
+                className="hidden"
+                onChange={importData}
+              />
+              <div onClick={(e) => {
+                e.preventDefault()
+                document.getElementById('file').click()
+              }}>
+
+                {
+                  load ? <ButtonLoader /> : <Button value={"Import"} />
+                }
+
               </div>
               <div className="w-2/5 ml-3">
                 <Link to="/addStudentForm">
