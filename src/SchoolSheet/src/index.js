@@ -59,6 +59,7 @@ import Ledger from "./components/finance/Ledger";
 import RoleGuard from "./components/RoleGuard";
 import PrintTransaction from "./components/finance/PrintTransaction";
 import DesktopLoading from "./components/DesktopLoading";
+import MarkSheet from "./views/classes/MarkSheet";
 
 
 const router = createBrowserRouter([
@@ -259,6 +260,10 @@ const router = createBrowserRouter([
       {
         path: "/printTransaction",
         element: <PrintTransaction />,
+      },
+      {
+        path: "/MarkSheet",
+        element: <MarkSheet />
       },
       // hrm routes
       {

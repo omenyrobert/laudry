@@ -10,8 +10,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import Button2 from '../../components/Button2'
 import axiosInstance from '../../axios-instance'
 import withReactContent from 'sweetalert2-react-content'
-// import { FaFilter } from "react-icons/fa";
 import ButtonAlt from '../../components/ButtonAlt'
+import ButtonLoader from '../../components/ButtonLoader'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   getStudents,
@@ -492,17 +492,21 @@ const Students = () => {
                   </div>
                 ) : null}
               </div>
-              <div className="w-1/3 mx-5">
+              <div className="w-1/3 mx-3">
                 <div onClick={printStudents} className="w-20">
                   <Button value={'Pdf'} />
                 </div>
               </div>
-              <div className="w-1/3 mx-5">
+              <div className="w-1/3 mx-3">
                 <div onClick={exportToCSV} className="w-20">
                   <Button value={'CSV'} />
+                  <ButtonLoader/>
                 </div>
               </div>
-              <div className="w-2/5">
+              <div>
+                <Button value={"Import"}/>
+              </div>
+              <div className="w-2/5 ml-3">
                 <Link to="/addStudentForm">
                   <Button2 value={'Student'} />
                 </Link>
