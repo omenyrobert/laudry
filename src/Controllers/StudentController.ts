@@ -11,7 +11,8 @@ import {
   deleteStudentDocument,
   searchStudents,
   getNumberOfStudents,
-  getStudentsWithFeesBalanceLessThan50
+  getStudentsWithFeesBalanceLessThan50,
+  createStudentWithMandatoryFields
 } from "../Entities/Student";
 import { getTermBySelect } from "../Entities/Term";
 
@@ -476,6 +477,39 @@ export const fetchStudentsWithFeesBalanceLessThan50Controller = async (req: Requ
         .status(404)
         .end();
     }
+  } catch (error) {
+    console.log(error)
+    return res
+      .json(customPayloadResponse(false, "An Error Occured"))
+      .status(500)
+      .end();
+  }
+}
+
+export const addMultipleStudents = async (req: Request, res: Response) => {
+  try {
+    const { students } = req.body;
+    students.forEach(async (student: any) => {
+      const newStudent = await createStudentWithMandatoryFields(
+        student.firstName,
+        student.lastName,
+        student.middleName,
+        student.gender,
+        student.dateOfBirth,
+        student.phoneNumber,
+        student.nationality,
+        student.residence,
+        student.fatherName,
+        student.fatherContact,
+        student.motherName,
+        student.motherContact,
+      )
+    });
+    return res
+      .json(customPayloadResponse(true, "Students Added Successfully"))
+      .status(200)
+      .end();
+      
   } catch (error) {
     console.log(error)
     return res
