@@ -69,3 +69,16 @@ export const selectedType = async (ids:any) => {
   });
   return selectedTypes;
 };
+
+
+export const getStudentTypeByName = async (type: string | null) => {
+  if (type === null) {
+    return null;
+  }
+
+  const studentType = await StudentType.findOne({
+    where: { type: type },
+  });
+
+  return studentType;
+}

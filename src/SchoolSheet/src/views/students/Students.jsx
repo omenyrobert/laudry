@@ -341,7 +341,7 @@ const Students = () => {
     const allHeaders = Object.keys(studentData[0])
     // remove 'documents', "fees" from allHeaders
     const headers = allHeaders.filter(
-      (header) => header !== 'documents' && header !== 'fees' && header !== 'terms' && header !== "photo" && header !== "feesBalance" && header !== "sections"
+      (header) => header !== 'documents' && header !== 'terms' && header !== "photo" && header !== "fees" && header !== "feesBalance"
     )
     csvRows.push(headers.join(','))
     for (const row of studentData) {
@@ -360,12 +360,15 @@ const Students = () => {
           const escaped = value.length === 0 ? '' : ('' + value[0]?.stream).replace(/"/g, '\\"')
           return `"${escaped}"`
         } else if (header === 'feesBalance') {
-          return ''
+          const loaded = JSON.parse(value)
+          console.log(loaded)
+          return `"${loaded.balance ? loaded.balance : 0}"`
         } else if (header === 'student_levels') {
           const escaped = value.length === 0 ? '' : ('' + value[0]?.name).replace(/"/g, '\\"')
           return `"${escaped}"`
-        } else if (Array.isArray(value)) {
-          return ""
+        } else if (header === 'sections') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.section).replace(/"/g, '\\"')
+          return `"${escaped}"`
         }
         const escaped = ('' + row[header]).replace(/"/g, '\\"')
         return `"${escaped}"`
@@ -433,8 +436,18 @@ const Students = () => {
             student.house = row[header]
           } else if (refinedHeader === "classlevel" || refinedHeader === "student_levels") {
             student.classLevel = row[header]
+          } else if (refinedHeader === "email") {
+            student.email = row[header]
+          } else if (refinedHeader === "feesbalance") {
+            student.feesBalance = row[header]
+          } else if (refinedHeader === "student_types") {
+            student.type = row[header]
+          } else if (refinedHeader === "sections") {
+            student.section = row[header]
           }
+
         }
+        console.log(student)
         return student
       })
       postMultipleStudents(data)

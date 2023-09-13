@@ -10,10 +10,10 @@ import {
   Like,
 } from "typeorm";
 import { House, getSelectedHouses, getHouseByName, addHouse } from "./House";
-import { StudentType, selectedType } from "./StudentType";
+import { StudentType, selectedType, addStudentType, getStudentTypeByName } from "./StudentType";
 import { Stream, getSelectedStream, getStreamByName, createStream } from "./Stream";
-import { Section, selectedSections } from "./Section";
-import { Fee, selectedFee } from "./Fee";
+import { Section, selectedSections, createSections, getSectionByName } from "./Section";
+import { Fee, selectedFee, createFee, getFeeByName } from "./Fee";
 import { Term, selectedTermIds, getTermBySelect } from "./Term";
 import { SchoolClass, getSelectedClasses, getClassByName, createClass } from "./SchoolClass";
 import { ClassLevel, getSelectedLevels, getLevelByName, createLevel } from "./ClassLevel";
@@ -519,6 +519,7 @@ export const createStudentWithMandatoryFields = async (
   firstName: string,
   middleName: string,
   lastName: string,
+  email: string,
   gender: string,
   dateOfBirth: string,
   phoneNumber: string,
@@ -533,12 +534,17 @@ export const createStudentWithMandatoryFields = async (
   streamName: string | null = null,
   studentType: string | null = null,
   classLevel: string | null = null,
+  sections: string | null = null,
+  feesBalance: string | null = null,
+
 ) => {
   let studentHouse = await getHouseByName(house);
   let studentClass = await getClassByName(className);
   let studentStream = await getStreamByName(streamName);
-  //let studentType = await getStudentTypeByName(studentType);
+  let studentTypeObj = await getStudentTypeByName(studentType);
   let studentLevel = await getLevelByName(classLevel);
+  let studentSection = await getSectionByName(sections);
+  //let studentFees = await getFeeByName(fees);
   const student = new Student();
   student.firstName = firstName;
   student.middleName = middleName;
@@ -552,6 +558,8 @@ export const createStudentWithMandatoryFields = async (
   student.fatherContact = fatherContact
   student.motherName = motherName
   student.motherContact = motherContact
+  student.email = email;
+  student.feesBalance = feesBalance ? JSON.stringify({amount: 0, balance: feesBalance}): JSON.stringify({amount: 0, balance: 0});
 
   await Student.save(student);
 
@@ -579,6 +587,16 @@ export const createStudentWithMandatoryFields = async (
     studentLevel = await getLevelByName(classLevel);
   }
 
+  if (studentTypeObj === null && studentType !== null) {
+    await addStudentType(studentType);
+    studentTypeObj = await getStudentTypeByName(studentType);
+  }
+
+  if (studentSection === null && sections !== null) {
+    await createSections(sections);
+    studentSection = await getSectionByName(sections);
+  }
+
   // add to student 
   
   if (studentHouse !== null) {
@@ -595,6 +613,14 @@ export const createStudentWithMandatoryFields = async (
 
   if (studentLevel !== null) {
     student.student_levels = [studentLevel];
+  }
+
+  if (studentTypeObj !== null) {
+    student.student_types = [studentTypeObj];
+  }
+
+  if (studentSection !== null) {
+    student.sections = [studentSection];
   }
 
   await Student.save(student);
