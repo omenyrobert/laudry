@@ -30,14 +30,14 @@ const Login = () => {
 
   const handleLogin = async () => {
     setIsLoging(true);
-    const isActive = await checkActivation();
-    if (!isActive) {
-      setActivate(true);
-      return;
-    }
-    if (expireDate) {
-      setActivate(true);
-    } else {
+    // const isActive = await checkActivation();
+    // if (!isActive) {
+    //   setActivate(true);
+    //   return;
+    // }
+    // if (expireDate) {
+    //   setActivate(true);
+    // } else {
       try {
         setIsLoging(true);
         const response = await axiosInstance.post("/auth/login", formData);
@@ -58,7 +58,7 @@ const Login = () => {
         console.log(error);
         setIsLoging(false);
       }
-    }
+    // }
   };
 
   async function checkActivation() {
