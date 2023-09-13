@@ -65,13 +65,17 @@ const Login = () => {
     try {
       const response = await axiosInstance.get("/system");
       const { status, payload } = response.data;
+      console.log(status, payload)
       if (status) {
         if (payload === null) {
           return false;
         } else {
+
           const now = new Date().getTime();
           const expiryDate = new Date(payload).getTime();
-          return now > expiryDate;
+          console.log(now, expiryDate);
+          console.log(now > expiryDate);
+          return now < expiryDate;
         }
       } else {
         return false;

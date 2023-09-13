@@ -492,8 +492,9 @@ export const addMultipleStudents = async (req: Request, res: Response) => {
     students.forEach(async (student: any) => {
       const newStudent = await createStudentWithMandatoryFields(
         student.firstName,
-        student.lastName,
         student.middleName,
+        student.lastName,
+        student.email,
         student.gender,
         student.dateOfBirth,
         student.phoneNumber,
@@ -507,7 +508,9 @@ export const addMultipleStudents = async (req: Request, res: Response) => {
         student.class,
         student.stream,
         student.type,
-        student.classLevel
+        student.classLevel,
+        student.section,
+        student.feesBalance
       )
     });
     return res

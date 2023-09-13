@@ -57,3 +57,13 @@ export const selectedSections = async (ids: any) => {
   });
   return selectedSection;
 };
+
+export const getSectionByName = async (section: string | null) => {
+  if (section === null) {
+    return null;
+  }
+  const sectionToFind = await Section.findOne({
+    where: { section: section },
+  });
+  return sectionToFind;
+}

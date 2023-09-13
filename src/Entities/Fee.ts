@@ -60,3 +60,13 @@ export const selectedFee = async (ids: any) => {
   });
   return selectedFees;
 };
+
+export const getFeeByName = async (name: string | null) => {
+  if (name === null) {
+    return null;
+  }
+  const fee = await Fee.findOne({
+    where: { name: name },
+  });
+  return fee;
+}
