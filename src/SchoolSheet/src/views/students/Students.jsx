@@ -338,7 +338,11 @@ const Students = () => {
   const exportToCSV = () => {
     const csvRows = []
     const studentData = student ? students?.students : searchedStudents
-    const headers = Object.keys(studentData[0])
+    const allHeaders = Object.keys(studentData[0])
+    // remove 'documents', "fees" from allHeaders
+    const headers = allHeaders.filter(
+      (header) => header !== 'documents' && header !== 'fees' && header !== 'terms' && header !== "photo" && header !== "feesBalance" && header !== "sections"
+    )
     csvRows.push(headers.join(','))
     for (const row of studentData) {
       const values = headers.map((header) => {
@@ -592,7 +596,6 @@ const Students = () => {
               <div className="w-1/3 mx-3">
                 <div onClick={exportToCSV} className="w-20">
                   <Button value={'CSV'} />
-                  <ButtonLoader />
                 </div>
               </div>
               <input
