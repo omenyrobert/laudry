@@ -503,6 +503,11 @@ export const addMultipleStudents = async (req: Request, res: Response) => {
         student.fatherContact,
         student.motherName,
         student.motherContact,
+        student.house,
+        student.class,
+        student.stream,
+        student.type,
+        student.classLevel
       )
     });
     return res
