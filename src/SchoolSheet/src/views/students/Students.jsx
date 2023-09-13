@@ -11,6 +11,7 @@ import Button2 from '../../components/Button2'
 import axiosInstance from '../../axios-instance'
 import withReactContent from 'sweetalert2-react-content'
 import ButtonAlt from '../../components/ButtonAlt'
+import ButtonLoader from '../../components/ButtonLoader'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   getStudents,
@@ -24,6 +25,8 @@ import {
   getClassLevels,
 } from '../../store/schoolSheetSlices/schoolStore'
 import Loader from '../../components/Loader'
+import * as XLSX from 'xlsx'
+import { useFeedback } from "../../hooks/feedback"
 
 const Students = () => {
   const dispatch = useDispatch()
@@ -54,6 +57,8 @@ const Students = () => {
     searchingStudents,
     classLevels,
   } = useSelector((state) => state.schoolStore)
+  const { toggleFeedback } = useFeedback()
+  const [load, setLoading] = useState(false)
 
   useEffect(() => {
     const ppts = classLevels.map((level) => {
@@ -120,6 +125,7 @@ const Students = () => {
           .then(() => {
             setPage(0)
             Swal.fire('Deleted!', 'Student file has been deleted.', 'success')
+
           })
           .catch((error) => {
             console.log(error)
@@ -316,7 +322,6 @@ const Students = () => {
         dispatch(getStudentCount())
         dispatch(getClassLevels())
       } catch (error) {
-        console.log(error)
         const MySwal = withReactContent(Swal)
         MySwal.fire({
           icon: 'error',
@@ -338,23 +343,25 @@ const Students = () => {
     for (const row of studentData) {
       const values = headers.map((header) => {
         const value = row[header]
-        console.log(value, header, row)
-        if (header === 'studentType') {
-          const escaped = ('' + value.type).replace(/"/g, '\\"')
+        if (header === 'student_types') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.type).replace(/"/g, '\\"')
           return `"${escaped}"`
-        } else if (header === 'studentHouse') {
-          const escaped = ('' + value.house).replace(/"/g, '\\"')
+        } else if (header === 'houses') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.house).replace(/"/g, '\\"')
           return `"${escaped}"`
-        } else if (header === 'studentClass') {
-          const escaped = ('' + value.class).replace(/"/g, '\\"')
+        } else if (header === 'classes') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.class).replace(/"/g, '\\"')
           return `"${escaped}"`
-        } else if (header === 'studentStream') {
-          if (value) {
-            const escaped = ('' + value.stream).replace(/"/g, '\\"')
-            return `"${escaped}"`
-          }
-          const escaped = 'null'.replace(/"/g, '\\"')
+        } else if (header === 'streams') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.stream).replace(/"/g, '\\"')
           return `"${escaped}"`
+        } else if (header === 'feesBalance') {
+          return ''
+        } else if (header === 'student_levels') {
+          const escaped = value.length === 0 ? '' : ('' + value[0]?.name).replace(/"/g, '\\"')
+          return `"${escaped}"`
+        } else if (Array.isArray(value)) {
+          return ""
         }
         const escaped = ('' + row[header]).replace(/"/g, '\\"')
         return `"${escaped}"`
@@ -369,6 +376,92 @@ const Students = () => {
     link.setAttribute('download', 'students.csv')
     link.click()
   }
+
+  // import data from xls
+  const importData = async (e) => {
+    setLoading(true)
+    const file = e.target.files[0]
+    // read and convert to json object
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      const text = e.target.result
+      const workbook = XLSX.read(text, { type: 'binary' })
+      const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])
+
+      // convert to server json
+      const data = rows.map((row) => {
+        const headers = Object.keys(row)
+        let student = {}
+        for (const header of headers) {
+          // trim and convert to lowercase and remove spaces
+          const refinedHeader = header.trim().toLowerCase().replace(/\s/g, '')
+          if (refinedHeader === 'firstname') {
+            student.firstName = row[header]
+          } else if (refinedHeader === 'lastname') {
+            student.lastName = row[header]
+          } else if (refinedHeader === 'middlename') {
+            student.middleName = row[header]
+          } else if (refinedHeader === "phonenumber") {
+            student.phoneNumber = row[header]
+          } else if (refinedHeader === 'email') {
+            student.email = row[header]
+          } else if (refinedHeader === "dateofbirth") {
+            student.dateOfBirth = row[header]
+          } else if (refinedHeader === "gender") {
+            student.gender = row[header]
+          } else if (refinedHeader === "nationality") {
+            student.nationality = row[header]
+          } else if (refinedHeader === "residence") {
+            student.residence = row[header]
+          } else if (refinedHeader === "fathername") {
+            student.fatherName = row[header]
+          } else if (refinedHeader === "fathercontact") {
+            student.fatherContact = row[header]
+          } else if (refinedHeader === "mothername") {
+            student.motherName = row[header]
+          } else if (refinedHeader === "mothercontact") {
+            student.motherContact = row[header]
+          } else if (refinedHeader === "class" || refinedHeader === "classes") {
+            student.class = row[header]
+          } else if (refinedHeader === "stream" || refinedHeader === "streams") {
+            student.stream = row[header]
+          } else if (refinedHeader === "house" || refinedHeader === "houses") {
+            student.house = row[header]
+          } else if (refinedHeader === "classlevel" || refinedHeader === "student_levels") {
+            student.classLevel = row[header]
+          }
+        }
+        return student
+      })
+      postMultipleStudents(data)
+    }
+    reader.readAsBinaryString(file)
+  }
+
+  const postMultipleStudents = async (data) => {
+
+    try {
+      const res = await axiosInstance.post("/students/add/multiple", { students: data })
+      dispatch(getStudents({
+        page
+      }))
+      setLoading(false)
+      toggleFeedback("success", {
+        title: "Success",
+        text: "Students Added Successfully",
+      })
+
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+      toggleFeedback("error", {
+        title: "Error",
+        text: "An Error Occured while trying to add students. Please try again",
+      })
+    }
+  }
+
+
 
   return (
     <div className=" mt-2 w-full">
@@ -491,17 +584,35 @@ const Students = () => {
                   </div>
                 ) : null}
               </div>
-              <div className="w-1/3 mx-5">
+              <div className="w-1/3 mx-3">
                 <div onClick={printStudents} className="w-20">
                   <Button value={'Pdf'} />
                 </div>
               </div>
-              <div className="w-1/3 mx-5">
+              <div className="w-1/3 mx-3">
                 <div onClick={exportToCSV} className="w-20">
                   <Button value={'CSV'} />
+                  <ButtonLoader />
                 </div>
               </div>
-              <div className="w-2/5">
+              <input
+                type="file"
+                name="file"
+                id="file"
+                className="hidden"
+                onChange={importData}
+              />
+              <div onClick={(e) => {
+                e.preventDefault()
+                document.getElementById('file').click()
+              }}>
+
+                {
+                  load ? <ButtonLoader /> : <Button value={"Import"} />
+                }
+
+              </div>
+              <div className="w-2/5 ml-3">
                 <Link to="/addStudentForm">
                   <Button2 value={'Student'} />
                 </Link>

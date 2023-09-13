@@ -59,3 +59,11 @@ export const getSelectedStream = async (ids: any) => {
   const selectedStreams = await Stream.find({ where: { id: In(ids) } });
   return selectedStreams;
 };
+
+export const getStreamByName = async (stream: string| null) => {
+  if (stream) {
+    const streamToFind = await Stream.findOne({ where: { stream: stream } });
+    return streamToFind;
+  }
+  return null;
+}

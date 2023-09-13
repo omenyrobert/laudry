@@ -9,14 +9,14 @@ import {
   OneToMany,
   Like,
 } from "typeorm";
-import { House, getSelectedHouses } from "./House";
+import { House, getSelectedHouses, getHouseByName, addHouse } from "./House";
 import { StudentType, selectedType } from "./StudentType";
-import { Stream, getSelectedStream } from "./Stream";
+import { Stream, getSelectedStream, getStreamByName, createStream } from "./Stream";
 import { Section, selectedSections } from "./Section";
 import { Fee, selectedFee } from "./Fee";
 import { Term, selectedTermIds, getTermBySelect } from "./Term";
-import { SchoolClass, getSelectedClasses } from "./SchoolClass";
-import { ClassLevel, getSelectedLevels } from "./ClassLevel";
+import { SchoolClass, getSelectedClasses, getClassByName, createClass } from "./SchoolClass";
+import { ClassLevel, getSelectedLevels, getLevelByName, createLevel } from "./ClassLevel";
 import { extraLatestArrayIndex } from "../Helpers/Helpers";
 import { getStudentTermPayments } from "./StudentPaidBalance";
 
@@ -514,3 +514,92 @@ const loadStudentRelationships = async (
 
   return student;
 };
+
+export const createStudentWithMandatoryFields = async (
+  firstName: string,
+  middleName: string,
+  lastName: string,
+  gender: string,
+  dateOfBirth: string,
+  phoneNumber: string,
+  nationality: string,
+  residence: string,
+  fatherName: string,
+  fatherContact: string,
+  motherName: string,
+  motherContact: string,
+  house: string | null = null,
+  className: string | null = null,
+  streamName: string | null = null,
+  studentType: string | null = null,
+  classLevel: string | null = null,
+) => {
+  let studentHouse = await getHouseByName(house);
+  let studentClass = await getClassByName(className);
+  let studentStream = await getStreamByName(streamName);
+  //let studentType = await getStudentTypeByName(studentType);
+  let studentLevel = await getLevelByName(classLevel);
+  const student = new Student();
+  student.firstName = firstName;
+  student.middleName = middleName;
+  student.lastName = lastName;
+  student.gender = gender;
+  student.dateOfBirth = dateOfBirth;
+  student.phoneNumber = phoneNumber;
+  student.nationality = nationality
+  student.residence = residence
+  student.fatherName = fatherName
+  student.fatherContact = fatherContact
+  student.motherName = motherName
+  student.motherContact = motherContact
+
+  await Student.save(student);
+
+  if (studentHouse === null && house !== null) {
+    await addHouse(house);
+    studentHouse = await getHouseByName(house);
+  }
+
+  if (studentStream === null && streamName !== null) {
+    await createStream(streamName);
+    studentStream = await getStreamByName(streamName);
+  }
+
+  if (studentClass === null && className !== null ) {
+    const streamIDs = []
+    if (studentStream !== null) {
+      streamIDs.push(studentStream.id)
+    }
+    await createClass(className, streamIDs);
+    studentClass = await getClassByName(className);
+  }
+
+  if (studentLevel === null && classLevel !== null) {
+    await createLevel(classLevel);
+    studentLevel = await getLevelByName(classLevel);
+  }
+
+  // add to student 
+  
+  if (studentHouse !== null) {
+    student.houses = [studentHouse];
+  }
+
+  if (studentStream !== null) {
+    student.streams = [studentStream];
+  }
+
+  if (studentClass !== null) {
+    student.classes = [studentClass];
+  }
+
+  if (studentLevel !== null) {
+    student.student_levels = [studentLevel];
+  }
+
+  await Student.save(student);
+
+
+
+  return student;
+}

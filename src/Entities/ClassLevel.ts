@@ -83,3 +83,11 @@ export const getSelectedLevels = async (ids: any) => {
   const selectedLevels = await ClassLevel.find({ where: { id: In(ids) } });
   return selectedLevels;
 };
+
+export const getLevelByName = async (name: string | null) => {
+  if (name === null) {
+    return null;
+  }
+  const level = await ClassLevel.findOne({ where: { name: name } });
+  return level;
+};
