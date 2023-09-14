@@ -3,6 +3,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import InputField from '../InputField'
 import Button from '../Button'
+import ButtonSecondary from '../ButtonSecondary'
 import axiosInstance from '../../axios-instance'
 import { useNavigate } from 'react-router-dom'
 import ButtonLoader from '../ButtonLoader'
@@ -298,514 +299,610 @@ const FeesTable = (props) => {
             <th className="p-2 text-primary text-sm text-left">Action</th>
           </thead>
           <tbody>
+            {/* cash model */}
+
             {cash ? (
-              <div className="w-[600px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
-                <div className="flex justify-between p-3 bg-gray1">
-                  <div>
-                    <p className="text-primary font-semibold">
-                      Register Cash Payment
-                    </p>
-                  </div>
-                  <div>
-                    <p className="cursor-pointer" onClick={closeCash}>
-                      X
-                    </p>
-                  </div>
-                </div>
-                <div className="px-5">
-                  <InputField
-                    type="date"
-                    label="Date"
-                    name="date"
-                    onChange={onChangeCash}
-                    value={cashForm.date}
-                  />
+              <div className='flex bg-black/50 absolute z-50 top-0 h-[100vh] overflow-hidden left-0 right-0'>
+                <div className='w-3/12' onClick={closeCash}>
 
-                  <InputField
-                    type="number"
-                    label="Amount"
-                    name="amount"
-                    placeholder="Enter Amount"
-                    onChange={onChangeCash}
-                    value={cashForm.amount}
-                  />
-                  <InputField
-                    type="text"
-                    label="Paid By"
-                    name="paidBy"
-                    placeholder="Enter Name"
-                    onChange={onChangeCash}
-                    value={cashForm.paidBy}
-                  />
-                  <InputField
-                    type="text"
-                    label="Contact"
-                    name="contact"
-                    placeholder="Enter Contact"
-                    onChange={onChangeCash}
-                    value={cashForm.contact}
-                  />
                 </div>
-                <div className="flex justify-between mb-3 mr-3">
-                  <div></div>
-                  <div>
-                    {posting ? (
-                      <div className="w-40">
-                        <ButtonLoader />
+                <div className='w-6/12'>
+                  <div className="bg-white mt-[10vh] rounded-md shadow-lg border-2 border-gray1">
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div>
+                        <p className="text-primary font-semibold">
+                          Register Cash Payment
+                        </p>
                       </div>
-                    ) : (
-                      <div
-                        className="w-40 mb-5 float-right"
-                        onClick={(event) =>
-                          postPayment(event, cashForm, 'Cash')
-                        }
-                      >
-                        <Button value={'Add Payment'} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-            {bankslip ? (
-              <div className="w-[800px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
-                <div className="flex justify-between p-3 bg-gray1">
-                  <div>
-                    <p className="text-primary font-semibold">
-                      Register Bankslip
-                    </p>
-                  </div>
-                  <div>
-                    <p className="cursor-pointer" onClick={closeBankSlip}>
-                      X
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-5 flex">
-                  <div className="w-1/2">
-                    <InputField
-                      type="date"
-                      label="Date"
-                      name="date"
-                      onChange={onChangeBankSlip}
-                      value={bankSlipForm.date}
-                    />
-
-                    <InputField
-                      type="number"
-                      label="Amount"
-                      name="amount"
-                      placeholder="Enter Amount"
-                      onChange={onChangeBankSlip}
-                      value={bankSlipForm.amount}
-                    />
-                    <InputField
-                      type="text"
-                      label="Bank"
-                      name="bank"
-                      placeholder="Enter Bank Name"
-                      onChange={onChangeBankSlip}
-                      value={bankSlipForm.bank}
-                    />
-                  </div>
-                  <div className="w-1/2 ml-5">
-                    <InputField
-                      type="text"
-                      label="Branch"
-                      name="branch"
-                      placeholder="Enter Branch Name"
-                      onChange={onChangeBankSlip}
-                      value={bankSlipForm.branch}
-                    />
-                    <InputField
-                      type="text"
-                      label="Bank slip No"
-                      name="bankSlipNo"
-                      placeholder="Enter Bankslip No"
-                      onChange={onChangeBankSlip}
-                      value={bankSlipForm.bankSlipNo}
-                    />
-                    <InputField
-                      type="text"
-                      label="Paid By"
-                      name="paidBy"
-                      placeholder="Enter Name"
-                      onChange={onChangeBankSlip}
-                      value={bankSlipForm.paidBy}
-                    />
-                    <InputField
-                      type="text"
-                      label="Contact"
-                      name="contact"
-                      placeholder="Enter Contact"
-                      onChange={onChangeBankSlip}
-                      value={bankSlipForm.contact}
-                    />
-                  </div>
-
-                  <br />
-                </div>
-                <div className="flex justify-between mb-3 mr-3">
-                  <div></div>
-                  <div>
-                    {posting ? (
-                      <div className="w-40">
-                        <ButtonLoader />
-                      </div>
-                    ) : (
-                      <div
-                        className="w-40 float-right mb-5"
-                        onClick={(event) =>
-                          postPayment(event, bankSlipForm, 'Bank Slip')
-                        }
-                      >
-                        <Button value={'Add Payment'} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-            {bank ? (
-              <div className="w-[800px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
-                <div className="flex justify-between p-3 bg-gray1">
-                  <div>
-                    <p className="text-primary font-semibold">
-                      Register Bank Transfer
-                    </p>
-                  </div>
-                  <div>
-                    <p className="cursor-pointer" onClick={closeBank}>
-                      X
-                    </p>
-                  </div>
-                </div>
-                <div className="px-5 flex mb-5">
-                  <div className="w-1/2">
-                    <InputField
-                      type="date"
-                      label="Date"
-                      name="date"
-                      onChange={onChangeBank}
-                      value={bankForm.date}
-                    />
-
-                    <InputField
-                      type="number"
-                      label="Amount"
-                      name="amount"
-                      placeholder="Enter Amount"
-                      onChange={onChangeBank}
-                      value={bankForm.amount}
-                    />
-                    <InputField
-                      type="text"
-                      label="Bank"
-                      name="bank"
-                      placeholder="Enter Bank Name"
-                      onChange={onChangeBank}
-                      value={bankForm.name}
-                    />
-                  </div>
-                  <div className="w-1/2 ml-5">
-                    <InputField
-                      type="text"
-                      label="From Account No"
-                      name="fromAccountNo"
-                      placeholder="Enter Account Number"
-                      onChange={onChangeBank}
-                      value={bankForm.fromAccountNo}
-                    />
-                    <InputField
-                      type="text"
-                      label="Account Name"
-                      placeholder="Enter Account Name"
-                      name="accountName"
-                      onChange={onChangeBank}
-                      value={bankForm.accountName}
-                    />
-                    <InputField
-                      type="text"
-                      label="Paid By"
-                      name="paidBy"
-                      placeholder="Enter Name"
-                      onChange={onChangeBank}
-                      value={bankForm.paidBy}
-                    />
-                    <InputField
-                      type="text"
-                      label="Contact"
-                      name="contact"
-                      placeholder="Enter Contact"
-                      onChange={onChangeBank}
-                      value={bankForm.contact}
-                    />
-                  </div>
-
-                  <br />
-                </div>
-                <div className="flex justify-between mb-3 mr-3">
-                  <div></div>
-                  <div>
-                    {posting ? (
-                      <div className="w-40">
-                        <ButtonLoader />
-                      </div>
-                    ) : (
-                      <div
-                        className="w-40"
-                        onClick={(event) =>
-                          postPayment(event, bankForm, 'Bank Transfer')
-                        }
-                      >
-                        <Button value={'Add Payment'} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-            {mobile ? (
-              <div className="w-[700px] absolute bg-white rounded-md shadow-lg -mt-10 border-2 border-gray1 z-50">
-                <div className="flex justify-between p-3 bg-gray1">
-                  <div>
-                    <p className="text-primary font-semibold">
-                      Register Mobile Money Payment
-                    </p>
-                  </div>
-                  <div>
-                    <p className="cursor-pointer" onClick={closeMobile}>
-                      X
-                    </p>
-                  </div>
-                </div>
-                <div className="px-5 flex ">
-                  <div className="w-1/2">
-                    <InputField
-                      type="date"
-                      label="Date"
-                      name="date"
-                      onChange={onChangeMobile}
-                      value={mobileForm.date}
-                    />
-                    <InputField
-                      type="number"
-                      label="Amount"
-                      name="amount"
-                      placeholder="Enter Amount"
-                      onChange={onChangeMobile}
-                      value={mobileForm.amount}
-                    />
-                    <InputField
-                      type="text"
-                      label="From Mobile No"
-                      name="mobileNo"
-                      placeholder="Enter Number"
-                      onChange={onChangeMobile}
-                      value={mobileForm.mobileNo}
-                    />
-                  </div>
-                  <div className="w-1/2 ml-3">
-                    <InputField
-                      type="text"
-                      label="Names"
-                      name="mobileName"
-                      placeholder="Enter Name"
-                      onChange={onChangeMobile}
-                      value={mobileForm.mobileName}
-                    />
-
-                    <InputField
-                      type="text"
-                      label="Paid By"
-                      name="paidBy"
-                      placeholder="Enter Paid by Name"
-                      onChange={onChangeMobile}
-                      value={mobileForm.paidBy}
-                    />
-                    <InputField
-                      type="text"
-                      label="Contact"
-                      name="contact"
-                      placeholder="Enter Contact"
-                      onChange={onChangeMobile}
-                      value={mobileForm.contact}
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-between mb-3 mr-3">
-                  <div></div>
-                  <div>
-                    {posting ? (
-                      <div className="w-40">
-                        <ButtonLoader />
-                      </div>
-                    ) : (
-                      <div
-                        className="w-40"
-                        onClick={(event) =>
-                          postPayment(event, mobileForm, 'Mobile Money')
-                        }
-                      >
-                        <Button value={'Add Payment'} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-
-            {cheque ? (
-              <div className="w-[600px] absolute bg-white rounded-md shadow-lg border-2 border-gray1 z-50">
-                <div className="flex justify-between p-3 bg-gray1">
-                  <div>
-                    <p className="text-primary font-semibold">
-                      Register Checque Payment
-                    </p>
-                  </div>
-                  <div>
-                    <p className="cursor-pointer" onClick={closeCheque}>
-                      X
-                    </p>
-                  </div>
-                </div>
-                <div className="px-5 flex mb-5">
-                  <div className="w-1/2">
-                    <InputField
-                      type="date"
-                      label="Date"
-                      name="date"
-                      onChange={onChangeCheque}
-                      value={chequeForm.date}
-                    />
-
-                    <InputField
-                      type="number"
-                      label="Amount"
-                      name="amount"
-                      placeholder="Enter Amount"
-                      onChange={onChangeCheque}
-                      value={chequeForm.amount}
-                    />
-                    <InputField
-                      type="text"
-                      label="Bank"
-                      name="bank"
-                      placeholder="Enter Bank Name"
-                      onChange={onChangeCheque}
-                      value={chequeForm.bank}
-                    />
-                  </div>
-                  <div className="w-1/2 ml-5">
-                    <InputField
-                      type="text"
-                      label="Account Name"
-                      name="accountName"
-                      placeholder="Enter Account Name"
-                      onChange={onChangeCheque}
-                      value={chequeForm.accountName}
-                    />
-                    <InputField
-                      type="text"
-                      label="Account No"
-                      name="accountNo"
-                      placeholder="Enter Account Number"
-                      onChange={onChangeCheque}
-                      value={chequeForm.accountNo}
-                    />
-                    <InputField
-                      type="text"
-                      label="Paid By"
-                      name="paidBy"
-                      placeholder="Enter Name"
-                      onChange={onChangeCheque}
-                      value={chequeForm.paidBy}
-                    />
-                    <InputField
-                      type="text"
-                      label="Contact"
-                      name="contact"
-                      placeholder="Enter Contact"
-                      onChange={onChangeCheque}
-                      value={chequeForm.contact}
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-between mb-3 mr-3">
-                  <div></div>
-                  <div>
-                    {posting ? (
-                      <div className="w-40">
-                        <ButtonLoader />
-                      </div>
-                    ) : (
-                      <div
-                        className="w-40"
-                        onClick={(event) =>
-                          postPayment(event, chequeForm, 'Cheque')
-                        }
-                      >
-                        <Button value={'Add Payment'} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-
-            {payments ? (
-              <div className="w-3/4 absolute h-[60vh] overflow-y-auto bg-white rounded-md shadow-lg border-2 border-gray2 z-50">
-                <div className="flex justify-between p-3 bg-gray1">
-                  <div>
-                    <p className="text-primary font-semibold">
-                      Payment history
-                    </p>
-                  </div>
-                  <div>
-                    <p className="cursor-pointer" onClick={closePayments}>
-                      X
-                    </p>
-                  </div>
-                </div>
-                <div className="px-5 flex bg-gray2 p-2 text-xs mt-2 cursor-pointer w-full">
-                  <div className="w-1/4 p-2">Date</div>
-                  {/* <div className='w-1/4 p-2'>Fees</div> */}
-                  <div className="w-1/4 p-2">Amount</div>
-                  {/* <div className='w-1/4 p-2'>Balance</div> */}
-                  <div className="w-1/4 p-2">Method</div>
-                  <div className="w-1/4 p-2">Paid By</div>
-                  <div className="w-1/4 p-2">Contact</div>
-                </div>
-                {paymentsForm?.map((student) => {
-                  return (
-                    <div
-                      className="px-5 flex border-b text-gray5 border-gray2 hover:border-b-2 cursor-pointer text-xs w-full"
-                      key={student.id}
-                    >
-                      <div className="w-1/4 truncate p-2">{student?.date}</div>
-                      {/* <div className='w-1/4 truncate p-2'>
-                                            790,000
-                                        </div> */}
-                      <div className="w-1/4 truncate p-2">
-                        {Number(student?.amount_paid).toLocaleString()}
-                      </div>
-                      {/* <div className='w-1/4 truncate p-2'>
-                                            550,000
-                                        </div> */}
-                      <div className="w-1/4 truncate p-2">
-                        {student?.method}
-                      </div>
-                      <div className="w-1/4 truncate p-2">
-                        {student?.paid_by}
-                      </div>
-                      <div className="w-1/4 truncate p-2">
-                        {student?.contact}
+                      <div>
+                        <p className="cursor-pointer" onClick={closeCash}>
+                          X
+                        </p>
                       </div>
                     </div>
-                  )
-                })}
-                <br />
+                    <div className="px-5">
+                      <InputField
+                        type="date"
+                        label="Date"
+                        name="date"
+                        onChange={onChangeCash}
+                        value={cashForm.date}
+                      />
+
+                      <InputField
+                        type="number"
+                        label="Amount"
+                        name="amount"
+                        placeholder="Enter Amount"
+                        onChange={onChangeCash}
+                        value={cashForm.amount}
+                      />
+                      <InputField
+                        type="text"
+                        label="Paid By"
+                        name="paidBy"
+                        placeholder="Enter Name"
+                        onChange={onChangeCash}
+                        value={cashForm.paidBy}
+                      />
+                      <InputField
+                        type="text"
+                        label="Contact"
+                        name="contact"
+                        placeholder="Enter Contact"
+                        onChange={onChangeCash}
+                        value={cashForm.contact}
+                      />
+                    </div>
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div onClick={closeCash}>
+                        <ButtonSecondary value={"Close"}/>
+                      </div>
+                      <div>
+                        {posting ? (
+                          <div className="w-40">
+                            <ButtonLoader />
+                          </div>
+                        ) : (
+                          <div
+                            className="w-40"
+                            onClick={(event) =>
+                              postPayment(event, cashForm, 'Cash')
+                            }
+                          >
+                            <Button value={'Add Payment'} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className='h-full' onClick={closeCash}>
+
+                  </div>
+                </div>
+                <div className='w-3/12' onClick={closeCash}>
+
+                </div>
+              </div>
+
+            ) : null}
+
+            {/* bank slip modal */}
+
+            {bankslip ? (
+              <div className='flex h-[100vh] overflow-hidden  bg-black/50 absolute z-50 top-0 h-screen left-0 right-0'>
+                <div className='w-3/12' onClick={closeBankSlip}>
+
+                </div>
+                <div className='w-6/12'>
+                  <div className="bg-white mt-[10vh] rounded-lg shadow-lg">
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div>
+                        <p className="text-primary font-semibold">
+                          Register Bankslip
+                        </p>
+                      </div>
+                      <div>
+                        <p className="cursor-pointer" onClick={closeBankSlip}>
+                          X
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="px-5 flex">
+                      <div className="w-1/2">
+                        <InputField
+                          type="date"
+                          label="Date"
+                          name="date"
+                          onChange={onChangeBankSlip}
+                          value={bankSlipForm.date}
+                        />
+
+                        <InputField
+                          type="number"
+                          label="Amount"
+                          name="amount"
+                          placeholder="Enter Amount"
+                          onChange={onChangeBankSlip}
+                          value={bankSlipForm.amount}
+                        />
+                        <InputField
+                          type="text"
+                          label="Bank"
+                          name="bank"
+                          placeholder="Enter Bank Name"
+                          onChange={onChangeBankSlip}
+                          value={bankSlipForm.bank}
+                        />
+                      </div>
+                      <div className="w-1/2 ml-5">
+                        <InputField
+                          type="text"
+                          label="Branch"
+                          name="branch"
+                          placeholder="Enter Branch Name"
+                          onChange={onChangeBankSlip}
+                          value={bankSlipForm.branch}
+                        />
+                        <InputField
+                          type="text"
+                          label="Bank slip No"
+                          name="bankSlipNo"
+                          placeholder="Enter Bankslip No"
+                          onChange={onChangeBankSlip}
+                          value={bankSlipForm.bankSlipNo}
+                        />
+                        <InputField
+                          type="text"
+                          label="Paid By"
+                          name="paidBy"
+                          placeholder="Enter Name"
+                          onChange={onChangeBankSlip}
+                          value={bankSlipForm.paidBy}
+                        />
+                        <InputField
+                          type="text"
+                          label="Contact"
+                          name="contact"
+                          placeholder="Enter Contact"
+                          onChange={onChangeBankSlip}
+                          value={bankSlipForm.contact}
+                        />
+                      </div>
+
+                      <br />
+                    </div>
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div  onClick={closeBankSlip}>
+                        <ButtonSecondary value={'Close'} />
+                      </div>
+                      <div>
+                        {posting ? (
+                          <div className="w-40">
+                            <ButtonLoader />
+                          </div>
+                        ) : (
+                          <div
+                            className="w-40"
+                            onClick={(event) =>
+                              postPayment(event, bankSlipForm, 'Bank Slip')
+                            }
+                          >
+                            <Button value={'Add Payment'} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className='h-full' onClick={closeBankSlip}>
+
+                  </div>
+                </div>
+                <div className='w-3/12' onClick={closeBankSlip}>
+
+                </div>
+              </div>
+            ) : null}
+
+            {/* bank transafer mo/dal */}
+            {bank ? (
+              <div className='flex h-[100vh] overflow-hidden  bg-black/50 absolute z-50 top-0 h-screen left-0 right-0'>
+                <div className='w-3/12' onClick={closeBank}>
+
+                </div>
+                <div className='w-6/12'>
+                  <div className="bg-white mt-[7vh] rounded-md shadow-lg">
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div>
+                        <p className="text-primary font-semibold">
+                          Register Bank Transfer
+                        </p>
+                      </div>
+                      <div>
+                        <p className="cursor-pointer" onClick={closeBank}>
+                          X
+                        </p>
+                      </div>
+                    </div>
+                    <div className="px-5 flex mb-5">
+                      <div className="w-1/2">
+                        <InputField
+                          type="date"
+                          label="Date"
+                          name="date"
+                          onChange={onChangeBank}
+                          value={bankForm.date}
+                        />
+
+                        <InputField
+                          type="number"
+                          label="Amount"
+                          name="amount"
+                          placeholder="Enter Amount"
+                          onChange={onChangeBank}
+                          value={bankForm.amount}
+                        />
+                        <InputField
+                          type="text"
+                          label="Bank"
+                          name="bank"
+                          placeholder="Enter Bank Name"
+                          onChange={onChangeBank}
+                          value={bankForm.name}
+                        />
+                      </div>
+                      <div className="w-1/2 ml-5">
+                        <InputField
+                          type="text"
+                          label="From Account No"
+                          name="fromAccountNo"
+                          placeholder="Enter Account Number"
+                          onChange={onChangeBank}
+                          value={bankForm.fromAccountNo}
+                        />
+                        <InputField
+                          type="text"
+                          label="Account Name"
+                          placeholder="Enter Account Name"
+                          name="accountName"
+                          onChange={onChangeBank}
+                          value={bankForm.accountName}
+                        />
+                        <InputField
+                          type="text"
+                          label="Paid By"
+                          name="paidBy"
+                          placeholder="Enter Name"
+                          onChange={onChangeBank}
+                          value={bankForm.paidBy}
+                        />
+                        <InputField
+                          type="text"
+                          label="Contact"
+                          name="contact"
+                          placeholder="Enter Contact"
+                          onChange={onChangeBank}
+                          value={bankForm.contact}
+                        />
+                      </div>
+
+                      <br />
+                    </div>
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div onClick={closeBank}>
+                      <ButtonSecondary value={"Close"} />
+                      </div>
+                      <div>
+                        {posting ? (
+                          <div className="w-40">
+                            <ButtonLoader />
+                          </div>
+                        ) : (
+                          <div
+                            className="w-40"
+                            onClick={(event) =>
+                              postPayment(event, bankForm, 'Bank Transfer')
+                            }
+                          >
+                            <Button value={'Add Payment'} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className='h-full' onClick={closeBank}>
+
+                  </div>
+                </div>
+                <div className='w-3/12' onClick={closeBank}>
+
+                </div>
+              </div>
+            ) : null}
+
+            {/* mobile money modal */}
+            {mobile ? (
+              <div className='flex h-[100vh] overflow-hidden  bg-black/50 absolute z-50 top-0 h-screen left-0 right-0'>
+                <div className='w-3/12' onClick={closeMobile}>
+                </div>
+                <div className='w-6/12'>
+                  <div className="bg-white mt-[10vh] rounded-md shadow-lg">
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div>
+                        <p className="text-primary font-semibold">
+                          Register Mobile Money Payment
+                        </p>
+                      </div>
+                      <div>
+                        <p className="cursor-pointer" onClick={closeMobile}>
+                          X
+                        </p>
+                      </div>
+                    </div>
+                    <div className="px-5 flex ">
+                      <div className="w-1/2">
+                        <InputField
+                          type="date"
+                          label="Date"
+                          name="date"
+                          onChange={onChangeMobile}
+                          value={mobileForm.date}
+                        />
+                        <InputField
+                          type="number"
+                          label="Amount"
+                          name="amount"
+                          placeholder="Enter Amount"
+                          onChange={onChangeMobile}
+                          value={mobileForm.amount}
+                        />
+                        <InputField
+                          type="text"
+                          label="From Mobile No"
+                          name="mobileNo"
+                          placeholder="Enter Number"
+                          onChange={onChangeMobile}
+                          value={mobileForm.mobileNo}
+                        />
+                      </div>
+                      <div className="w-1/2 ml-3">
+                        <InputField
+                          type="text"
+                          label="Names"
+                          name="mobileName"
+                          placeholder="Enter Name"
+                          onChange={onChangeMobile}
+                          value={mobileForm.mobileName}
+                        />
+
+                        <InputField
+                          type="text"
+                          label="Paid By"
+                          name="paidBy"
+                          placeholder="Enter Paid by Name"
+                          onChange={onChangeMobile}
+                          value={mobileForm.paidBy}
+                        />
+                        <InputField
+                          type="text"
+                          label="Contact"
+                          name="contact"
+                          placeholder="Enter Contact"
+                          onChange={onChangeMobile}
+                          value={mobileForm.contact}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div onClick={closeMobile}>
+                      <ButtonSecondary value={"Close"} />
+                      </div>
+                      <div>
+                        {posting ? (
+                          <div className="w-40">
+                            <ButtonLoader />
+                          </div>
+                        ) : (
+                          <div
+                            className="w-40"
+                            onClick={(event) =>
+                              postPayment(event, mobileForm, 'Mobile Money')
+                            }
+                          >
+                            <Button value={'Add Payment'} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className='h-full' onClick={closeMobile}>
+
+                  </div>
+                </div>
+                <div className='w-3/12' onClick={closeMobile}>
+                </div>
+              </div>
+            ) : null}
+
+
+            {/* check model */}
+            {cheque ? (
+              <div className='flex h-[100vh] overflow-hidden  bg-black/50 absolute z-50 top-0 h-screen left-0 right-0'>
+                <div className='w-3/12' onClick={closeCheque}>
+                </div>
+                <div className='w-6/12'>
+                  <div className=" bg-white rounded-md mt-[7vh] shadow-lg">
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div>
+                        <p className="text-primary font-semibold">
+                          Register Checque Payment
+                        </p>
+                      </div>
+                      <div>
+                        <p className="cursor-pointer" onClick={closeCheque}>
+                          X
+                        </p>
+                      </div>
+                    </div>
+                    <div className="px-5 flex mb-5">
+                      <div className="w-1/2">
+                        <InputField
+                          type="date"
+                          label="Date"
+                          name="date"
+                          onChange={onChangeCheque}
+                          value={chequeForm.date}
+                        />
+
+                        <InputField
+                          type="number"
+                          label="Amount"
+                          name="amount"
+                          placeholder="Enter Amount"
+                          onChange={onChangeCheque}
+                          value={chequeForm.amount}
+                        />
+                        <InputField
+                          type="text"
+                          label="Bank"
+                          name="bank"
+                          placeholder="Enter Bank Name"
+                          onChange={onChangeCheque}
+                          value={chequeForm.bank}
+                        />
+                      </div>
+                      <div className="w-1/2 ml-5">
+                        <InputField
+                          type="text"
+                          label="Account Name"
+                          name="accountName"
+                          placeholder="Enter Account Name"
+                          onChange={onChangeCheque}
+                          value={chequeForm.accountName}
+                        />
+                        <InputField
+                          type="text"
+                          label="Account No"
+                          name="accountNo"
+                          placeholder="Enter Account Number"
+                          onChange={onChangeCheque}
+                          value={chequeForm.accountNo}
+                        />
+                        <InputField
+                          type="text"
+                          label="Paid By"
+                          name="paidBy"
+                          placeholder="Enter Name"
+                          onChange={onChangeCheque}
+                          value={chequeForm.paidBy}
+                        />
+                        <InputField
+                          type="text"
+                          label="Contact"
+                          name="contact"
+                          placeholder="Enter Contact"
+                          onChange={onChangeCheque}
+                          value={chequeForm.contact}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div onClick={closeCheque}>
+                        <ButtonSecondary value={"Close"} />
+                      </div>
+                      <div>
+                        {posting ? (
+                          <div className="w-40">
+                            <ButtonLoader />
+                          </div>
+                        ) : (
+                          <div
+                            className="w-40"
+                            onClick={(event) =>
+                              postPayment(event, chequeForm, 'Cheque')
+                            }
+                          >
+                            <Button value={'Add Payment'} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className='h-full' onClick={closeCheque}>
+
+                  </div>
+                </div>
+                <div className='w-3/12' onClick={closeCheque}>
+                </div>
+              </div>
+            ) : null}
+
+
+            {/* // payments model */}
+            {payments ? (
+              <div className='flex h-[100vh] overflow-hidden  bg-black/50 absolute z-50 top-0 h-screen left-0 right-0'>
+                <div className='w-2/12' onClick={closePayments}>
+                </div>
+                <div className='w-8/12'>
+                  <div className="h-[60vh] mt-[10vh] overflow-y-auto bg-white rounded-md shadow-lg">
+                    <div className="flex justify-between p-3 bg-gray1">
+                      <div>
+                        <p className="text-primary font-semibold">
+                          Payment history
+                        </p>
+                      </div>
+                      <div>
+                        <p className="cursor-pointer" onClick={closePayments}>
+                          X
+                        </p>
+                      </div>
+                    </div>
+                    <div className="px-5 flex bg-gray2 p-2 text-xs mt-2 cursor-pointer w-full">
+                      <div className="w-1/4 p-2">Date</div>
+                      {/* <div className='w-1/4 p-2'>Fees</div> */}
+                      <div className="w-1/4 p-2">Amount</div>
+                      {/* <div className='w-1/4 p-2'>Balance</div> */}
+                      <div className="w-1/4 p-2">Method</div>
+                      <div className="w-1/4 p-2">Paid By</div>
+                      <div className="w-1/4 p-2">Contact</div>
+                    </div>
+                    {paymentsForm?.map((student) => {
+                      return (
+                        <div
+                          className="px-5 flex border-b text-gray5 border-gray2 hover:border-b-2 cursor-pointer text-xs w-full"
+                          key={student.id}
+                        >
+                          <div className="w-1/4 truncate p-2">{student?.date}</div>
+                          {/* <div className='w-1/4 truncate p-2'>
+                                            790,000
+                                        </div> */}
+                          <div className="w-1/4 truncate p-2">
+                            {Number(student?.amount_paid).toLocaleString()}
+                          </div>
+                          {/* <div className='w-1/4 truncate p-2'>
+                                            550,000
+                                        </div> */}
+                          <div className="w-1/4 truncate p-2">
+                            {student?.method}
+                          </div>
+                          <div className="w-1/4 truncate p-2">
+                            {student?.paid_by}
+                          </div>
+                          <div className="w-1/4 truncate p-2">
+                            {student?.contact}
+                          </div>
+                        </div>
+                      )
+                    })}
+                    <br />
+                  </div>
+                  <div className='h-full' onClick={closePayments}>
+
+                  </div>
+                </div>
+                <div className='w-2/12' onClick={closePayments}>
+                </div>
               </div>
             ) : null}
 
