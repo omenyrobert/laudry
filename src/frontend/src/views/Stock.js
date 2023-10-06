@@ -1,0 +1,649 @@
+import React, { useState, useEffect } from "react";
+import Button2 from "../components/Button2";
+import InputField from "../components/InputField";
+import Button from "../components/Button";
+import ButtonSecondary from "../components/ButtonSecondary";
+import { BsEye, BsPencilSquare, BsPlusCircle, BsSearch } from "react-icons/bs";
+import { MdDeleteOutline } from "react-icons/md";
+import ButtonAlt from "../components/ButtonAlt";
+import "../assets/styles/main.css"
+import Select from "react-select"
+import Category from "../components/Category";
+import axiosInstance from "../axios-instance";
+import ButtonLoader from "../components/ButtonLoader";
+import Loader from "../components/Loader";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const Stock = () => {
+
+    const [modal, setModal] = useState(false)
+
+    const openModal = () => {
+        setModal(true);
+    }
+
+    const closeModal = () => {
+        setModal(false);
+    }
+
+
+
+
+
+
+
+    const [modal2, setModal2] = useState(false)
+
+    const openModal2 = (stock) => {
+        setModal2(true);
+        seteName(stock.product);
+        seteQty(stock.qty);
+        seteUnitCost(stock.unitcost);
+        seteUnitSell(stock.unitsell);
+        seteWarningAt(stock.warningAt);
+        // seteCategoryId(stock.category.id);
+        seteDate(stock.date);
+    }
+
+    const closeModal2 = () => {
+        setModal2(false);
+    }
+
+    // stock input values
+    const [ename, seteName] = useState("");
+    const [eqty, seteQty] = useState("");
+    const [edate, seteDate] = useState("");
+    const [eunitcost, seteUnitCost] = useState("");
+    const [eunitsell, seteUnitSell] = useState("");
+    const [ewarningAt, seteWarningAt] = useState("");
+    const [ecategoryId, seteCategoryId] = useState("");
+    const [updating, setUpdating] = useState("");
+
+    const updatePost = async () => {
+        try {
+            setUpdating(true)
+            let formData = {
+                mame: ename,
+                qty: eqty,
+                date: edate,
+                unitcost: eunitcost,
+                unitsell: eunitsell,
+                warningAt: ewarningAt,
+                categoryId: ecategoryId
+            }
+            let res = await axiosInstance.post("/stock", formData)
+            if (res.status === "SUCCESS") {
+                setUpdating(false)
+                seteName("");
+                seteQty("");
+                seteUnitCost("");
+                seteUnitSell("");
+                seteWarningAt("");
+                seteCategoryId("");
+                seteDate("");
+                const MySwal = withReactContent(Swal);
+                MySwal.fire({
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 500,
+                });
+            } else {
+                setUpdating(false)
+            }
+        } catch (error) {
+            console.log(error)
+            setUpdating(false)
+        } finally {
+            setUpdating(false)
+        }
+    }
+
+
+
+
+    const stockks = [
+        {
+            id: 1,
+            product: "6 Inched Nails",
+            cat: "Nails",
+            stock: "Stock A",
+            date: "12-01-2023",
+            unitcost: 300,
+            unitsell: 500,
+            qty: 900,
+            warningAt: 10,
+        },
+        {
+            id: 1,
+            product: "1 ltr Regal Paint",
+            cat: "Paint",
+            stock: "Stock A",
+            date: "12-11-2023",
+            unitcost: "15,000",
+            unitsell: "35,000",
+            qty: 100,
+            warningAt: 7,
+        },
+        {
+            id: 1,
+            product: "Red Iron Sheets",
+            cat: "Iron Sheets",
+            stock: "Stock A",
+            date: "12-08-2023",
+            unitcost: "43,000",
+            unitsell: "65,000",
+            qty: 90,
+            warningAt: 13,
+        },
+        {
+            id: 1,
+            product: "Padlocks",
+            cat: "Nails",
+            stock: "Stock A",
+            date: "12-01-2023",
+            unitcost: 3000,
+            unitsell: 3500,
+            qty: 200,
+            warningAt: 8,
+        },
+        {
+            id: 1,
+            product: "Wire mesh",
+            cat: "Nails",
+            stock: "Stock A",
+            date: "12-01-2023",
+            unitcost: 300,
+            unitsell: 500,
+            qty: 900,
+            warningAt: 16,
+        },
+        {
+            id: 1,
+            product: "6 Inched Nails",
+            cat: "Nails",
+            stock: "Stock A",
+            date: "12-01-2023",
+            unitcost: 300,
+            unitsell: 500,
+            qty: 900,
+            warningAt: 3,
+        },
+        {
+            id: 1,
+            product: "6 Inched Nails",
+            cat: "Nails",
+            stock: "Stock A",
+            date: "12-01-2023",
+            unitcost: 300,
+            unitsell: 500,
+            qty: 900,
+            warningAt: 34,
+        },
+        {
+            id: 1,
+            product: "6 Inched Nails",
+            cat: "Nails",
+            stock: "Stock A",
+            date: "12-01-2023",
+            unitcost: 300,
+            unitsell: 500,
+            qty: 900,
+            warningAt: 17,
+        },
+        {
+            id: 1,
+            product: "6 Inched Nails",
+            cat: "Nails",
+            stock: "Stock A",
+            date: "12-01-2023",
+            unitcost: 300,
+            unitsell: 500,
+            qty: 900,
+            warningAt: 10,
+        },
+        {
+            id: 1,
+            product: "6 Inched Nails",
+            cat: "Nails",
+            stock: "Stock A",
+            date: "12-01-2023",
+            unitcost: 300,
+            unitsell: 500,
+            qty: 900,
+            warningAt: 10,
+        },
+
+    ];
+
+    // stock input values
+    const [name, setName] = useState("");
+    const [qty, setQty] = useState("");
+    const [date, setDate] = useState("");
+    const [unitcost, setUnitCost] = useState("");
+    const [unitsell, setUnitSell] = useState("");
+    const [warningAt, setWarningAt] = useState("");
+    const [categoryId, setCategoryId] = useState("");
+    const [posting, setPosting] = useState("");
+
+    const postStock = async () => {
+        if(name && qty && date && unitcost && unitsell && warningAt && categoryId){
+            try {
+                setPosting(true)
+                let formData = {
+                    mame: name,
+                    qty: qty,
+                    date: date,
+                    unitcost: unitcost,
+                    unitsell: unitsell,
+                    warningAt: warningAt,
+                    categoryId: categoryId
+                }
+                let res = await axiosInstance.post("/stock", formData)
+                if (res.status === "SUCCESS") {
+                    setPosting(false)
+                    setName("");
+                    setQty("");
+                    setUnitCost("");
+                    setUnitSell("");
+                    setWarningAt("");
+                    setCategoryId("");
+                    setDate("");
+                    const MySwal = withReactContent(Swal);
+                    MySwal.fire({
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 500,
+                    });
+                } else {
+                    setPosting(false)
+                }
+            } catch (error) {
+                console.log(error)
+                setPosting(false)
+            } finally {
+                setPosting(false)
+            }
+        }
+    }
+
+
+    const [loading, setLoading] = useState(false)
+
+    const [stocks, setstocks] = useState([]);
+
+    const fetchstocks = async () => {
+        try {
+            setLoading(true)
+            let res = await axiosInstance.get("/stock");
+            if (res.status === "SUCCESS") {
+                setLoading(false);
+                setstocks(res.payload.data);
+            } else {
+                setLoading(false)
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchstocks()
+    }, [stocks]);
+
+
+
+    const deleteStock = (stock) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await axiosInstance.delete(
+                        `/stock/${stock.id}`
+                    );
+                    const { data } = response;
+                    const { status } = data;
+                    if (status) {
+                        fetchstocks()
+                        Swal.fire({
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 500,
+                        });
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        });
+    };
+
+
+    const [restocking, setRestocking] = useState(false)
+
+    const [modal4, setModal4] = useState(false)
+    const [stockId, setStockId] = useState("");
+    const [stock, setStock] = useState("");
+    const openModal4 = (stock) => {
+        setModal4(true);
+        setStockId(stock.id)
+        setStock(stock.product)
+    }
+
+    const closeModal4 = () => {
+        setModal4(false);
+    }
+
+    const restock = async () => {
+        if(date && qty && unitcost && stockId){
+            try {
+                setRestocking(true)
+                let formData = {
+                    date: date,
+                    qty: qty,
+                    unitcost: unitcost,
+                    unitsell: unitsell,
+                    stockId: stockId,
+                }
+                let res = await axiosInstance.post("/restock", formData);
+                if (res.status === "SUCCESS") {
+                    setDate("");
+                    setQty("");
+                    setUnitCost("");
+                    setUnitSell("")
+                    setRestocking(false)
+                }
+    
+            } catch (error) {
+    
+            } finally {
+                setRestocking(false)
+            }
+        }
+
+    }
+
+    return (
+        <div className="w-full relative bg-white rounded-md shadow pr-5">
+
+            {/* stock modal */}
+
+            {modal4 ? <div className="w-[600px] ml-[30vw] -mt-[5vh] z-50 absolute bg-white shadow-2xl rounded-md border border-gray2">
+                <div className="flex bg-gray1 text-lg text-primary p-3 font-medium justify-between">
+                    <div>
+                        <p>Add More Stock</p>
+                    </div>
+                    <div>
+                        {stock}
+                    </div>
+                    <div>
+                        <p className="cursor-pointer" onClick={closeModal4}>X</p>
+                    </div>
+                </div>
+                <div className="flex">
+                    <div className="w-1/2 p-2">
+                        <InputField value={date} onChange={(e) => setDate(e.target.value)} label="date" type="date" />
+                    </div>
+                    <div className="w-1/2 p-2">
+                        <InputField value={qty} onChange={(e) => setQty(e.target.value)} label="Qty" placeholder="Enter qty" type="number" />
+                    </div>
+
+                </div>
+                <div className="flex">
+                    <div className="w-1/2 p-2">
+                        <InputField value={unitcost} onChange={(e) => setUnitCost(e.target.value)} label="Unitcost" type="number" placeholder="enter Unitcost" />
+                    </div>
+                    <div className="w-1/2 p-2">
+                        <InputField value={unitsell} onChange={(e) => setUnitSell(e.target.value)} label="unitSell" placeholder="Enter UNitSell" type="number" />
+                    </div>
+
+                </div>
+                <div className="flex bg-gray1 text-lg text-primary p-3 font-medium justify-between">
+                    <div onClick={closeModal4}>
+                        <ButtonSecondary value={"Close"} />
+                    </div>
+                    <div className="w-20">
+                        {restocking ? <ButtonLoader /> : <div onClick={restock}>
+                            <Button value={"Add"} />
+                        </div>}
+
+
+                    </div>
+                </div>
+            </div> : null}
+
+
+
+            <div className="flex w-full justify-between">
+                <div className='flex'>
+                    <h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">
+                        Stock
+                    </h1>
+                </div>
+                <div className="w-4/12 ">
+                    <InputField
+                        type="text"
+                        placeholder="Search For Student ..."
+                        name="lastName"
+                        icon={
+                            <BsSearch
+                                className="w-3 -ml-7 mt-3 cursor-pointer"
+                                type="button"
+                            />
+                        }
+                    />
+                </div>
+                <div className="flex mt-5">
+                    <div className="" onClick={openModal}>
+                        <Button2 value={"Stock"} />
+                    </div>
+                    <div className="ml-5">
+                        <Category />
+                    </div>
+                </div>
+            </div>
+
+
+            {modal ? <div className='z-50 bg-black/50 h-full w-full top-0 right-0 left-0 absolute flex'>
+                <div className='w-3/12' onClick={closeModal}>
+
+                </div>
+                <div className='w-6/12'>
+                    <div className='rounded-lg bg-white mt-[5vh]'>
+                        <div className='flex text-xl justify-between font-semibold text-primary p-2 bg-gray1'>
+                            <div>
+                                <p>Add Stock</p>
+                            </div>
+                            <div>
+                                <p onClick={closeModal} className='cursor-pointer'>X</p>
+                            </div>
+
+                        </div>
+                        <div className='flex'>
+                            <div className='w-1/2 p-3 -mt-5'>
+                                <InputField value={name} onChange={(e) => setName(e.target.value)} label="Product Name" placeholder="Enter Product" />
+                                <InputField value={date} onChange={(e) => setDate(e.target.value)} label="Date" placeholder="" type="date" />
+                                <label className="text-gray5 mt-2">Category</label>
+                                <Select
+                                    className="w-full mt-2"
+                                    placeholder="Select Category"
+                                    options={[
+                                        { value: 'Nails', label: 'Nails' },
+                                        { value: 'Paints', label: 'Paints' },
+                                        { value: 'Iron sheets', label: 'Iron Sheets' },
+                                    ]}
+                                />
+                            </div>
+                            <div className='w-1/2 p-3 -mt-5'>
+                                <InputField value={qty} onChange={(e) => setQty(e.target.value)} label="Qty" placeholder="Enter qty" />
+                                <InputField value={unitcost} onChange={(e) => setUnitCost(e.target.value)} label="Unitcost" placeholder="Unitcost" />
+                                <InputField value={unitsell} onChange={(e) => setUnitSell(e.target.value)} label="Unit Sell" placeholder="UnitSell" />
+                                <InputField value={warningAt} onChange={(e) => setWarningAt(e.target.value)} label="Warning At" placeholder="Warning At" />
+                            </div>
+
+                        </div>
+
+                        <div className='flex text-xl justify-between font-semibold text-primary p-2 bg-gray1'>
+                            <div onClick={closeModal}>
+                                <ButtonSecondary value={"Close"} />
+
+                            </div>
+                            <div className="w-36">
+                                {posting ? <ButtonLoader /> : <div onClick={postStock}>
+                                    <Button value={"Add Stock"} />
+                                </div>}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div className='h-1/4' onClick={closeModal}>
+
+                    </div>
+
+                </div>
+                <div className='w-3/12' onClick={closeModal}>
+
+                </div>
+
+            </div> : null}
+
+
+            <div className="h-[70vh] overflow-y-auto">
+
+                <table className="mt-4 w-[98%]  table-auto mx-2">
+
+                    <thead className="bg-gray1">
+                        <th className="p-2 text-primary text-sm text-left">Date</th>
+                        <th className="p-2 text-primary text-sm text-left">Product</th>
+                        <th className="p-2 text-primary text-sm text-left">Unit Cost</th>
+                        <th className="p-2 text-primary text-sm text-left">Unit Selling</th>
+                        <th className="p-2 text-primary text-sm text-left">Qty</th>
+                        <th className="p-2 text-primary text-sm text-left">Category</th>
+                        <th className="p-2 text-primary text-sm text-left">Action</th>
+                    </thead>
+                    <tbody>
+                        {loading ? <div className="flex justify-center mt-[10vh]"> <Loader />  </div> :
+                            <>
+                                {stockks.map((stock) => {
+                                    return (
+                                        <tr
+                                            className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+                                            key={stock.id}
+                                        >
+                                            <td className="text-sm p-3 text-gray5">{stock.date}</td>
+                                            <td className="p-3 text-sm text-gray5"> {stock.product} </td>
+                                            <td className="text-sm p-3 text-gray5">{stock.unitcost}</td>
+                                            <td className="text-sm p-3 text-gray5">{stock.unitsell}</td>
+                                            <td className="text-sm p-3 text-gray5">{stock.qty}</td>
+                                            <td className="text-sm p-3 text-gray5">{stock.cat}</td>
+                                            <td className="text-sm p-3 text-gray5 flex">
+                                                <MdDeleteOutline
+                                                    onClick={(e) => deleteStock(stock)}
+                                                    className="text-red w-4 h-4"
+                                                />
+                                                <BsPencilSquare
+                                                    onClick={() => openModal2(stock)}
+                                                    className="text-warning h-4 w-4 mx-5"
+                                                />
+
+                                                <BsPlusCircle onClick={()=>openModal4(stock)} className="bg-primary text-xl text-white rounded-full" />
+
+
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </>}
+
+                    </tbody>
+                </table>
+            </div>
+
+
+            {modal2 ? <div className='z-50 bg-black/50 h-full w-full top-0 right-0 left-0 absolute flex'>
+                <div className='w-3/12' onClick={closeModal2}>
+
+                </div>
+                <div className='w-6/12'>
+                    <div className='rounded-lg bg-white mt-[5vh]'>
+                        <div className='flex text-xl justify-between font-semibold text-primary p-2 bg-gray1'>
+                            <div>
+                                <p>Edit Sample</p>
+                            </div>
+                            <div>
+                                <p onClick={closeModal2} className='cursor-pointer'>X</p>
+                            </div>
+
+                        </div>
+                        <div className='flex'>
+                            <div className='w-1/2 p-3 -mt-5'>
+                                <InputField value={ename} onChange={(e) => seteName(e.target.value)} label="Product Name" placeholder="Enter Product" />
+                                <InputField value={edate} onChange={(e) => seteDate(e.target.value)} label="Date" placeholder="" type="date" />
+                                <label className="text-gray5 mt-2">Category</label>
+                                <Select
+                                    className="w-full mt-2"
+                                    placeholder="Select Category"
+                                    options={[
+                                        { value: 'Nails', label: 'Nails' },
+                                        { value: 'Paints', label: 'Paints' },
+                                        { value: 'Iron sheets', label: 'Iron Sheets' },
+                                    ]}
+                                />
+
+
+                            </div>
+                            <div className='w-1/2 p-3 -mt-5'>
+                                <InputField value={eqty} onChange={(e) => seteQty(e.target.value)} label="Qty" placeholder="Enter qty" />
+                                <InputField value={eunitcost} onChange={(e) => seteUnitCost(e.target.value)} label="Unitcost" placeholder="Unitcost" />
+                                <InputField value={eunitsell} onChange={(e) => seteUnitSell(e.target.value)} label="Unit Sell" placeholder="UnitSell" />
+                                <InputField value={ewarningAt} onChange={(e) => seteWarningAt(e.target.value)} label="Warning At" placeholder="Warning At" />
+                            </div>
+                        </div>
+
+                        <div className='flex text-xl justify-between font-semibold text-primary p-2 bg-gray1'>
+                            <div onClick={closeModal2}>
+                                <ButtonSecondary value={"Close"} />
+
+                            </div>
+                            <div className="w-32">
+                                {updating ? <ButtonLoader /> : <div onClick={updatePost}>
+                                    <Button value={"Update"} />
+                                </div>}
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div className='h-1/4' onClick={closeModal2}>
+
+                    </div>
+
+                </div>
+                <div className='w-3/12' onClick={closeModal2}>
+
+                </div>
+
+            </div> : null}
+
+
+
+
+            <br />
+        </div>
+    )
+}
+
+export default Stock
