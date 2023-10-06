@@ -61,7 +61,7 @@ export const createStaffMember = async (req: Request, res: Response) => {
         .end();
     }
 
-    const password = randomStringGenerator(10);
+    const password = firstName + 1234;
 
     const hashPwd = await hashPassword(password, 10);
 

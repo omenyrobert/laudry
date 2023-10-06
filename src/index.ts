@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/api", router());
 
-app.use(express.static(join(__dirname, "SchoolSheet/build")));
+app.use(express.static(join(__dirname, "frontend/build")));
 
 // serve user uploads in parent directory ../useruploads
 app.use("/useruploads", express.static(join(__dirname, "../useruploads")));
@@ -23,7 +23,7 @@ app.use(express.static(join(__dirname, "./Views/")));
 
 // Catch-all route for handling SchoolSheet-side routing
 app.get("*", (req: Request, res: Response) => {
-  res.sendFile(join(__dirname, "SchoolSheet/build", "index.html"));
+  res.sendFile(join(__dirname, "frontend/build", "index.html"));
 });
 
 

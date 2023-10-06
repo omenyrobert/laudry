@@ -4,9 +4,9 @@ package-lock.json
 yarn.lock
 /build
 
-src/SchoolSheet/node_modules
-src/SchoolSheet/package-lock.json
-src/SchoolSheet/build
+src/frontend/node_modules
+src/frontend/package-lock.json
+src/frontend/build
 
 useruplods
 useruploads
