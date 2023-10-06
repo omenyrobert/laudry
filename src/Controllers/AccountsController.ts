@@ -125,6 +125,7 @@ export const modifyAccount = async (req: Request, res: Response) => {
         .end();
     }
 
+    // this
     const accountToModify = await getSingleAccount(accountId);
 
     if (accountToModify) {
