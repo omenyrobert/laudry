@@ -35,9 +35,10 @@ const Category = () => {
     const [ecategory, seteCategory] = useState("");
 
     const [updating, setUpdating] = useState(false);
-
+    const [categoryId, setcategoryId] = useState("");
     const editCat = (cat) => {
-        seteCategory(cat.name)
+        seteCategory(cat.type)
+        setcategoryId(cat.id)
         setEd(true)
     }
 
@@ -48,15 +49,16 @@ const Category = () => {
     const fetchCategories = async () => {
         try {
             setLoading(true)
-            let res = await axiosInstance.get("/category");
-            if (res.status === "SUCCESS") {
+            let res = await axiosInstance.get("/categories");
+            if (res.status) {
                 setLoading(false);
-                setCategories(res.payload.data);
+                setCategories(res.data.payload);
             } else {
                 setLoading(false)
             }
         } catch (error) {
             console.log(error)
+            setLoading(false)
         } finally {
             setLoading(false)
         }
@@ -64,16 +66,17 @@ const Category = () => {
 
     useEffect(() => {
         fetchCategories()
-    }, [categories]);
+    }, []);
 
 
     const postCategory = async () => {
         try {
             setPosting(true)
-            let res = await axiosInstance.post("/category", { category: category });
-            if (res.status === "SUCCESS") {
+            let res = await axiosInstance.post("/categories", { type: category });
+            if (res.status) {
                 setPosting(false)
                 setCategory("");
+                fetchCategories();
                 const MySwal = withReactContent(Swal);
                 MySwal.fire({
                     icon: "success",
@@ -95,10 +98,16 @@ const Category = () => {
     const updateCategory = async () => {
         try {
             setUpdating(true)
-            let res = await axiosInstance.put("/category", { category: category });
-            if (res.status === "SUCCESS") {
+            let formData ={
+                type: ecategory,
+                id : categoryId
+            }
+            let res = await axiosInstance.put("/categories", formData);
+            if (res.status) {
                 setUpdating(false)
                 setCategory("");
+                fetchCategories()
+                closeEd();
                 const MySwal = withReactContent(Swal);
                 MySwal.fire({
                     icon: "success",
@@ -107,7 +116,6 @@ const Category = () => {
                 });
             } else {
                 setUpdating(false)
-
             }
 
         } catch (error) {
@@ -130,7 +138,7 @@ const Category = () => {
             if (result.isConfirmed) {
                 try {
                     const response = await axiosInstance.delete(
-                        `/category/${category.id}`
+                        `/categories/${category.id}`
                     );
                     const { data } = response;
                     const { status } = data;
@@ -149,16 +157,6 @@ const Category = () => {
         });
     };
 
-
-    const cats = [
-        { id: 1, name: "Cement" },
-        { id: 2, name: "Paint" },
-        { id: 3, name: "Nails" },
-        { id: 4, name: "Locks" },
-        { id: 5, name: "Iron sheets" },
-        { id: 6, name: "garden Tools" },
-
-    ]
 
 
 
@@ -186,7 +184,7 @@ const Category = () => {
 
                     </div>
                     <div className="text-secondary relative bg-gray1 flex font-medium">
-                        {ed ? <div className=" absolute z-50 w-96 bg-white shadow border border-gray2 rounded-md">
+                        {ed ? <div className=" absolute z-50 w-full bg-white shadow border border-gray2 rounded-md">
                             <div className="flex justify-between p-3 bg-gray1 font-semibold text-primary">
                                 <div>
                                     <p>Edit Category</p>
@@ -200,7 +198,7 @@ const Category = () => {
                                 <div className="w-[60%] ml-5">
                                     <InputField value={ecategory} onChange={(e) => seteCategory(e.target.value)} label="Category Name" placeholder="Category Name" />
                                 </div>
-                                <div className="w-[20%] ml-5 mt-14">
+                                <div className="ml-5 mt-14">
                                     {updating ? <ButtonLoader /> : <div onClick={updateCategory}>
                                         <Button value={"Update"} />
                                     </div>}
@@ -219,21 +217,20 @@ const Category = () => {
                             Action
                         </div>
                     </div>
-                    {loading ?  <div className="flex justify-center mt-[10vh]"><Loader /> </div>: <>
-                        {cats.map((cat) => {
-                            return (
-                                <div key={cat.id} className="text-gray5 border-b border-gray1 hover:bg-gray1 cursor-pointer flex text-sm">
-                                    <div className="p-2 w-7/12">
-                                        {cat?.name}
-                                    </div>
-                                    <div className="p-2 w-5/12 flex">
-                                        <BsTrash onClick={()=>deletecategory(category)} className="text-red" />
-                                        <BsPencilSquare onClick={() => editCat(cat)} className="text-yellow ml-5" />
-                                    </div>
+                    {categories.map((cat) => {
+                        return (
+                            <div key={cat.id} className="text-gray5 border-b w-full border-gray1 hover:bg-gray1 cursor-pointer flex text-sm">
+                                <div className="p-2 w-7/12">
+                                    {cat?.type}
                                 </div>
-                            )
-                        })}
-                    </>}
+                                <div className="p-2 w-5/12 flex">
+                                    <BsTrash onClick={() => deletecategory(cat)} className="text-red" />
+                                    <BsPencilSquare onClick={() => editCat(cat)} className="text-yellow ml-5" />
+                                </div>
+                            </div>
+                        )
+                    })}
+                    {loading ? <div className="flex justify-center mt-[10vh]"><Loader /> </div> : null}
 
 
 

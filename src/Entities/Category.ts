@@ -1,0 +1,56 @@
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+} from "typeorm";
+
+@Entity()
+export class Category extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column()
+  type!: string;
+}
+
+export const getCategories = async () => {
+  const categories = await Category.find({
+    order: {
+      id: "DESC",
+    },
+  });
+
+  return categories;
+};
+
+export const addCategories = async (type: string) => {
+  const categoriesToAdd = await Category.insert({
+    type: type,
+  });
+  return categoriesToAdd;
+};
+
+export const getCategoriesById = async (id: number) => {
+  const categoriesToFindById = await Category.findOne({ where: { id: id } });
+  return categoriesToFindById;
+};
+
+export const getCategoriesByType = async (type: string) => {
+  const categoriesToFindByType = await Category.findOne({
+    where: { type: type },
+  });
+  return categoriesToFindByType;
+};
+
+export const deleteCategories = async (id: number) => {
+  const categoriesToDelete = await Category.delete(id);
+  if (categoriesToDelete) {
+    return "Staff Type Deleted";
+  }
+};
+
+export const updateCategories = async (id: number, type: string) => {
+  const categoriesToUpdate = await Category.update(id, { type: type });
+  return categoriesToUpdate;
+};

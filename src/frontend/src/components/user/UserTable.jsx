@@ -164,8 +164,6 @@ function UserTable() {
 			{/* show user popup end */}
 			{" "}
 			<div className="h-[70vh] overflow-y-auto">
-
-				{loading ? <div className="flex justify-center items-center h-52"> <Loader /> </div> : null}
 				<table className="mt-4 w-[98%] table-auto ml-5">
 					<thead style={{ backgroundColor: "#f9f9f9" }}>
 						<th className="p-2 text-primary text-sm text-left">Full Name</th>
@@ -220,6 +218,8 @@ function UserTable() {
 						})}
 					</tbody>
 				</table>
+				{loading ? <div className="flex justify-center items-center h-52"> <Loader /> </div> : null}
+
 			</div>
 
 		</>

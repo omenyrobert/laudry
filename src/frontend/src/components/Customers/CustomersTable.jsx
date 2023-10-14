@@ -66,13 +66,14 @@ const CustomersTable = (props) => {
     { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
     { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
   ]
-  const fetchPayments = async () => {
+  const fetchCustomers = async () => {
     try {
       setLoadingp(true)
-      let res = await axiosInstance.post("/payment");
-      if (res.status === "SUCCESS") {
+      let res = await axiosInstance.get("/suppliers");
+      if (res.status) {
         setLoadingp(false)
-        setPayments(res.payload.data);
+        setPayments(res.data.payload);
+        console.log('customers', res.data.payload)
       }
     } catch (error) {
       console.log(error)
@@ -95,7 +96,7 @@ const CustomersTable = (props) => {
           setDate("")
           setAmount("")
           setAdding(false)
-          fetchPayments();
+          fetchCustomers();
         }
 
       } catch (error) {
@@ -160,21 +161,21 @@ const CustomersTable = (props) => {
   const [loading, setLoading] = useState(false)
   const [customersData2, setCustomersData] = useState([])
 
-  const fetchCustomers = async () => {
-    try {
-      setLoading(true);
-      let res = await axiosInstance.get("/customers");
-      if (res.status === "SUCCESS") {
-        setLoading(false)
-        setCustomersData(res.payload.data)
-      }
-    } catch (error) {
-      setLoading(false)
-    } finally {
-      setLoading(false)
-    }
+  // const fetchCustomers = async () => {
+  //   try {
+  //     setLoading(true);
+  //     let res = await axiosInstance.get("/customers");
+  //     if (res.status === "SUCCESS") {
+  //       setLoading(false)
+  //       setCustomersData(res.payload.data)
+  //     }
+  //   } catch (error) {
+  //     setLoading(false)
+  //   } finally {
+  //     setLoading(false)
+  //   }
 
-  }
+  // }
 
   useEffect(() => {
     fetchCustomers();

@@ -37,13 +37,15 @@ const Stock = () => {
 
     const openModal2 = (stock) => {
         setModal2(true);
-        seteName(stock.product);
+        seteName(stock.name);
         seteQty(stock.qty);
-        seteUnitCost(stock.unitcost);
-        seteUnitSell(stock.unitsell);
+        seteUnitCost(stock.unitCost);
+        seteUnitSell(stock.unitSell);
         seteWarningAt(stock.warningAt);
+        setStockId(stock.id);
         // seteCategoryId(stock.category.id);
         seteDate(stock.date);
+        console.log('ddate', stock.date);
     }
 
     const closeModal2 = () => {
@@ -57,23 +59,24 @@ const Stock = () => {
     const [eunitcost, seteUnitCost] = useState("");
     const [eunitsell, seteUnitSell] = useState("");
     const [ewarningAt, seteWarningAt] = useState("");
-    const [ecategoryId, seteCategoryId] = useState("");
+    const [ecategoryId, seteCategoryId] = useState("1");
     const [updating, setUpdating] = useState("");
 
     const updatePost = async () => {
         try {
             setUpdating(true)
             let formData = {
-                mame: ename,
+                name: ename,
                 qty: eqty,
                 date: edate,
-                unitcost: eunitcost,
-                unitsell: eunitsell,
+                unitCost: eunitcost,
+                unitSell: eunitsell,
                 warningAt: ewarningAt,
-                categoryId: ecategoryId
+                categoryId: ecategoryId,
+                id: stockId,
             }
-            let res = await axiosInstance.post("/stock", formData)
-            if (res.status === "SUCCESS") {
+            let res = await axiosInstance.put("/stock", formData)
+            if (res.status) {
                 setUpdating(false)
                 seteName("");
                 seteQty("");
@@ -82,6 +85,8 @@ const Stock = () => {
                 seteWarningAt("");
                 seteCategoryId("");
                 seteDate("");
+                fetchstocks();
+                closeModal2();
                 const MySwal = withReactContent(Swal);
                 MySwal.fire({
                     icon: "success",
@@ -100,122 +105,6 @@ const Stock = () => {
     }
 
 
-
-
-    const stockks = [
-        {
-            id: 1,
-            product: "6 Inched Nails",
-            cat: "Nails",
-            stock: "Stock A",
-            date: "12-01-2023",
-            unitcost: 300,
-            unitsell: 500,
-            qty: 900,
-            warningAt: 10,
-        },
-        {
-            id: 1,
-            product: "1 ltr Regal Paint",
-            cat: "Paint",
-            stock: "Stock A",
-            date: "12-11-2023",
-            unitcost: "15,000",
-            unitsell: "35,000",
-            qty: 100,
-            warningAt: 7,
-        },
-        {
-            id: 1,
-            product: "Red Iron Sheets",
-            cat: "Iron Sheets",
-            stock: "Stock A",
-            date: "12-08-2023",
-            unitcost: "43,000",
-            unitsell: "65,000",
-            qty: 90,
-            warningAt: 13,
-        },
-        {
-            id: 1,
-            product: "Padlocks",
-            cat: "Nails",
-            stock: "Stock A",
-            date: "12-01-2023",
-            unitcost: 3000,
-            unitsell: 3500,
-            qty: 200,
-            warningAt: 8,
-        },
-        {
-            id: 1,
-            product: "Wire mesh",
-            cat: "Nails",
-            stock: "Stock A",
-            date: "12-01-2023",
-            unitcost: 300,
-            unitsell: 500,
-            qty: 900,
-            warningAt: 16,
-        },
-        {
-            id: 1,
-            product: "6 Inched Nails",
-            cat: "Nails",
-            stock: "Stock A",
-            date: "12-01-2023",
-            unitcost: 300,
-            unitsell: 500,
-            qty: 900,
-            warningAt: 3,
-        },
-        {
-            id: 1,
-            product: "6 Inched Nails",
-            cat: "Nails",
-            stock: "Stock A",
-            date: "12-01-2023",
-            unitcost: 300,
-            unitsell: 500,
-            qty: 900,
-            warningAt: 34,
-        },
-        {
-            id: 1,
-            product: "6 Inched Nails",
-            cat: "Nails",
-            stock: "Stock A",
-            date: "12-01-2023",
-            unitcost: 300,
-            unitsell: 500,
-            qty: 900,
-            warningAt: 17,
-        },
-        {
-            id: 1,
-            product: "6 Inched Nails",
-            cat: "Nails",
-            stock: "Stock A",
-            date: "12-01-2023",
-            unitcost: 300,
-            unitsell: 500,
-            qty: 900,
-            warningAt: 10,
-        },
-        {
-            id: 1,
-            product: "6 Inched Nails",
-            cat: "Nails",
-            stock: "Stock A",
-            date: "12-01-2023",
-            unitcost: 300,
-            unitsell: 500,
-            qty: 900,
-            warningAt: 10,
-        },
-
-    ];
-
     // stock input values
     const [name, setName] = useState("");
     const [qty, setQty] = useState("");
@@ -223,24 +112,24 @@ const Stock = () => {
     const [unitcost, setUnitCost] = useState("");
     const [unitsell, setUnitSell] = useState("");
     const [warningAt, setWarningAt] = useState("");
-    const [categoryId, setCategoryId] = useState("");
+    const [categoryId, setCategoryId] = useState("1");
     const [posting, setPosting] = useState("");
 
     const postStock = async () => {
-        if(name && qty && date && unitcost && unitsell && warningAt && categoryId){
+        if (name !== "" && qty !== "" && date !== "" && unitcost !== "" && unitsell !== "" && warningAt !== "" && categoryId !== "") {
             try {
                 setPosting(true)
                 let formData = {
-                    mame: name,
+                    name: name,
                     qty: qty,
                     date: date,
-                    unitcost: unitcost,
-                    unitsell: unitsell,
+                    unitCost: unitcost,
+                    unitSell: unitsell,
                     warningAt: warningAt,
                     categoryId: categoryId
                 }
                 let res = await axiosInstance.post("/stock", formData)
-                if (res.status === "SUCCESS") {
+                if (res.status) {
                     setPosting(false)
                     setName("");
                     setQty("");
@@ -249,6 +138,8 @@ const Stock = () => {
                     setWarningAt("");
                     setCategoryId("");
                     setDate("");
+                    closeModal();
+                    fetchstocks();
                     const MySwal = withReactContent(Swal);
                     MySwal.fire({
                         icon: "success",
@@ -276,9 +167,9 @@ const Stock = () => {
         try {
             setLoading(true)
             let res = await axiosInstance.get("/stock");
-            if (res.status === "SUCCESS") {
+            if (res.status) {
                 setLoading(false);
-                setstocks(res.payload.data);
+                setstocks(res.data.payload);
             } else {
                 setLoading(false)
             }
@@ -291,7 +182,7 @@ const Stock = () => {
 
     useEffect(() => {
         fetchstocks()
-    }, [stocks]);
+    }, []);
 
 
 
@@ -333,6 +224,7 @@ const Stock = () => {
     const [modal4, setModal4] = useState(false)
     const [stockId, setStockId] = useState("");
     const [stock, setStock] = useState("");
+
     const openModal4 = (stock) => {
         setModal4(true);
         setStockId(stock.id)
@@ -344,7 +236,7 @@ const Stock = () => {
     }
 
     const restock = async () => {
-        if(date && qty && unitcost && stockId){
+        if (date && qty && unitcost && stockId) {
             try {
                 setRestocking(true)
                 let formData = {
@@ -362,9 +254,9 @@ const Stock = () => {
                     setUnitSell("")
                     setRestocking(false)
                 }
-    
+
             } catch (error) {
-    
+
             } finally {
                 setRestocking(false)
             }
@@ -373,7 +265,7 @@ const Stock = () => {
     }
 
     return (
-        <div className="w-full relative bg-white rounded-md shadow pr-5">
+        <div className="w-full bg-white rounded-md shadow pr-5">
 
             {/* stock modal */}
 
@@ -407,7 +299,7 @@ const Stock = () => {
                     </div>
 
                 </div>
-                <div className="flex bg-gray1 text-lg text-primary p-3 font-medium justify-between">
+                <div className="flex bg-gray1 text-primary p-3 justify-between">
                     <div onClick={closeModal4}>
                         <ButtonSecondary value={"Close"} />
                     </div>
@@ -484,15 +376,15 @@ const Stock = () => {
                                 />
                             </div>
                             <div className='w-1/2 p-3 -mt-5'>
-                                <InputField value={qty} onChange={(e) => setQty(e.target.value)} label="Qty" placeholder="Enter qty" />
-                                <InputField value={unitcost} onChange={(e) => setUnitCost(e.target.value)} label="Unitcost" placeholder="Unitcost" />
-                                <InputField value={unitsell} onChange={(e) => setUnitSell(e.target.value)} label="Unit Sell" placeholder="UnitSell" />
-                                <InputField value={warningAt} onChange={(e) => setWarningAt(e.target.value)} label="Warning At" placeholder="Warning At" />
+                                <InputField value={qty} onChange={(e) => setQty(e.target.value)} label="Qty" type="number" placeholder="Enter qty" />
+                                <InputField value={unitcost} onChange={(e) => setUnitCost(e.target.value)} type="number" label="Unitcost" placeholder="Unitcost" />
+                                <InputField value={unitsell} onChange={(e) => setUnitSell(e.target.value)} type="number" label="Unit Sell" placeholder="UnitSell" />
+                                <InputField value={warningAt} onChange={(e) => setWarningAt(e.target.value)} type="number" label="Warning At" placeholder="Warning At" />
                             </div>
 
                         </div>
 
-                        <div className='flex text-xl justify-between font-semibold text-primary p-2 bg-gray1'>
+                        <div className=' justify-between flex text-primary p-2 bg-gray1'>
                             <div onClick={closeModal}>
                                 <ButtonSecondary value={"Close"} />
 
@@ -533,41 +425,41 @@ const Stock = () => {
                         <th className="p-2 text-primary text-sm text-left">Action</th>
                     </thead>
                     <tbody>
-                        {loading ? <div className="flex justify-center mt-[10vh]"> <Loader />  </div> :
-                            <>
-                                {stockks.map((stock) => {
-                                    return (
-                                        <tr
-                                            className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-                                            key={stock.id}
-                                        >
-                                            <td className="text-sm p-3 text-gray5">{stock.date}</td>
-                                            <td className="p-3 text-sm text-gray5"> {stock.product} </td>
-                                            <td className="text-sm p-3 text-gray5">{stock.unitcost}</td>
-                                            <td className="text-sm p-3 text-gray5">{stock.unitsell}</td>
-                                            <td className="text-sm p-3 text-gray5">{stock.qty}</td>
-                                            <td className="text-sm p-3 text-gray5">{stock.cat}</td>
-                                            <td className="text-sm p-3 text-gray5 flex">
-                                                <MdDeleteOutline
-                                                    onClick={(e) => deleteStock(stock)}
-                                                    className="text-red w-4 h-4"
-                                                />
-                                                <BsPencilSquare
-                                                    onClick={() => openModal2(stock)}
-                                                    className="text-warning h-4 w-4 mx-5"
-                                                />
 
-                                                <BsPlusCircle onClick={()=>openModal4(stock)} className="bg-primary text-xl text-white rounded-full" />
+                        {stocks.map((stock) => {
+                            return (
+                                <tr
+                                    className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+                                    key={stock.id}
+                                >
+                                    <td className="text-sm p-3 text-gray5">{stock.date}</td>
+                                    <td className="p-3 text-sm text-gray5"> {stock.name} </td>
+                                    <td className="text-sm p-3 text-gray5">{stock.unitCost}</td>
+                                    <td className="text-sm p-3 text-gray5">{stock.unitSell}</td>
+                                    <td className="text-sm p-3 text-gray5">{stock.qty}</td>
+                                    <td className="text-sm p-3 text-gray5">{stock?.cat}</td>
+                                    <td className="text-sm p-3 text-gray5 flex">
+                                        <MdDeleteOutline
+                                            onClick={(e) => deleteStock(stock)}
+                                            className="text-red w-4 h-4"
+                                        />
+                                        <BsPencilSquare
+                                            onClick={() => openModal2(stock)}
+                                            className="text-warning h-4 w-4 mx-5"
+                                        />
+
+                                        <BsPlusCircle onClick={() => openModal4(stock)} className="bg-primary text-xl text-white rounded-full" />
 
 
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </>}
+                                    </td>
+                                </tr>
+                            );
+                        })}
 
                     </tbody>
                 </table>
+                {loading ? <div className="flex justify-center mt-[10vh]"> <Loader />  </div> :
+                    null}
             </div>
 
 
@@ -579,7 +471,7 @@ const Stock = () => {
                     <div className='rounded-lg bg-white mt-[5vh]'>
                         <div className='flex text-xl justify-between font-semibold text-primary p-2 bg-gray1'>
                             <div>
-                                <p>Edit Sample</p>
+                                <p>Edit Stock</p>
                             </div>
                             <div>
                                 <p onClick={closeModal2} className='cursor-pointer'>X</p>
@@ -611,7 +503,7 @@ const Stock = () => {
                             </div>
                         </div>
 
-                        <div className='flex text-xl justify-between font-semibold text-primary p-2 bg-gray1'>
+                        <div className='flex justify-between text-primary p-2 bg-gray1'>
                             <div onClick={closeModal2}>
                                 <ButtonSecondary value={"Close"} />
 
