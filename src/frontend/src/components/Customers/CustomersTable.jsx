@@ -238,7 +238,7 @@ const CustomersTable = (props) => {
                   className="shadow-sm border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"
                   key={customer.id}
                 >
-                  <td className="text-sm p-3 text-gray5" onClick={() => openModal2(customer)}>
+                  <td className="text-sm p-3 text-gray5" >
                     {customer.supplierName}
                   </td>
 
@@ -260,7 +260,8 @@ const CustomersTable = (props) => {
                   </td>
                   <td className="text-xs flex p-3 text-gray5">
                     <BsTrash onClick={() => deleteCustomer(customer)} className='text-red' />
-                    <BsPencilSquare onClick={() => openModal(customer)} className='text-yellow ml-5' />
+                    <BsPencilSquare onClick={() => openModal(customer)} className='text-yellow mx-5' />
+                    <p onClick={() => openModal2(customer)} className='px-1 bg-primary rounded-full -mt-1 cursor-pointor font-bold text-white'>A</p>
                   </td>
 
                 </tr>
@@ -322,10 +323,10 @@ const CustomersTable = (props) => {
         </div> : null}
 
         {modal2 ? <div className='z-50 bg-black/50 h-full w-full top-0 right-0 left-0 absolute flex'>
-          <div className='w-3/12' onClick={closeModal2}>
+          <div className='w-2/12' onClick={closeModal2}>
 
           </div>
-          <div className='w-6/12'>
+          <div className='w-8/12'>
             <div className='rounded-lg bg-white mt-[5vh]'>
               <div className='flex text-xl justify-between text-primary p-2 bg-gray1'>
                 <div>
@@ -340,14 +341,38 @@ const CustomersTable = (props) => {
 
               </div>
               <div className=''>
+                <div className='flex '>
+                  <div className='w-32 p-2 m-2 bg-primary text-white'>
+                    2,000,000
+                  </div>
+                  <div className='w-32 p-2 m-2 bg-gray2'>
+                    950,000
+                  </div>
+                  <div className='w-32 p-2 m-2 bg-gray2'>
+                    1,800,000
+                  </div>
+                  <div className='w-32 p-2 m-2 bg-gray2'>
+                    2,000,000
+                  </div>
+
+                </div>
                 <div className='flex'>
+                  <div className='p-2'>
+                    2,000,000
+                  </div>
+                   <div className='p-2'>
+                    12-10-2023
+                  </div>
+
+                </div>
+                <div className='flex -mt-5'>
                   <div className='w-1/3 p-2'>
-                    <InputField value={date} onChange={(e) => setDate(e.target.value)} label="Date" type="date" />
+                    <InputField value={date} onChange={(e) => setDate(e.target.value)} type="date" />
                   </div>
                   <div className='w-1/3 p-2'>
-                    <InputField value={amount} onChange={(e) => setAmount(e.target.value)} label="Amount" placeholder="Amount" />
+                    <InputField value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" />
                   </div>
-                  <div className='w-42 mt-14 p-2'>
+                  <div className='w-42 mt-6 p-2'>
                     {adding ? <ButtonLoader /> :
                       <div onClick={addPayments}>
                         <Button value={"Add Payment"} />
@@ -370,7 +395,7 @@ const CustomersTable = (props) => {
                 </div>
                 {loadingp ? <div className='w-full h-52 flex justify-center items-center'> <Loader /> </div> : null}
 
-                <div className='h-[calc(100vh-280px)] overflow-y-auto'>
+                <div className='h-[calc(100vh-300px)] overflow-y-auto'>
                   {pays.map((pay) => {
                     return (
                       <div className='flex mx-3 border-b cursor-pointer text-sm text-gray5 border-gray1 hover:bg-gray1'>
@@ -397,7 +422,7 @@ const CustomersTable = (props) => {
             </div>
 
           </div>
-          <div className='w-3/12' onClick={closeModal2}>
+          <div className='w-2/12' onClick={closeModal2}>
 
           </div>
 
