@@ -39,17 +39,18 @@ const Customers = () => {
   const [posting, setPosting] = useState("");
 
   const postCustomer = async () => {
-    if(name && email && phone && location){
+    if (name !== "" && email !== "" && phone !== "" && location !== "") {
       try {
         setPosting(true);
         let formData = {
-          name: name,
-          email: email,
-          phone: phone,
-          location: location
+          supplierName: name,
+          emails: email,
+          contacts: phone,
+          address: location,
+          about: "location"
         }
-        let res = await axiosInstance.post("/customers", formData);
-        if (res.status === "SUCCESS") {
+        let res = await axiosInstance.post("/suppliers", formData);
+        if (res.status) {
           setPosting(true);
           setName("");
           setEmail("");
@@ -64,7 +65,7 @@ const Customers = () => {
           // fetchCustomers();
           closeModal();
         }
-  
+
       } catch (error) {
         setPosting(false)
         console.log(error)
@@ -126,12 +127,12 @@ const Customers = () => {
                 </div>
                 <div className='flex'>
                   <div className='w-1/2 p-2'>
-                    <InputField value={name} onChange={(e)=>setName(e.target.value)} label="Name Of Customer" placeholder="Enter Name" />
-                    <InputField value={email} onChange={(e)=>setEmail(e.target.value)} label="Email" placeholder="Enter Email" />
+                    <InputField value={name} onChange={(e) => setName(e.target.value)} label="Name Of Customer" placeholder="Enter Name" />
+                    <InputField value={email} onChange={(e) => setEmail(e.target.value)} label="Email" placeholder="Enter Email" />
                   </div>
                   <div className='w-1/2 p-2'>
-                    <InputField value={phone} onChange={(e)=>setPhone(e.target.value)} label="Phone Number" placeholder="Phone Number" />
-                    <InputField value={location} onChange={(e)=>setLocation(e.target.value)} label="Location" placeholder="Enter Location" />
+                    <InputField value={phone} onChange={(e) => setPhone(e.target.value)} label="Phone Number" placeholder="Phone Number" />
+                    <InputField value={location} onChange={(e) => setLocation(e.target.value)} label="Location" placeholder="Enter Location" />
                   </div>
                 </div>
 

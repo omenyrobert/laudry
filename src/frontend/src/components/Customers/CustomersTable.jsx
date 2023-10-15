@@ -14,7 +14,6 @@ import Loader from '../Loader'
 
 const CustomersTable = (props) => {
   const {
-    customersData,
     deletecustomersInfo,
   } = props
 
@@ -23,10 +22,10 @@ const CustomersTable = (props) => {
 
   const openModal = (customer) => {
     setModal(true);
-    setName(customer.name);
-    setEmail(customer.email);
-    setLocation(customer.location);
-    setPhone(customer.phone)
+    setName(customer.supplierName);
+    setEmail(customer.emails);
+    setLocation(customer.address);
+    setPhone(customer.contacts)
   }
 
   const closeModal = () => {
@@ -36,6 +35,7 @@ const CustomersTable = (props) => {
   const [modal2, setModal2] = useState(false)
   const [customerId, setCustomerId] = useState("");
   const [isEdit, setIsEdit] = useState(false);
+
   const openModal2 = (customer) => {
     setModal2(true);
     setName(customer.name)
@@ -66,7 +66,7 @@ const CustomersTable = (props) => {
     { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
     { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
   ]
-  const fetchCustomers = async () => {
+  const fetchPayments = async () => {
     try {
       setLoadingp(true)
       let res = await axiosInstance.get("/suppliers");
@@ -121,18 +121,19 @@ const CustomersTable = (props) => {
   const [posting, setPosting] = useState("");
 
   const UpdateCustomer = async () => {
-    if (name && email && phone && location) {
+    if (name !=="" && email !=="" && phone !=="" && location !=="") {
       try {
         setPosting(true);
         let formData = {
-          name: name,
-          email: email,
-          phone: phone,
-          location: location
+          supplierName: name,
+          emails: email,
+          contacts: phone,
+          address: location,
+          about: "location"
         }
 
-        let res = await axiosInstance.post("/customers", formData);
-        if (res.status === "SUCCESS") {
+        let res = await axiosInstance.post("/suppliers", formData);
+        if (res.status) {
           setPosting(true);
           setName("");
           setEmail("");
@@ -159,27 +160,28 @@ const CustomersTable = (props) => {
 
 
   const [loading, setLoading] = useState(false)
-  const [customersData2, setCustomersData] = useState([])
+  const [customersData, setCustomersData] = useState([])
 
-  // const fetchCustomers = async () => {
-  //   try {
-  //     setLoading(true);
-  //     let res = await axiosInstance.get("/customers");
-  //     if (res.status === "SUCCESS") {
-  //       setLoading(false)
-  //       setCustomersData(res.payload.data)
-  //     }
-  //   } catch (error) {
-  //     setLoading(false)
-  //   } finally {
-  //     setLoading(false)
-  //   }
+  const fetchCustomers = async () => {
+    try {
+      setLoading(true);
+      let res = await axiosInstance.get("/suppliers");
+      if (res.status) {
+        setLoading(false)
+        setCustomersData(res.data.payload)
+        console.log('customerss',res.data.payload);
+      }
+    } catch (error) {
+      setLoading(false)
+    } finally {
+      setLoading(false)
+    }
 
-  // }
+  }
 
   useEffect(() => {
     fetchCustomers();
-  }, [customersData])
+  }, [])
 
 
   const deleteCustomer = (customer) => {
@@ -195,7 +197,7 @@ const CustomersTable = (props) => {
       if (result.isConfirmed) {
         try {
           const response = await axiosInstance.delete(
-            `/customer/${customer.id}`
+            `/suppliers/${customer.id}`
           );
           const { data } = response;
           const { status } = data;
@@ -237,17 +239,17 @@ const CustomersTable = (props) => {
                   key={customer.id}
                 >
                   <td className="text-sm p-3 text-gray5" onClick={() => openModal2(customer)}>
-                    {customer.name}
+                    {customer.supplierName}
                   </td>
 
                   <td className="text-sm p-3 text-gray5">
-                    {customer.phone}
+                    {customer.contacts}
                   </td>
                   <td className="text-sm p-3 text-gray5">
-                    {customer.email}
+                    {customer.emails}
                   </td>
                   <td className="text-sm p-3 text-gray5">
-                    {customer.location}
+                    {customer.address}
                   </td>
                   <td className="text-sm p-3 text-gray5">
                     {customer.amount}
