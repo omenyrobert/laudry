@@ -112,7 +112,7 @@ const Stock = () => {
     const [unitcost, setUnitCost] = useState("");
     const [unitsell, setUnitSell] = useState("");
     const [warningAt, setWarningAt] = useState("");
-    const [categoryId, setCategoryId] = useState("1");
+    const [categoryId, setCategoryId] = useState("");
     const [posting, setPosting] = useState("");
 
     const postStock = async () => {
@@ -158,6 +158,30 @@ const Stock = () => {
         }
     }
 
+    const [categories, setCategories] = useState([]);
+
+    const fetchCategories = async () => {
+        let res = await axiosInstance.get("/categories");
+        if (res.status) {
+            let data = res.data.payload;
+            let newArray = []
+            data.forEach((dat) => {
+                let obj = {
+                    value: dat.type,
+                    label: dat.type,
+                    id: dat.id,
+                }
+                newArray.push(obj);
+            })
+            setCategories(newArray)
+            console.log('catts', categories)
+
+        }
+    }
+
+    useEffect(() => {
+        fetchCategories()
+    }, [])
 
     const [loading, setLoading] = useState(false)
 
@@ -368,11 +392,8 @@ const Stock = () => {
                                 <Select
                                     className="w-full mt-2"
                                     placeholder="Select Category"
-                                    options={[
-                                        { value: 'Nails', label: 'Nails' },
-                                        { value: 'Paints', label: 'Paints' },
-                                        { value: 'Iron sheets', label: 'Iron Sheets' },
-                                    ]}
+                                    options={categories}
+                                    onChange={(categories) => setCategoryId(categories.id)}
                                 />
                             </div>
                             <div className='w-1/2 p-3 -mt-5'>

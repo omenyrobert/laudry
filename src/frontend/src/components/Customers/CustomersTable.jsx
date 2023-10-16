@@ -227,8 +227,6 @@ const CustomersTable = (props) => {
             <th className="p-2 text-primary text-sm text-left">Phone Number</th>
             <th className="p-2 text-primary text-sm text-left">email</th>
             <th className="p-2 text-primary text-sm text-left">Location</th>
-            <th className="p-2 text-primary text-sm text-left">Amount</th>
-            <th className="p-2 text-primary text-sm text-left">Paid</th>
             <th className="p-2 text-primary text-sm text-left">Action</th>
           </thead>
           <tbody>
@@ -251,13 +249,7 @@ const CustomersTable = (props) => {
                   <td className="text-sm p-3 text-gray5">
                     {customer.address}
                   </td>
-                  <td className="text-sm p-3 text-gray5">
-                    {customer.amount}
-                  </td>
-                  <td className="text-sm p-3 text-gray5">
-                    {customer.paid} -
-                    <span className='text-xs bg-gray1 p-1 rounded-md'>Balance: {customer.balance}</span>
-                  </td>
+                 
                   <td className="text-xs flex p-3 text-gray5">
                     <BsTrash onClick={() => deleteCustomer(customer)} className='text-red' />
                     <BsPencilSquare onClick={() => openModal(customer)} className='text-yellow mx-5' />
