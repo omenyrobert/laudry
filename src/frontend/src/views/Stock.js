@@ -59,7 +59,7 @@ const Stock = () => {
     const [eunitcost, seteUnitCost] = useState("");
     const [eunitsell, seteUnitSell] = useState("");
     const [ewarningAt, seteWarningAt] = useState("");
-    const [ecategoryId, seteCategoryId] = useState("1");
+    const [ecategoryId, seteCategoryId] = useState("");
     const [updating, setUpdating] = useState("");
 
     const updatePost = async () => {
@@ -507,11 +507,8 @@ const Stock = () => {
                                 <Select
                                     className="w-full mt-2"
                                     placeholder="Select Category"
-                                    options={[
-                                        { value: 'Nails', label: 'Nails' },
-                                        { value: 'Paints', label: 'Paints' },
-                                        { value: 'Iron sheets', label: 'Iron Sheets' },
-                                    ]}
+                                    options={categories}
+                                    onChange={(categories) => seteCategoryId(categories.id)}
                                 />
 
 
