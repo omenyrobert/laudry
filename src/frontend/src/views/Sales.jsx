@@ -8,11 +8,23 @@ import ButtonSecondary from "../components/ButtonSecondary";
 import TodaySales from "../components/TodaySales";
 import Select from "react-select"
 import Expenses from "../components/Expenses";
+import { useDispatch, useSelector } from "react-redux"
+import { getStock } from "../store/slices/store";
+import axiosInstance from "../axios-instance";
+import { useFeedback } from "../hooks/feedback";
 
 
 const Sales = () => {
-
+    const dispatch = useDispatch()
+    const { stock } = useSelector((state) => state.autocountStore)
     const [cart, setCart] = useState([])
+    const { toggleFeedback } = useFeedback()
+
+
+    useEffect(() => {
+        dispatch(getStock())
+    }, [dispatch])
+
 
     // Function to add an item to the cart
     const addItemToCart = (item) => {
@@ -21,12 +33,12 @@ const Sales = () => {
         if (existingItem) {
             const updatedCart = cart.map((cartItem) =>
                 cartItem.id === item.id
-                    ? { ...cartItem, qty: cartItem.qty + 1 }
+                    ? { ...cartItem, quantity: cartItem.quantity + 1 }
                     : cartItem
             );
             setCart(updatedCart);
         } else {
-            setCart([...cart, { ...item, qty: 1 }]);
+            setCart([...cart, { ...item, quantity: 1 }]);
         }
     };
 
@@ -41,10 +53,10 @@ const Sales = () => {
     const decreaseItemqty = (item) => {
         const existingItem = cart.find((cartItem) => cartItem.id === item.id);
 
-        if (existingItem && existingItem.qty > 1) {
+        if (existingItem && existingItem.quantity > 1) {
             const updatedCart = cart.map((cartItem) =>
                 cartItem.id === item.id
-                    ? { ...cartItem, qty: cartItem.qty - 1 }
+                    ? { ...cartItem, quantity: cartItem.quantity - 1 }
                     : cartItem
             );
             setCart(updatedCart);
@@ -55,7 +67,7 @@ const Sales = () => {
 
     // Function to calculate the total price of items in the cart
     const calculateTotal = () => {
-        return cart.reduce((total, item) => total + item.price * item.qty, 0);
+        return cart.reduce((total, item) => total + (item.unitCost * item.quantity), 0);
     };
 
 
@@ -63,23 +75,46 @@ const Sales = () => {
         localStorage.setItem('cart', JSON.stringify(cart));
     }, [cart]);
 
-    const products = [
-        { id: 1, name: "6 Inched Nail", cate: "Paint", qty: 200, price: 250000 },
-        { id: 2, name: "Sadonlin 2ltr ", cate: "Cement", qty: 20, price: 50000 },
-        { id: 3, name: "Regal Paint", cate: "cate B", qty: 100, price: 100000 },
-        { id: 4, name: "Padlock", cate: "cate B", qty: 80, price: 120000 },
-        { id: 5, name: "Iron Sheet", cate: "cate A", qty: 120, price: 70000 },
-        { id: 6, name: "2 Inched Nail", cate: "cate B", qty: 50, price: 20000 },
-        { id: 7, name: "Wires", cate: "cate A", qty: 400, price: 40000 },
-        { id: 8, name: "Cement", cate: "cate B", qty: 50, price: 250000 },
-        { id: 9, name: "Hoes", cate: "cate B", qty: 90, price: 250000 },
-        { id: 10, name: "Spade", cate: "cate B", qty: 40, price: 250000 },
-        { id: 11, name: "Travel", cate: "cate B", qty: 30, price: 250000 },
-        { id: 12, name: "Garden tool", cate: "cate B", qty: 80, price: 15000 },
-        { id: 13, name: "6 Inched Nail", cate: "cate B", qty: 90, price: 10000 },
-        { id: 14, name: "6 Inched Nail", cate: "cate A", qty: 100, price: 150000 },
-        { id: 15, name: "6 Inched Nail", cate: "cate B", qty: 120, price: 20000 },
-    ]
+    const [makeSaleLoading, setMakeSaleLoading] = useState(false)
+
+    async function makeSale() {
+        if (cart.length === 0) {
+            toggleFeedback("error", {
+                title: "Error",
+                text: "Please add items to the cart",
+            })
+        }
+        try {
+            setMakeSaleLoading(true)
+            const res = await axiosInstance.post("/sales", {
+                sales: cart
+            })
+            console.log(res.data)
+            const { status, payload } = res.data
+            if (status) {
+                toggleFeedback("success", {
+                    title: "Success",
+                    text: "Sale made successfully",
+                })
+                setMakeSaleLoading(false)
+                setCart([])
+            } else {
+                toggleFeedback("error", {
+                    title: "Error",
+                    text: payload,
+                })
+                setMakeSaleLoading(false)
+            }
+        } catch (error) {
+            toggleFeedback("error", {
+                title: "Error",
+                text: error.message
+            })
+            setMakeSaleLoading(false)
+        }
+    }
+
+
 
     return (
         <div className="flex w-full">
@@ -109,12 +144,16 @@ const Sales = () => {
                         <Expenses />
                     </div>
                 </div>
-                {products.map((item) => {
+                {stock.map((item) => {
                     return (
-                        <div onClick={() => addItemToCart(item)} className="flex border cursor-pointer border-gray2 m-2 rounded-md p-2 hover:bg-gray1 justify-between">
+                        <div onClick={() => addItemToCart({
+                            ...item,
+                            date: new Date().toISOString().slice(0, 10),
+                            stockId: item.id,
+                        })} className="flex border cursor-pointer border-gray2 m-2 rounded-md p-2 hover:bg-gray1 justify-between">
                             <div>
                                 <p className="">{item.name}</p>
-                                <p className="text-sm text-gray5">{item.cate}</p>
+                                <p className="text-sm text-gray5">{item.category?.type}</p>
                             </div>
                             <div>
                                 <p className="font-bold">
@@ -155,14 +194,14 @@ const Sales = () => {
                                     <p>{item.name}</p>
                                 </div>
                                 <div className="w-4/12">
-                                    {(item.price * item.qty).toLocaleString()}
+                                    {(item.unitCost * item.quantity).toLocaleString()}
                                 </div>
                                 <div className="w-4/12 flex">
                                     <div className="flex ml-5">
                                         <div onClick={() => decreaseItemqty(item)} className="p-1 rounded-full bg-primary my-1">
                                             <TbMinus className="text-white text-lg" />
                                         </div>
-                                        <p className="mx-3 mt-1">{item.qty}</p>
+                                        <p className="mx-3 mt-1">{item.quantity}</p>
                                         <div onClick={() => addItemToCart(item)} className="p-1 rounded-full bg-primary my-1">
                                             <BsPlus className="text-white text-lg" />
                                         </div>
@@ -183,9 +222,18 @@ const Sales = () => {
 
                 </div>
                 <div className="flex justify-between p-3 bg-primary text-white">
-                    <div className="bg-black rounded-md p-2 cursor-pointer">
-                        Make Sale
-                    </div>
+                    {
+                        makeSaleLoading ? (
+                            <div className="bg-black rounded-md p-2 cursor-pointer">
+                                Loading...
+                            </div>
+                        ) : (
+                            <div onClick={makeSale} className="bg-black rounded-md p-2 cursor-pointer">
+                                Make Sale
+                            </div>
+                        )
+                    }
+
                     <div>
 
                     </div>

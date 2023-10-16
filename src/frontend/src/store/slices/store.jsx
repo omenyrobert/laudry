@@ -9,13 +9,32 @@ export const getCartegories = createAsyncThunk("/autocount/cartegories", async (
 });
 
 
-export const getStock = createAsyncThunk("/autocount/stock", async () => {
-	const stock = await axiosInstance.get("/stock");
+export const getStock = createAsyncThunk("/autocount/stock", async (
+	page = 1,
+) => {
+	const stock = await axiosInstance.get("/stock?page=" + page);
 	const { data } = stock;
 	const { status, payload } = data;
 	if (status) return payload;
 });
 
+
+export const getSales = createAsyncThunk("/autocount/sales", async (
+	page = 1,
+) => {
+	const sales = await axiosInstance.get("/sales?page=" + page);
+	const { data } = sales;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+export const getTodaySales = createAsyncThunk("/autocount/todaySales", async () => {
+	const today = new Date().toISOString().slice(0, 10);
+	const sales = await axiosInstance.get("/sales/by-date?date=" + today);
+	const { data } = sales;
+	const { status, payload } = data;
+	if (status) return payload;
+});
 
 
 export const autoCountSlices = createSlice({
@@ -23,9 +42,13 @@ export const autoCountSlices = createSlice({
 	initialState: {
 		cartegories: [],
 		stock: [],
+		sales: [],
+		todaySales: [],
 		loading: {
 			cartegories: false,
 			stock: false,
+			sales: false,
+			todaySales: false,
 		},
 	},
 	extraReducers: {
@@ -48,6 +71,26 @@ export const autoCountSlices = createSlice({
 		},
 		[getStock.rejected]: (state) => {
 			state.loading.stock = false;
+		},
+		[getSales.pending]: (state) => {
+			state.loading.sales = true;
+		},
+		[getSales.fulfilled]: (state, action) => {
+			state.loading.sales = false;
+			state.sales = action.payload;
+		},
+		[getSales.rejected]: (state) => {
+			state.loading.sales = false;
+		},
+		[getTodaySales.pending]: (state) => {
+			state.loading.todaySales = true;
+		},
+		[getTodaySales.fulfilled]: (state, action) => {
+			state.loading.todaySales = false;
+			state.todaySales = action.payload;
+		},
+		[getTodaySales.rejected]: (state) => {
+			state.loading.todaySales = false;
 		},
 	},
 });

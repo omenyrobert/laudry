@@ -1,4 +1,4 @@
-
+import {startOfDay, endOfDay} from "date-fns";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,90 +6,89 @@ import {
   BaseEntity,
   ManyToMany,
   In,
+  ManyToOne,
+  Between
 } from "typeorm";
-import { Student } from "./Student";
+import { Stock } from "./Stock";
 
 @Entity()
-export class Term extends BaseEntity {
+export class Sales extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
-  from!: string;
+  date!: Date;
 
   @Column()
-  to!: string;
+  quantity!: number;
 
-  @Column()
-  term!: string;
+  @ManyToOne(() => Stock, (stock) => stock.sales, {
+    onDelete: "CASCADE",
+    eager: true,
+  })
+  stock!: Stock;
 
-  @Column()
-  is_selected!: number;
-
-  @ManyToMany(() => Student, (student) => student.terms)
-  students: [];
 }
 
-export const getTerms = async () => {
-  const terms = await Term.find({
+
+export const createSale = async (
+  date: string,
+  quantity: number,
+  stockId: number
+) => {
+  const stock = await Stock.findOne({
+    where: {
+      id: stockId,
+    },
+  });
+
+  if (!stock) {
+    throw new Error("Stock not found");
+  }
+
+  const sales = Sales.create({
+    date,
+    quantity,
+    stock,
+  });
+
+  await sales.save();
+
+  stock.qty -= quantity;
+  await stock.save();
+
+  return sales;
+}
+
+
+export const getSales = async (
+  page = 1,
+) => {
+  const sales = await Sales.find({
+    order: {
+      id: "DESC",
+    },
+    take: 30 * page,
+  });
+  return sales;
+}
+
+export const getSalesByDate = async (
+  date: string,
+) => {
+  const validDate = new Date(date);
+
+  if (isNaN(validDate.getTime())) {
+    throw new Error("Invalid Date");
+  }
+  
+  const sales = await Sales.find({
+    where: {
+      date: Between(startOfDay(validDate), endOfDay(validDate))
+    },
     order: {
       id: "DESC",
     },
   });
-  return terms;
-};
-
-export const createTerm = async (
-  from: string,
-  to: string,
-  term: string,
-  selected: number
-) => {
-  const termToInsert = await Term.insert({
-    from: from,
-    to: to,
-    term: term,
-    is_selected: selected,
-  });
-  return termToInsert;
-};
-
-export const deleteTerm = async (id: number) => {
-  const term = await Term.delete(id);
-  if (term) {
-    return "Term Deleted";
-  }
-};
-
-export const updateTerm = async (
-  id: number,
-  from: string,
-  to: string,
-  term: string,
-  selected: number
-) => {
-  const termToUpdate = await Term.update(id, {
-    from: from,
-    to: to,
-    term: term,
-    is_selected: selected,
-  });
-  return termToUpdate;
-};
-
-export const getSingleTerm = async (id: number) => {
-  const term = await Term.findOne({ where: { id: id } });
-  return term;
-};
-
-export const getTermBySelect = async () => {
-  const term = await Term.findOne({ where: { is_selected: 1 } });
-  return term;
-};
-
-export const selectedTermIds = async (ids:any) => {
-  const selectedTerms = await Term.find({
-    where: { id: In(ids) },
-  });
-  return selectedTerms;
-};
+  return sales;
+}

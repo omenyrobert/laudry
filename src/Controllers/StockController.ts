@@ -13,7 +13,11 @@ import { customPayloadResponse } from "../Helpers/Helpers";
 
 export const fetchStocks = async (req: Request, res: Response) => {
   try {
-    const stocks = await getStocks();
+    const {page} = req.query;
+
+    const stocks = await getStocks(
+      page ? parseInt(page.toString()) : 1
+    );
     return res.json(customPayloadResponse(true, stocks)).status(200).end();
   } catch (error) {
     console.log(error);
@@ -166,9 +170,9 @@ export const handleResctock = async (req: Request, res: Response) => {
 
     const stock = await restock(
       id,
-      qty,
-      unitCost,
-      unitSell,
+      parseInt(qty),
+      parseInt(unitCost),
+      parseInt(unitSell),
       date
     );
 

@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ButtonAlt from "./ButtonAlt";
 import { usePrint } from "../hooks/print";
+import { useDispatch, useSelector } from "react-redux"
+import { getTodaySales } from "../store/slices/store";
 
 const TodaySales = () => {
     const { printContent } = usePrint()
-
-
     const [modal, setModal] = useState(false)
+    const dispatch = useDispatch()
+    const { todaySales } = useSelector((state) => state.autocountStore)
+
+    useEffect(() => {
+        dispatch(getTodaySales())
+    }, [dispatch])
+
+
+
 
     const openModal = () => {
         setModal(true)
@@ -16,24 +25,6 @@ const TodaySales = () => {
         setModal(false)
     }
 
-    const sales = [
-        { id: 1, product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, product: "Regal Pain", qty: 10, sale: "200,000", cost: "100,000", profit: "100,000" },
-        { id: 1, product: "Iron Bar", qty: 104, sale: "1,03,000", cost: "710,000", profit: "67,000" },
-        { id: 1, product: "Iron Sheet", qty: 234, sale: "203,000", cost: "180,000", profit: "97,000" },
-        { id: 1, product: "B Wire", qty: 14, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, product: "2 inc Nails", qty: 24, sale: "230,000", cost: "190,000", profit: "30,000" },
-        { id: 1, product: "1 ltr Sadolin", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, product: "Padlocks", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, product: "Spade", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, product: "cememnt Hima", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, product: "Wheel Barrow", qty: 2, sale: "700,000", cost: "400,000", profit: "300,000" },
-        { id: 1, product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-    ]
 
     return (
         <>
@@ -75,28 +66,22 @@ const TodaySales = () => {
                                 Cost
                             </div>
                             <div className="w-1/4 p-2">
-                                Sales
-                            </div>
-                            <div className="w-1/4 p-2">
                                 Profit
                             </div>
 
                         </div>
                         <div className="h-[75vh] overflow-y-auto">
-                            {sales.map((sale) => {
+                            {todaySales.map((sale) => {
                                 return (
                                     <div className="flex hover:bg-gray1 text-sm text-gray5 border-b border-gray1 cursor-pointer">
                                         <div className="w-1/4 p-2">
-                                            {sale.product}
+                                            {sale.stock?.name}
                                         </div>
                                         <div className="w-1/4 p-2">
-                                            {sale.qty}
+                                            {sale.quantity}
                                         </div>
                                         <div className="w-1/4 p-2">
-                                            {sale.cost}
-                                        </div>
-                                        <div className="w-1/4 p-2">
-                                            {sale.sale}
+                                            {sale.stock?.unitCost}
                                         </div>
                                         <div className="w-1/4 p-2">
                                             {sale.profit}
@@ -111,16 +96,21 @@ const TodaySales = () => {
                                 Total
                             </div>
                             <div className="w-1/4 p-2">
+                                {
+                                    todaySales.reduce((a, b) => {
+                                        return a + b.quantity
+                                    }, 0)
+                                }
+                            </div>
+                            <div className="w-1/4 p-2">
+                                {
+                                    todaySales.reduce((a, b) => {
+                                        return a + b.stock.unitCost
+                                    }, 0)
+                                }
+                            </div>
+                            <div className="w-1/4 p-2">
 
-                            </div>
-                            <div className="w-1/4 p-2">
-                                7,300,000
-                            </div>
-                            <div className="w-1/4 p-2">
-                                6,070,000
-                            </div>
-                            <div className="w-1/4 p-2">
-                                4,900,000
                             </div>
 
                         </div>

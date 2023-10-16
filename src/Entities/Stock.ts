@@ -7,9 +7,10 @@ import {
   ManyToMany,
   In,
   ManyToOne,
+  OneToMany
 } from "typeorm";
-// import { Student } from "./Student";
 import { Category } from "./Category";
+import  { Sales } from "./Sales";
 
 @Entity()
 export class Stock extends BaseEntity {
@@ -40,13 +41,19 @@ export class Stock extends BaseEntity {
     eager: true,
   })
   category!: Category;
+
+  @OneToMany(() => Sales, (sales) => sales.stock)
+  sales!: Sales[];
 }
 
-export const getStocks = async () => {
+export const getStocks = async (
+  page = 1,
+) => {
   const stocks = await Stock.find({
     order: {
       id: "DESC",
     },
+    take: 30 * page,
   });
   return stocks;
 };
@@ -150,5 +157,15 @@ export const restock = async (
 
   await stock.save();
 
+  return stock;
+}
+
+
+export const searchStock = async (name: string) => {
+  const stock = await Stock.find({
+    where: {
+      name: name,
+    }
+  });
   return stock;
 }
