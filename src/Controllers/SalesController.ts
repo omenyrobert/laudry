@@ -20,7 +20,7 @@ export const getSalesController = async (req: Request, res: Response) => {
 
 export const createSalesController = async (req: Request, res: Response) => {
   try {
-    const {sales} = req.body;
+    const {sales, customerId, paymentDate} = req.body;
     if (!sales) {
       return res
         .json(customPayloadResponse(false, "Sales Required"))
@@ -38,7 +38,7 @@ export const createSalesController = async (req: Request, res: Response) => {
       if (!date || !quantity || !stockId) {
         continue
       }
-      await createSale(date, quantity, stockId);
+      await createSale(date, quantity, stockId, customerId, paymentDate);
     }
 
     return res

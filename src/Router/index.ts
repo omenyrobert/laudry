@@ -36,6 +36,7 @@ import CategoriesRoutes from "./CategoriesRoutes";
 import StockRoutes from "./StockRoutes";
 import ExpensesRoutes from "./ExpensesRoutes";
 import SalesRoutes from "./SalesRoutes";
+import CustomerRoutes from "./CustomerRoutes";
 
 const router = Router();
 
@@ -52,5 +53,6 @@ export default (): Router => {
   StockRoutes(router);
   ExpensesRoutes(router);
   SalesRoutes(router);
+  CustomerRoutes(router);
   return router;
 };

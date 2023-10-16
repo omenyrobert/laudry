@@ -6,7 +6,8 @@ import {
   createStock,
   deleteStock,
   getSingleStock,
-  restock
+  restock,
+  searchStock
 } from "../Entities/Stock";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -181,6 +182,25 @@ export const handleResctock = async (req: Request, res: Response) => {
       .status(200)
       .end();
     
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const handleSearchStock = async (req: Request, res: Response) => {
+  try {
+    const { search } = req.query;
+    if (!search) {
+      return res
+        .json(customPayloadResponse(false, "Search Required"))
+        .status(200)
+        .end();
+    }
+    const stocks = await searchStock(search.toString());
+    return res
+      .json(customPayloadResponse(true, stocks))
+      .status(200)
+      .end();
   } catch (error) {
     console.log(error);
   }

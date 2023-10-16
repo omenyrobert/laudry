@@ -14,7 +14,7 @@ import Loader from '../Loader'
 
 const CustomersTable = (props) => {
   const {
-    deletecustomersInfo,
+    customersData,
   } = props
 
 
@@ -52,60 +52,6 @@ const CustomersTable = (props) => {
 
   const [loadingp, setLoadingp] = useState(false)
   const [payments, setPayments] = useState([])
-  const pays = [
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-    { id: 1, date: "10-10-2023", paid: 23000, balance: 44000 },
-  ]
-  const fetchPayments = async () => {
-    try {
-      setLoadingp(true)
-      let res = await axiosInstance.get("/suppliers");
-      if (res.status) {
-        setLoadingp(false)
-        setPayments(res.data.payload);
-        console.log('customers', res.data.payload)
-      }
-    } catch (error) {
-      console.log(error)
-
-    }
-  }
-
-  const addPayments = async () => {
-    if (date && amount) {
-      try {
-        setAdding(true)
-        let formData = {
-          date: date,
-          amount: amount,
-          customerId: customerId
-        }
-
-        let res = await axiosInstance.post("/pay", formData);
-        if (res.status === "SUCCESS") {
-          setDate("")
-          setAmount("")
-          setAdding(false)
-          fetchCustomers();
-        }
-
-      } catch (error) {
-        console.log(error)
-      } finally {
-        setAdding(false)
-      }
-    }
-  }
 
 
 
@@ -117,104 +63,9 @@ const CustomersTable = (props) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
-
   const [posting, setPosting] = useState("");
-
-  const UpdateCustomer = async () => {
-    if (name !=="" && email !=="" && phone !=="" && location !=="") {
-      try {
-        setPosting(true);
-        let formData = {
-          supplierName: name,
-          emails: email,
-          contacts: phone,
-          address: location,
-          about: "location"
-        }
-
-        let res = await axiosInstance.post("/suppliers", formData);
-        if (res.status) {
-          setPosting(true);
-          setName("");
-          setEmail("");
-          setPhone("");
-          setLocation("");
-          const MySwal = withReactContent(Swal);
-          MySwal.fire({
-            icon: "success",
-            showConfirmButton: false,
-            timer: 500,
-          });
-          fetchCustomers();
-          closeModal();
-        }
-
-      } catch (error) {
-        setPosting(false)
-        console.log(error)
-      } finally {
-        setPosting(false)
-      }
-    }
-  }
-
-
   const [loading, setLoading] = useState(false)
-  const [customersData, setCustomersData] = useState([])
 
-  const fetchCustomers = async () => {
-    try {
-      setLoading(true);
-      let res = await axiosInstance.get("/suppliers");
-      if (res.status) {
-        setLoading(false)
-        setCustomersData(res.data.payload)
-        console.log('customerss',res.data.payload);
-      }
-    } catch (error) {
-      setLoading(false)
-    } finally {
-      setLoading(false)
-    }
-
-  }
-
-  useEffect(() => {
-    fetchCustomers();
-  }, [])
-
-
-  const deleteCustomer = (customer) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axiosInstance.delete(
-            `/suppliers/${customer.id}`
-          );
-          const { data } = response;
-          const { status } = data;
-          if (status) {
-            fetchCustomers()
-            Swal.fire({
-              icon: "success",
-              showConfirmButton: false,
-              timer: 500,
-            });
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    });
-  };
 
 
 
@@ -232,31 +83,7 @@ const CustomersTable = (props) => {
           <tbody>
             {customersData?.map((customer) => {
               return (
-                <tr
-                  className="shadow-sm border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"
-                  key={customer.id}
-                >
-                  <td className="text-sm p-3 text-gray5" >
-                    {customer.supplierName}
-                  </td>
-
-                  <td className="text-sm p-3 text-gray5">
-                    {customer.contacts}
-                  </td>
-                  <td className="text-sm p-3 text-gray5">
-                    {customer.emails}
-                  </td>
-                  <td className="text-sm p-3 text-gray5">
-                    {customer.address}
-                  </td>
-                 
-                  <td className="text-xs flex p-3 text-gray5">
-                    <BsTrash onClick={() => deleteCustomer(customer)} className='text-red' />
-                    <BsPencilSquare onClick={() => openModal(customer)} className='text-yellow mx-5' />
-                    <p onClick={() => openModal2(customer)} className='px-1 bg-primary rounded-full -mt-1 cursor-pointor font-bold text-white'>A</p>
-                  </td>
-
-                </tr>
+                <Customer customer={customer} openModal2={openModal2} openModal={openModal} />
               )
             })}
           </tbody>
@@ -294,7 +121,7 @@ const CustomersTable = (props) => {
                   <ButtonSecondary value={"Close"} />
                 </div>
                 <div className='20'>
-                  {posting ? <ButtonLoader /> : <div onClick={UpdateCustomer}>
+                  {posting ? <ButtonLoader /> : <div onClick={() => { }}>
                     <Button value={"Update "} />
                   </div>}
 
@@ -352,7 +179,7 @@ const CustomersTable = (props) => {
                   <div className='p-2'>
                     2,000,000
                   </div>
-                   <div className='p-2'>
+                  <div className='p-2'>
                     12-10-2023
                   </div>
 
@@ -366,7 +193,7 @@ const CustomersTable = (props) => {
                   </div>
                   <div className='w-42 mt-6 p-2'>
                     {adding ? <ButtonLoader /> :
-                      <div onClick={addPayments}>
+                      <div onClick={() => { }}>
                         <Button value={"Add Payment"} />
                       </div>}
 
@@ -388,7 +215,7 @@ const CustomersTable = (props) => {
                 {loadingp ? <div className='w-full h-52 flex justify-center items-center'> <Loader /> </div> : null}
 
                 <div className='h-[calc(100vh-300px)] overflow-y-auto'>
-                  {pays.map((pay) => {
+                  {[].map((pay) => {
                     return (
                       <div className='flex mx-3 border-b cursor-pointer text-sm text-gray5 border-gray1 hover:bg-gray1'>
                         <div className='w-1/3 p-2'>
@@ -426,3 +253,34 @@ const CustomersTable = (props) => {
 }
 
 export default CustomersTable
+
+
+export const Customer = ({ customer, openModal2, openModal }) => {
+  return (
+    <tr
+      className="shadow-sm border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"
+      key={customer.id}
+    >
+      <td className="text-sm p-3 text-gray5" >
+        {customer.name}
+      </td>
+
+      <td className="text-sm p-3 text-gray5">
+        {customer.phone}
+      </td>
+      <td className="text-sm p-3 text-gray5">
+        {customer.email}
+      </td>
+      <td className="text-sm p-3 text-gray5">
+        {customer.location}
+      </td>
+
+      <td className="text-xs flex p-3 text-gray5">
+        <BsTrash onClick={() => { }} className='text-red' />
+        <BsPencilSquare onClick={() => openModal(customer)} className='text-yellow mx-5' />
+        <p onClick={() => openModal2(customer)} className='px-1 bg-primary rounded-full -mt-1 cursor-pointor font-bold text-white'>A</p>
+      </td>
+
+    </tr>
+  )
+}

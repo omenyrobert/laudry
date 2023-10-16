@@ -7,7 +7,8 @@ import {
   ManyToMany,
   In,
   ManyToOne,
-  OneToMany
+  OneToMany,
+  Like,
 } from "typeorm";
 import { Category } from "./Category";
 import  { Sales } from "./Sales";
@@ -164,7 +165,8 @@ export const restock = async (
 export const searchStock = async (name: string) => {
   const stock = await Stock.find({
     where: {
-      name: name,
+      // check if name contains the name 
+      name: Like(`%${name}%`)
     }
   });
   return stock;

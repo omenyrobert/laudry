@@ -1,8 +1,8 @@
-// src/entities/Customer.ts
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from 'typeorm';
+import { Sales } from './Sales';
 
 @Entity()
-export class Customer {
+export class Customer extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -17,4 +17,83 @@ export class Customer {
 
   @Column()
   phone: string;
+
+  @OneToMany(() => Sales, (sales) => sales.customer, {
+    onDelete: "CASCADE",
+  })
+  sales!: Sales[];
 }
+
+
+export const createCustomer = async (
+  name: string,
+  email: string,
+  location: string,
+  phone: string
+) => {
+  const customer = new Customer();
+  customer.name = name;
+  customer.email = email;
+  customer.location = location;
+  customer.phone = phone;
+  return customer.save();
+}
+
+export const getCustomers = async () => {
+  return Customer.find();
+}
+
+export const deleteCustomer = async (id: number) => {
+  const customer = await Customer.findOne({
+    where: {
+      id
+    }
+  });
+  
+  if (!customer) {
+    throw new Error('Customer not found');
+  }
+
+  return customer.remove();
+
+}
+
+
+export const updateCustomer = async (
+  id: number,
+  name: string,
+  email: string,
+  location: string,
+  phone: string
+) => {
+  const customer = await Customer.findOne({
+    where: {
+      id
+    }
+  });
+  
+  if (!customer) {
+    throw new Error('Customer not found');
+  }
+
+  customer.name = name;
+  customer.email = email;
+  customer.location = location;
+  customer.phone = phone;
+  return customer.save();
+}
+
+export const getCustomer = async (id: number) => {
+  const customer = await Customer.findOne({
+    where: {
+      id
+    }
+  });
+  
+  if (!customer) {
+    throw new Error('Customer not found');
+  }
+
+  return customer;
+}
+

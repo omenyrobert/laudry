@@ -2,7 +2,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, TableForeignKey } from 'typeorm';
 
 @Entity()
-export class Customer {
+export class CustomerPayments {
   @PrimaryGeneratedColumn()
   id: number;
 

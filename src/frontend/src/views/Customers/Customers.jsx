@@ -6,7 +6,6 @@ import { BsSearch } from 'react-icons/bs'
 import Select from 'react-select'
 import { Link } from 'react-router-dom'
 import Button2 from '../../components/Button2'
-// import { FaFilter } from "react-icons/fa";
 import ButtonAlt from '../../components/ButtonAlt'
 import CustomersTable from '../../components/Customers/CustomersTable'
 import { testcustomersData } from '../../components/Customers/Customers'
@@ -15,10 +14,19 @@ import axiosInstance from '../../axios-instance'
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Loader from '../../components/Loader'
+import { useDispatch, useSelector } from 'react-redux'
+import { getCustomers } from '../../store/slices/store'
+import { useFeedback } from '../../hooks/feedback'
 
 const Customers = () => {
-
+  const dispatch = useDispatch()
+  const { customers } = useSelector((state) => state.autocountStore)
   const [modal, setModal] = useState(false)
+  const { toggleFeedback } = useFeedback()
+
+  useEffect(() => {
+    dispatch(getCustomers())
+  }, [dispatch])
 
   const openModal = () => {
     setModal(true);
@@ -31,6 +39,8 @@ const Customers = () => {
 
 
 
+
+
   const [name, setName] = useState("")
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -39,39 +49,49 @@ const Customers = () => {
   const [posting, setPosting] = useState("");
 
   const postCustomer = async () => {
-    if (name !== "" && email !== "" && phone !== "" && location !== "") {
-      try {
-        setPosting(true);
-        let formData = {
-          supplierName: name,
-          emails: email,
-          contacts: phone,
-          address: location,
-          about: "location"
-        }
-        let res = await axiosInstance.post("/suppliers", formData);
-        if (res.status) {
-          setPosting(true);
-          setName("");
-          setEmail("");
-          setPhone("");
-          setLocation("");
-          const MySwal = withReactContent(Swal);
-          MySwal.fire({
-            icon: "success",
-            showConfirmButton: false,
-            timer: 500,
-          });
-          // fetchCustomers();
-          closeModal();
-        }
+    if (name === "" || email === "" || phone === "" || location === "") {
+      toggleFeedback("error", {
+        title: "Error",
+        message: "Please Fill All Fields",
+      });
+      return;
+    }
+    try {
+      setPosting(true);
+      const response = await axiosInstance.post("/customers", {
+        name,
+        email,
+        phone,
+        location,
+      });
 
-      } catch (error) {
-        setPosting(false)
-        console.log(error)
-      } finally {
-        setPosting(false)
+      const { status, payload } = response.data
+
+      if (status) {
+        toggleFeedback("success", {
+          title: "Success",
+          message: "Customer Added Successfully",
+        });
+        dispatch(getCustomers())
+        setName("");
+        setEmail("");
+        setPhone("");
+        setLocation("");
+        setPosting(false);
+        closeModal();
+      } else {
+        toggleFeedback("error", {
+          title: "Error",
+          message: payload,
+        });
+        setPosting(false);
       }
+    } catch (error) {
+      toggleFeedback("error", {
+        title: "Error",
+        message: error.message,
+      });
+      setPosting(false);
     }
   }
 
@@ -163,7 +183,7 @@ const Customers = () => {
           </div> : null}
 
 
-          <CustomersTable customersData={testcustomersData} />
+          <CustomersTable customersData={customers} />
 
         </div>
       </div>

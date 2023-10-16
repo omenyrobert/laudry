@@ -37,6 +37,13 @@ export const getTodaySales = createAsyncThunk("/autocount/todaySales", async () 
 });
 
 
+export const getCustomers = createAsyncThunk("/autocount/customers", async () => {
+	const customers = await axiosInstance.get("/customers");
+	const { data } = customers;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
 export const autoCountSlices = createSlice({
 	name: "AutoCountStore",
 	initialState: {
@@ -44,11 +51,13 @@ export const autoCountSlices = createSlice({
 		stock: [],
 		sales: [],
 		todaySales: [],
+		customers: [],
 		loading: {
 			cartegories: false,
 			stock: false,
 			sales: false,
 			todaySales: false,
+			customers: false,
 		},
 	},
 	extraReducers: {
@@ -91,6 +100,16 @@ export const autoCountSlices = createSlice({
 		},
 		[getTodaySales.rejected]: (state) => {
 			state.loading.todaySales = false;
+		},
+		[getCustomers.pending]: (state) => {
+			state.loading.customers = true;
+		},
+		[getCustomers.fulfilled]: (state, action) => {
+			state.loading.customers = false;
+			state.customers = action.payload;
+		},
+		[getCustomers.rejected]: (state) => {
+			state.loading.customers = false;
 		},
 	},
 });

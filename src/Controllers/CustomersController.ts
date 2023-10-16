@@ -1,44 +1,32 @@
-// // src/app.ts
-// import express from 'express';
-// import { createConnection } from 'typeorm';
-// import { Customer } from '../Entities/Customer';
+import { Request, Response } from "express";
+import { customPayloadResponse } from "../Helpers/Helpers";
+import { getCustomers, createCustomer } from "../Entities/Customer";
 
-// const app = express();
-// app.use(express.json());
 
-// // Configure CORS as needed
+export const createCustomerController = async (req: Request, res: Response) => {
+  try {
+    const { name, email, location, phone } = req.body;
+    if (!name || !email || !location || !phone) {
+      return res
+        .json(customPayloadResponse(false, "All fields are required"))
+        .status(200)
+        .end();
+    }
 
-// // CRUD routes
-// app.get('/customers', async (req, res) => {
-//   const Customers = await Customer.find();
-//   res.json(Customers);
-// });
+    const customer = await createCustomer(name, email, location, phone);
+    return res.json(customPayloadResponse(true, customer)).status(200).end();
+  } catch (error) {
+    console.log(error)
+    return res.json(customPayloadResponse(false, "Internal Server Error")).status(500).end();
+  }
+}
 
-// app.post('/customers', async (req, res) => {
-//   const Customer = new Customer(req.body);
-//   await Customer.save();
-//   res.status(201).json(Customer);
-// });
-
-// app.put('/Customers/:id', async (req, res) => {
-//   const { id } = req.params;
-//   const Customer = await Customer.findOne(id);
-//   if (!Customer) {
-//     return res.status(404).json({ message: 'Customer not found' });
-//   }
-//   Object.assign(Customer, req.body);
-//   await Customer.save();
-//   res.json(Customer);
-// });
-
-// app.delete('/Customers/:id', async (req, res) => {
-//   const { id } = req.params;
-//   const Customer = await Customer.findOne(id);
-//   if (!Customer) {
-//     return res.status(404).json({ message: 'Customer not found' });
-//   }
-//   await Customer.remove();
-//   res.status(204).end();
-// });
-
-// export default app;
+export const getCustomersController = async (req: Request, res: Response) => {
+  try {
+    const customers = await getCustomers();
+    return res.json(customPayloadResponse(true, customers)).status(200).end();
+  } catch (error) {
+    console.log(error)
+    return res.json(customPayloadResponse(false, "Internal Server Error")).status(500).end();
+  }
+}

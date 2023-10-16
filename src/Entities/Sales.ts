@@ -10,6 +10,8 @@ import {
   Between
 } from "typeorm";
 import { Stock } from "./Stock";
+import { Customer } from "./Customer";
+
 
 @Entity()
 export class Sales extends BaseEntity {
@@ -22,11 +24,22 @@ export class Sales extends BaseEntity {
   @Column()
   quantity!: number;
 
+  @Column({
+    default: true,
+  })
+  paid!: boolean;
+
   @ManyToOne(() => Stock, (stock) => stock.sales, {
     onDelete: "CASCADE",
     eager: true,
   })
   stock!: Stock;
+
+  @ManyToOne(() => Customer, (customer) => customer.sales, {
+    onDelete: "CASCADE",
+    eager: true,
+  })
+  customer!: Customer;
 
 }
 
@@ -34,7 +47,9 @@ export class Sales extends BaseEntity {
 export const createSale = async (
   date: string,
   quantity: number,
-  stockId: number
+  stockId: number,
+  customerId: number | null = null,
+  paymentDate: string | null = null,
 ) => {
   const stock = await Stock.findOne({
     where: {
@@ -42,15 +57,32 @@ export const createSale = async (
     },
   });
 
+  let customer = null 
+  if (customerId) {
+    customer = await Customer.findOne({
+      where: {
+        id: customerId,
+      },
+    });
+  }
+
   if (!stock) {
     throw new Error("Stock not found");
   }
 
-  const sales = Sales.create({
-    date,
-    quantity,
-    stock,
-  });
+  const sales = new Sales();
+  sales.date = new Date(date);
+  sales.quantity = quantity;
+  sales.stock = stock;
+  
+  if (customer) {
+    sales.customer = customer;
+    sales.paid = false;
+    if (paymentDate) {
+      sales.date = new Date(paymentDate);
+    }
+  }
+
 
   await sales.save();
 

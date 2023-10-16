@@ -21,7 +21,7 @@ import { useFeedback } from "../hooks/feedback";
 const Stock = () => {
     const [modal, setModal] = useState(false)
     const dispatch = useDispatch();
-    const { cartegories } = useSelector(state => state.autocountStore)
+    const { cartegories, stock: allStock } = useSelector(state => state.autocountStore)
     const [cartegoryOptions, setCartegoryOptions] = useState([])
     const { toggleFeedback } = useFeedback()
 
@@ -211,11 +211,12 @@ const Stock = () => {
     const [loading, setLoading] = useState(false)
 
     const [stocks, setstocks] = useState([]);
+    const [page, setPage] = useState(1);
 
     const fetchstocks = async () => {
         try {
             setLoading(true)
-            let res = await axiosInstance.get("/stock");
+            let res = await axiosInstance.get("/stock?page=" + page);
             if (res.status) {
                 setLoading(false);
                 setstocks(res.data.payload);
@@ -231,7 +232,7 @@ const Stock = () => {
 
     useEffect(() => {
         fetchstocks()
-    }, []);
+    }, [page]);
 
 
 
@@ -341,6 +342,20 @@ const Stock = () => {
         }
     }
 
+    // search
+    const [search, setSearch] = useState("")
+    async function searchStock() {
+        try {
+            const response = await axiosInstance.get(`/stock/search?search=${search}`);
+            const { status, payload } = response.data
+            if (status) {
+                setstocks(payload)
+            }
+        } catch (error) {
+
+        }
+    }
+
 
 
     return (
@@ -428,12 +443,15 @@ const Stock = () => {
                 <div className="w-4/12 ">
                     <InputField
                         type="text"
-                        placeholder="Search For Student ..."
+                        placeholder="Search Stock ..."
                         name="lastName"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                         icon={
                             <BsSearch
                                 className="w-3 -ml-7 mt-3 cursor-pointer"
                                 type="button"
+                                onClick={searchStock}
                             />
                         }
                     />
@@ -561,6 +579,10 @@ const Stock = () => {
                 </table>
                 {loading ? <div className="flex justify-center mt-[10vh]"> <Loader />  </div> :
                     null}
+                <div className="flex justify-center mt-5">
+                    <ButtonAlt value={"Load More"} onClick={() => setPage(page + 1)} />
+                </div>
+
             </div>
 
 

@@ -9,21 +9,38 @@ import TodaySales from "../components/TodaySales";
 import Select from "react-select"
 import Expenses from "../components/Expenses";
 import { useDispatch, useSelector } from "react-redux"
-import { getStock } from "../store/slices/store";
+import { getCustomers, getStock } from "../store/slices/store";
 import axiosInstance from "../axios-instance";
 import { useFeedback } from "../hooks/feedback";
 
 
 const Sales = () => {
     const dispatch = useDispatch()
-    const { stock } = useSelector((state) => state.autocountStore)
+    const { stock, customers, loading } = useSelector((state) => state.autocountStore)
     const [cart, setCart] = useState([])
     const { toggleFeedback } = useFeedback()
-
+    const [customerOptions, setCustomerOptions] = useState([])
 
     useEffect(() => {
-        dispatch(getStock())
+        const options = customers.map((customer) => {
+            return {
+                value: customer.id,
+                label: customer.name,
+                ...customer
+            }
+        })
+        setCustomerOptions(options)
+    }, [customers])
+
+    const [page, setPage] = useState(1)
+
+    useEffect(() => {
+        dispatch(getCustomers())
     }, [dispatch])
+
+    useEffect(() => {
+        dispatch(getStock(page))
+    }, [dispatch, page])
 
 
     // Function to add an item to the cart
@@ -76,6 +93,8 @@ const Sales = () => {
     }, [cart]);
 
     const [makeSaleLoading, setMakeSaleLoading] = useState(false)
+    const [customerId, setCustomerId] = useState(null)
+    const [paymentDate, setPaymentDate] = useState("")
 
     async function makeSale() {
         if (cart.length === 0) {
@@ -83,13 +102,23 @@ const Sales = () => {
                 title: "Error",
                 text: "Please add items to the cart",
             })
+            return
         }
+        if (customerId && paymentDate === "") {
+            toggleFeedback("error", {
+                title: "Error",
+                text: "Please select a payment date",
+            })
+            return
+        }
+
         try {
             setMakeSaleLoading(true)
             const res = await axiosInstance.post("/sales", {
-                sales: cart
+                sales: cart,
+                customerId: customerId,
+                paymentDate: paymentDate
             })
-            console.log(res.data)
             const { status, payload } = res.data
             if (status) {
                 toggleFeedback("success", {
@@ -114,6 +143,22 @@ const Sales = () => {
         }
     }
 
+    // implement search 
+    const [search, setSearch] = useState("")
+    const [filteredStock, setFilteredStock] = useState([])
+
+    useEffect(() => {
+        if (search === "") {
+            setFilteredStock(stock)
+            return
+        }
+        const filtered = stock.filter((item) => {
+            return item.name.toLowerCase().includes(search.toLowerCase())
+        })
+        setFilteredStock(filtered)
+    }, [search, stock])
+
+
 
 
     return (
@@ -132,6 +177,8 @@ const Sales = () => {
                             type="text"
                             placeholder="Search For Student ..."
                             name="lastName"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
                             icon={
                                 <BsSearch
                                     className="w-3 -ml-7 mt-3 cursor-pointer"
@@ -144,7 +191,7 @@ const Sales = () => {
                         <Expenses />
                     </div>
                 </div>
-                {stock.map((item) => {
+                {filteredStock.map((item) => {
                     return (
                         <div onClick={() => addItemToCart({
                             ...item,
@@ -166,6 +213,21 @@ const Sales = () => {
                     )
                 })}
 
+                <div className="flex justify-center">
+                    {
+                        loading.stock ? (
+                            <div className="bg-primary p-2 rounded-md text-white cursor-pointer">
+                                Loading...
+                            </div>
+                        ) : (
+                            <div onClick={() => setPage(page + 1)} className="bg-primary p-2 rounded-md text-white cursor-pointer">
+                                Load More
+                            </div>
+                        )
+                    }
+
+                </div>
+
             </div>
             <div className="w-[45%] rounded-md shadow bg-white  ml-2">
                 <div className="flex justify-between">
@@ -173,15 +235,15 @@ const Sales = () => {
                         <Select
                             className="w-full mt-2 ml-2"
                             placeholder="Select Customer"
-                            options={[
-                                { value: 'Omeny Robert', label: 'Omeny Robert' },
-                                { value: 'William Omiel', label: 'William Omiel' },
-                                { value: 'Mujuni Brian', label: 'Mujuni Brian' },
-                            ]}
+                            options={customerOptions}
+                            onChange={(e) => setCustomerId(e.id)}
                         />
                     </div>
                     <div className="-mt-3">
-                        <InputField type="date" />
+                        <InputField
+                            type="date"
+                            onChange={(e) => setPaymentDate(e.target.value)}
+                        />
                     </div>
 
                     <TodaySales />
