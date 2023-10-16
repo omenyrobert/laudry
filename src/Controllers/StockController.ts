@@ -5,7 +5,8 @@ import {
   updateStock,
   createStock,
   deleteStock,
-  getSingleStock
+  getSingleStock,
+  restock
 } from "../Entities/Stock";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -29,24 +30,6 @@ export const addStock = async (req: Request, res: Response) => {
       unitSell,
       categoryId,
       warningAt } = req.body;
-    // if (!name) {
-    //   return res
-    //     .json(customPayloadResponse(false, "name Required"))
-    //     .status(200)
-    //     .end();
-    // }
-    // if (!date) {
-    //   return res
-    //     .json(customPayloadResponse(false, "To Required"))
-    //     .status(200)
-    //     .end();
-    // }
-    // if (!qty) {
-    //   return res
-    //     .json(customPayloadResponse(false, "qty Required"))
-    //     .status(200)
-    //     .end();
-    // }
     await createStock(
       name,
       date,
@@ -110,65 +93,7 @@ export const modifyStock = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
-// export const modifyStock = async (req: Request, res: Response) => {
-//   try {
-//     const {
-//       stockId,
-//       name,
-//       date,
-//       qty,
-//       unitCost,
-//       unitSell,
-//       categoryId,
-//       warningAt, } = req.body;
-//     if (!name) {
-//       return res
-//         .json(customPayloadResponse(false, "name Required"))
-//         .status(200)
-//         .end();
-//     }
-//     if (!date) {
-//       return res
-//         .json(customPayloadResponse(false, "date Required"))
-//         .status(200)
-//         .end();
-//     }
-//     if (!qty) {
-//       return res
-//         .json(customPayloadResponse(false, "qty Required"))
-//         .status(200)
-//         .end();
-//     }
-//     if (!stockId) {
-//       return res
-//         .json(customPayloadResponse(false, "Term Id Required"))
-//         .status(200)
-//         .end();
-//     }
-//     if (selected === 1) {
-//       const selectedTerm = await getTermBySelect();
-//       if (selectedTerm === null) {
-//         await updateTerm(stockId, to, from, term, selected);
-//       } else {
-//         await updateTerm(
-//           selectedTerm.id,
-//           selectedTerm.to,
-//           selectedTerm.from,
-//           selectedTerm.term,
-//           0
-//         );
-//         await updateTerm(stockId, to, from, term, selected);
-//       }
-//     }
 
-//     return res
-//       .json(customPayloadResponse(true, "Term Updated"))
-//       .status(200)
-//       .end();
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 export const removeStock = async (req: Request, res: Response) => {
   try {
@@ -191,21 +116,68 @@ export const removeStock = async (req: Request, res: Response) => {
 };
 
 
-// get selected term
-// export const getSelectedTerm = async (req: Request, res: Response) => {
-//   try {
-//     const term = await getTermBySelect();
-//     if (term) {
-//       return res.json(customPayloadResponse(true, term)).status(200).end();
-//     }
-//     return res
-//       .json(customPayloadResponse(false, "Term not Found"))
-//       .status(200)
-//       .end();
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 
 
+export const handleResctock = async (req: Request, res: Response) => {
+  try {
+    const { 
+      id,
+      qty,
+      unitCost,
+      unitSell,
+      date
+    } = req.body;
+
+    if (!id) {
+      return res
+        .json(customPayloadResponse(false, "Stock Id Required"))
+        .status(200)
+        .end();
+    }
+
+    if (!qty) {
+      return res
+        .json(customPayloadResponse(false, "Stock Qty Required"))
+        .status(200)
+        .end();
+    }
+
+    if (!unitCost) {
+      return res
+        .json(customPayloadResponse(false, "Stock Unit Cost Required"))
+        .status(200)
+        .end();
+    }
+
+    if (!unitSell) {
+      return res
+        .json(customPayloadResponse(false, "Stock Unit Sell Required"))
+        .status(200)
+        .end();
+    }
+
+    if (!date) {
+      return res
+        .json(customPayloadResponse(false, "Stock Date Required"))
+        .status(200)
+        .end();
+    }
+
+    const stock = await restock(
+      id,
+      qty,
+      unitCost,
+      unitSell,
+      date
+    );
+
+    return res
+      .json(customPayloadResponse(true, stock))
+      .status(200)
+      .end();
+    
+  } catch (error) {
+    console.log(error);
+  }
+}

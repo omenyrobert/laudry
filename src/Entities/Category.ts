@@ -3,7 +3,9 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
+  OneToMany,
 } from "typeorm";
+import { Stock } from "./Stock";
 
 @Entity()
 export class Category extends BaseEntity {
@@ -12,6 +14,10 @@ export class Category extends BaseEntity {
 
   @Column()
   type!: string;
+
+  @OneToMany(() => Stock, (stock) => stock.category)
+  stocks!: Stock[];
+
 }
 
 export const getCategories = async () => {

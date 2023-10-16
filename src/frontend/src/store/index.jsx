@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import schoolSheetReducer from "./schoolSheetSlices/schoolStore";
+import autoCoutReducer from "./slices/store";
 
 const store = configureStore({
-	reducer: { schoolStore: schoolSheetReducer },
+	reducer: { autocountStore: autoCoutReducer },
 });
 export default store;

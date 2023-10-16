@@ -6,9 +6,10 @@ import {
   BaseEntity,
   ManyToMany,
   In,
+  ManyToOne,
 } from "typeorm";
 // import { Student } from "./Student";
-// import { category } from "./Category";
+import { Category } from "./Category";
 
 @Entity()
 export class Stock extends BaseEntity {
@@ -33,11 +34,12 @@ export class Stock extends BaseEntity {
   @Column()
   warningAt!: number;
 
-  @Column()
-  categoryId!: number;
 
-  // @ManyToMany(() => category, (category) => category.type)
-  // categories: [];
+  @ManyToOne(() => Category, (category) => category.stocks, {
+    onDelete: "CASCADE",
+    eager: true,
+  })
+  category!: Category;
 }
 
 export const getStocks = async () => {
@@ -58,16 +60,26 @@ export const createStock = async (
   categoryId: number,
   warningAt: number,
 ) => {
-  const stockToInsert = await Stock.insert({
-    name,
-    date,
-    qty,
-     unitCost,
-    unitSell,
-    categoryId,
-    warningAt
-  });
-  return stockToInsert;
+
+  const category = await Category.findOne({ where: { id: categoryId } });
+
+
+  const stock = new Stock();
+  stock.name = name;
+  stock.date = date;
+  stock.qty = qty;
+  stock.unitCost = unitCost;
+  stock.unitSell = unitSell;
+
+  if (category) {
+    stock.category = category;
+  }
+
+  stock.warningAt = warningAt;
+
+  await stock.save();
+
+  return stock;
 };
 
 export const deleteStock = async (id: number) => {
@@ -87,16 +99,29 @@ export const updateStock = async (
   categoryId: number,
   warningAt: number,
 ) => {
-  const stockUpdate = await Stock.update(id, {
-    name: name,
-    date: date,
-    qty: qty,
-    unitCost: unitCost,
-    unitSell: unitSell,
-    categoryId: unitSell,
-    warningAt: warningAt
-  });
-  return stockUpdate;
+  const category = await Category.findOne({ where: { id: categoryId } });
+
+  const stock = await Stock.findOne({ where: { id: id } });
+
+  if (!stock) {
+    throw new Error("Stock not found!");
+  }
+
+  stock.name = name;
+  stock.date = date;
+  stock.qty = qty;
+  stock.unitCost = unitCost;
+  stock.unitSell = unitSell;
+
+  if (category) {
+    stock.category = category;
+  }
+
+  stock.warningAt = warningAt;
+
+  await stock.save();
+
+  return stock;
 };
 
 export const getSingleStock = async (id: number) => {
@@ -104,14 +129,26 @@ export const getSingleStock = async (id: number) => {
   return stock;
 };
 
-// export const getStockBySelect = async () => {
-//   const stock = await Stock.findOne({ where: { is_selected: 1 } });
-//   return stock;
-// };
 
-// export const selectedStockIds = async (ids: any) => {
-//   const selectedstocks = await Stock.find({
-//     where: { id: In(ids) },
-//   });
-//   return selectedstocks;
-// };
+export const restock = async (
+  id: number,
+  qty: number,
+  unitCost: number,
+  unitSell: number,
+  date: string,
+) => {
+  const stock = await Stock.findOne({ where: { id: id } });
+
+  if (!stock) {
+    throw new Error("Stock not found!");
+  }
+
+  stock.qty = stock.qty + qty;
+  stock.unitCost = unitCost;
+  stock.unitSell = unitSell;
+  stock.date = date;
+
+  await stock.save();
+
+  return stock;
+}

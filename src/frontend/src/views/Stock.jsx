@@ -14,10 +14,35 @@ import ButtonLoader from "../components/ButtonLoader";
 import Loader from "../components/Loader";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { useDispatch, useSelector } from "react-redux";
+import { getCartegories, getStock } from "../store/slices/store";
+import { useFeedback } from "../hooks/feedback";
 
 const Stock = () => {
-
     const [modal, setModal] = useState(false)
+    const dispatch = useDispatch();
+    const { cartegories } = useSelector(state => state.autocountStore)
+    const [cartegoryOptions, setCartegoryOptions] = useState([])
+    const { toggleFeedback } = useFeedback()
+
+    useEffect(() => {
+        let options = []
+        cartegories.map((cartegory) => {
+            let option = {
+                value: cartegory.id,
+                label: cartegory.type,
+                ...cartegory
+            }
+            options.push(option)
+        })
+        setCartegoryOptions(options)
+    }, [cartegories])
+
+
+    useEffect(() => {
+        dispatch(getCartegories());
+        dispatch(getStock());
+    }, [dispatch]);
 
     const openModal = () => {
         setModal(true);
@@ -112,7 +137,7 @@ const Stock = () => {
     const [unitcost, setUnitCost] = useState("");
     const [unitsell, setUnitSell] = useState("");
     const [warningAt, setWarningAt] = useState("");
-    const [categoryId, setCategoryId] = useState("1");
+    const [categoryId, setCategoryId] = useState("");
     const [posting, setPosting] = useState("");
 
     const postStock = async () => {
@@ -226,92 +251,147 @@ const Stock = () => {
     const [stock, setStock] = useState("");
 
     const openModal4 = (stock) => {
+        setRStockId(stock.id)
         setModal4(true);
+        setRUnitSell(stock.unitSell);
+        setRUnitCost(stock.unitCost);
         setStockId(stock.id)
         setStock(stock.product)
+
     }
 
     const closeModal4 = () => {
         setModal4(false);
     }
 
+    // restock input values
+    const [rdate, setRDate] = useState("");
+    const [rqty, setRQty] = useState("");
+    const [runitcost, setRUnitCost] = useState("");
+    const [runitsell, setRUnitSell] = useState("");
+    const [rStockId, setRStockId] = useState("stockk");
+
+
     const restock = async () => {
-        if (date && qty && unitcost && stockId) {
-            try {
-                setRestocking(true)
-                let formData = {
-                    date: date,
-                    qty: qty,
-                    unitcost: unitcost,
-                    unitsell: unitsell,
-                    stockId: stockId,
-                }
-                let res = await axiosInstance.post("/restock", formData);
-                if (res.status === "SUCCESS") {
-                    setDate("");
-                    setQty("");
-                    setUnitCost("");
-                    setUnitSell("")
-                    setRestocking(false)
-                }
-
-            } catch (error) {
-
-            } finally {
-                setRestocking(false)
-            }
+        if (rdate === "" || rqty === "" || runitcost === "" || runitsell === "") {
+            toggleFeedback("error", {
+                title: "Error",
+                text: "Please fill all fields",
+            })
+            return
         }
 
+        try {
+            setRestocking(true)
+            let formData = {
+                date: rdate,
+                qty: rqty,
+                unitCost: runitcost,
+                unitSell: runitsell,
+                id: rStockId
+            }
+            let res = await axiosInstance.post("/stock/restock", formData)
+
+            const { status, payload } = res.data
+            if (status) {
+                toggleFeedback("success", {
+                    title: "Success",
+                    text: "Stock has been restocked",
+                })
+                setRestocking(false)
+                closeModal4()
+                fetchstocks()
+            } else {
+                toggleFeedback("error", {
+                    title: "Error",
+                    text: payload,
+                })
+                setRestocking(false)
+            }
+        } catch (error) {
+            toggleFeedback("error", {
+                title: "Error",
+                text: error.message,
+            })
+            setRestocking(false)
+        }
     }
+
+
 
     return (
         <div className="w-full bg-white rounded-md shadow pr-5">
 
             {/* stock modal */}
 
-            {modal4 ? <div className="w-[600px] ml-[30vw] -mt-[5vh] z-50 absolute bg-white shadow-2xl rounded-md border border-gray2">
-                <div className="flex bg-gray1 text-lg text-primary p-3 font-medium justify-between">
-                    <div>
-                        <p>Add More Stock</p>
+            {modal4 ? (
+                <div className="w-[600px] ml-[30vw] -mt-[5vh] z-50 absolute bg-white shadow-2xl rounded-md border border-gray2">
+                    <div className="flex bg-gray1 text-lg text-primary p-3 font-medium justify-between">
+                        <div>
+                            <p>Add More Stock</p>
+                        </div>
+                        <div>
+                            {stock}
+                        </div>
+                        <div>
+                            <p className="cursor-pointer" onClick={closeModal4}>X</p>
+                        </div>
                     </div>
-                    <div>
-                        {stock}
-                    </div>
-                    <div>
-                        <p className="cursor-pointer" onClick={closeModal4}>X</p>
-                    </div>
-                </div>
-                <div className="flex">
-                    <div className="w-1/2 p-2">
-                        <InputField value={date} onChange={(e) => setDate(e.target.value)} label="date" type="date" />
-                    </div>
-                    <div className="w-1/2 p-2">
-                        <InputField value={qty} onChange={(e) => setQty(e.target.value)} label="Qty" placeholder="Enter qty" type="number" />
-                    </div>
-
-                </div>
-                <div className="flex">
-                    <div className="w-1/2 p-2">
-                        <InputField value={unitcost} onChange={(e) => setUnitCost(e.target.value)} label="Unitcost" type="number" placeholder="enter Unitcost" />
-                    </div>
-                    <div className="w-1/2 p-2">
-                        <InputField value={unitsell} onChange={(e) => setUnitSell(e.target.value)} label="unitSell" placeholder="Enter UNitSell" type="number" />
-                    </div>
-
-                </div>
-                <div className="flex bg-gray1 text-primary p-3 justify-between">
-                    <div onClick={closeModal4}>
-                        <ButtonSecondary value={"Close"} />
-                    </div>
-                    <div className="w-20">
-                        {restocking ? <ButtonLoader /> : <div onClick={restock}>
-                            <Button value={"Add"} />
-                        </div>}
-
+                    <div className="flex">
+                        <div className="w-1/2 p-2">
+                            <InputField
+                                label="date"
+                                type="date"
+                                value={rdate}
+                                onChange={(e) => setRDate(e.target.value)}
+                            />
+                        </div>
+                        <div className="w-1/2 p-2">
+                            <InputField
+                                label="Qty"
+                                placeholder="Enter qty"
+                                type="number"
+                                value={rqty}
+                                onChange={(e) => setRQty(e.target.value)}
+                            />
+                        </div>
 
                     </div>
+                    <div className="flex">
+                        <div className="w-1/2 p-2">
+                            <InputField
+                                label="Unitcost"
+                                type="number"
+                                placeholder="enter Unitcost"
+                                value={runitcost}
+                                onChange={(e) => setRUnitCost(e.target.value)}
+                            />
+                        </div>
+                        <div className="w-1/2 p-2">
+                            <InputField
+                                label="unitSell"
+                                placeholder="Enter UNitSell"
+                                type="number"
+                                value={runitsell}
+                                onChange={(e) => setRUnitSell(e.target.value)}
+                            />
+                        </div>
+
+                    </div>
+                    <div className="flex bg-gray1 text-primary p-3 justify-between">
+                        <div onClick={closeModal4}>
+                            <ButtonSecondary value={"Close"} />
+                        </div>
+                        <div className="w-20">
+                            {restocking ? <ButtonLoader /> : <div onClick={restock}>
+                                <Button value={"Add"} />
+                            </div>}
+
+
+                        </div>
+                    </div>
                 </div>
-            </div> : null}
+            ) : null}
 
 
 
@@ -368,11 +448,8 @@ const Stock = () => {
                                 <Select
                                     className="w-full mt-2"
                                     placeholder="Select Category"
-                                    options={[
-                                        { value: 'Nails', label: 'Nails' },
-                                        { value: 'Paints', label: 'Paints' },
-                                        { value: 'Iron sheets', label: 'Iron Sheets' },
-                                    ]}
+                                    options={cartegoryOptions}
+                                    onChange={(e) => setCategoryId(e.value)}
                                 />
                             </div>
                             <div className='w-1/2 p-3 -mt-5'>
@@ -437,7 +514,7 @@ const Stock = () => {
                                     <td className="text-sm p-3 text-gray5">{stock.unitCost}</td>
                                     <td className="text-sm p-3 text-gray5">{stock.unitSell}</td>
                                     <td className="text-sm p-3 text-gray5">{stock.qty}</td>
-                                    <td className="text-sm p-3 text-gray5">{stock?.cat}</td>
+                                    <td className="text-sm p-3 text-gray5">{stock?.category?.type}</td>
                                     <td className="text-sm p-3 text-gray5 flex">
                                         <MdDeleteOutline
                                             onClick={(e) => deleteStock(stock)}
