@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ButtonAlt from "./ButtonAlt";
 import InputField from "./InputField";
 import Button from "./Button";
@@ -30,9 +30,10 @@ const Expenses = () => {
         seteDate(expense.date);
         seteAmount(expense.amount);
         seteType(expense.type);
-        seteReceivedby(expense.receivedby);
+        seteReceivedby(expense.receivedBy);
         seteExpense(expense.expense)
         setModal2(true)
+        setId(expense.id)
     }
 
     // posting sales
@@ -42,21 +43,22 @@ const Expenses = () => {
     const [etype, seteType] = useState("");
     const [ereceivedby, seteReceivedby] = useState("");
     const [eexpense, seteExpense] = useState("");
+    const [id, setId] = useState("");
 
     const updateExpense = async () => {
-        if (date && amount && type && receivedby && expense) {
 
             try {
                 setUpdating(true)
                 let formData = {
+                    id: id,
                     date: edate,
                     amount: eamount,
-                    type: etype,
-                    receivedby: ereceivedby,
+                    type: etype.label,
+                    receivedBy: ereceivedby,
                     expense: eexpense
                 }
-                let res = await axiosInstance.post("/expenses", formData);
-                if (res.status === "SUCCESS") {
+                let res = await axiosInstance.put("/expenses", formData);
+                if (res.status) {
                     setUpdating(false)
                     setDate("");
                     setAmount("");
@@ -64,6 +66,8 @@ const Expenses = () => {
                     setType("");
                     fetchExpenses();
                     setExpense("");
+                    setId("")
+                    closeModal2();
                     const MySwal = withReactContent(Swal);
                     MySwal.fire({
                         icon: "success",
@@ -76,23 +80,13 @@ const Expenses = () => {
             } finally {
                 setUpdating(false)
             }
-        }
+    
     }
 
     const closeModal2 = () => {
         setModal2(false)
     }
 
-
-    const expenses = [
-        { id: 1, date: "12-10-2023", expense: "Lunch", receivedby: "Omeny Robert 070098343", amount: 10000 },
-        { id: 1, date: "12-10-2023", expense: "Offloading cement", receivedby: "Offloaders", amount: 7000 },
-        { id: 1, date: "12-10-2023", expense: "Breakfast", receivedby: "To me", amount: 4000 },
-        { id: 1, date: "12-10-2023", expense: "Yaka", receivedby: "Mobile Moneu", amount: 20000 },
-        { id: 1, date: "12-10-2023", expense: "Transport", receivedby: "For buying stock", amount: 10000 },
-        { id: 1, date: "12-10-2023", expense: "Lunch", receivedby: "My Daily Lunch", amount: 10000 },
-        { id: 1, date: "12-10-2023", expense: "Lunch", receivedby: "My Daily Lunch", amount: 10000 },
-    ]
 
 
     // posting sales
@@ -104,19 +98,20 @@ const Expenses = () => {
     const [expense, setExpense] = useState("");
 
     const postExpense = async () => {
-        if (date && amount && type && receivedby && expense) {
-
+        // alert(type)
+        if (date !== "" && amount !== "" && type !== "" && receivedby !== "" && expense !== "") {
             try {
+                
                 setPosting(true)
                 let formData = {
                     date: date,
                     amount: amount,
-                    type: type,
-                    receivedby: receivedby,
+                    type: type.label,
+                    receivedBy: receivedby,
                     expense: expense
                 }
                 let res = await axiosInstance.post("/expenses", formData);
-                if (res.status === "SUCCESS") {
+                if (res.status) {
                     setPosting(false)
                     setDate("");
                     setAmount("");
@@ -143,14 +138,19 @@ const Expenses = () => {
     const [loading, setLoading] = useState(false);
 
     const [expenseData, setExpenseData] = useState([]);
-
+    const [total, setTotal] = useState("")
     const fetchExpenses = async () => {
         try {
             setLoading(true)
             let res = await axiosInstance.get("/expenses");
-            if (res.status === "SUCCESS") {
+            if (res.status) {
                 setLoading(false)
-                setExpenseData(res.payload.data)
+                setExpenseData(res.data.payload)
+                const sumOfAges = res.data.payload.reduce((accumulator, currentValue) => {
+                    return accumulator + currentValue.amount;
+                  }, 0);
+
+                  setTotal(sumOfAges)
             }
 
         } catch (error) {
@@ -160,6 +160,10 @@ const Expenses = () => {
         }
 
     }
+
+    useEffect(() => {
+        fetchExpenses()
+    }, [])
 
     const deleteExpense = (expense) => {
         Swal.fire({
@@ -174,7 +178,7 @@ const Expenses = () => {
             if (result.isConfirmed) {
                 try {
                     const response = await axiosInstance.delete(
-                        `/expense/${expense.id}`
+                        `/expenses/${expense.id}`
                     );
                     const { data } = response;
                     const { status } = data;
@@ -192,6 +196,14 @@ const Expenses = () => {
             }
         });
     };
+
+    const types = [
+        { label: "Utility", value: "Utility" },
+        { label: "Meals", value: "Meals" },
+        { label: "Commissions", value: "Commissions" },
+        { label: "Causal Labour", value: "Labour" },
+        { label: "Transport", value: "Transport" },
+    ]
 
 
 
@@ -243,13 +255,8 @@ const Expenses = () => {
                             <div className="w-1/3 p-2">
                                 <br />
                                 <label className="text-gray5">Expense Type</label>
-                                <Select value={etype} onChange={(e) => seteType(e.target.value)} placeholder="Select Expense Type"
-                                    options={[{ label: "Utility", value: "Utility" },
-                                    { label: "Meals", value: "Meals" },
-                                    { label: "Commissions", value: "Commissions" },
-                                    { label: "Causal Labour", value: "Labour" },
-                                    { label: "Transport", value: "Transport" },
-                                    ]} />
+                                <Select defaultValue={etype} onChange={seteType} placeholder="Select Expense Type"
+                                    options={types} />
                             </div>
                             <div className="w-1/3 p-2">
 
@@ -262,7 +269,7 @@ const Expenses = () => {
                                 <ButtonSecondary value={"Close"} />
                             </div>
                             <div className="w-32">
-                                {updating ? <ButtonLoader /> : <div onClick={updateExpense}> 
+                                {updating ? <ButtonLoader /> : <div onClick={updateExpense}>
                                     <Button value={"Update"} />
                                 </div>}
 
@@ -282,7 +289,7 @@ const Expenses = () => {
 
                         </div>
                         <div className="w-1/3 p-2">
-                            <InputField label="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount" />
+                            <InputField label="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} type="number" placeholder="Enter amount" />
 
                         </div>
                         <div className="w-1/3 p-2">
@@ -299,13 +306,8 @@ const Expenses = () => {
                         <div className="w-1/3 p-2">
                             <br />
                             <label className="text-gray5">Expense Type</label>
-                            <Select value={type} onChange={(e) => setType(e.target.value)} placeholder="Select Expense Type"
-                                options={[{ label: "Utility", value: "Utility" },
-                                { label: "Meals", value: "Meals" },
-                                { label: "Commissions", value: "Commissions" },
-                                { label: "Causal Labour", value: "Labour" },
-                                { label: "Transport", value: "Transport" },
-                                ]} />
+                            <Select defaultValue={type} onChange={setType} placeholder="Select Expense Type"
+                                    options={types} />
                         </div>
                         <div className="w-32 mt-14">
                             {posting ? <ButtonLoader /> : <div onClick={postExpense}>
@@ -346,7 +348,7 @@ const Expenses = () => {
                     {loading ? <div className="flex justify-center items-center"> <Loader /> </div> : null}
 
                     <div className="h-[calc(100vh-310px)] overflow-y-auto">
-                        {expenses.map((expense) => {
+                        {expenseData.map((expense) => {
                             return (
                                 <div className="flex hover:bg-gray1 text-sm text-gray5 border-b border-gray1 cursor-pointer">
                                     <div className="w-2/12 p-2">
@@ -356,10 +358,10 @@ const Expenses = () => {
                                         {expense.expense}
                                     </div>
                                     <div className="w-3/12 p-2">
-                                        {expense.receivedby}
+                                        {expense.receivedBy}
                                     </div>
                                     <div className="w-2/12 p-2">
-                                        meals
+                                        {expense.type}
                                     </div>
                                     <div className="w-2/12 p-2">
                                         {(expense.amount).toLocaleString()}
@@ -375,24 +377,28 @@ const Expenses = () => {
                         })}
                     </div>
                     <div className="flex bg-secondary text-white font-medium mt-2">
-                        <div className="w-1/4 p-2">
+                    <div className="w-2/12 p-2">
                             Total
                         </div>
-                        <div className="w-1/4 p-2">
+                        <div className="w-2/12 p-2">
+                            
+                        </div>
+                        <div className="w-3/12 p-2">
+                        
+                        </div>
+                        <div className="w-2/12 p-2">
+                            
+                        </div>
+                        <div className="w-2/12 p-2">
+                        {(total).toLocaleString()}
+                        </div>
 
+                        <div className="w-1/12 p-2">
+                        
                         </div>
-                        <div className="w-1/4 p-2">
 
-                        </div>
-                        <div className="w-1/4 p-2">
 
-                        </div>
-                        <div className="w-1/4 p-2">
-                            7,300,000
-                        </div>
-                        <div className="w-1/4 p-2">
-
-                        </div>
+           
 
 
                     </div>

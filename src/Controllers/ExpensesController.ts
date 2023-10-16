@@ -1,0 +1,101 @@
+import { Request, Response } from "express";
+
+import {
+  getExpenses,
+  updateExpense,
+  createExpense,
+  deleteExpense,
+  getSingleExpense
+} from "../Entities/Expense";
+
+import { customPayloadResponse } from "../Helpers/Helpers";
+
+export const fetchExpenses = async (req: Request, res: Response) => {
+  try {
+    const expenses = await getExpenses();
+    return res.json(customPayloadResponse(true, expenses)).status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const addExpenses = async (req: Request, res: Response) => {
+  try {
+    const { 
+      date,
+      amount,
+      expense,
+      receivedBy,
+      type,
+     } = req.body;
+    await createExpense(
+      date,
+    amount,
+    expense,
+    receivedBy,
+    type,);
+    return res
+      .json(customPayloadResponse(true, "Expense Added"))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const modifyExpense = async (req: Request, res: Response) => {
+  try {
+    const {
+      id,
+      date,
+      amount,
+      expense,
+      receivedBy,
+      type, } = req.body;
+    const expenseUpdate = await getSingleExpense(id);
+    if (expenseUpdate) {
+      await updateExpense(id,
+        date,
+        amount,
+        expense,
+        receivedBy,
+        type,
+        );
+      return res
+        .json(customPayloadResponse(true, "Expense Updated"))
+        .status(200)
+        .end();
+    }
+    return res
+      .json(customPayloadResponse(false, "Expense not Found"))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const removeExpense = async (req: Request, res: Response) => {
+  try {
+    const expenseId = parseInt(req.params.id);
+    const expenseToDelete = await getSingleExpense(expenseId);
+    if (expenseToDelete) {
+      await deleteExpense(expenseId);
+      return res
+        .json(customPayloadResponse(true, "Expense Deleted"))
+        .status(200)
+        .end();
+    }
+    return res
+      .json(customPayloadResponse(false, "Expense not Found"))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
+

@@ -55,7 +55,10 @@ const Banking = () => {
                     Date
                 </div>
                 <div className="w-1/4 p-2">
-                    Total income
+                    Total sales
+                </div>
+                <div className="w-1/4 p-2">
+                    Sales on Credit
                 </div>
                 <div className="w-1/4 p-2">
                     Expenses
@@ -80,6 +83,9 @@ const Banking = () => {
                                 {bank.expense}
                             </div>
                             <div className="w-1/4 p-2">
+                                {bank.expense}
+                            </div>
+                            <div className="w-1/4 p-2">
                                 {bank.bank}
                             </div>
 
@@ -92,6 +98,9 @@ const Banking = () => {
             <div className="flex bg-secondary text-white font-medium">
                 <div className="w-1/4 p-2">
                     Total
+                </div>
+                <div className="w-1/4 p-2">
+                    22,000,000
                 </div>
                 <div className="w-1/4 p-2">
                     22,000,000
