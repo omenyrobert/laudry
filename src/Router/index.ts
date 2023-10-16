@@ -34,6 +34,7 @@ import SystemRoutes from "./SystemRoutes";
 import ClassLevelRoutes from "./ClassLevelRoutes";
 import CategoriesRoutes from "./CategoriesRoutes";
 import StockRoutes from "./StockRoutes";
+import ExpensesRoutes from "./ExpensesRoutes";
 
 const router = Router();
 
@@ -73,5 +74,6 @@ export default (): Router => {
   ClassLevelRoutes(router);
   CategoriesRoutes(router);
   StockRoutes(router);
+  ExpensesRoutes(router);
   return router;
 };
