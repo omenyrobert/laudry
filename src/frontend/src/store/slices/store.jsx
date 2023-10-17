@@ -44,6 +44,52 @@ export const getCustomers = createAsyncThunk("/autocount/customers", async () =>
 	if (status) return payload;
 });
 
+export const getAllStock = createAsyncThunk("/autocount/allStock", async () => {
+	const stock = await axiosInstance.get("/stock/all");
+	const { data } = stock;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+export const getBankReport = createAsyncThunk("/autocount/bankReport", async (
+	{ startDate, endDate },
+) => {
+	const report = await axiosInstance.get("/sales/bank-report?startDate=" + startDate + "&endDate=" + endDate);
+	const { data } = report;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+
+export const getExpenseReport = createAsyncThunk("/autocount/expenseRport", async (
+	{
+		search = "",
+		startDate = "",
+		endDate = "",
+		type = "",
+	}
+) => {
+	const report = await axiosInstance.get("/expenses/search?search=" + search + "&startDate=" + startDate + "&endDate=" + endDate + "&type=" + type);
+	const { data } = report;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+
+export const getAccounts = createAsyncThunk("/autocount/accounts", async () => {
+	const accounts = await axiosInstance.get("/accounts");
+	const { data } = accounts;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
+export const getTopStock = createAsyncThunk("/autocount/topStock", async () => {
+	const stock = await axiosInstance.get("/stock/top");
+	const { data } = stock;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
 export const autoCountSlices = createSlice({
 	name: "AutoCountStore",
 	initialState: {
@@ -52,12 +98,22 @@ export const autoCountSlices = createSlice({
 		sales: [],
 		todaySales: [],
 		customers: [],
+		allStock: [],
+		bankReport: [],
+		expenseReport: [],
+		accounts: [],
+		topStock: [],
 		loading: {
 			cartegories: false,
 			stock: false,
 			sales: false,
 			todaySales: false,
 			customers: false,
+			allStock: false,
+			bankReport: false,
+			expenseReport: false,
+			accounts: false,
+			topStock: false,
 		},
 	},
 	extraReducers: {
@@ -110,6 +166,56 @@ export const autoCountSlices = createSlice({
 		},
 		[getCustomers.rejected]: (state) => {
 			state.loading.customers = false;
+		},
+		[getAllStock.pending]: (state) => {
+			state.loading.allStock = true;
+		},
+		[getAllStock.fulfilled]: (state, action) => {
+			state.loading.allStock = false;
+			state.allStock = action.payload;
+		},
+		[getAllStock.rejected]: (state) => {
+			state.loading.allStock = false;
+		},
+		[getBankReport.pending]: (state) => {
+			state.loading.bankReport = true;
+		},
+		[getBankReport.fulfilled]: (state, action) => {
+			state.loading.bankReport = false;
+			state.bankReport = action.payload;
+		},
+		[getBankReport.rejected]: (state) => {
+			state.loading.bankReport = false;
+		},
+		[getExpenseReport.pending]: (state) => {
+			state.loading.expenseReport = true;
+		},
+		[getExpenseReport.fulfilled]: (state, action) => {
+			state.loading.expenseReport = false;
+			state.expenseReport = action.payload;
+		},
+		[getExpenseReport.rejected]: (state) => {
+			state.loading.expenseReport = false;
+		},
+		[getAccounts.pending]: (state) => {
+			state.loading.accounts = true;
+		},
+		[getAccounts.fulfilled]: (state, action) => {
+			state.loading.accounts = false;
+			state.accounts = action.payload;
+		},
+		[getAccounts.rejected]: (state) => {
+			state.loading.accounts = false;
+		},
+		[getTopStock.pending]: (state) => {
+			state.loading.topStock = true;
+		},
+		[getTopStock.fulfilled]: (state, action) => {
+			state.loading.topStock = false;
+			state.topStock = action.payload;
+		},
+		[getTopStock.rejected]: (state) => {
+			state.loading.topStock = false;
 		},
 	},
 });

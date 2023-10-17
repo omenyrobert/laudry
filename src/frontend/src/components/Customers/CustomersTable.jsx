@@ -6,11 +6,12 @@ import { Link } from 'react-router-dom'
 import Button from '../Button'
 import InputField from '../InputField'
 import ButtonSecondary from '../ButtonSecondary'
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 import axiosInstance from '../../axios-instance'
 import ButtonLoader from '../ButtonLoader'
 import Loader from '../Loader'
+import { useFeedback } from '../../hooks/feedback'
+import { useDispatch } from 'react-redux'
+import { getCustomers } from '../../store/slices/store'
 
 const CustomersTable = (props) => {
   const {
@@ -43,10 +44,7 @@ const CustomersTable = (props) => {
     setIsEdit(true)
   }
 
-  // adding payments
-  const [adding, setAdding] = useState(false)
-  const [date, setDate] = useState("");
-  const [amount, setAmount] = useState("");
+
 
 
 
@@ -55,9 +53,6 @@ const CustomersTable = (props) => {
 
 
 
-  const closeModal2 = () => {
-    setModal2(false);
-  }
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("");
@@ -141,111 +136,7 @@ const CustomersTable = (props) => {
 
         </div> : null}
 
-        {modal2 ? <div className='z-50 bg-black/50 h-full w-full top-0 right-0 left-0 absolute flex'>
-          <div className='w-2/12' onClick={closeModal2}>
 
-          </div>
-          <div className='w-8/12'>
-            <div className='rounded-lg bg-white mt-[5vh]'>
-              <div className='flex text-xl justify-between text-primary p-2 bg-gray1'>
-                <div>
-                  <p>Customers Payments</p>
-                </div>
-                <div>
-                  {name}
-                </div>
-                <div>
-                  <p onClick={closeModal2} className='cursor-pointer'>X</p>
-                </div>
-
-              </div>
-              <div className=''>
-                <div className='flex '>
-                  <div className='w-32 p-2 m-2 bg-primary text-white'>
-                    2,000,000
-                  </div>
-                  <div className='w-32 p-2 m-2 bg-gray2'>
-                    950,000
-                  </div>
-                  <div className='w-32 p-2 m-2 bg-gray2'>
-                    1,800,000
-                  </div>
-                  <div className='w-32 p-2 m-2 bg-gray2'>
-                    2,000,000
-                  </div>
-
-                </div>
-                <div className='flex'>
-                  <div className='p-2'>
-                    2,000,000
-                  </div>
-                  <div className='p-2'>
-                    12-10-2023
-                  </div>
-
-                </div>
-                <div className='flex -mt-5'>
-                  <div className='w-1/3 p-2'>
-                    <InputField value={date} onChange={(e) => setDate(e.target.value)} type="date" />
-                  </div>
-                  <div className='w-1/3 p-2'>
-                    <InputField value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" />
-                  </div>
-                  <div className='w-42 mt-6 p-2'>
-                    {adding ? <ButtonLoader /> :
-                      <div onClick={() => { }}>
-                        <Button value={"Add Payment"} />
-                      </div>}
-
-
-                  </div>
-
-                </div>
-                <div className='flex bg-gray2 mx-3'>
-                  <div className='w-1/3 p-2'>
-                    Date
-                  </div>
-                  <div className='w-1/3 p-2'>
-                    Paid
-                  </div>
-                  <div className='w-1/3 p-2'>
-                    Balance
-                  </div>
-                </div>
-                {loadingp ? <div className='w-full h-52 flex justify-center items-center'> <Loader /> </div> : null}
-
-                <div className='h-[calc(100vh-300px)] overflow-y-auto'>
-                  {[].map((pay) => {
-                    return (
-                      <div className='flex mx-3 border-b cursor-pointer text-sm text-gray5 border-gray1 hover:bg-gray1'>
-                        <div className='w-1/3 p-2'>
-                          {pay.date}
-                        </div>
-                        <div className='w-1/3 p-2'>
-                          {pay.paid}
-                        </div>
-                        <div className='w-1/3 p-2'>
-                          {pay.balance}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-
-
-              </div>
-
-            </div>
-            <div className='h-1/4' onClick={closeModal2}>
-
-            </div>
-
-          </div>
-          <div className='w-2/12' onClick={closeModal2}>
-
-          </div>
-
-        </div> : null}
 
       </div>
     </div>
@@ -255,32 +146,244 @@ const CustomersTable = (props) => {
 export default CustomersTable
 
 
-export const Customer = ({ customer, openModal2, openModal }) => {
+export const Customer = ({ customer, openModal }) => {
+  const [modal2, setModal2] = useState(false)
+  const [adding, setAdding] = useState(false)
+  const [date, setDate] = useState("");
+  const [amount, setAmount] = useState("");
+  const [loading, setLoading] = useState(false)
+  const [activeAccount, setActiveAccount] = useState(null)
+  const { toggleFeedback } = useFeedback()
+  const dispatch = useDispatch()
+
+  const postPayment = async () => {
+    if (activeAccount === null) {
+      toggleFeedback("error", {
+        title: "Error",
+        text: "Please select an account"
+      })
+      return
+    }
+    if (date === "") {
+      toggleFeedback("error", {
+        title: "Error",
+        text: "Please select a date"
+      })
+      return
+    }
+
+    if (amount === "") {
+      toggleFeedback("error", {
+        title: "Error",
+        text: "Please select an amount"
+      })
+      return
+    }
+
+    if (parseInt(amount) > parseInt(activeAccount.balance)) {
+      toggleFeedback("error", {
+        title: "Error",
+        text: "Amount cannot be greater than balance"
+      })
+      return
+    }
+
+    try {
+      setAdding(true)
+
+      const res = await axiosInstance.post("/accounts/pay", {
+        date,
+        amount,
+        id: activeAccount.id
+      })
+
+      const { status, payload } = res.data
+
+      if (status) {
+        dispatch(getCustomers())
+        toggleFeedback("success", {
+          title: "Success",
+          text: "Payment added successfully"
+        })
+        setDate("")
+        setAmount("")
+        setAdding(false)
+        setActiveAccount(null)
+      } else {
+        toggleFeedback("error", {
+          title: "Error",
+          text: payload
+        })
+        setAdding(false)
+      }
+
+
+    } catch (error) {
+      toggleFeedback("error", {
+        title: "Error",
+        text: "An error occured"
+      })
+      setAdding(false)
+    }
+  }
+
+
   return (
-    <tr
-      className="shadow-sm border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"
-      key={customer.id}
-    >
-      <td className="text-sm p-3 text-gray5" >
-        {customer.name}
-      </td>
+    <>
+      {modal2 ? <div className='z-50 bg-black/50 h-full w-full top-0 right-0 left-0 absolute flex'>
+        <div className='w-2/12' onClick={() => {
+          setModal2(false)
+        }}>
 
-      <td className="text-sm p-3 text-gray5">
-        {customer.phone}
-      </td>
-      <td className="text-sm p-3 text-gray5">
-        {customer.email}
-      </td>
-      <td className="text-sm p-3 text-gray5">
-        {customer.location}
-      </td>
+        </div>
+        <div className='w-8/12'>
+          <div className='rounded-lg bg-white mt-[5vh]'>
+            <div className='flex text-xl justify-between text-primary p-2 bg-gray1'>
+              <div>
+                <p>Customers Payments</p>
+              </div>
+              <div>
+                {customer.name}
+              </div>
+              <div>
+                <p onClick={() => {
+                  setModal2(false)
+                }} className='cursor-pointer'>X</p>
+              </div>
 
-      <td className="text-xs flex p-3 text-gray5">
-        <BsTrash onClick={() => { }} className='text-red' />
-        <BsPencilSquare onClick={() => openModal(customer)} className='text-yellow mx-5' />
-        <p onClick={() => openModal2(customer)} className='px-1 bg-primary rounded-full -mt-1 cursor-pointor font-bold text-white'>A</p>
-      </td>
+            </div>
+            <div className=''>
+              <div className='flex '>
+                {
+                  customer.accounts?.map((account) => {
+                    if (account.balance === 0) {
+                      return null
+                    }
+                    return (
+                      <div className={activeAccount?.id === account.id ? 'w-32 p-2 m-2 bg-primary text-white' : 'w-32 p-2 m-2 bg-gray1'} onClick={() => {
+                        setActiveAccount(account)
+                      }}>
+                        {account.amount}
+                      </div>
+                    )
+                  })
+                }
 
-    </tr>
+              </div>
+              <div className='flex'>
+                <div className='p-2'>
+                  <span className='text-primary'>Amount:</span>
+                  {activeAccount?.amount}
+                </div>
+                <div className='p-2'>
+                  <span className='text-primary'>Date:</span>
+                  {
+                    new Date(activeAccount?.date).toDateString()
+                  }
+                </div>
+                <div className='p-2'>
+                  <span className='text-primary'>Balance:</span> {activeAccount?.balance}
+                </div>
+
+              </div>
+              <div className='flex -mt-5'>
+                <div className='w-1/3 p-2'>
+                  <InputField value={date} onChange={(e) => setDate(e.target.value)} type="date" />
+                </div>
+                <div className='w-1/3 p-2'>
+                  <InputField value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" />
+                </div>
+                <div className='w-42 mt-6 p-2'>
+                  {adding ? <ButtonLoader /> :
+                    <div onClick={() => { postPayment() }}>
+                      <Button value={"Add Payment"} />
+                    </div>}
+
+
+                </div>
+
+              </div>
+              <div className='flex bg-gray2 mx-3'>
+                <div className='w-1/3 p-2'>
+                  Date
+                </div>
+                <div className='w-1/3 p-2'>
+                  Paid
+                </div>
+                <div className='w-1/3 p-2'>
+                  Balance
+                </div>
+              </div>
+              {loading ? <div className='w-full h-52 flex justify-center items-center'> <Loader /> </div> : null}
+
+              <div className='h-[calc(100vh-300px)] overflow-y-auto'>
+                {activeAccount?.payments?.map((pay) => {
+                  return (
+                    <div className='flex mx-3 border-b cursor-pointer text-sm text-gray5 border-gray1 hover:bg-gray1'>
+                      <div className='w-1/3 p-2'>
+                        {
+                          new Date(pay.date).toDateString()
+                        }
+                      </div>
+                      <div className='w-1/3 p-2'>
+                        {
+                          pay.amount
+                        }
+                      </div>
+                      <div className='w-1/3 p-2'>
+                        {pay.balance}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+
+            </div>
+
+          </div>
+          <div className='h-1/4' onClick={() => {
+            setModal2(false)
+          }}>
+
+          </div>
+
+        </div>
+        <div className='w-2/12' onClick={() => {
+          setModal2(false)
+        }}>
+
+        </div>
+
+      </div> : null}
+      <tr
+        className="shadow-sm border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"
+        key={customer.id}
+      >
+        <td className="text-sm p-3 text-gray5" >
+          {customer.name}
+        </td>
+
+        <td className="text-sm p-3 text-gray5">
+          {customer.phone}
+        </td>
+        <td className="text-sm p-3 text-gray5">
+          {customer.email}
+        </td>
+        <td className="text-sm p-3 text-gray5">
+          {customer.location}
+        </td>
+
+        <td className="text-xs flex p-3 text-gray5">
+          <BsTrash onClick={() => { }} className='text-red' />
+          <BsPencilSquare onClick={() => openModal(customer)} className='text-yellow mx-5' />
+          <p onClick={() => {
+            setModal2(true)
+          }} className='px-1 bg-primary rounded-full -mt-1 cursor-pointor font-bold text-white'>A</p>
+        </td>
+
+      </tr>
+    </>
+
   )
 }

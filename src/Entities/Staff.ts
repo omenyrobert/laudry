@@ -11,11 +11,6 @@ import {
   JoinTable,
 } from "typeorm";
 import { StaffType } from "./StaffType";
-import { SalaryInfo } from "./SalaryInfo";
-import { PaySlip } from "./PaySlip";
-import { StaffProfile } from "./StaffProfile";
-import { Subject } from "./Subject";
-import { SchoolClass } from "./SchoolClass";
 
 @Entity()
 export class Staff extends BaseEntity {
@@ -52,31 +47,9 @@ export class Staff extends BaseEntity {
   @Column("simple-array", { nullable: true })
   roles: string[];
 
-  @OneToMany(
-    () => SalaryInfo,
-    (salaryInfo) => salaryInfo.staff,
-    {
-      cascade: true,
-      eager: true,
-      nullable: true,
-    }
-  )
-  salaryInfo!: SalaryInfo;
-
-  @OneToMany(
-    () => PaySlip,
-    (paySlip) => paySlip.staff,
-    {
-      cascade: true,
-      eager: true,
-      nullable: true,
-    }
-  )
-  paySlips!: PaySlip[];
 
 
   // Add profile columns all are nullable
-
   @Column({ nullable: true })
   profile_picture!: string;
 
@@ -97,33 +70,6 @@ export class Staff extends BaseEntity {
 
   @Column({ nullable: true })
   nationality!: string;
-
-
-  @OneToOne(()=> StaffProfile, staffProfile => staffProfile.staff, {
-    cascade: true,
-    eager: true,
-    nullable: true,
-    })
-  @JoinColumn()
-  staffProfile!: StaffProfile;
-
-  @ManyToMany(() => Subject, {
-    cascade: true,
-    eager: true,
-    nullable: true,
-  })
-  @JoinTable({ name: "staff_subjects" })
-  subjects: Subject[];
-
-  @ManyToMany(() => SchoolClass, {
-    cascade: true,
-    eager: true,
-    nullable: true,
-  })
-  @JoinTable({ name: "staff_classes" })
-  classes: SchoolClass[];
-
-
 
 
 }

@@ -7,7 +7,9 @@ import {
   deleteStock,
   getSingleStock,
   restock,
-  searchStock
+  searchStock,
+  getAllStocks,
+  getTopStocks
 } from "../Entities/Stock";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -203,5 +205,31 @@ export const handleSearchStock = async (req: Request, res: Response) => {
       .end();
   } catch (error) {
     console.log(error);
+  }
+}
+
+export const handleGetAllStocks = async (req: Request, res: Response) => {
+  try {
+    const stocks = await getAllStocks();
+    return res
+      .json(customPayloadResponse(true, stocks))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const handleGetTopStocks = async (req: Request, res: Response) => {
+  try {
+    console.log("here");
+    const stocks = await getTopStocks();
+    return res
+      .json(customPayloadResponse(true, stocks))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error);
+    
   }
 }

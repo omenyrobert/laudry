@@ -171,3 +171,30 @@ export const searchStock = async (name: string) => {
   });
   return stock;
 }
+
+export const getAllStocks = async () => {
+  const stock = await Stock.find(
+    {
+      order: {
+        id: "DESC",
+      },
+      relations: ["sales"],
+    }
+
+  );
+  return stock;
+}
+
+
+// get 10 stocks with the highest sales
+export const getTopStocks = async () => {
+  const stocks = await Stock.find({
+    order: {
+      id: "DESC",
+    },
+    take: 10,
+    relations: ["sales"],
+  });
+
+  return stocks;
+}

@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from 'typeorm';
 import { Sales } from './Sales';
+import { Account } from './Account';
 
 @Entity()
 export class Customer extends BaseEntity {
@@ -22,6 +23,12 @@ export class Customer extends BaseEntity {
     onDelete: "CASCADE",
   })
   sales!: Sales[];
+
+  @OneToMany(() => Account, (account) => account.customer, {
+    onDelete: "CASCADE",
+    eager: true,
+  })
+  accounts!: Account[];
 }
 
 
@@ -40,7 +47,12 @@ export const createCustomer = async (
 }
 
 export const getCustomers = async () => {
-  return Customer.find();
+  const customers = await Customer.find({
+    order: {
+      id: "DESC",
+    },
+  });
+  return customers;
 }
 
 export const deleteCustomer = async (id: number) => {

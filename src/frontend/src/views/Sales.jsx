@@ -256,7 +256,7 @@ const Sales = () => {
                                     <p>{item.name}</p>
                                 </div>
                                 <div className="w-4/12">
-                                    {(item.unitCost * item.quantity).toLocaleString()}
+                                    {(item.unitSell * item.quantity).toLocaleString()}
                                 </div>
                                 <div className="w-4/12 flex">
                                     <div className="flex ml-5">

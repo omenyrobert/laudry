@@ -5,7 +5,9 @@ import {
   removeStock,
   addStock,
   handleResctock,
-  handleSearchStock
+  handleSearchStock,
+  handleGetAllStocks,
+  handleGetTopStocks
 } from "../Controllers/StockController";
 import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
 
@@ -17,4 +19,6 @@ export default (router: Router) => {
   router.delete(`${stokPrefix}/:id`, JWTAuthMiddleWare, removeStock);
   router.post(`${stokPrefix}/restock`, JWTAuthMiddleWare, handleResctock);
   router.get(`${stokPrefix}/search`, JWTAuthMiddleWare, handleSearchStock);
+  router.get(`${stokPrefix}/all`, JWTAuthMiddleWare, handleGetAllStocks);
+  router.get(`${stokPrefix}/top`, JWTAuthMiddleWare, handleGetTopStocks);
 };

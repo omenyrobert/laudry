@@ -1,12 +1,16 @@
-import { 
-  Entity, 
-  PrimaryGeneratedColumn, 
-  Column, 
-  BaseEntity, 
-  In ,
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
   OneToMany,
+  ManyToOne,
+  OneToOne,
+  JoinColumn
 } from "typeorm";
-import { Transaction } from "./Transaction";
+import { Customer } from "./Customer";
+import { Sales } from "./Sales";
+import { Payment } from "./Payment";
 
 @Entity()
 export class Account extends BaseEntity {
@@ -14,36 +18,106 @@ export class Account extends BaseEntity {
   id!: number;
 
   @Column()
-  accountName!: string;
+  balance!: number;
+
 
   @Column()
-  accountType!: string;
+  date!: Date;
 
   @Column()
-  subType!: string;
-
-  @Column({ nullable: true })
   amount!: number;
 
-
-  @OneToMany(() => Transaction, transaction => transaction.account, {
-    cascade: true,
-    nullable: true,
+  @OneToOne(() => Sales, (sales) => sales.account, {
+    onDelete: "CASCADE",
   })
-  transactions!: Transaction[];
+  @JoinColumn()
+  sales!: Sales;
 
-  @Column({ nullable: true })
-  supplierName!: string;
 
-  @Column({ nullable: true })
-  contacts!: string;
+  @ManyToOne(() => Customer, (customer) => customer.accounts, {
+    onDelete: "CASCADE",
+  })
+  customer!: Customer;
 
-  @Column({ nullable: true })
-  address!: string;
+  @OneToMany(() => Payment, (payment) => payment.account, {
+    onDelete: "CASCADE",
+    eager: true,
+  })
+  payments!: Payment[];
 
-  @Column({ nullable: true })
-  about!: string;
+}
 
+
+export const createAccount = async (
+  date: string,
+  amount: number,
+  customerId: number,
+  salesId: number,
+) => {
+
+  const customer = await Customer.findOne({
+    where: {
+      id: customerId,
+    },
+  });
+
+  if (!customer) {
+    throw new Error("Customer not found");
+  }
+
+  const sale = await Sales.findOne({
+    where: {
+      id: salesId,
+    },
+  });
+
+  if (!sale) {
+    throw new Error("Sale not found");
+  }
+
+
+  const account = new Account();
+  account.date = new Date(date);
+  account.amount = amount;
+  account.balance = amount;
+  account.customer = customer;
+  account.sales = sale;
+  account.save();
+
+  return account;
+}
+
+
+export const payAccount = async (
+  id: number,
+  amount: number,
+  date: string,
+) => {
+  const account = await Account.findOne({
+    where: {
+      id,
+    },
+  });
+
+  if (!account) {
+    throw new Error("Account not found");
+  }
+
+  const balance = account.balance - amount;
+
+  if (balance < 0) {
+    throw new Error("Amount is greater than balance");
+  }
+
+  account.balance = balance;
+  account.save();
+
+  const payment = new Payment();
+  payment.amount = amount;
+  payment.date = new Date(date);
+  payment.account = account;
+  payment.balance = balance;
+  payment.save();
 }
 
 export const getAccounts = async () => {
@@ -51,72 +125,7 @@ export const getAccounts = async () => {
     order: {
       id: "DESC",
     },
+    relations: ["customer"],
   });
   return accounts;
-};
-
-export const createAccount = async (
-  accountName: string,
-  accountType: string,
-  subType: string,
-  amount: number,
-  supplierName: string,
-  contacts: string,
-  address: string,
-  about: string,
-) => {
-  const accountToInsert = await Account.insert({
-    accountName,
-    accountType,
-    subType,
-    amount,
-    supplierName,
-    contacts,
-    address,
-    about,
-  });
-
-  return accountToInsert;
-};
-
-export const deleteAccount = async (id: number) => {
-  const account = await Account.delete(id);
-  if (account) {
-    return "Account Deleted";
-  }
-};
-
-export const updateAccount = async (
-  id: number,
-  accountName: string,
-  accountType: string,
-  subType: string,
-  amount: number,
-  supplierName: string,
-  contacts: string,
-  address: string,
-  about: string,
-) => {
-  const accountToUpdate = await Account.update(id, {
-    accountName,
-    accountType,
-    subType,
-    amount,
-    supplierName,
-    contacts,
-    address,
-    about,
-  });
-  return accountToUpdate;
-};
-
-export const getSingleAccount = async (id: number) => {
-    const account = await Account.findOne({ where: { id: id } }) as Account;
-    return account;
-};
-
-export const getSelectedAccounts = async (ids: number[]) => {
-  const selectedAccounts = await Account.find({ where: { id: In(ids) } });
-  return selectedAccounts;
-};
-
+}

@@ -5,7 +5,8 @@ import {
   updateExpense,
   createExpense,
   deleteExpense,
-  getSingleExpense
+  getSingleExpense,
+  getExpensesByDate
 } from "../Entities/Expense";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -99,3 +100,24 @@ export const removeExpense = async (req: Request, res: Response) => {
 
 
 
+
+export const searchExpensesController = async (req: Request, res: Response) => {
+  try {
+    const { search, startDate, endDate, type } = req.query;
+    
+    const expenses = await getExpensesByDate(
+      search ? search.toString() : null,
+      startDate ? startDate.toString() : null,
+      endDate ? endDate.toString() : null,
+      type ? type.toString() : null,
+    );
+
+    return res
+      .json(customPayloadResponse(true, expenses))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error)
+    return res.json(customPayloadResponse(false, "Internal Server Error")).status(500).end();
+  }
+}

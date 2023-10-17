@@ -3,7 +3,9 @@ import { JWTAuthMiddleWare } from "../Middlewares/AuthMiddleware";
 import {
   createSalesController,
   getSalesByDateController,
-  getSalesController
+  getSalesController,
+  searchSalesController,
+  getSalesAndExpensesController
 } from "../Controllers/SalesController";
 
 
@@ -12,4 +14,6 @@ export default (router: Router) => {
   router.get(`${salesPrefix}`, JWTAuthMiddleWare, getSalesController);
   router.post(`${salesPrefix}`, JWTAuthMiddleWare, createSalesController);
   router.get(`${salesPrefix}/by-date`, JWTAuthMiddleWare, getSalesByDateController);
+  router.get(`${salesPrefix}/search`, JWTAuthMiddleWare, searchSalesController);
+  router.get(`${salesPrefix}/bank-report`, JWTAuthMiddleWare, getSalesAndExpensesController);
 }

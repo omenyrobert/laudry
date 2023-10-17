@@ -7,10 +7,16 @@ import {
   ManyToMany,
   In,
   ManyToOne,
-  Between
+  Between,
+  OneToOne,
+  CreateDateColumn,
+  Like
 } from "typeorm";
 import { Stock } from "./Stock";
 import { Customer } from "./Customer";
+import { Account } from "./Account";
+import { getExpensesByDate } from "./Expense";
+
 
 
 @Entity()
@@ -23,6 +29,9 @@ export class Sales extends BaseEntity {
 
   @Column()
   quantity!: number;
+
+  @CreateDateColumn()
+  createdAt!: Date;
 
   @Column({
     default: true,
@@ -40,6 +49,12 @@ export class Sales extends BaseEntity {
     eager: true,
   })
   customer!: Customer;
+
+  @OneToOne(() => Account, (account) => account.sales, {
+    onDelete: "CASCADE",
+    nullable: true,
+  })
+  account!: Account;
 
 }
 
@@ -89,6 +104,23 @@ export const createSale = async (
   stock.qty -= quantity;
   await stock.save();
 
+  if (customer) {
+    const account = new Account();
+    account.amount = stock.unitSell * quantity;
+    account.balance = account.amount;
+    account.customer = customer;
+    
+
+    if (paymentDate) {
+      account.date = new Date(paymentDate);
+    }
+    
+    await account.save();
+
+    sales.account = account;
+    await sales.save();
+  }
+
   return sales;
 }
 
@@ -123,4 +155,109 @@ export const getSalesByDate = async (
     },
   });
   return sales;
+}
+
+
+export const searchSales = async (
+  stockName: string | null = null,
+  startDate: string | null = null,
+  endDate: string | null = null,
+) => {
+  const where: any = {};
+
+  if (stockName !== null && stockName !== "") {
+    where.stock = {
+      name: Like(`%${stockName}%`)
+    }
+  }
+
+  if (startDate !== null && endDate !== null && startDate !== "" && endDate !== "") {
+    where.createdAt = Between(new Date(startDate), new Date(endDate));
+  } else if (startDate !== null && startDate !== "") {
+    where.createdAt = Between(new Date(startDate), new Date());
+  } else if (endDate !== null && endDate !== "") {
+    where.createdAt = Between(new Date(0), new Date(endDate));
+  } else {
+    where.createdAt = Between(new Date(0), new Date());
+  }
+
+  const sales = await Sales.find({
+    where,
+    order: {
+      id: "DESC",
+    },
+  });
+  return sales;
+}
+
+
+// A function that returns the sales and expenses form start date to end date and grouped by date
+export const getSalesAndExpenses = async (
+  startDate: string | null = null,
+  endDate: string | null = null,
+) => {
+  const where: any = {};
+
+
+  if (startDate !== null && endDate !== null && startDate !== "" && endDate !== "") {
+    where.createdAt = Between(new Date(startDate), new Date(endDate));
+  } else if (startDate !== null && startDate !== "") {
+    where.createdAt = Between(new Date(startDate), new Date());
+  } else if (endDate !== null && endDate !== "") {
+    where.createdAt = Between(new Date(0), new Date(endDate));
+  } else {
+    where.createdAt = Between(new Date(0), new Date());
+  }
+
+  const sales = await Sales.find({
+    where,
+    order: {
+      id: "DESC",
+    },
+  });
+
+  let dates = new Set();
+  sales.forEach((sale) => {
+    dates.add(sale.createdAt.toDateString().slice(0,10));
+  });
+
+  const expenses = await getExpensesByDate(null, startDate, endDate);
+  
+  expenses.forEach((expense) => {
+    dates.add(expense.createdAt.toDateString().slice(0,10));
+  });
+
+  const result: any = [];
+  dates.forEach((date) => {
+    const salesTotal = sales.reduce((acc, sale) => {
+      if (sale.createdAt.toDateString().slice(0,10) === date) {
+        return acc + sale.stock.unitSell * sale.quantity;
+      }
+      return acc;
+    }, 0);
+
+    const expensesTotal = expenses.reduce((acc, expense) => {
+      if (expense.createdAt.toDateString().slice(0,10) === date) {
+        return acc + expense.amount;
+      }
+      return acc;
+    }, 0);
+
+    const unpaidSales = sales.reduce((acc, sale) => {
+      if (sale.createdAt.toDateString().slice(0,10) === date && !sale.paid) {
+        return acc + sale.stock.unitSell * sale.quantity;
+      }
+      return acc;
+    } , 0);
+
+    result.push({
+      date,
+      sales: salesTotal,
+      expenses: expensesTotal,
+      profit: salesTotal - expensesTotal,
+      unpaidSales,
+    });
+  });
+
+  return result;
 }

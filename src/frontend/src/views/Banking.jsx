@@ -1,24 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ButtonAlt from "../components/ButtonAlt";
 import InputField from "../components/InputField";
 import ExpensesReported from "../components/ExpensesReport";
+import { useDispatch, useSelector } from "react-redux";
+import { getBankReport } from "../store/slices/store";
 
 const Banking = () => {
+    const { bankReport } = useSelector((state) => state.autocountStore)
+    const dispatch = useDispatch()
+    const [startDate, setStartDate] = useState("")
+    const [endDate, setEndDate] = useState("")
 
-    const banks = [
-        { id: 1, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 2, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 3, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 4, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 5, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 6, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 7, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 8, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 9, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 10, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 11, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-        { id: 12, income: "2,050,000", bank: "2,000,000", expense: "50,000", date: "10-10-2023" },
-    ]
+    useEffect(() => {
+        dispatch(getBankReport({
+            startDate: startDate,
+            endDate: endDate
+        }))
+    }, [])
+
+    const searchBankReport = () => {
+        dispatch(getBankReport({
+            startDate: startDate,
+            endDate: endDate
+        }))
+    }
+
 
     return (
         <div className="w-full bg-white rounded-md shadow px-5">
@@ -35,17 +41,33 @@ const Banking = () => {
                 </div>
                 <div className="flex mt-5">
                     <div className="-mt-5">
-                        <InputField type="date" />
+                        <InputField
+                            type="date"
+                            onChange={(e) => {
+                                setStartDate(e.target.value)
+                            }}
+                        />
                     </div>
                     <div className="-mt-5 mx-3">
-                        <InputField type="date" />
+                        <InputField
+                            type="date"
+                            onChange={(e) => {
+                                setEndDate(e.target.value)
+                            }}
+                        />
+                    </div>
+                    <div className="ml-2">
+                        <ButtonAlt
+                            value={"Filter"}
+                            onClick={searchBankReport}
+                        />
                     </div>
 
                     <div className="ml-2">
                         <ButtonAlt value={"Print"} />
                     </div>
                     <div className="ml-2">
-                      <ExpensesReported/>
+                        <ExpensesReported />
                     </div>
                 </div>
 
@@ -69,7 +91,7 @@ const Banking = () => {
 
             </div>
             <div className="h-[calc(100vh-260px)] overflow-y-auto">
-                {banks.map((bank) => {
+                {bankReport.map((bank) => {
                     return (
 
                         <div className="flex cursor-pointer border-b border-gray1 hover:bg-gray1 text-gray5 text-sm">
@@ -77,16 +99,16 @@ const Banking = () => {
                                 {bank.date}
                             </div>
                             <div className="w-1/4 p-2">
-                                {bank.income}
+                                {bank.sales}
                             </div>
                             <div className="w-1/4 p-2">
-                                {bank.expense}
+                                {bank.unpaidSales}
                             </div>
                             <div className="w-1/4 p-2">
-                                {bank.expense}
+                                {bank.expenses}
                             </div>
                             <div className="w-1/4 p-2">
-                                {bank.bank}
+                                {bank.sales + bank.unpaidSales}
                             </div>
 
                         </div>
@@ -100,16 +122,32 @@ const Banking = () => {
                     Total
                 </div>
                 <div className="w-1/4 p-2">
-                    22,000,000
+                    {
+                        bankReport.reduce((a, b) => {
+                            return a + b.sales
+                        }, 0)
+                    }
                 </div>
                 <div className="w-1/4 p-2">
-                    22,000,000
+                    {
+                        bankReport.reduce((a, b) => {
+                            return a + b.unpaidSales
+                        }, 0)
+                    }
                 </div>
                 <div className="w-1/4 p-2">
-                    8,070,000
+                    {
+                        bankReport.reduce((a, b) => {
+                            return a + b.expenses
+                        }, 0)
+                    }
                 </div>
                 <div className="w-1/4 p-2">
-                    19,000,000
+                    {
+                        bankReport.reduce((a, b) => {
+                            return a + b.sales + b.unpaidSales
+                        }, 0)
+                    }
                 </div>
 
             </div>

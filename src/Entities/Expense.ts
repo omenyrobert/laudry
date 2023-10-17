@@ -1,4 +1,4 @@
-
+import {startOfDay, endOfDay} from "date-fns";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,9 +6,10 @@ import {
   BaseEntity,
   ManyToMany,
   In,
+  Like,
+  CreateDateColumn,
+  Between
 } from "typeorm";
-// import { Student } from "./Student";
-// import { category } from "./Category";
 
 @Entity()
 export class Expense extends BaseEntity {
@@ -29,6 +30,9 @@ export class Expense extends BaseEntity {
 
   @Column()
   type!: string;
+
+  @CreateDateColumn()
+  createdAt!: Date;
 }
 
 export const getExpenses = async () => {
@@ -88,3 +92,37 @@ export const getSingleExpense = async (id: number) => {
   return expense;
 };
 
+
+export const getExpensesByDate = async (
+  name: string | null = null,
+  startDate: string | null = null,
+  endDate: string | null = null,
+  type: string | null = null,
+) => {
+  const where: any = {};
+
+  if (startDate !== null && endDate !== null && startDate !== "" && endDate !== "") {
+    where.createdAt = Between(startOfDay(new Date(startDate)), endOfDay(new Date(endDate)));
+  } else if (startDate !== null && startDate !== "") {
+    where.createdAt = Between(startOfDay(new Date(startDate)), endOfDay(new Date()));
+  } else if (endDate !== null && endDate !== "") {
+    where.createdAt = Between(startOfDay(new Date(0)), endOfDay(new Date(endDate)));
+  }
+
+  if (name !== null && name !== "") {
+    where.expense = Like(`%${name}%`);
+  }
+
+  if (type !== null && type !== "") {
+    where.type = type;
+  }
+
+
+  const expenses = await Expense.find({
+    where: where,
+    order: {
+      id: "DESC",
+    },
+  });
+  return expenses;
+}

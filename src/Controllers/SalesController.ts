@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { customPayloadResponse } from "../Helpers/Helpers";
-import { getSales, createSale, getSalesByDate } from "../Entities/Sales";
+import { getSales, createSale, getSalesByDate, searchSales, getSalesAndExpenses } from "../Entities/Sales";
 
 
 export const getSalesController = async (req: Request, res: Response) => {
@@ -60,8 +60,46 @@ export const getSalesByDateController = async (req: Request, res: Response) => {
         .status(200)
         .end();
     }
-    console.log(date)
     const sales = await getSalesByDate(date.toString());
+
+    return res
+      .json(customPayloadResponse(true, sales))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error)
+    return res.json(customPayloadResponse(false, "Internal Server Error")).status(500).end();
+  }
+}
+
+export const searchSalesController = async (req: Request, res: Response) => {
+  try {
+    const { search, startDate, endDate } = req.query;
+    
+    const sales = await searchSales(
+      search ? search.toString() : null,
+      startDate ? startDate.toString() : null,
+      endDate ? endDate.toString() : null,
+    );
+
+    return res
+      .json(customPayloadResponse(true, sales))
+      .status(200)
+      .end();
+  } catch (error) {
+    console.log(error)
+    return res.json(customPayloadResponse(false, "Internal Server Error")).status(500).end();
+  }
+}
+
+export const getSalesAndExpensesController = async (req: Request, res: Response) => {
+  try {
+    const { startDate, endDate } = req.query;
+    
+    const sales = await getSalesAndExpenses(
+      startDate ? startDate.toString() : null,
+      endDate ? endDate.toString() : null,
+    );
 
     return res
       .json(customPayloadResponse(true, sales))

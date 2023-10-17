@@ -1,9 +1,11 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { FaUsers, FaFileInvoiceDollar, FaTooth } from "react-icons/fa";
 import { TbZoomMoney } from "react-icons/tb"
 
 
-function Cards() {
+function Cards({ allStock, warningStock, accounts }) {
+
+
 
 	return (
 		<div className="flex p-5 bg-white rounded-md mb-5 w-full">
@@ -14,7 +16,7 @@ function Cards() {
 				</p>
 				<div className="flex justify-between mt-3 text-sm">
 					<div>
-						20
+						2
 					</div>
 					<div>
 						View All
@@ -61,7 +63,7 @@ function Cards() {
 				<div className="flex justify-between mt-5">
 					<div className="">
 						<p className="text-2xl">
-							12
+							{allStock.length}
 						</p>
 					</div>
 					<div className="">
@@ -86,7 +88,7 @@ function Cards() {
 				<div className="flex justify-between mt-5">
 					<div className="">
 						<p className="text-2xl">
-							15
+							{warningStock.length}
 						</p>
 					</div>
 					<div className="">
@@ -110,7 +112,9 @@ function Cards() {
 				</div>
 				<div className="flex justify-between mt-5">
 					<div className="">
-						<p>204</p>
+						<p>
+							{accounts.length}
+						</p>
 					</div>
 					<div className="">
 						<p className="bg-red1 p-2 text-red text-xs rounded">View All</p>

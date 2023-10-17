@@ -1,39 +1,66 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import InputField from "../components/InputField";
 import Button2 from "../components/Button2";
+import Button from "../components/Button";
 import { BsSearch } from "react-icons/bs";
 import ButtonAlt from "../components/ButtonAlt";
 import ReStock from "../components/ReStock";
+import { useDispatch, useSelector } from "react-redux";
+import { getSales } from "../store/slices/store";
+import axiosInstance from "../axios-instance";
+import { useFeedback } from "../hooks/feedback";
+import { usePrint } from "../hooks/print";
 
 const Reports = () => {
+    const dispatch = useDispatch()
+    const { sales, loading } = useSelector((state) => state.autocountStore)
+    const [filteredSales, setFilteredSales] = useState([])
+    const [search, setSearch] = useState("")
+    const [startDate, setStartDate] = useState("")
+    const [endDate, setEndDate] = useState("")
+    const [searchLoading, setSearchLoading] = useState(false)
+    const { toggleFeedback } = useFeedback()
+    const { printContent } = usePrint()
+    const [page, setPage] = useState(1)
+    const [isSearched, setIsSearched] = useState(false)
+
+    useEffect(() => {
+        dispatch(getSales(page))
+    }, [dispatch, page])
+
+    useEffect(() => {
+        setFilteredSales(sales)
+        setIsSearched(false)
+    }, [sales])
 
 
-    const sales = [
-        { id: 1, date: "09-11-2023", product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, date: "09-11-2023", product: "Regal Pain", qty: 10, sale: "200,000", cost: "100,000", profit: "100,000" },
-        { id: 1, date: "09-11-2023", product: "Iron Bar", qty: 104, sale: "1,03,000", cost: "710,000", profit: "67,000" },
-        { id: 1, date: "09-11-2023", product: "Iron Sheet", qty: 234, sale: "203,000", cost: "180,000", profit: "97,000" },
-        { id: 1, date: "09-11-2023", product: "B Wire", qty: 14, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, date: "09-11-2023", product: "2 inc Nails", qty: 24, sale: "230,000", cost: "190,000", profit: "30,000" },
-        { id: 1, date: "09-11-2023", product: "1 ltr Sadolin", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, date: "09-11-2023", product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, date: "09-11-2023", product: "Padlocks", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, date: "09-11-2023", product: "Spade", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, date: "09-11-2023", product: "cememnt Hima", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 1, date: "09-11-2023", product: "Wheel Barrow", qty: 2, sale: "700,000", cost: "400,000", profit: "300,000" },
-        { id: 2, date: "09-11-2023", product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 3, date: "09-11-2023", product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 4, date: "10-11-2023", product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
-        { id: 5, date: "11-11-2023", product: "Nails", qty: 234, sale: "23,000", cost: "10,000", profit: "13,000" },
+    async function searchSales() {
+        try {
+            setSearchLoading(true)
+            const response = await axiosInstance.get("/sales/search?search=" + search + "&startDate=" + startDate + "&endDate=" + endDate)
+            const { status, payload } = response.data
+            if (status) {
+                setFilteredSales(payload)
+                setIsSearched(true)
+            }
+        } catch (error) {
+            toggleFeedback("error", {
+                title: "Error",
+                text: error.message
+            })
 
-    ]
+        }
+        setSearchLoading(false)
+    }
+
+
 
     return (
         <div className="w-full bg-white rounded-md shadow px-5">
             <div className="flex w-full justify-between">
                 <div className=''>
                     <h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">
-                      Sales  Report
+                        Sales  Report
                     </h1>
                 </div>
 
@@ -41,28 +68,59 @@ const Reports = () => {
 
                     <InputField
                         type="text"
-                        placeholder="Search For Student ..."
+                        placeholder="Search For Sale..."
                         name="lastName"
-                        icon={
-                            <BsSearch
-                                className="w-3 -ml-7 mt-3 cursor-pointer"
-                                type="button"
-                            />
-                        }
+                        value={search}
+                        onChange={(e) => {
+                            setSearch(e.target.value)
+                        }}
+
                     />
                 </div>
                 <div className="flex mt-5">
                     <div className="-mt-5">
-                        <InputField type="date" />
+                        <InputField
+                            type="date"
+                            onChange={(e) => {
+                                setStartDate(e.target.value)
+                            }}
+                            placeholder={"Start Date"}
+                        />
                     </div>
                     <div className="-mt-5 mx-3">
-                        <InputField type="date" />
+                        <InputField
+                            type="date"
+                            onChange={(e) => {
+                                setEndDate(e.target.value)
+                            }}
+                            placeholder={"End Date"}
+
+                        />
                     </div>
-                    <div>
+                    <div className="ml-2">
+                        {
+                            searchLoading ? (
+                                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary"></div>
+                            ) : (
+                                <Button value={"Search"}
+                                    onClick={() => {
+                                        searchSales()
+                                    }}
+                                />
+                            )
+                        }
+
+                    </div>
+                    <div className="ml-2">
                         <ReStock />
                     </div>
                     <div className="ml-2">
-                        <ButtonAlt value={"Print"} />
+                        <ButtonAlt
+                            value={"Print"}
+                            onClick={() => {
+                                printContent("sales-report")
+                            }}
+                        />
                     </div>
 
 
@@ -70,7 +128,10 @@ const Reports = () => {
                 </div>
 
             </div>
-            <div className="h-[65vh] overflow-y-auto">
+            <div
+                className="h-[65vh] overflow-y-auto"
+                id="sales-report"
+            >
                 <div className="font-medium flex w-full bg-gray1 text-primary">
                     <div className="p-3 w-2/12">
                         Date
@@ -92,30 +153,42 @@ const Reports = () => {
                     </div>
                 </div>
 
+                {
+                    loading.sales && (
+                        <div className="flex justify-center items-center h-full">
+                            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
+                        </div>
+                    )
+                }
 
-                {sales?.map((sale) => {
+
+                {filteredSales?.map((sale) => {
                     return (
                         <div
                             className="shadow-sm flex border-l border-gray1 cursor-pointer hover:shadow-md hover:border-l-primary hover:border-l-2  pl-2"
                             key={sale.id}
                         >
                             <div className="py-3 w-2/12 text-xs text-gray5  ">
-                                {sale.date}
+                                {
+                                    new Date(sale.createdAt).toLocaleDateString()
+                                }
                             </div>
                             <div className="py-3 text-xs text-gray5 w-2/12">
-                                {sale.product}
+                                {sale.stock?.name}
                             </div>
                             <div className="py-3 text-xs text-gray5 w-2/12">
-                                {sale.qty}
+                                {sale.quantity}
                             </div>
                             <div className="py-3 text-xs text-gray5 w-2/12">
-                                {sale.cost}
+                                {sale.stock?.unitCost * sale.quantity}
                             </div>
                             <div className="py-3 text-xs text-gray5 w-2/12">
-                                {sale.sale}
+                                {sale.stock?.unitSell * sale.quantity}
                             </div>
                             <div className="py-3 text-xs text-gray5 w-2/12">
-                                {sale.profit}
+                                {
+                                    sale.stock?.unitSell * sale.quantity - sale.stock?.unitCost * sale.quantity
+                                }
                             </div>
 
 
@@ -123,8 +196,27 @@ const Reports = () => {
                     )
                 })}
 
+                {
+                    filteredSales.length === 0 && !loading.sales && (
+                        <div className="flex justify-center items-center h-full">
+                            <p className="text-xl font-semibold text-gray5">No Sales Found</p>
+                        </div>
+                    )
+                }
+
 
             </div>
+            {/* Load more */}
+            <div className="flex justify-center items-center">
+                {
+                    filteredSales.length > 0 && !loading.sales && filteredSales.length % 10 === 0 && (
+                        <span className="text-primary cursor-pointer underline" onClick={() => {
+                            setPage(page + 1)
+                        }}>Load More</span>
+                    )
+                }
+            </div>
+
             <div>
                 <div className="font-medium flex w-full bg-secondary text-white">
                     <div className="p-3 w-2/12">
@@ -137,13 +229,25 @@ const Reports = () => {
 
                     </div>
                     <div className="py-3 w-2/12">
-                        1,250,00
+                        {
+                            filteredSales.reduce((a, b) => {
+                                return a + b.stock.unitCost * b.quantity
+                            }, 0)
+                        }
                     </div>
                     <div className="py-3 w-2/12">
-                        3,250,00
+                        {
+                            filteredSales.reduce((a, b) => {
+                                return a + (b.stock.unitSell * b.quantity)
+                            }, 0)
+                        }
                     </div>
                     <div className="py-3 w-2/12">
-                        2,250,00
+                        {
+                            filteredSales.reduce((a, b) => {
+                                return a + (b.stock.unitSell * b.quantity - b.stock.unitCost * b.quantity)
+                            }, 0)
+                        }
                     </div>
                 </div>
             </div>

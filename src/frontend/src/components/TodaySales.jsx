@@ -81,10 +81,12 @@ const TodaySales = () => {
                                             {sale.quantity}
                                         </div>
                                         <div className="w-1/4 p-2">
-                                            {sale.stock?.unitCost}
+                                            {sale.stock?.unitSell * sale.quantity}
                                         </div>
                                         <div className="w-1/4 p-2">
-                                            {sale.profit}
+                                            {
+                                                sale.stock?.unitSell * sale.quantity - sale.stock?.unitCost * sale.quantity
+                                            }
                                         </div>
 
                                     </div>
@@ -110,7 +112,11 @@ const TodaySales = () => {
                                 }
                             </div>
                             <div className="w-1/4 p-2">
-
+                                {
+                                    todaySales.reduce((a, b) => {
+                                        return a + (b.stock.unitSell * b.quantity - b.stock.unitCost * b.quantity)
+                                    }, 0)
+                                }
                             </div>
 
                         </div>
