@@ -167,9 +167,8 @@ function UserTable() {
 				<table className="mt-4 w-[98%] table-auto ml-5">
 					<thead style={{ backgroundColor: "#f9f9f9" }}>
 						<th className="p-2 text-primary text-sm text-left">Full Name</th>
-						<th className="p-2 text-primary text-sm text-left">Location</th>
-						<th className="p-2 text-primary text-sm text-left">Phone</th>
 						<th className="p-2 text-primary text-sm text-left">Email</th>
+						<th className="p-2 text-primary text-sm text-left">Roles</th>
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
@@ -191,16 +190,15 @@ function UserTable() {
 
 										</div>
 									</td>
-									<td className="text-xs p-3 text-gray5">
-										{user?.location}
-									</td>
 
 
-									<td className="text-xs p-3 text-gray5">
-										{user?.phone}
-									</td>
+
+
 
 									<td className="text-xs p-3 text-gray5">{user.email}</td>
+									<td className="text-xs p-3 text-gray5">
+										admin, sales, report
+									</td>
 
 									<td className="text-xs p-3 w-28 text-gray5 flex justify-between">
 										<MdDeleteOutline

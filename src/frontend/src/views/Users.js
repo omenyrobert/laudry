@@ -120,12 +120,10 @@ const Users = () => {
               <div className='w-1/2 p-2'>
                 <InputField value={firstName} onChange={(e) => setFirstName(e.target.value)} label="First Name" placeholder="Enter First Name" />
                 <InputField value={middleName} onChange={(e) => setMiddleName(e.target.value)} label="Middle Name" placeholder="Enter Middle Name" />
-                <InputField value={phone} onChange={(e) => setPhone(e.target.value)} label="Phone" placeholder="Enter phone number" />
               </div>
               <div className='w-1/2 p-2'>
                 <InputField value={lastName} onChange={(e) => setLastName(e.target.value)} label="Last Name" placeholder="Last Name" />
                 <InputField value={email} onChange={(e) => setEmail(e.target.value)} label="Email" placeholder="Enter Email" />
-                <InputField value={location} onChange={(e) => setLocation(e.target.value)} label="Location" placeholder="Enter location" />
               </div>
 
             </div>
