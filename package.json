@@ -11,6 +11,7 @@
     "build:node": "tsc --build",
     "build:client": "npm run build --prefix ./src/frontend",
     "start": "ts-node ./src/index.ts",
+    "create:staff": "ts-node ./src/init.ts",
     "build": "npm install --prefix ./src/frontend && npm run build --prefix ./src/frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "electron": "electron .",

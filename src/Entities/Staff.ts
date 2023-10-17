@@ -227,3 +227,22 @@ export const updateProfilePicture = async (
 
   return staff;
 }
+
+
+export const createStaff = async (
+  firstName: string,
+  middleName: string,
+  lastName: string,
+  email: string,
+  password: string,
+) => {
+  const staff = await Staff.insert({
+    first_name: firstName,
+    middle_name: middleName,
+    last_name: lastName,
+    email: email,
+    password: password,
+  });
+
+  return staff;
+}
