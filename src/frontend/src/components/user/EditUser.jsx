@@ -5,40 +5,68 @@ import Button from "../Button";
 import ButtonSecondary from "../ButtonSecondary";
 import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../ButtonLoader";
+import Select from "react-select"
+import Swal from "sweetalert2";
 
 function EditUser(props) {
 	const { userData, closeEditData } = props;
 	const [posting, setPosting] = useState(false)
 	const [firstName, setFirstName] = useState(userData.first_name)
-	const [middletName, setMiddleName] = useState(userData.middlet_name)
+	const [middletName, setMiddleName] = useState(userData.middle_name)
 	const [lastName, setLastName] = useState(userData.last_name)
 	const [email, setEmail] = useState(userData.email)
 	const [phone, setPhone] = useState(userData.phone)
 	const [location, setLocation] = useState(userData.location)
+	const [roles, setRoles] = useState(userData.roles?.map((role) => {
+		return { value: role, label: role }
+	}) || [])
 
 
 	const updateUser = async () => {
-		if (firstName && middletName && lastName && email && phone && location) {
+		if (firstName && middletName && lastName && email && roles.length > 0) {
 			try {
 				setPosting(true)
 				let formData = {
+					staffId: userData.id,
 					firstName: firstName,
 					middletName: middletName,
 					lastName: lastName,
 					email: email,
 					phone: phone,
-					location: location
+					location: location,
+					roles: roles.map((role) => role.value)
 				}
-				let res = axiosInstance.post("/user", formData);
-				if (res.status === "SUCCESS") {
+				let res = await axiosInstance.put("/staff", formData);
+				const { status, payload } = res.data;
+
+				if (status) {
 					setFirstName("");
 					setMiddleName("");
 					setLastName("");
 					setEmail("");
 					setPhone("");
 					setLocation("");
+					setRoles([]);
 					setPosting(false)
+					closeEditData();
+					Swal.fire({
+						title: "Success",
+						text: "User Updated Successfully",
+						icon: "success",
+						timer: 2000,
+						showConfirmButton: false,
+					});
+				} else {
+					setPosting(false)
+					Swal.fire({
+						title: "Error",
+						text: payload,
+						icon: "error",
+						timer: 2000,
+						showConfirmButton: false,
+					});
 				}
+
 
 			} catch (error) {
 				setPosting(false)
@@ -65,13 +93,28 @@ function EditUser(props) {
 					</div>
 					<div className="flex p-3">
 						<div className='w-1/2 p-2'>
-							
+
 							<InputField value={firstName} onChange={(e) => setFirstName(e.target.value)} label="First Name" placeholder="Enter First Name" />
 							<InputField value={middletName} onChange={(e) => setMiddleName(e.target.value)} label="Middle Name" placeholder="Enter Middle Name" />
 						</div>
 						<div className='w-1/2 p-2'>
 							<InputField value={lastName} onChange={(e) => setLastName(e.target.value)} label="Last Name" placeholder="Last Name" />
 							<InputField value={email} onChange={(e) => setEmail(e.target.value)} label="Email" placeholder="Enter Email" />
+						</div>
+						<div className='w-1/2 p-2'>
+							<p className='text-sm text-gray5'>Select Roles</p>
+							<Select
+								options={[
+									{ value: 'admin', label: 'admin' },
+									{ value: 'stock', label: 'stock' },
+									{ value: 'reports', label: 'reports' },
+									{ value: 'sales', label: 'sales' },
+								]}
+								placeholder="Select Role"
+								isMulti
+								onChange={(e) => setRoles(e)}
+								value={roles}
+							/>
 						</div>
 
 					</div>

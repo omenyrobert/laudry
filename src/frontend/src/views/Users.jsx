@@ -9,6 +9,11 @@ import axiosInstance from "../axios-instance";
 import ButtonLoader from "../components/ButtonLoader";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import Select from "react-select"
+
+
+
+
 const Users = () => {
   const [modal, setModal] = useState(false)
 
@@ -28,12 +33,13 @@ const Users = () => {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [location, setLocation] = useState("")
+  const [roles, setRoles] = useState([])
 
 
 
   const postUser = async () => {
 
-    if (firstName !== "" && lastName !== "" && email !== "" && phone !== "" && location !== "") {
+    if (firstName !== "" && lastName !== "" && email !== "") {
       try {
         setPosting(true)
         let formData = {
@@ -42,16 +48,19 @@ const Users = () => {
           lastName: lastName,
           email: email,
           phone: phone,
-          location: location
+          location: location,
+          roles: roles.map((role) => role.value)
         }
         let res = await axiosInstance.post("/staff", formData);
-        if (res.status) {
+        const { status, payload } = res.data;
+        if (status) {
           setFirstName("");
           setMiddleName("");
           setLastName("");
           setEmail("");
           setPhone("");
           setLocation("");
+          setRoles([]);
           setPosting(false)
           closeModal();
           const MySwal = withReactContent(Swal);
@@ -59,6 +68,14 @@ const Users = () => {
             icon: "success",
             showConfirmButton: false,
             timer: 500,
+          });
+        } else {
+          const MySwal = withReactContent(Swal);
+          MySwal.fire({
+            icon: "error",
+            showConfirmButton: true,
+            //timer: 500,
+            text: payload
           });
         }
 
@@ -85,7 +102,7 @@ const Users = () => {
 
           <InputField
             type="text"
-            placeholder="Search For Student ..."
+            placeholder="Search For Staff ..."
             name="lastName"
             icon={
               <BsSearch
@@ -125,6 +142,22 @@ const Users = () => {
                 <InputField value={lastName} onChange={(e) => setLastName(e.target.value)} label="Last Name" placeholder="Last Name" />
                 <InputField value={email} onChange={(e) => setEmail(e.target.value)} label="Email" placeholder="Enter Email" />
               </div>
+              <div className='w-1/2 p-2'>
+                <p className='text-sm text-gray5'>Select Roles</p>
+                <Select
+                  options={[
+                    { value: 'admin', label: 'Admin' },
+                    { value: 'stock', label: 'Stock' },
+                    { value: 'reports', label: 'Reports' },
+                    { value: 'sales', label: 'Sales' },
+                  ]}
+                  placeholder="Select Role"
+                  isMulti
+                  onChange={(e) => setRoles(e)}
+                  value={roles}
+                />
+              </div>
+
 
             </div>
 

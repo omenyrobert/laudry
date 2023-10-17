@@ -12,68 +12,7 @@ import Loader from "../Loader"
 function UserTable() {
 	const [editData, setEditData] = useState(false);
 	const [showData, setShowData] = useState(false);
-	const users = [
-		{
-			id: 1,
-			identifier: "CN0001",
-			first_name: "Alice",
-			middle_name: "Barlow",
-			last_name: "Namu",
-			location: "kira",
-			email: "mac@gmail.com",
-			phone: "0777076500",
-		},
-		{
-			id: 2,
-			identifier: "CN0002",
-			first_name: "Tom",
-			middle_name: "mac",
-			last_name: "Lugya",
-			location: "kira",
-			email: "mac@gmail.com",
-			phone: "0777076500",
-		},
-		{
-			id: 3,
-			identifier: "CN0003",
-			first_name: "Lubwama",
-			middle_name: "mc",
-			last_name: "Julius",
-			location: "kira",
-			email: "mac@gmail.com",
-			phone: "0777076500",
-		},
-		{
-			id: 4,
-			identifier: "CN0004",
-			first_name: "Omeny",
-			middle_name: "",
-			last_name: "Robert",
-			location: "kira",
-			email: "lu@gmail.com",
-			phone: "0777076500",
-		},
-		{
-			id: 5,
-			identifier: "CN0005",
-			first_name: "Seguya",
-			middle_name: "Barlow",
-			last_name: "Godfrey",
-			location: "kira",
-			email: "matt@gmail.com",
-			phone: "0777076500",
-		},
-		{
-			id: 6,
-			identifier: "CN0006",
-			first_name: "Mattania",
-			middle_name: "",
-			last_name: "Muwaguzi",
-			location: "kira",
-			email: "kat@gmail.com",
-			phone: "0777076500",
-		},
-	];
+
 
 	const closeEditData = () => {
 		setEditData(false);
@@ -81,7 +20,6 @@ function UserTable() {
 	const [userData, setUserData] = useState("")
 	const openEditData = (user) => {
 		setEditData(true);
-		console.log(user);
 		setUserData(user)
 	};
 
@@ -197,7 +135,15 @@ function UserTable() {
 
 									<td className="text-xs p-3 text-gray5">{user.email}</td>
 									<td className="text-xs p-3 text-gray5">
-										admin, sales, report
+										{
+											user.roles.map((role) => {
+												return (
+													<span className="bg-gray3 text-gray5 rounded-md px-2 py-1 mr-2">
+														{role}
+													</span>
+												)
+											})
+										}
 									</td>
 
 									<td className="text-xs p-3 w-28 text-gray5 flex justify-between">

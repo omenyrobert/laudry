@@ -28,7 +28,7 @@ function ShowUser(props) {
 							<div className="">
 								<img className="w-40 relative h-40 rounded-full" src="https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg" />
 
-								<div className="bg-secondary absolute ml-[140px] cursor-pointer -mt-20 p-2 bg-secondary rounded-full">
+								<div className=" absolute ml-[140px] cursor-pointer -mt-20 p-2 bg-secondary rounded-full">
 									<BsCamera className="text-xl text-white" />
 								</div>
 							</div>
@@ -41,26 +41,21 @@ function ShowUser(props) {
 
 								<br />
 								<p className="text-gray5">{userData.email}</p>
-<br/>
-								<p className="">Place of Residence</p>
-								<p className="text-gray5">{userData.location}</p>
 								<br />
-								<p className="">Phone</p>
-								<p className="text-gray5">{userData.phone}</p>
+								<p className="">Roles</p>
+								{
+									userData.roles.map((role) => {
+										return (
+											<span className="bg-gray3 text-gray5 rounded-md px-2 py-1 mr-2">
+												{role}
+											</span>
+										)
+									})
+								}
+								<br />
 
 							</div>
-							<div className="w-1/2 p-2">
-								<br/>
-								<label>Add roles</label>
-								<Select className="mt-2" placeholder="Select Role" options={[
-									{label:"Admin", value:"Admin"},
-									{label:"Sales", value:"Sales"},
-									{label:"Stock", value:"Stock"},
-									{label:"Report", value:"Report"},
-									]} />
-								
 
-							</div>
 						</div>
 					</div>
 				</div>

@@ -53,7 +53,6 @@ const Dashboard = () => {
 				return 1
 			}
 		})
-		console.log(stocksWithHightsSales)
 
 		setStocksWithHightsSales(stocksWithHightsSales.slice(0, 5))
 	}, [allStock])

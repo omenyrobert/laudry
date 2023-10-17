@@ -24,6 +24,7 @@ import AddcustomerForm from './components/Customers/AddCustomerForm'
 import Stock from './views/Stock'
 import Sales from './views/Sales'
 import Banking from './views/Banking'
+import RoleGuard from './components/RoleGuard'
 
 const router = createBrowserRouter([
   {
@@ -58,12 +59,18 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/dashboard',
-        element: <Dashboard />,
+        element: (
+          <RoleGuard allowedRoles={['admin', 'reports', 'stock', "sales"]}>
+            <Dashboard />
+          </RoleGuard>
+        )
       },
       {
         path: '/customers',
         element: (
-          <Customers />
+          <RoleGuard allowedRoles={['admin']} >
+            <Customers />
+          </RoleGuard>
         ),
       },
       {
@@ -81,31 +88,41 @@ const router = createBrowserRouter([
       {
         path: '/users',
         element: (
-          <Users />
+          <RoleGuard allowedRoles={['admin']} >
+            <Users />
+          </RoleGuard>
         )
       },
       {
         path: '/sales',
         element: (
-          <Sales />
+          <RoleGuard allowedRoles={['admin', 'sales']} >
+            <Sales />
+          </RoleGuard>
         )
       },
       {
         path: '/reports',
         element: (
-          <Reports />
+          <RoleGuard allowedRoles={['admin', 'reports']} >
+            <Reports />
+          </RoleGuard>
         )
       },
       {
         path: '/stock',
         element: (
-          <Stock />
+          <RoleGuard allowedRoles={['admin', 'stock']} >
+            <Stock />
+          </RoleGuard>
         )
       },
       {
         path: "/banking",
         element: (
-          <Banking />
+          <RoleGuard allowedRoles={['admin', 'reports']} >
+            <Banking />
+          </RoleGuard>
         )
       }
     ],
