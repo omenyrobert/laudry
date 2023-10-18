@@ -204,7 +204,7 @@ const Sales = () => {
                             </div>
                             <div>
                                 <p className="font-bold">
-                                    {item.qty}
+                                    {item.qty.toLocaleString()}
                                 </p>
                             </div>
 

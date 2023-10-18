@@ -553,9 +553,15 @@ const Stock = () => {
                                 >
                                     <td className="text-sm p-3 text-gray5">{stock.date}</td>
                                     <td className="p-3 text-sm text-gray5"> {stock.name} </td>
-                                    <td className="text-sm p-3 text-gray5">{stock.unitCost}</td>
-                                    <td className="text-sm p-3 text-gray5">{stock.unitSell}</td>
-                                    <td className="text-sm p-3 text-gray5">{stock.qty}</td>
+                                    <td className="text-sm p-3 text-gray5">{
+                                        stock.unitCost.toLocaleString()
+                                    }</td>
+                                    <td className="text-sm p-3 text-gray5">{
+                                        stock.unitSell.toLocaleString()
+                                    }</td>
+                                    <td className="text-sm p-3 text-gray5">{
+                                        stock.qty.toLocaleString()
+                                    }</td>
                                     <td className="text-sm p-3 text-gray5">{stock?.category?.type}</td>
                                     <td className="text-sm p-3 text-gray5 flex">
                                         <MdDeleteOutline

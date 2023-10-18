@@ -180,14 +180,14 @@ const Reports = () => {
                                 {sale.quantity}
                             </div>
                             <div className="py-3 text-xs text-gray5 w-2/12">
-                                {sale.stock?.unitCost * sale.quantity}
+                                {(sale.stock?.unitCost * sale.quantity).toLocaleString()}
                             </div>
                             <div className="py-3 text-xs text-gray5 w-2/12">
-                                {sale.stock?.unitSell * sale.quantity}
+                                {(sale.stock?.unitSell * sale.quantity).toLocaleString()}
                             </div>
                             <div className="py-3 text-xs text-gray5 w-2/12">
                                 {
-                                    sale.stock?.unitSell * sale.quantity - sale.stock?.unitCost * sale.quantity
+                                    (sale.stock?.unitSell * sale.quantity - sale.stock?.unitCost * sale.quantity).toLocaleString()
                                 }
                             </div>
 
@@ -232,21 +232,21 @@ const Reports = () => {
                         {
                             filteredSales.reduce((a, b) => {
                                 return a + b.stock.unitCost * b.quantity
-                            }, 0)
+                            }, 0).toLocaleString()
                         }
                     </div>
                     <div className="py-3 w-2/12">
                         {
                             filteredSales.reduce((a, b) => {
                                 return a + (b.stock.unitSell * b.quantity)
-                            }, 0)
+                            }, 0).toLocaleString()
                         }
                     </div>
                     <div className="py-3 w-2/12">
                         {
                             filteredSales.reduce((a, b) => {
                                 return a + (b.stock.unitSell * b.quantity - b.stock.unitCost * b.quantity)
-                            }, 0)
+                            }, 0).toLocaleString()
                         }
                     </div>
                 </div>
