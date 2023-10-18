@@ -60,7 +60,7 @@ const router = createBrowserRouter([
       {
         path: '/dashboard',
         element: (
-          <RoleGuard allowedRoles={['admin', 'reports', 'stock', "sales"]}>
+          <RoleGuard allowedRoles={['admin', 'reports']}>
             <Dashboard />
           </RoleGuard>
         )

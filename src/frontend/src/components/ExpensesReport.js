@@ -169,30 +169,31 @@ const ExpensesReported = () => {
                                 )
                             })}
                         </div>
-                    </div>
-                    <div className="flex bg-secondary text-white font-medium mt-2">
-                        <div className="w-1/4 p-2">
-                            Total
-                        </div>
-                        <div className="w-1/4 p-2">
+
+                        <div className="flex bg-secondary text-white font-medium mt-2">
+                            <div className="w-1/4 p-2">
+                                Total
+                            </div>
+                            <div className="w-1/4 p-2">
+
+                            </div>
+                            <div className="w-1/4 p-2">
+
+                            </div>
+                            <div className="w-1/4 p-2">
+
+                            </div>
+                            <div className="w-1/4 p-2">
+                                {
+                                    expenseReport.reduce((a, b) => a + b.amount, 0)
+                                }
+                            </div>
+                            <div className="w-1/4 p-2">
+
+                            </div>
+
 
                         </div>
-                        <div className="w-1/4 p-2">
-
-                        </div>
-                        <div className="w-1/4 p-2">
-
-                        </div>
-                        <div className="w-1/4 p-2">
-                            {
-                                expenseReport.reduce((a, b) => a + b.amount, 0)
-                            }
-                        </div>
-                        <div className="w-1/4 p-2">
-
-                        </div>
-
-
                     </div>
 
                 </div>

@@ -90,6 +90,13 @@ export const getTopStock = createAsyncThunk("/autocount/topStock", async () => {
 	if (status) return payload;
 });
 
+export const getStaff = createAsyncThunk("/autocount/staff", async () => {
+	const staff = await axiosInstance.get("/staff");
+	const { data } = staff;
+	const { status, payload } = data;
+	if (status) return payload;
+});
+
 export const autoCountSlices = createSlice({
 	name: "AutoCountStore",
 	initialState: {
@@ -103,6 +110,7 @@ export const autoCountSlices = createSlice({
 		expenseReport: [],
 		accounts: [],
 		topStock: [],
+		staff: [],
 		loading: {
 			cartegories: false,
 			stock: false,
@@ -114,6 +122,7 @@ export const autoCountSlices = createSlice({
 			expenseReport: false,
 			accounts: false,
 			topStock: false,
+			staff: false,
 		},
 	},
 	extraReducers: {
@@ -216,6 +225,16 @@ export const autoCountSlices = createSlice({
 		},
 		[getTopStock.rejected]: (state) => {
 			state.loading.topStock = false;
+		},
+		[getStaff.pending]: (state) => {
+			state.loading.staff = true;
+		},
+		[getStaff.fulfilled]: (state, action) => {
+			state.loading.staff = false;
+			state.staff = action.payload;
+		},
+		[getStaff.rejected]: (state) => {
+			state.loading.staff = false;
 		},
 	},
 });

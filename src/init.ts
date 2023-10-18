@@ -1,4 +1,4 @@
-import { createStaff } from "./Entities/Staff";
+import { createStaff, setStaffRoles } from "./Entities/Staff";
 import * as readline from "readline/promises";
 import { stdin as input, stdout as output } from 'process';
 import chalk from "chalk"
@@ -42,9 +42,10 @@ async function createStaffinDB() {
     }
 
     // create staff
-    await createStaff(first_name, middle_name, last_name, email, hashedPassword);
+    const staff = await createStaff(first_name, middle_name, last_name, email, hashedPassword);
     rl.close();
 
+    console.log("Staff created successfully!");
     console.log("Staff created successfully!");
 
 }
@@ -53,7 +54,7 @@ async function createStaffinDB() {
 DatabaseConnection.initialize()
   .then(() => {
     console.log("Database Connection Successful");
-    createStaffinDB();
+    setStaffRoles(1, ["admin"])
   })
   .catch((error) => {
     console.log(error);

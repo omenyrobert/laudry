@@ -3,7 +3,7 @@ import { FaUsers, FaFileInvoiceDollar, FaTooth } from "react-icons/fa";
 import { TbZoomMoney } from "react-icons/tb"
 
 
-function Cards({ allStock, warningStock, accounts }) {
+function Cards({ allStock, warningStock, accounts, customers, staff }) {
 
 
 
@@ -16,7 +16,7 @@ function Cards({ allStock, warningStock, accounts }) {
 				</p>
 				<div className="flex justify-between mt-3 text-sm">
 					<div>
-						2
+						{customers?.length}
 					</div>
 					<div>
 						View All
@@ -39,7 +39,9 @@ function Cards({ allStock, warningStock, accounts }) {
 				</div>
 				<div className="flex justify-between mt-5">
 					<div className="">
-						<p className="text-2xl">{20}</p>
+						<p className="text-2xl">{
+							staff.length
+						}</p>
 					</div>
 					<div className="">
 						<p className="bg-blue11 p-2 text-primary text-xs rounded">View All</p>

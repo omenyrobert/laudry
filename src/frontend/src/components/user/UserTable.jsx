@@ -8,10 +8,19 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import axiosInstance from "../../axios-instance";
 import Loader from "../Loader"
+import { useDispatch, useSelector } from "react-redux";
+import { getStaff } from "../../store/slices/store";
 
 function UserTable() {
 	const [editData, setEditData] = useState(false);
 	const [showData, setShowData] = useState(false);
+	const dispatch = useDispatch()
+	const { staff } = useSelector((state) => state.autocountStore)
+
+	useEffect(() => {
+		dispatch(getStaff())
+	}, [dispatch])
+
 
 
 	const closeEditData = () => {
@@ -68,12 +77,12 @@ function UserTable() {
 			if (result.isConfirmed) {
 				try {
 					const response = await axiosInstance.delete(
-						`/user/${user.id}`
+						`/staff/${user.id}`
 					);
 					const { data } = response;
 					const { status } = data;
 					if (status) {
-						fetchUsers()
+						dispatch(getStaff())
 						Swal.fire({
 							icon: "success",
 							showConfirmButton: false,
@@ -110,7 +119,7 @@ function UserTable() {
 						<th className="p-2 text-primary text-sm text-left">Action</th>
 					</thead>
 					<tbody>
-						{userArray.map((user) => {
+						{staff.map((user) => {
 							return (
 								<tr
 									className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"

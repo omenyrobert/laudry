@@ -4,19 +4,29 @@ import { Navigate } from "react-router-dom";
 const RoleGuard = ({ allowedRoles, children }) => {
   const user = JSON.parse(localStorage.getItem("schoolSoftUser"));
 
-  if (user?.roles?.length === 1 && user.roles[0] === "sales") {
-    return <Navigate to="/sales" />;
+  const userRoles = user?.roles;
+
+
+  if (userRoles) {
+    const hasRole = allowedRoles.some((role) => userRoles.includes(role));
+
+    if (!hasRole) {
+      if (userRoles.includes("sales")) {
+        window.location.href = "/sales";
+        return null
+
+      } else if (userRoles.includes("stock")) {
+        window.location.href = "/stock";
+        return null
+
+      } else if (userRoles.includes("reports")) {
+        window.location.href = "/reports";
+        return null
+      }
+    }
   }
 
-  if (user?.roles?.length === 1 && user.roles[0] === "stock") {
-    return <Navigate to="/stock" />;
-  }
 
-  const hasAllowedRole = user && user?.roles?.some((role) => allowedRoles.includes(role));
-
-  if (!hasAllowedRole) {
-    return <Navigate to="/dashboard" />;
-  }
 
   return children;
 };

@@ -16,7 +16,7 @@ import { useFeedback } from "../hooks/feedback";
 
 const Sales = () => {
     const dispatch = useDispatch()
-    const { stock, customers, loading } = useSelector((state) => state.autocountStore)
+    const { stock, customers, loading, allStock } = useSelector((state) => state.autocountStore)
     const [cart, setCart] = useState([])
     const { toggleFeedback } = useFeedback()
     const [customerOptions, setCustomerOptions] = useState([])
@@ -219,11 +219,13 @@ const Sales = () => {
                             <div className="bg-primary p-2 rounded-md text-white cursor-pointer">
                                 Loading...
                             </div>
-                        ) : (
-                            <div onClick={() => setPage(page + 1)} className="bg-primary p-2 rounded-md text-white cursor-pointer">
-                                Load More
-                            </div>
-                        )
+                        ) :
+                            stock.length === allStock.length ? null :
+                                (
+                                    <div onClick={() => setPage(page + 1)} className="bg-primary p-2 rounded-md text-white cursor-pointer">
+                                        Load More
+                                    </div>
+                                )
                     }
 
                 </div>

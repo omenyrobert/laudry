@@ -23,10 +23,10 @@ const CustomersTable = (props) => {
 
   const openModal = (customer) => {
     setModal(true);
-    setName(customer.supplierName);
-    setEmail(customer.emails);
-    setLocation(customer.address);
-    setPhone(customer.contacts)
+    setName(customer.name);
+    setEmail(customer.email);
+    setLocation(customer.location);
+    setPhone(customer.phone)
   }
 
   const closeModal = () => {
@@ -45,21 +45,17 @@ const CustomersTable = (props) => {
   }
 
 
-
-
-
-  const [loadingp, setLoadingp] = useState(false)
-  const [payments, setPayments] = useState([])
-
-
-
-
   const [name, setName] = useState("")
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
-  const [posting, setPosting] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [posting, setPosting] = useState(false);
+
+  const { toggleFeedback } = useFeedback()
+
+  const dispatch = useDispatch()
+
+
 
 
 
@@ -152,9 +148,15 @@ export const Customer = ({ customer, openModal }) => {
   const [date, setDate] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
   const [activeAccount, setActiveAccount] = useState(null)
   const { toggleFeedback } = useFeedback()
   const dispatch = useDispatch()
+  const [modal, setModal] = useState(false)
+
+  const closeModal = () => {
+    setModal(false);
+  }
 
   const postPayment = async () => {
     if (activeAccount === null) {
@@ -227,9 +229,141 @@ export const Customer = ({ customer, openModal }) => {
     }
   }
 
+  async function deleteCustomer() {
+    try {
+      setDeleteLoading(true)
+      const res = await axiosInstance.delete(`/customers/${customer.id}`)
+
+      const { status, payload } = res.data
+
+      if (status) {
+        dispatch(getCustomers())
+        toggleFeedback("success", {
+          title: "Success",
+          text: "Customer deleted successfully"
+        })
+        setDeleteLoading(false)
+      } else {
+        toggleFeedback("error", {
+          title: "Error",
+          text: payload
+        })
+        setDeleteLoading(false)
+      }
+
+    } catch (error) {
+      toggleFeedback("error", {
+        title: "Error",
+        text: "An error occured"
+      })
+      setDeleteLoading(false)
+    }
+  }
+
+  //edit customer
+  const [name, setName] = useState(customer.name)
+  const [email, setEmail] = useState(customer.email);
+  const [phone, setPhone] = useState(customer.phone);
+  const [location, setLocation] = useState(customer.location);
+  const [posting, setPosting] = useState(false);
+
+  const postCustomer = async () => {
+    try {
+      setPosting(true);
+      const response = await axiosInstance.put(`/customers`, {
+        id: customer.id,
+        name,
+        email,
+        phone,
+        location,
+      });
+
+      const { status, payload } = response.data
+
+      if (status) {
+        toggleFeedback("success", {
+          title: "Success",
+          text: "Customer Updated Successfully",
+        });
+        dispatch(getCustomers())
+        setName("");
+        setEmail("");
+        setPhone("");
+        setLocation("");
+        setPosting(false);
+        closeModal();
+      } else {
+        toggleFeedback("error", {
+          title: "Error",
+          text: payload,
+        });
+        setPosting(false);
+      }
+    } catch (error) {
+      toggleFeedback("error", {
+        title: "Error",
+        text: error.message,
+      });
+      setPosting(false);
+    }
+  }
 
   return (
     <>
+
+      {modal ? <div className='z-50 bg-black/50 h-full w-full top-0 right-0 left-0 absolute flex'>
+        <div className='w-3/12' onClick={closeModal}>
+
+        </div>
+        <div className='w-6/12'>
+          <div className='rounded-lg bg-white mt-[10vh]'>
+            <div className='flex text-xl justify-between font-semibold text-primary p-2 bg-gray1'>
+              <div>
+                <p>Edit Customer</p>
+              </div>
+              <div>
+                <p onClick={closeModal} className='cursor-pointer'>X</p>
+              </div>
+
+            </div>
+            <div className='flex'>
+              <div className='w-1/2 p-2'>
+                <InputField value={name} onChange={(e) => setName(e.target.value)} label="Name Of Customer" placeholder="Enter Name" />
+                <InputField value={email} onChange={(e) => setEmail(e.target.value)} label="Email" placeholder="Enter Email" />
+              </div>
+              <div className='w-1/2 p-2'>
+                <InputField value={phone} onChange={(e) => setPhone(e.target.value)} label="Phone Number" placeholder="Phone Number" />
+                <InputField value={location} onChange={(e) => setLocation(e.target.value)} label="Location" placeholder="Enter Location" />
+              </div>
+            </div>
+
+            <div className='flex justify-between text-primary p-2 bg-gray1'>
+              <div onClick={closeModal}>
+                <ButtonSecondary value={"Close"} />
+              </div>
+              <div className='20'>
+                {posting ? <ButtonLoader /> : <div onClick={() => {
+                  postCustomer()
+                }}>
+                  <Button value={"Update "} />
+                </div>}
+
+              </div>
+
+            </div>
+
+          </div>
+          <div className='h-1/4' onClick={closeModal}>
+
+          </div>
+
+        </div>
+        <div className='w-3/12' onClick={closeModal}>
+
+        </div>
+
+      </div> : null}
+
       {modal2 ? <div className='z-50 bg-black/50 h-full w-full top-0 right-0 left-0 absolute flex'>
         <div className='w-2/12' onClick={() => {
           setModal2(false)
@@ -256,14 +390,13 @@ export const Customer = ({ customer, openModal }) => {
               <div className='flex '>
                 {
                   customer.accounts?.map((account) => {
-                    if (account.balance === 0) {
-                      return null
-                    }
                     return (
                       <div className={activeAccount?.id === account.id ? 'w-32 p-2 m-2 bg-primary text-white' : 'w-32 p-2 m-2 bg-gray1'} onClick={() => {
                         setActiveAccount(account)
                       }}>
-                        {account.amount}
+                        {account.amount} {
+                          account.balance === 0 && <span>( Closed )</span>
+                        }
                       </div>
                     )
                   })
@@ -287,20 +420,29 @@ export const Customer = ({ customer, openModal }) => {
 
               </div>
               <div className='flex -mt-5'>
-                <div className='w-1/3 p-2'>
-                  <InputField value={date} onChange={(e) => setDate(e.target.value)} type="date" />
-                </div>
-                <div className='w-1/3 p-2'>
-                  <InputField value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" />
-                </div>
-                <div className='w-42 mt-6 p-2'>
-                  {adding ? <ButtonLoader /> :
-                    <div onClick={() => { postPayment() }}>
-                      <Button value={"Add Payment"} />
-                    </div>}
+                {
+                  activeAccount?.balance === 0 ? <div className='p-2'>
+                    <span className='text-primary'>Account Settled</span>
+                  </div> : (
+                    <>
+                      <div className='w-1/3 p-2'>
+                        <InputField value={date} onChange={(e) => setDate(e.target.value)} type="date" />
+                      </div>
+                      <div className='w-1/3 p-2'>
+                        <InputField value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" />
+                      </div>
+                      <div className='w-42 mt-6 p-2'>
+                        {adding ? <ButtonLoader /> :
+                          <div onClick={() => { postPayment() }}>
+                            <Button value={"Add Payment"} />
+                          </div>}
 
 
-                </div>
+                      </div>
+                    </>
+                  )
+                }
+
 
               </div>
               <div className='flex bg-gray2 mx-3'>
@@ -375,8 +517,17 @@ export const Customer = ({ customer, openModal }) => {
         </td>
 
         <td className="text-xs flex p-3 text-gray5">
-          <BsTrash onClick={() => { }} className='text-red' />
-          <BsPencilSquare onClick={() => openModal(customer)} className='text-yellow mx-5' />
+          {
+            deleteLoading ? (
+              <span className='animate-spin rounded-full h-3 w-3 border-t-2 border-b-2 border-red'></span>
+            ) : <BsTrash onClick={() => {
+              deleteCustomer()
+            }} className='text-red' />
+          }
+
+          <BsPencilSquare onClick={() => {
+            setModal(true)
+          }} className='text-yellow mx-5' />
           <p onClick={() => {
             setModal2(true)
           }} className='px-1 bg-primary rounded-full -mt-1 cursor-pointor font-bold text-white'>A</p>

@@ -79,9 +79,6 @@ export const getStaffMembers = async () => {
     order: {
       id: "DESC",
     },
-    relations: {
-      staff_type: true,
-    },
   });
   return staffMembers;
 };
@@ -236,13 +233,27 @@ export const createStaff = async (
   email: string,
   password: string,
 ) => {
-  const staff = await Staff.insert({
-    first_name: firstName,
-    middle_name: middleName,
-    last_name: lastName,
-    email: email,
-    password: password,
-  });
+  const staff = new Staff();
+  staff.first_name = firstName;
+  staff.middle_name = middleName;
+  staff.last_name = lastName;
+  staff.email = email;
+  staff.password = password;
+  await staff.save();
+
+  return staff;
+}
+
+export const setStaffRoles = async (id: number, roles: string[]) => {
+  const staff = await Staff.findOne({ where: { id: id } });
+
+  if (!staff) {
+    throw new Error("Staff account does not exist");
+  }
+
+  staff.roles = roles;
+
+  await staff.save();
 
   return staff;
 }

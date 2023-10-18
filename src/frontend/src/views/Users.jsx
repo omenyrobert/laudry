@@ -10,12 +10,15 @@ import ButtonLoader from "../components/ButtonLoader";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import Select from "react-select"
+import { useDispatch, useSelector } from "react-redux";
+import { getStaff } from "../store/slices/store";
 
 
 
 
 const Users = () => {
   const [modal, setModal] = useState(false)
+  const dispatch = useDispatch()
 
   const openModal = () => {
     setModal(true);
@@ -54,6 +57,7 @@ const Users = () => {
         let res = await axiosInstance.post("/staff", formData);
         const { status, payload } = res.data;
         if (status) {
+          dispatch(getStaff())
           setFirstName("");
           setMiddleName("");
           setLastName("");

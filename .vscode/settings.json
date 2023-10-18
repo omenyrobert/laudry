@@ -14,6 +14,20 @@
       "username": "u848751863_school",
       "database": "u848751863_school",
       "password": "@Jollyjoe123"
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "sql865.main-hosting.eu",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "AutoCount",
+      "username": "u848751863_pointsale",
+      "database": "u848751863_pointsale",
+      "askForPassword": true
     }
   ]
 }

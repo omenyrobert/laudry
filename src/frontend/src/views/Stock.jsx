@@ -15,13 +15,13 @@ import Loader from "../components/Loader";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useDispatch, useSelector } from "react-redux";
-import { getCartegories, getStock } from "../store/slices/store";
+import { getAllStock, getCartegories, getStock } from "../store/slices/store";
 import { useFeedback } from "../hooks/feedback";
 
 const Stock = () => {
     const [modal, setModal] = useState(false)
     const dispatch = useDispatch();
-    const { cartegories, stock: allStock } = useSelector(state => state.autocountStore)
+    const { cartegories, allStock } = useSelector(state => state.autocountStore)
     const [cartegoryOptions, setCartegoryOptions] = useState([])
     const { toggleFeedback } = useFeedback()
 
@@ -41,7 +41,7 @@ const Stock = () => {
 
     useEffect(() => {
         dispatch(getCartegories());
-        dispatch(getStock());
+        dispatch(getAllStock());
     }, [dispatch]);
 
     const openModal = () => {
@@ -580,7 +580,10 @@ const Stock = () => {
                 {loading ? <div className="flex justify-center mt-[10vh]"> <Loader />  </div> :
                     null}
                 <div className="flex justify-center mt-5">
-                    <ButtonAlt value={"Load More"} onClick={() => setPage(page + 1)} />
+                    {
+                        stocks.length < allStock.length && <ButtonAlt value={"Load More"} onClick={() => setPage(page + 1)} />
+                    }
+
                 </div>
 
             </div>

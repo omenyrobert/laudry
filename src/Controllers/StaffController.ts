@@ -181,7 +181,7 @@ export const modifyStaffMember = async (req: Request, res: Response) => {
         firstName,
         middleName,
         staffType,
-        updatedRoles
+        roles
       );
 
       if (staffMember) {

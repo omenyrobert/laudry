@@ -12,12 +12,12 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axios-instance";
 import DoughnutComp from "../components/dashboard/DoughnutComp";
 import { useDispatch, useSelector } from "react-redux";
-import { getAccounts, getAllStock, getCustomers, getTopStock } from "../store/slices/store";
+import { getAccounts, getAllStock, getCustomers, getStaff, getTopStock } from "../store/slices/store";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch()
-	const { allStock, customers, accounts, topStock } = useSelector((state) => state.autocountStore)
+	const { allStock, customers, accounts, topStock, staff } = useSelector((state) => state.autocountStore)
 	const [warningStock, setWarningStock] = useState([])
 	const [unSettled, setUnSettled] = useState([])
 	const [stocksWithHightsSales, setStocksWithHightsSales] = useState([])
@@ -34,6 +34,8 @@ const Dashboard = () => {
 		dispatch(getAllStock())
 		dispatch(getCustomers())
 		dispatch(getAccounts())
+		dispatch(getTopStock())
+		dispatch(getStaff())
 	}, [dispatch])
 
 	useEffect(() => {
@@ -64,7 +66,7 @@ const Dashboard = () => {
 
 	return (
 		<div className="h-[100vh] overflow-y-auto">
-			<Cards allStock={allStock} warningStock={warningStock} accounts={unSettled} />
+			<Cards staff={staff} allStock={allStock} warningStock={warningStock} accounts={unSettled} customers={customers} />
 			<div className="flex w-full">
 				<div className="w-7/12">
 					<div className="rounded-md w-full shadow-md bg-white h-[65vh] p-5">

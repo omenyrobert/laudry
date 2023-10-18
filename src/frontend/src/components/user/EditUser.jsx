@@ -7,6 +7,8 @@ import axiosInstance from "../../axios-instance";
 import ButtonLoader from "../ButtonLoader";
 import Select from "react-select"
 import Swal from "sweetalert2";
+import { useDispatch, useSelector } from "react-redux";
+import { getStaff } from "../../store/slices/store";
 
 function EditUser(props) {
 	const { userData, closeEditData } = props;
@@ -17,9 +19,18 @@ function EditUser(props) {
 	const [email, setEmail] = useState(userData.email)
 	const [phone, setPhone] = useState(userData.phone)
 	const [location, setLocation] = useState(userData.location)
-	const [roles, setRoles] = useState(userData.roles?.map((role) => {
-		return { value: role, label: role }
-	}) || [])
+	const [roles, setRoles] = useState([])
+	const dispatch = useDispatch()
+
+	useEffect(() => {
+		if (userData.roles) {
+			let rolesArray = userData.roles.map((role) => {
+				return { value: role, label: role }
+			})
+			setRoles(rolesArray)
+		}
+	}, [userData])
+
 
 
 	const updateUser = async () => {
@@ -40,6 +51,7 @@ function EditUser(props) {
 				const { status, payload } = res.data;
 
 				if (status) {
+					dispatch(getStaff())
 					setFirstName("");
 					setMiddleName("");
 					setLastName("");
