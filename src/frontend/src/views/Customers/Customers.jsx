@@ -114,7 +114,7 @@ const Customers = () => {
           <div className="w-4/12 ">
             <InputField
               type="text"
-              placeholder="Search For Student ..."
+              placeholder="Search For Customer ..."
               name="lastName"
               icon={
                 <BsSearch
