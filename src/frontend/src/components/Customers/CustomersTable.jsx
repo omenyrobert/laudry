@@ -406,13 +406,18 @@ export const Customer = ({ customer, openModal }) => {
               <div className='flex'>
                 <div className='p-2'>
                   <span className='text-primary'>Amount:</span>
-                  {activeAccount?.amount}
+                  {activeAccount?.amount.toLocaleString()}
                 </div>
                 <div className='p-2'>
                   <span className='text-primary'>Date:</span>
-                  {
-                    new Date(activeAccount?.date).toDateString()
-                  }
+                  <span className={
+                    new Date(activeAccount?.date).getTime() < new Date().getTime() ? 'text-red' : ''
+                  }>
+
+                    {
+                      new Date(activeAccount?.date).toDateString()
+                    }
+                  </span>
                 </div>
                 <div className='p-2'>
                   <span className='text-primary'>Balance:</span> {activeAccount?.balance}
@@ -469,7 +474,7 @@ export const Customer = ({ customer, openModal }) => {
                       </div>
                       <div className='w-1/3 p-2'>
                         {
-                          pay.amount
+                          pay.amount.toLocaleString()
                         }
                       </div>
                       <div className='w-1/3 p-2'>
@@ -518,11 +523,11 @@ export const Customer = ({ customer, openModal }) => {
 
         <td className="text-xs flex p-3 text-gray5">
           {
-            deleteLoading ? (
+            /* deleteLoading ? (
               <span className='animate-spin rounded-full h-3 w-3 border-t-2 border-b-2 border-red'></span>
             ) : <BsTrash onClick={() => {
               deleteCustomer()
-            }} className='text-red' />
+            }} className='text-red' /> */
           }
 
           <BsPencilSquare onClick={() => {

@@ -6,7 +6,8 @@ import {
   createExpense,
   deleteExpense,
   getSingleExpense,
-  getExpensesByDate
+  getExpensesByDate,
+  searchExpenses
 } from "../Entities/Expense";
 
 import { customPayloadResponse } from "../Helpers/Helpers";
@@ -105,7 +106,7 @@ export const searchExpensesController = async (req: Request, res: Response) => {
   try {
     const { search, startDate, endDate, type } = req.query;
     
-    const expenses = await getExpensesByDate(
+    const expenses = await searchExpenses(
       search ? search.toString() : null,
       startDate ? startDate.toString() : null,
       endDate ? endDate.toString() : null,

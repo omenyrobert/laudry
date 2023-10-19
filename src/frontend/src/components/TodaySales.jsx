@@ -78,14 +78,14 @@ const TodaySales = () => {
                                             {sale.stock?.name}
                                         </div>
                                         <div className="w-1/4 p-2">
-                                            {sale.quantity}
+                                            {sale.quantity.toLocaleString()}
                                         </div>
                                         <div className="w-1/4 p-2">
-                                            {sale.stock?.unitSell * sale.quantity}
+                                            {(sale.stock?.unitSell * sale.quantity).toLocaleString()}
                                         </div>
                                         <div className="w-1/4 p-2">
                                             {
-                                                sale.stock?.unitSell * sale.quantity - sale.stock?.unitCost * sale.quantity
+                                                (sale.stock?.unitSell * sale.quantity - sale.stock?.unitCost * sale.quantity).toLocaleString()
                                             }
                                         </div>
 
@@ -101,21 +101,21 @@ const TodaySales = () => {
                                 {
                                     todaySales.reduce((a, b) => {
                                         return a + b.quantity
-                                    }, 0)
+                                    }, 0).toLocaleString()
                                 }
                             </div>
                             <div className="w-1/4 p-2">
                                 {
                                     todaySales.reduce((a, b) => {
                                         return a + b.stock.unitCost
-                                    }, 0)
+                                    }, 0).toLocaleString()
                                 }
                             </div>
                             <div className="w-1/4 p-2">
                                 {
                                     todaySales.reduce((a, b) => {
                                         return a + (b.stock.unitSell * b.quantity - b.stock.unitCost * b.quantity)
-                                    }, 0)
+                                    }, 0).toLocaleString()
                                 }
                             </div>
 

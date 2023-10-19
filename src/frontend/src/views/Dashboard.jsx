@@ -71,7 +71,9 @@ const Dashboard = () => {
 				<div className="w-7/12">
 					<div className="rounded-md w-full shadow-md bg-white h-[65vh] p-5">
 						<p className="text-xl text-primary font-semibold">Products</p>
-						<BarGraph allStock={allStock} />
+						<BarGraph allStock={
+							allStock.slice(0, 20)
+						} />
 
 					</div>
 					<div className="bg-white h-[75vh] overflow-y-auto rounded-md p-2 mt-2 shadow-md">
@@ -99,13 +101,13 @@ const Dashboard = () => {
 										<div className="ml-2">	{mem.name}</div>
 									</div>
 									<div className="p-2 w-1/4">
-										{mem.qty}
+										{mem.qty.toLocaleString()}
 									</div>
 									<div className="p-2 w-1/4">
-										{mem.unitCost}
+										{mem.unitCost.toLocaleString()}
 									</div>
 									<div className="p-2 w-1/4">
-										{mem.unitSell}
+										{mem.unitSell.toLocaleString()}
 									</div>
 
 								</div>
@@ -127,7 +129,9 @@ const Dashboard = () => {
 												new Date(giv.date).toDateString()
 											}</p>
 										</div>
-										<p className="text-primary font-medium text-lg">{giv.amount}</p>
+										<p className="text-primary font-medium text-lg">{
+											giv.amount.toLocaleString()
+										}</p>
 									</div>
 								)
 							})}
@@ -135,7 +139,7 @@ const Dashboard = () => {
 						<br />
 					</div>
 					<div className="mt-2 rounded-md shadow-md bg-white ml-2 overflow-y-auto p-2">
-						<p className="m-2 text-xl font-semibold text-primary">Profit per Product</p>
+						<p className="m-2 text-xl font-semibold text-primary">Unsettled Accounts</p>
 						<DoughnutComp unSettled={unSettled} />
 						<br />
 						<br />

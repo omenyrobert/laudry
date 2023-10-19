@@ -160,7 +160,7 @@ const ExpensesReported = () => {
                                             {sale.type}
                                         </div>
                                         <div className="w-1/4 p-2">
-                                            {sale.amount}
+                                            {sale.amount.toLocaleString()}
                                         </div>
 
 
@@ -185,7 +185,7 @@ const ExpensesReported = () => {
                             </div>
                             <div className="w-1/4 p-2">
                                 {
-                                    expenseReport.reduce((a, b) => a + b.amount, 0)
+                                    expenseReport.reduce((a, b) => a + b.amount, 0).toLocaleString()
                                 }
                             </div>
                             <div className="w-1/4 p-2">

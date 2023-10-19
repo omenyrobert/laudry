@@ -40,7 +40,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between mt-5">
 					<div className="">
 						<p className="text-2xl">{
-							staff.length
+							staff.length.toLocaleString()
 						}</p>
 					</div>
 					<div className="">
@@ -65,7 +65,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between mt-5">
 					<div className="">
 						<p className="text-2xl">
-							{allStock.length}
+							{allStock.length.toLocaleString()}
 						</p>
 					</div>
 					<div className="">
@@ -90,7 +90,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between mt-5">
 					<div className="">
 						<p className="text-2xl">
-							{warningStock.length}
+							{warningStock.length.toLocaleString()}
 						</p>
 					</div>
 					<div className="">
@@ -115,7 +115,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between mt-5">
 					<div className="">
 						<p>
-							{accounts.length}
+							{accounts.length.toLocaleString()}
 						</p>
 					</div>
 					<div className="">

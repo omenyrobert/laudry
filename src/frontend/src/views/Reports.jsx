@@ -204,53 +204,55 @@ const Reports = () => {
                     )
                 }
 
+                {/* Load more */}
+                <div className="flex justify-center items-center">
+                    {
+                        filteredSales.length > 0 && !loading.sales && filteredSales.length % 10 === 0 && (
+                            <span className="text-primary cursor-pointer underline" onClick={() => {
+                                setPage(page + 1)
+                            }}>Load More</span>
+                        )
+                    }
+                </div>
 
-            </div>
-            {/* Load more */}
-            <div className="flex justify-center items-center">
-                {
-                    filteredSales.length > 0 && !loading.sales && filteredSales.length % 10 === 0 && (
-                        <span className="text-primary cursor-pointer underline" onClick={() => {
-                            setPage(page + 1)
-                        }}>Load More</span>
-                    )
-                }
-            </div>
+                <div>
+                    <div className="font-medium flex w-full bg-secondary text-white">
+                        <div className="p-3 w-2/12">
+                            Total
+                        </div>
+                        <div className="p-3 w-2/12">
 
-            <div>
-                <div className="font-medium flex w-full bg-secondary text-white">
-                    <div className="p-3 w-2/12">
-                        Total
-                    </div>
-                    <div className="p-3 w-2/12">
+                        </div>
+                        <div className="p-3 w-2/12">
 
-                    </div>
-                    <div className="p-3 w-2/12">
-
-                    </div>
-                    <div className="py-3 w-2/12">
-                        {
-                            filteredSales.reduce((a, b) => {
-                                return a + b.stock.unitCost * b.quantity
-                            }, 0).toLocaleString()
-                        }
-                    </div>
-                    <div className="py-3 w-2/12">
-                        {
-                            filteredSales.reduce((a, b) => {
-                                return a + (b.stock.unitSell * b.quantity)
-                            }, 0).toLocaleString()
-                        }
-                    </div>
-                    <div className="py-3 w-2/12">
-                        {
-                            filteredSales.reduce((a, b) => {
-                                return a + (b.stock.unitSell * b.quantity - b.stock.unitCost * b.quantity)
-                            }, 0).toLocaleString()
-                        }
+                        </div>
+                        <div className="py-3 w-2/12">
+                            {
+                                filteredSales.reduce((a, b) => {
+                                    return a + b.stock.unitCost * b.quantity
+                                }, 0).toLocaleString()
+                            }
+                        </div>
+                        <div className="py-3 w-2/12">
+                            {
+                                filteredSales.reduce((a, b) => {
+                                    return a + (b.stock.unitSell * b.quantity)
+                                }, 0).toLocaleString()
+                            }
+                        </div>
+                        <div className="py-3 w-2/12">
+                            {
+                                filteredSales.reduce((a, b) => {
+                                    return a + (b.stock.unitSell * b.quantity - b.stock.unitCost * b.quantity)
+                                }, 0).toLocaleString()
+                            }
+                        </div>
                     </div>
                 </div>
+
+
             </div>
+
         </div>
     )
 }

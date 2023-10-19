@@ -17,7 +17,7 @@ export class Expense extends BaseEntity {
   id!: number;
 
   @Column()
-  date!: string;
+  date!: Date;
 
   @Column()
   amount!: number;
@@ -107,6 +107,40 @@ export const getExpensesByDate = async (
     where.createdAt = Between(startOfDay(new Date(startDate)), endOfDay(new Date()));
   } else if (endDate !== null && endDate !== "") {
     where.createdAt = Between(startOfDay(new Date(0)), endOfDay(new Date(endDate)));
+  }
+
+  if (name !== null && name !== "") {
+    where.expense = Like(`%${name}%`);
+  }
+
+  if (type !== null && type !== "") {
+    where.type = type;
+  }
+
+
+  const expenses = await Expense.find({
+    where: where,
+    order: {
+      id: "DESC",
+    },
+  });
+  return expenses;
+}
+
+export const searchExpenses = async (
+  name: string | null = null,
+  startDate: string | null = null,
+  endDate: string | null = null,
+  type: string | null = null,
+) => {
+  const where: any = {};
+
+  if (startDate !== null && endDate !== null && startDate !== "" && endDate !== "") {
+    where.date = Between(startOfDay(new Date(startDate)), endOfDay(new Date(endDate)));
+  } else if (startDate !== null && startDate !== "") {
+    where.date = Between(startOfDay(new Date(startDate)), endOfDay(new Date()));
+  } else if (endDate !== null && endDate !== "") {
+    where.date = Between(startOfDay(new Date(0)), endOfDay(new Date(endDate)));
   }
 
   if (name !== null && name !== "") {
