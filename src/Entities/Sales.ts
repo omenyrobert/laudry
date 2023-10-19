@@ -15,7 +15,7 @@ import {
 import { Stock } from "./Stock";
 import { Customer } from "./Customer";
 import { Account } from "./Account";
-import { getExpensesByDate } from "./Expense";
+import { getExpensesByDate, searchExpenses } from "./Expense";
 
 
 
@@ -221,10 +221,10 @@ export const getSalesAndExpenses = async (
     dates.add(sale.createdAt.toDateString().slice(0,10));
   });
 
-  const expenses = await getExpensesByDate(null, startDate, endDate);
+  const expenses = await searchExpenses(null, startDate, endDate);
   
   expenses.forEach((expense) => {
-    dates.add(expense.createdAt.toDateString().slice(0,10));
+    dates.add(expense.date.toDateString().slice(0,10));
   });
 
   const result: any = [];
@@ -237,7 +237,7 @@ export const getSalesAndExpenses = async (
     }, 0);
 
     const expensesTotal = expenses.reduce((acc, expense) => {
-      if (expense.createdAt.toDateString().slice(0,10) === date) {
+      if (expense.date.toDateString().slice(0,10) === date) {
         return acc + expense.amount;
       }
       return acc;

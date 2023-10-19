@@ -47,40 +47,49 @@ const Expenses = () => {
 
     const updateExpense = async () => {
 
-            try {
-                setUpdating(true)
-                let formData = {
-                    id: id,
-                    date: edate,
-                    amount: eamount,
-                    type: etype.label,
-                    receivedBy: ereceivedby,
-                    expense: eexpense
-                }
-                let res = await axiosInstance.put("/expenses", formData);
-                if (res.status) {
-                    setUpdating(false)
-                    setDate("");
-                    setAmount("");
-                    setReceivedby("");
-                    setType("");
-                    fetchExpenses();
-                    setExpense("");
-                    setId("")
-                    closeModal2();
-                    const MySwal = withReactContent(Swal);
-                    MySwal.fire({
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 500,
-                    });
-                }
-            } catch (error) {
+        if (edate === "" || eamount === "" || etype === "" || ereceivedby === "" || eexpense === "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Please fill all fields!",
+            });
+            return;
+        }
 
-            } finally {
-                setUpdating(false)
+        try {
+            setUpdating(true)
+            let formData = {
+                id: id,
+                date: edate,
+                amount: eamount,
+                type: etype.label,
+                receivedBy: ereceivedby,
+                expense: eexpense
             }
-    
+            let res = await axiosInstance.put("/expenses", formData);
+            if (res.status) {
+                setUpdating(false)
+                setDate("");
+                setAmount("");
+                setReceivedby("");
+                setType("");
+                fetchExpenses();
+                setExpense("");
+                setId("")
+                closeModal2();
+                const MySwal = withReactContent(Swal);
+                MySwal.fire({
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 500,
+                });
+            }
+        } catch (error) {
+
+        } finally {
+            setUpdating(false)
+        }
+
     }
 
     const closeModal2 = () => {
@@ -101,7 +110,7 @@ const Expenses = () => {
         // alert(type)
         if (date !== "" && amount !== "" && type !== "" && receivedby !== "" && expense !== "") {
             try {
-                
+
                 setPosting(true)
                 let formData = {
                     date: date,
@@ -148,9 +157,9 @@ const Expenses = () => {
                 setExpenseData(res.data.payload)
                 const sumOfAges = res.data.payload.reduce((accumulator, currentValue) => {
                     return accumulator + currentValue.amount;
-                  }, 0);
+                }, 0);
 
-                  setTotal(sumOfAges)
+                setTotal(sumOfAges)
             }
 
         } catch (error) {
@@ -307,7 +316,7 @@ const Expenses = () => {
                             <br />
                             <label className="text-gray5">Expense Type</label>
                             <Select defaultValue={type} onChange={setType} placeholder="Select Expense Type"
-                                    options={types} />
+                                options={types} />
                         </div>
                         <div className="w-32 mt-14">
                             {posting ? <ButtonLoader /> : <div onClick={postExpense}>
@@ -377,28 +386,28 @@ const Expenses = () => {
                         })}
                     </div>
                     <div className="flex bg-secondary text-white font-medium mt-2">
-                    <div className="w-2/12 p-2">
+                        <div className="w-2/12 p-2">
                             Total
                         </div>
                         <div className="w-2/12 p-2">
-                            
+
                         </div>
                         <div className="w-3/12 p-2">
-                        
+
                         </div>
                         <div className="w-2/12 p-2">
-                            
+
                         </div>
                         <div className="w-2/12 p-2">
-                        {(total).toLocaleString()}
+                            {(total).toLocaleString()}
                         </div>
 
                         <div className="w-1/12 p-2">
-                        
+
                         </div>
 
 
-           
+
 
 
                     </div>

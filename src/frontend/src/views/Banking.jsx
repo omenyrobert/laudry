@@ -104,16 +104,16 @@ const Banking = () => {
                                     {bank.date}
                                 </div>
                                 <div className="w-1/4 p-2">
-                                    {bank.sales}
+                                    {bank.sales.toLocaleString()}
                                 </div>
                                 <div className="w-1/4 p-2">
-                                    {bank.unpaidSales}
+                                    {bank.unpaidSales.toLocaleString()}
                                 </div>
                                 <div className="w-1/4 p-2">
-                                    {bank.expenses}
+                                    {bank.expenses.toLocaleString()}
                                 </div>
                                 <div className="w-1/4 p-2">
-                                    {bank.sales + bank.unpaidSales}
+                                    {(bank.sales + bank.unpaidSales).toLocaleString()}
                                 </div>
 
                             </div>
@@ -130,28 +130,28 @@ const Banking = () => {
                         {
                             bankReport.reduce((a, b) => {
                                 return a + b.sales
-                            }, 0)
+                            }, 0).toLocaleString()
                         }
                     </div>
                     <div className="w-1/4 p-2">
                         {
                             bankReport.reduce((a, b) => {
                                 return a + b.unpaidSales
-                            }, 0)
+                            }, 0).toLocaleString()
                         }
                     </div>
                     <div className="w-1/4 p-2">
                         {
                             bankReport.reduce((a, b) => {
                                 return a + b.expenses
-                            }, 0)
+                            }, 0).toLocaleString()
                         }
                     </div>
                     <div className="w-1/4 p-2">
                         {
                             bankReport.reduce((a, b) => {
                                 return a + b.sales + b.unpaidSales
-                            }, 0)
+                            }, 0).toLocaleString()
                         }
                     </div>
 

@@ -21,6 +21,11 @@ function UserTable() {
 		dispatch(getStaff())
 	}, [dispatch])
 
+	useEffect(() => {
+		console.log('staff', staff)
+	}, [staff])
+
+
 
 
 	const closeEditData = () => {

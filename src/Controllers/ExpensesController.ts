@@ -106,7 +106,7 @@ export const searchExpensesController = async (req: Request, res: Response) => {
   try {
     const { search, startDate, endDate, type } = req.query;
     
-    const expenses = await searchExpenses(
+    const expenses = await getExpensesByDate(
       search ? search.toString() : null,
       startDate ? startDate.toString() : null,
       endDate ? endDate.toString() : null,

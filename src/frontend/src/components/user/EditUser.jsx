@@ -34,13 +34,13 @@ function EditUser(props) {
 
 
 	const updateUser = async () => {
-		if (firstName && middletName && lastName && email && roles.length > 0) {
+		if (firstName && lastName && email && roles.length > 0) {
 			try {
 				setPosting(true)
 				let formData = {
 					staffId: userData.id,
 					firstName: firstName,
-					middletName: middletName,
+					middleName: middletName,
 					lastName: lastName,
 					email: email,
 					phone: phone,
@@ -85,6 +85,14 @@ function EditUser(props) {
 			} finally {
 				setPosting(false)
 			}
+		} else {
+			Swal.fire({
+				title: "Error",
+				text: "Please fill all the required fields",
+				icon: "error",
+				timer: 2000,
+				showConfirmButton: false,
+			});
 		}
 	}
 
