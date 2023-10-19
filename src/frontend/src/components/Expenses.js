@@ -361,7 +361,9 @@ const Expenses = () => {
                             return (
                                 <div className="flex hover:bg-gray1 text-sm text-gray5 border-b border-gray1 cursor-pointer">
                                     <div className="w-2/12 p-2">
-                                        {expense.date}
+                                        {
+                                            new Date(expense.date).toLocaleDateString()
+                                        }
                                     </div>
                                     <div className="w-2/12 p-2">
                                         {expense.expense}
