@@ -113,7 +113,7 @@ const Banking = () => {
                                     {bank.expenses.toLocaleString()}
                                 </div>
                                 <div className="w-1/4 p-2">
-                                    {(bank.sales + bank.unpaidSales).toLocaleString()}
+                                    {(bank.sales - (bank.unpaidSales + bank.expenses)).toLocaleString()}
                                 </div>
 
                             </div>
