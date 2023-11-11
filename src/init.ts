@@ -43,6 +43,7 @@ async function createStaffinDB() {
 
     // create staff
     const staff = await createStaff(first_name, middle_name, last_name, email, hashedPassword);
+    await setStaffRoles(staff.id, ["admin"]);
     rl.close();
 
     console.log("Staff created successfully!");
@@ -54,7 +55,7 @@ async function createStaffinDB() {
 DatabaseConnection.initialize()
   .then(() => {
     console.log("Database Connection Successful");
-    setStaffRoles(1, ["admin"])
+    createStaffinDB();
   })
   .catch((error) => {
     console.log(error);

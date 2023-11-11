@@ -2,11 +2,11 @@ node_modules
 package-lock.json
 .env
 yarn.lock
-/build
+
 
 src/frontend/node_modules
 src/frontend/package-lock.json
-src/frontend/build
+
 
 useruplods
 useruploads
