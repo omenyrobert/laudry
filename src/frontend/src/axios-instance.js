@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 //const HOST_URL = "https://schoolsoftapp-3432013afef6.herokuapp.com";
-const HOST_URL = "http://88.198.203.80:3300";
+const HOST_URL = window.location.origin;
 
 //const HOST_URL = "http://localhost:3001";
 
