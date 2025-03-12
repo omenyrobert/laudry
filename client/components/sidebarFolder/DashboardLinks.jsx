@@ -13,24 +13,24 @@ function DashboardLinks({ name, link, Icon }) {
 				to={link}
 				className={
 					location.pathname === link
-						? `flex ml-3  rounded-md p-2 cursor-pointer  ${link === "/dashboard" ? "mt-7" : ""}`
-						: `flex ml-3 p-2 cursor-pointer ${link === "/dashboard" ? "mt-7" : ""}`
+						? ` ml-3  rounded-md p-2 cursor-pointer  ${link === "/dashboard" ? "-mt-2" : ""}`
+						: ` ml-3 p-2 cursor-pointer ${link === "/dashboard" ? "-mt-2" : ""}`
 				}
 			>
-				<div className="w-auto flex">
-					<Icon
-						className={
-							location.pathname === link
-								? "w-12 h-12 p-4 bg-primary rounded-md mt-[2px]  linkdiv text-white "
-								: "w-12 h-12 p-4 rounded-md mt-[2px] linkdiv text-white "
-						}
-					/>
-					<p
-						className="text-white p-2 ml-20 mt-2 tooltipp rounded-md bg-primary text-sm w-auto"
-					>
-						{name}
-					</p>
-				</div>
+				<center>
+					{/* <div className="text-white bg-primary p-2 -mt-2 rounded w-14"> */}
+					<div className={
+						location.pathname === link
+							? "text-white bg-primary p-2 -mt-2 rounded w-14" : "text-white "
+					}>
+						<Icon
+							className="text-center"
+						/>
+						<p className="text-xs text-center text-white">{name}</p>
+
+					</div>
+				</center>
+
 			</Link>
 		</>
 	);

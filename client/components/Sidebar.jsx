@@ -36,11 +36,11 @@ function Sidebar() {
 			<div className="p-5 flex justify-center">
 				<img src="fav.svg" className="w-2/3 rounded-full" />
 			</div>
-			<div className="h-[82vh] overflow-y-auto -mt-8">
+			<div className="h-[82vh] overflow-y-auto -mt-1">
 				{/* Dashboard */}
 
-				<DashboardLinks Icon={TbLayoutDashboard} name="Dashboard" link={"/dashboard"} />
-				<DashboardLinks Icon={AiOutlineTeam} name="customers" link={"/customers"} />
+				<DashboardLinks Icon={TbLayoutDashboard} name="Dashbo" link={"/dashboard"} />
+				<DashboardLinks Icon={AiOutlineTeam} name="debtors" link={"/customers"} />
 				<DashboardLinks Icon={FaUsers} name="users" link={"/users"} />
 				<DashboardLinks Icon={MdHardware} name="stock" link={"/stock"} />
 				<DashboardLinks Icon={MdSell} name="Sales" link={"/sales"} />
@@ -49,7 +49,7 @@ function Sidebar() {
 
 			</div>
 
-			<div onClick={handleLogout} className="w-12 cursor-pointer h-12 flex ml-5 justify-center rounded-full items-center text-center m-2 text-sm bg-black text-white">
+			<div onClick={handleLogout} className="w-12 cursor-pointer h-12 flex ml-5 justify-center rounded-full items-center text-center -mt-2 text-sm bg-black text-white">
 				<TbLogout2 className="w-6 h-6 -ml-1" />
 			</div>
 

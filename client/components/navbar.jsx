@@ -95,9 +95,9 @@ const Navbar = () => {
 	return (
 		<>
 
-			<div className="p-3 h-20 bg-white border border-gray1 flex justify-between">
+			<div className="p-2 h-16 bg-white border border-gray1 flex justify-between">
 				<div>
-					<img src="logo.png" className="w-52 h-20 -mt-3 object-cover" />
+					<img src="logo.png" className="w-52 h-16 -mt-3 object-cover" />
 				</div>
 				<div className="flex">
 					<div>

@@ -8,7 +8,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 
 
 	return (
-		<div className="flex p-5 bg-white rounded-md mb-5 w-full">
+		<div className="flex  rounded-md w-full">
 
 			<div className="w-1/4 my-2 mr-2 p-3 h-24  bg-primary text-white shadow  rounded-md">
 				<p className="text-lg font-semibold">

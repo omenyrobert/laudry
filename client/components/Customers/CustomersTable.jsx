@@ -62,7 +62,7 @@ const CustomersTable = (props) => {
 
   return (
     <div id="studentTable">
-      <div className="h-[70vh] overflow-y-auto">
+      <div className="h-[calc(100vh-180px)] overflow-y-auto">
         <table id="dmsk" className="mt-4 w-full table-auto">
           <thead className='bg-gray1'>
             <th className="p-2 text-primary text-sm text-left">Full Name</th>
@@ -394,7 +394,7 @@ export const Customer = ({ customer, openModal }) => {
                       <div className={activeAccount?.id === account.id ? 'w-32 p-2 m-2 bg-primary text-white' : 'w-32 p-2 m-2 bg-gray1'} onClick={() => {
                         setActiveAccount(account)
                       }}>
-                        {account.amount} {
+                        {account.amount.toLocaleString()} {
                           account.balance === 0 && <span>( Closed )</span>
                         }
                       </div>
@@ -420,7 +420,7 @@ export const Customer = ({ customer, openModal }) => {
                   </span>
                 </div>
                 <div className='p-2'>
-                  <span className='text-primary'>Balance:</span> {activeAccount?.balance}
+                  <span className='text-primary'>Balance:</span> {activeAccount?.balance.toLocaleString()}
                 </div>
 
               </div>
@@ -434,7 +434,7 @@ export const Customer = ({ customer, openModal }) => {
                         <InputField value={date} onChange={(e) => setDate(e.target.value)} type="date" />
                       </div>
                       <div className='w-1/3 p-2'>
-                        <InputField value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" />
+                        <InputField value={amount} type="number" onChange={(e) => setAmount(e.target.value)} placeholder="Amount" />
                       </div>
                       <div className='w-42 mt-6 p-2'>
                         {adding ? <ButtonLoader /> :
@@ -478,7 +478,7 @@ export const Customer = ({ customer, openModal }) => {
                         }
                       </div>
                       <div className='w-1/3 p-2'>
-                        {pay.balance}
+                        {pay.balance.toLocaleString()}
                       </div>
                     </div>
                   )

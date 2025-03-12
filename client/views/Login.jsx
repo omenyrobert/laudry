@@ -64,7 +64,7 @@ const Login = () => {
 
 
 				<div className="w-5/12 p-2 flex justify-center items-center">
-					<div className="bg-white p-10 w-[500px]">
+					<div className="bg-white p-10 w-[400px]">
 						<div className="flex justify-center">
 							<img src="logo.png" className="w-[70%] -mt-10" />
 						</div>

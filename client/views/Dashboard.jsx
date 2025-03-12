@@ -69,14 +69,14 @@ const Dashboard = () => {
 			<Cards staff={staff} allStock={allStock} warningStock={warningStock} accounts={unSettled} customers={customers} />
 			<div className="flex w-full">
 				<div className="w-7/12">
-					<div className="rounded-md w-full shadow-md bg-white h-[65vh] p-5">
+					<div className="rounded-md w-full shadow-md bg-white h-[calc(100vh-200px)] p-5">
 						<p className="text-xl text-primary font-semibold">Products</p>
 						<BarGraph allStock={
 							allStock.slice(0, 20)
 						} />
 
 					</div>
-					<div className="bg-white h-[75vh] overflow-y-auto rounded-md p-2 mt-2 shadow-md">
+					<div className="bg-white h-[calc(100vh-200px)] overflow-y-auto rounded-md p-2 mt-2 shadow-md">
 						<p className="my-2 text-xl font-semibold text-primary">Most Bought items</p>
 						<div className="flex font-medium text-primary bg-gray1">
 							<div className="p-2 w-1/4">
@@ -117,7 +117,7 @@ const Dashboard = () => {
 					</div>
 				</div>
 				<div className="w-5/12">
-					<div className=" rounded-md shadow-md bg-white ml-2 overflow-y-auto p-2">
+					<div className=" rounded-md h-[calc(100vh-200px)] shadow-md bg-white ml-2 overflow-y-auto p-2">
 						<p className="m-2 text-xl font-semibold text-primary">Un cleared Supply</p>
 						<div className="h-[40vh] overflow-y-auto mt-2">
 							{unSettled.map((giv) => {
@@ -138,7 +138,7 @@ const Dashboard = () => {
 						</div>
 						<br />
 					</div>
-					<div className="mt-2 rounded-md shadow-md bg-white ml-2 overflow-y-auto p-2">
+					<div className="mt-2 rounded-md shadow-md bg-white ml-2 h-[calc(100vh-200px)] overflow-y-auto p-2">
 						<p className="m-2 text-xl font-semibold text-primary">Unsettled Accounts</p>
 						<DoughnutComp unSettled={unSettled} />
 						<br />

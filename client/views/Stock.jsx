@@ -530,7 +530,7 @@ const Stock = () => {
             </div> : null}
 
 
-            <div className="h-[70vh] overflow-y-auto">
+            <div className="h-[calc(100vh-165px)] overflow-y-auto">
 
                 <table className="mt-4 w-[98%]  table-auto mx-2">
 
@@ -580,7 +580,21 @@ const Stock = () => {
                                 </tr>
                             );
                         })}
+                        <tr
+                            className="bg-secondary text-white"
+                            key={stock.id}
+                        >
+                            <td className="text-md  p-3 font-bold ">Total</td>
+                            <td className="p-3 font-bold ">  </td>
+                            <td className="text-md  p-3 font-bold ">7800</td>
+                            <td className="text-md  p-3 font-bold ">899</td>
+                            <td className="text-md  p-3 font-bold ">5000</td>
+                            <td className="text-md  p-3 font-bold "></td>
+                            <td className="text-md  p-3 font-bold  flex">
 
+
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 {loading ? <div className="flex justify-center mt-[10vh]"> <Loader />  </div> :
