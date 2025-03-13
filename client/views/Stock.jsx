@@ -532,71 +532,74 @@ const Stock = () => {
 
             <div className="h-[calc(100vh-165px)] overflow-y-auto">
 
-                <table className="mt-4 w-[98%]  table-auto mx-2">
-
+                <table className="mt-4 w-[98%] table-auto mx-2">
                     <thead className="bg-gray1">
-                        <th className="p-2 text-primary text-sm text-left">Date</th>
-                        <th className="p-2 text-primary text-sm text-left">Product</th>
-                        <th className="p-2 text-primary text-sm text-left">Unit Cost</th>
-                        <th className="p-2 text-primary text-sm text-left">Unit Selling</th>
-                        <th className="p-2 text-primary text-sm text-left">Qty</th>
-                        <th className="p-2 text-primary text-sm text-left">Category</th>
-                        <th className="p-2 text-primary text-sm text-left">Action</th>
+                        <tr>
+                            <th className="p-2 text-primary text-sm text-left">Date</th>
+                            <th className="p-2 text-primary text-sm text-left">Product</th>
+                            <th className="p-2 text-primary text-sm text-left">Unit Cost</th>
+                            <th className="p-2 text-primary text-sm text-left">Unit Selling</th>
+                            <th className="p-2 text-primary text-sm text-left">Qty</th>
+                            <th className="p-2 text-primary text-sm text-left">Category</th>
+                            <th className="p-2 text-primary text-sm text-left">Action</th>
+                        </tr>
                     </thead>
                     <tbody>
+                        {stocks.map((stock) => (
+                            <tr
+                                className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
+                                key={stock.id}
+                            >
+                                <td className="text-sm p-3 text-gray5">{stock.date}</td>
+                                <td className="p-3 text-sm text-gray5"> {stock.name} </td>
+                                <td className="text-sm p-3 text-gray5">
+                                    {stock.unitCost.toLocaleString()}
+                                </td>
+                                <td className="text-sm p-3 text-gray5">
+                                    {stock.unitSell.toLocaleString()}
+                                </td>
+                                <td className="text-sm p-3 text-gray5">
+                                    {stock.qty.toLocaleString()}
+                                </td>
+                                <td className="text-sm p-3 text-gray5">{stock?.category?.type}</td>
+                                <td className="text-sm p-3 text-gray5 flex">
+                                    <MdDeleteOutline
+                                        onClick={() => deleteStock(stock)}
+                                        className="text-red w-4 h-4"
+                                    />
+                                    <BsPencilSquare
+                                        onClick={() => openModal2(stock)}
+                                        className="text-warning h-4 w-4 mx-5"
+                                    />
+                                    <BsPlusCircle
+                                        onClick={() => openModal4(stock)}
+                                        className="bg-primary text-xl text-white rounded-full"
+                                    />
+                                </td>
+                            </tr>
+                        ))}
 
-                        {stocks.map((stock) => {
+                        {/* Calculate Totals */}
+                        {(() => {
+                            const totalUnitCost = stocks.reduce((sum, stock) => sum + stock.unitCost, 0);
+                            const totalUnitSell = stocks.reduce((sum, stock) => sum + stock.unitSell, 0);
+                            const totalQty = stocks.reduce((sum, stock) => sum + stock.qty, 0);
+
                             return (
-                                <tr
-                                    className="shadow-sm border-b border-gray1 cursor-pointer hover:shadow-md"
-                                    key={stock.id}
-                                >
-                                    <td className="text-sm p-3 text-gray5">{stock.date}</td>
-                                    <td className="p-3 text-sm text-gray5"> {stock.name} </td>
-                                    <td className="text-sm p-3 text-gray5">{
-                                        stock.unitCost.toLocaleString()
-                                    }</td>
-                                    <td className="text-sm p-3 text-gray5">{
-                                        stock.unitSell.toLocaleString()
-                                    }</td>
-                                    <td className="text-sm p-3 text-gray5">{
-                                        stock.qty.toLocaleString()
-                                    }</td>
-                                    <td className="text-sm p-3 text-gray5">{stock?.category?.type}</td>
-                                    <td className="text-sm p-3 text-gray5 flex">
-                                        <MdDeleteOutline
-                                            onClick={(e) => deleteStock(stock)}
-                                            className="text-red w-4 h-4"
-                                        />
-                                        <BsPencilSquare
-                                            onClick={() => openModal2(stock)}
-                                            className="text-warning h-4 w-4 mx-5"
-                                        />
-
-                                        <BsPlusCircle onClick={() => openModal4(stock)} className="bg-primary text-xl text-white rounded-full" />
-
-
-                                    </td>
+                                <tr className="bg-secondary text-white">
+                                    <td className="text-md p-3 font-bold">Total</td>
+                                    <td className="p-3 font-bold"></td>
+                                    <td className="text-md p-3 font-bold">{totalUnitCost.toLocaleString()}</td>
+                                    <td className="text-md p-3 font-bold">{totalUnitSell.toLocaleString()}</td>
+                                    <td className="text-md p-3 font-bold">{totalQty.toLocaleString()}</td>
+                                    <td className="text-md p-3 font-bold"></td>
+                                    <td className="text-md p-3 font-bold flex"></td>
                                 </tr>
                             );
-                        })}
-                        <tr
-                            className="bg-secondary text-white"
-                            key={stock.id}
-                        >
-                            <td className="text-md  p-3 font-bold ">Total</td>
-                            <td className="p-3 font-bold ">  </td>
-                            <td className="text-md  p-3 font-bold ">7800</td>
-                            <td className="text-md  p-3 font-bold ">899</td>
-                            <td className="text-md  p-3 font-bold ">5000</td>
-                            <td className="text-md  p-3 font-bold "></td>
-                            <td className="text-md  p-3 font-bold  flex">
-
-
-                            </td>
-                        </tr>
+                        })()}
                     </tbody>
                 </table>
+
                 {loading ? <div className="flex justify-center mt-[10vh]"> <Loader />  </div> :
                     null}
                 <div className="flex justify-center mt-5">
