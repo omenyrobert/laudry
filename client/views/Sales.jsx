@@ -84,7 +84,7 @@ const Sales = () => {
 
     // Function to calculate the total price of items in the cart
     const calculateTotal = () => {
-        return cart.reduce((total, item) => total + (item.unitCost * item.quantity), 0);
+        return cart.reduce((total, item) => total + (item.unitSell * item.quantity), 0);
     };
 
 

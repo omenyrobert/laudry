@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import InputField from "../components/InputField";
 import Button2 from "../components/Button2";
 import Button from "../components/Button";
-import { BsSearch } from "react-icons/bs";
+import { BsSearch, BsTrash } from "react-icons/bs";
 import ButtonAlt from "../components/ButtonAlt";
 import ReStock from "../components/ReStock";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +10,7 @@ import { getSales } from "../store/slices/store";
 import axiosInstance from "../axios-instance";
 import { useFeedback } from "../hooks/feedback";
 import { usePrint } from "../hooks/print";
+import Swal from "sweetalert2";
 
 const Reports = () => {
     const dispatch = useDispatch()
@@ -53,7 +54,39 @@ const Reports = () => {
         setSearchLoading(false)
     }
 
-
+   
+    const deleteSale = (sale) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await axiosInstance.delete(
+                        `/sales/${sale.id}`
+                    );
+                    const { data } = response;
+                    const { status } = data;
+                    dispatch(getSales(page))
+                    if (status) {
+                        dispatch(getSales(page))
+                        Swal.fire({
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 500,
+                        });
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        });
+    };
 
     return (
         <div className="w-full bg-white rounded-md shadow px-5">
@@ -151,6 +184,9 @@ const Reports = () => {
                     <div className="py-3 w-2/12">
                         Profit
                     </div>
+                    <div className="py-3 w-2/12">
+                        #
+                    </div>
                 </div>
 
                 {
@@ -189,6 +225,9 @@ const Reports = () => {
                                 {
                                     (sale.stock?.unitSell * sale.quantity - sale.stock?.unitCost * sale.quantity).toLocaleString()
                                 }
+                            </div>
+                            <div className="py-3 text-xs text-gray5 w-2/12">
+                            <BsTrash onClick={()=>deleteSale(sale)} className="text-red" />
                             </div>
 
 
@@ -246,6 +285,8 @@ const Reports = () => {
                                     return a + (b.stock.unitSell * b.quantity - b.stock.unitCost * b.quantity)
                                 }, 0).toLocaleString()
                             }
+                        </div>
+                        <div className="py-3 w-2/12">
                         </div>
                     </div>
                 </div>

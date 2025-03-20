@@ -261,3 +261,28 @@ export const getSalesAndExpenses = async (
 
   return result;
 }
+
+export const deleteSale = async (saleId: number) => {
+  const sale = await Sales.findOne({
+    where: { id: saleId },
+    relations: ["stock", "account"], // Ensures stock and account are loaded
+  });
+
+  if (!sale) {
+    throw new Error("Sale not found");
+  }
+
+  // Restore the stock quantity when a sale is deleted
+  if (sale.stock) {
+    sale.stock.qty += sale.quantity;
+    await sale.stock.save();
+  }
+
+  // If there is an account linked, delete it
+  if (sale.account) {
+    await sale.account.remove();
+  }
+
+  await sale.remove();
+  return { message: "Sale deleted successfully" };
+};

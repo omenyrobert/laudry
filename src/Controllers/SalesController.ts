@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { customPayloadResponse } from "../Helpers/Helpers";
-import { getSales, createSale, getSalesByDate, searchSales, getSalesAndExpenses } from "../Entities/Sales";
+import { getSales, createSale, getSalesByDate, searchSales, getSalesAndExpenses, deleteSale } from "../Entities/Sales";
 
 
 export const getSalesController = async (req: Request, res: Response) => {
@@ -110,3 +110,18 @@ export const getSalesAndExpensesController = async (req: Request, res: Response)
     return res.json(customPayloadResponse(false, "Internal Server Error")).status(500).end();
   }
 }
+
+export const handleDeleteSale = async (req: Request, res: Response) => {
+  try {
+    const saleId = parseInt(req.params.id);
+
+    if (isNaN(saleId)) {
+      return res.status(400).json({ error: "Invalid sale ID" });
+    }
+
+    const result = await deleteSale(saleId);
+    return res.json(result);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};

@@ -5,7 +5,8 @@ import {
   getSalesByDateController,
   getSalesController,
   searchSalesController,
-  getSalesAndExpensesController
+  getSalesAndExpensesController,
+  handleDeleteSale
 } from "../Controllers/SalesController";
 
 
@@ -15,5 +16,6 @@ export default (router: Router) => {
   router.post(`${salesPrefix}`, JWTAuthMiddleWare, createSalesController);
   router.get(`${salesPrefix}/by-date`, JWTAuthMiddleWare, getSalesByDateController);
   router.get(`${salesPrefix}/search`, JWTAuthMiddleWare, searchSalesController);
+  router.delete(`${salesPrefix}/:id`, JWTAuthMiddleWare, handleDeleteSale);
   router.get(`${salesPrefix}/bank-report`, JWTAuthMiddleWare, getSalesAndExpensesController);
 }

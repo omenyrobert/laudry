@@ -540,6 +540,9 @@ const Stock = () => {
                             <th className="p-2 text-primary text-sm text-left">Unit Cost</th>
                             <th className="p-2 text-primary text-sm text-left">Unit Selling</th>
                             <th className="p-2 text-primary text-sm text-left">Qty</th>
+                            <th className="p-2 text-primary text-sm text-left">Total Cost</th>
+                            <th className="p-2 text-primary text-sm text-left">Total Sale</th>
+                            <th className="p-2 text-primary text-sm text-left">Total Profit</th>
                             <th className="p-2 text-primary text-sm text-left">Category</th>
                             <th className="p-2 text-primary text-sm text-left">Action</th>
                         </tr>
@@ -560,6 +563,15 @@ const Stock = () => {
                                 </td>
                                 <td className="text-sm p-3 text-gray5">
                                     {stock.qty.toLocaleString()}
+                                </td>
+                                <td className="text-sm p-3 text-gray5">
+                                    {(stock.qty * stock.unitCost).toLocaleString()}
+                                </td>
+                                <td className="text-sm p-3 text-gray5">
+                                    {(stock.qty * stock.unitSell).toLocaleString()}
+                                </td>
+                                <td className="text-sm p-3 text-gray5">
+                                    {((stock.qty * stock.unitSell) - (stock.qty * stock.unitCost)).toLocaleString()}
                                 </td>
                                 <td className="text-sm p-3 text-gray5">{stock?.category?.type}</td>
                                 <td className="text-sm p-3 text-gray5 flex">
@@ -583,6 +595,9 @@ const Stock = () => {
                         {(() => {
                             const totalUnitCost = stocks.reduce((sum, stock) => sum + stock.unitCost, 0);
                             const totalUnitSell = stocks.reduce((sum, stock) => sum + stock.unitSell, 0);
+                            const grandTotalUnitSell = stocks.reduce((sum, stock) => sum + (stock.unitSell * stock.qty), 0);
+                            const grandTotalUnitCost = stocks.reduce((sum, stock) => sum + (stock.unitCost * stock.qty), 0);
+                            const totalProfit = grandTotalUnitSell - grandTotalUnitCost;
                             const totalQty = stocks.reduce((sum, stock) => sum + stock.qty, 0);
 
                             return (
@@ -592,6 +607,9 @@ const Stock = () => {
                                     <td className="text-md p-3 font-bold">{totalUnitCost.toLocaleString()}</td>
                                     <td className="text-md p-3 font-bold">{totalUnitSell.toLocaleString()}</td>
                                     <td className="text-md p-3 font-bold">{totalQty.toLocaleString()}</td>
+                                    <td className="text-md p-3 font-bold">{grandTotalUnitCost.toLocaleString()}</td>
+                                    <td className="text-md p-3 font-bold">{grandTotalUnitSell.toLocaleString()}</td>
+                                    <td className="text-md p-3 font-bold">{totalProfit.toLocaleString()}</td>
                                     <td className="text-md p-3 font-bold"></td>
                                     <td className="text-md p-3 font-bold flex"></td>
                                 </tr>
