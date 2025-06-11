@@ -5,6 +5,7 @@ import ExpensesReported from "../components/ExpensesReport";
 import { useDispatch, useSelector } from "react-redux";
 import { getBankReport } from "../store/slices/store";
 import { usePrint } from "../hooks/print";
+import ManualBanking from "./ManualBanking";
 
 const Banking = () => {
     const { bankReport } = useSelector((state) => state.autocountStore)
@@ -37,7 +38,7 @@ const Banking = () => {
                     </h1>
                 </div>
 
-                <div className="w-4/12 ">
+                <div className="w-2/12 ">
 
 
                 </div>
@@ -73,6 +74,7 @@ const Banking = () => {
                     <div className="ml-2">
                         <ExpensesReported />
                     </div>
+                    <div className="ml-2"><ManualBanking/> </div>
                 </div>
 
             </div>

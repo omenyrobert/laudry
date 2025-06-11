@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { MdLockOutline, MdAlternateEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
-import { FaBriefcase } from "react-icons/fa";
+import { FaBriefcase, FaBullseye, FaEye, FaEyeSlash } from "react-icons/fa";
 import "../assets/styles/login.css";
 import Button from "../components/Button";
 import InputField from "../components/InputField";
@@ -24,32 +24,39 @@ const Login = () => {
 	const [token, setToken] = useState("");
 	const { toggleFeedback } = useFeedback()
 	const [activating, setActivating] = useState(false);
+	const [inputType, setInputType] = useState("password");
 
+	const changeToText = () => {
+		setInputType("text")
+	}
+	const changeToPassword = () => {
+		setInputType("password")
+	}
 	const expireDate = false;
 
 	const handleLogin = async () => {
 		setIsLoging(true);
-		  try {
+		try {
 			setIsLoging(true);
 			const response = await axiosInstance.post("/auth/login", formData);
 			const { data } = response;
 			const { status, payload } = data;
 			const { token, user } = payload;
 			if (status) {
-			  localStorage.setItem("schoolSoftToken", token);
-			  localStorage.setItem("schoolSoftUser", JSON.stringify(user));
-			  setIsLoging(false);
-			  navigate("/dashboard");
+				localStorage.setItem("schoolSoftToken", token);
+				localStorage.setItem("schoolSoftUser", JSON.stringify(user));
+				setIsLoging(false);
+				navigate("/dashboard");
 			} else {
-			  setIsLoging(false);
-			  setLoginError(payload);
-			  console.log("error", payload);
+				setIsLoging(false);
+				setLoginError(payload);
+				console.log("error", payload);
 			}
-		  } catch (error) {
+		} catch (error) {
 			console.log(error);
 			setIsLoging(false);
-		  }
-	  };
+		}
+	};
 
 
 
@@ -79,11 +86,15 @@ const Login = () => {
 							onChange={onChange}
 						/>
 						<InputField
-							type="password"
+							type={inputType}
 							placeholder="Enter Your password"
 							label="Password"
 							name="password"
-							icon={<MdLockOutline className="w-10 mt-3" />}
+							icon={<>
+								{inputType === "password" ? <FaEye onClick={changeToText} className="w-10 mt-3" /> : <FaEyeSlash onClick={changeToPassword} className="w-10 mt-3" />}
+							</>
+
+							}
 							onChange={onChange}
 						/>
 						<div className="flex justify-between my-2">

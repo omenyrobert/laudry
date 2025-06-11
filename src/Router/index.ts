@@ -8,6 +8,7 @@ import ExpensesRoutes from "./ExpensesRoutes";
 import SalesRoutes from "./SalesRoutes";
 import CustomerRoutes from "./CustomerRoutes";
 import AccountRoutes from "./AccountRoutes";
+import BankingRoutes from "./BankingRoutes";
 
 const router = Router();
 
@@ -21,5 +22,6 @@ export default (): Router => {
   SalesRoutes(router);
   CustomerRoutes(router);
   AccountRoutes(router);
+  BankingRoutes(router);
   return router;
 };
