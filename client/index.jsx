@@ -25,6 +25,7 @@ import Stock from './views/Stock'
 import Sales from './views/Sales'
 import Banking from './views/Banking'
 import RoleGuard from './components/RoleGuard'
+import ActivityLogsView from './views/ActivityLogsView'
 
 const router = createBrowserRouter([
   {
@@ -83,6 +84,12 @@ const router = createBrowserRouter([
         path: '/editStudentsForm',
         element: (
           <EditCustomersForm />
+        ),
+      },
+       {
+        path: '/logs',
+        element: (
+          <ActivityLogsView />
         ),
       },
       {

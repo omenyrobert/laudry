@@ -3,16 +3,18 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  ManyToOne,
   BaseEntity,
 } from "typeorm";
+import { Staff } from "./Staff";
 
 @Entity()
 export class ActivityLog extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  userId: number;
+  @ManyToOne(() => Staff, { onDelete: "SET NULL", eager: true })
+  staff: Staff;
 
   @Column()
   action: string;
@@ -24,16 +26,28 @@ export class ActivityLog extends BaseEntity {
   timestamp: Date;
 }
 
+// activityLog.ts
 export const saveActivityLog = async (
-  userId: number,
+  staffId: number,
   action: string,
   description?: string
 ) => {
-  const log = await ActivityLog.insert({ userId, action, description });
+  const staff = await Staff.findOne({ where: { id: staffId } });
+  if (!staff) throw new Error("Staff not found");
+
+  const log = await ActivityLog.insert({
+    staff,
+    action,
+    description,
+  });
+
   return log;
 };
 
 export const fetchActivityLog = async () => {
-  const logs = await ActivityLog.find();
-  return logs;
+  return await ActivityLog.find({
+    order: {
+      timestamp: "DESC",
+    },
+  });
 };

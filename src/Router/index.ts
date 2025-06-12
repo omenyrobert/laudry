@@ -9,6 +9,7 @@ import SalesRoutes from "./SalesRoutes";
 import CustomerRoutes from "./CustomerRoutes";
 import AccountRoutes from "./AccountRoutes";
 import BankingRoutes from "./BankingRoutes";
+import ActivityLogsRoutes from "./ActivityLogsRoutes";
 
 const router = Router();
 
@@ -23,5 +24,6 @@ export default (): Router => {
   CustomerRoutes(router);
   AccountRoutes(router);
   BankingRoutes(router);
+  ActivityLogsRoutes(router);
   return router;
 };

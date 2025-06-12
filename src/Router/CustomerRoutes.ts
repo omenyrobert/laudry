@@ -6,12 +6,13 @@ import {
   deleteCustomerController,
   updateCustomerController
 } from "../Controllers/CustomersController";
+import { withActivityLog } from "../Middlewares/ActivityLoggerMiddleware";
 
 
 export default (router: Router) => {
   const customerPrefix = "/customers";
   router.get(`${customerPrefix}`, JWTAuthMiddleWare, getCustomersController);
-  router.post(`${customerPrefix}`, JWTAuthMiddleWare, createCustomerController);
-  router.delete(`${customerPrefix}/:id`, JWTAuthMiddleWare, deleteCustomerController);
-  router.put(`${customerPrefix}`, JWTAuthMiddleWare, updateCustomerController);
+  router.post(`${customerPrefix}`, JWTAuthMiddleWare, withActivityLog("Creating Account", (req) => req.body, createCustomerController) );
+  router.delete(`${customerPrefix}/:id`, JWTAuthMiddleWare,withActivityLog("Creating Account", (req) => req.body, deleteCustomerController) );
+  router.put(`${customerPrefix}`, JWTAuthMiddleWare,  withActivityLog("Creating Account", (req) => req.body, updateCustomerController));
 }

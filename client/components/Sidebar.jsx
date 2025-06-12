@@ -10,7 +10,7 @@ import { TbLayoutDashboard } from "react-icons/tb";
 import { AiOutlineTeam } from "react-icons/ai";
 import { MdSell } from "react-icons/md"
 import { FaUsers } from "react-icons/fa";
-import { BsBank, BsGraphUpArrow } from "react-icons/bs";
+import { BsBank, BsGraphUpArrow, BsSafe } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axios-instance";
 
@@ -46,6 +46,7 @@ function Sidebar() {
 				<DashboardLinks Icon={MdSell} name="Sales" link={"/sales"} />
 				<DashboardLinks Icon={BsGraphUpArrow} name="Reports" link={"/reports"} />
 				<DashboardLinks Icon={BsBank} name="Banking" link={"/banking"} />
+				<DashboardLinks Icon={BsSafe} name="Logs" link={"/logs"} />
 
 			</div>
 
