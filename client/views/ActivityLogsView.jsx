@@ -8,7 +8,22 @@ import { BsPencilSquare, BsSearch, BsTrash } from "react-icons/bs";
 import InputSelect from "../components/InputSelect";
 const ActivityLogsView = () => {
   const [loading, setLoading] = useState(false);
-  const [logss, setlogss] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value);
+  };
+
+  const handleEndDateChange = (e) => {
+    setEndDate(e.target.value);
+  };
+
   const fetchlogs = async () => {
     try {
       setLoading(true);
@@ -27,6 +42,24 @@ const ActivityLogsView = () => {
   useEffect(() => {
     fetchlogs();
   }, []);
+  const [logss, setlogss] = useState([]);
+  const filteredLogs = logss.filter((log) => {
+    const matchesSearch =
+      log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.staff.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.staff.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.staff.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const logDate = new Date(log.timestamp);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+
+    const withinDateRange =
+      (!start || logDate >= start) && (!end || logDate <= end);
+
+    return matchesSearch && withinDateRange;
+  });
 
   return (
     <div className="w-full bg-white p-5">
@@ -38,11 +71,21 @@ const ActivityLogsView = () => {
           <InputField
             placeholder="search"
             icon={<BsSearch className="mt-2 mr-2" />}
+            value={searchTerm}
+            onChange={handleSearchChange}
           />
         </div>
         <div className="flex gap-3 -mt-5">
-          <InputField type="date" />
-          <InputField type="date" />
+          <InputField
+            type="date"
+            value={startDate}
+            onChange={handleStartDateChange}
+          />
+          <InputField
+            type="date"
+            value={endDate}
+            onChange={handleEndDateChange}
+          />
         </div>
       </div>
       <div className="flex -mt-5 text-sm font-bold border-b">
@@ -52,7 +95,7 @@ const ActivityLogsView = () => {
         <div className="p-2 w-5/12">Description</div>
       </div>
       <div className="h-[calc(100vh-200px)] overflow-y-auto">
-        {logss.map((log) => {
+        {filteredLogs.map((log) => {
           return (
             <div className="flex text-sm border-gray3 hover:bg-gray1 cursor-pointer border-b">
               <div className="p-2 w-2/12">{log.timestamp}</div>

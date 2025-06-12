@@ -26,6 +26,7 @@ import Sales from './views/Sales'
 import Banking from './views/Banking'
 import RoleGuard from './components/RoleGuard'
 import ActivityLogsView from './views/ActivityLogsView'
+import BankingAuto from './views/BankingAuto'
 
 const router = createBrowserRouter([
   {
@@ -129,6 +130,14 @@ const router = createBrowserRouter([
         element: (
           <RoleGuard allowedRoles={['admin', 'reports']} >
             <Banking />
+          </RoleGuard>
+        )
+      },
+        {
+        path: "/banking-auto",
+        element: (
+          <RoleGuard allowedRoles={['admin', 'reports']} >
+            <BankingAuto />
           </RoleGuard>
         )
       }

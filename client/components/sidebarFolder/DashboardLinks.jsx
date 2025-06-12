@@ -13,8 +13,8 @@ function DashboardLinks({ name, link, Icon }) {
 				to={link}
 				className={
 					location.pathname === link
-						? ` ml-3  rounded-md p-2 cursor-pointer  ${link === "/dashboard" ? "-mt-2" : ""}`
-						: ` ml-3 p-2 cursor-pointer ${link === "/dashboard" ? "-mt-2" : ""}`
+						? ` ml-3  rounded-md p-2 cursor-pointer  ${link === "/dashboard" ? "-mt-4" : ""}`
+						: ` ml-3 p-2 cursor-pointer ${link === "/dashboard" ? "-mt-4" : ""}`
 				}
 			>
 				<center>
