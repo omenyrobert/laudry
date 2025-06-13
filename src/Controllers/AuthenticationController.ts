@@ -18,6 +18,7 @@ import {
   randomStringGenerator,
   sendingMail,
 } from "../Helpers/Helpers";
+import { saveActivityLog } from "../Entities/ActivityLogs";
 
 export const handleLogin = async (req: Request, res: Response) => {
   try {
@@ -57,6 +58,8 @@ export const handleLogin = async (req: Request, res: Response) => {
       }
 
       if (findUserById) {
+        // console.log('user res',findUserById);
+        await saveActivityLog(findUserById.id,"Logged In","A user has just logged In");
         const accessToken = getAuthAccessToken(
           findUserById,
           process.env.ACCESS_TOKEN_SECRET
@@ -66,6 +69,8 @@ export const handleLogin = async (req: Request, res: Response) => {
           token: accessToken,
           user: findUserById,
         };
+
+        
 
         return res
           .json(customPayloadResponse(true, response))
