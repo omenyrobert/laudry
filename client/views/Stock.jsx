@@ -247,10 +247,13 @@ const Stock = () => {
     }).diven(async (result) => {
       if (result.isConfirmed) {
         try {
-            let formData = {
-                stock: stock.name
-            }
-          const response = await axiosInstance.post(`/stock/${stock.id}`,formData);
+          let formData = {
+            stock: stock.name,
+          };
+          const response = await axiosInstance.post(
+            `/stock/${stock.id}`,
+            formData
+          );
           const { data } = response;
           const { status } = data;
           if (status) {
@@ -562,7 +565,7 @@ const Stock = () => {
           <div className="p-2">Category</div>
           <div className="p-2">Action</div>
         </div>
-        <div className="h-[calc(100vh-250px)] overflow-y-auto">
+        <div className="h-[calc(100vh-280px)] overflow-y-auto">
           {stocks.map((stock) => (
             <div
               className="shadow-sm grid grid-cols-10 border-b border-gray1 cursor-pointer hover:shadow-md"
@@ -611,17 +614,22 @@ const Stock = () => {
             </div>
           ))}
         </div>
-
-        {loading ? (
-          <div className="flex justify-center mt-[10vh]">
-            {" "}
-            <Loader />{" "}
+        <div className="">
+          {loading ? (
+            <div className="flex justify-center mt-[10vh]">
+              {" "}
+              <Loader />{" "}
+            </div>
+          ) : null}
+          <div className="flex justify-center">
+            <ButtonAlt value={"Next >>"} onClick={() => setPage(page + 1)} />
+            {/* {stocks.lengdiv < allStock.lengdiv && (
+              <ButtonAlt
+                value={"Next"}
+                onClick={() => setPage(page + 1)}
+              />
+            )} */}
           </div>
-        ) : null}
-        <div className="flex justify-center">
-          {stocks.lengdiv < allStock.lengdiv && (
-            <ButtonAlt value={"Load More"} onClick={() => setPage(page + 1)} />
-          )}
         </div>
       </div>
       {/* Calculate Totals */}

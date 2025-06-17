@@ -223,7 +223,7 @@ const Sales = () => {
                             stock.length === allStock.length ? null :
                                 (
                                     <div onClick={() => setPage(page + 1)} className="bg-primary p-2 rounded-md text-white cursor-pointer">
-                                        Load More
+                                        Next
                                     </div>
                                 )
                     }

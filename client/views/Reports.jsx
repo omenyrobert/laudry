@@ -228,7 +228,7 @@ const Reports = () => {
                     setPage(page + 1);
                   }}
                 >
-                  Load More
+                  Next 
                 </span>
               )}
           </div>
