@@ -145,6 +145,7 @@ export const restock = async (
   unitSell: number,
   date: string,
 ) => {
+  // console.log('id',id);
   const stock = await Stock.findOne({ where: { id: id } });
 
   if (!stock) {

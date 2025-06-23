@@ -30,11 +30,16 @@ export default (router: Router) => {
     JWTAuthMiddleWare,
     withActivityLog("Deleted stock", (req) => req.body, removeStock)
   );
-  router.post(
+  router.put(
     `${stokPrefix}/restock`,
     JWTAuthMiddleWare,
     withActivityLog("Restocking", (req) => req.body, handleResctock)
   );
+  //  router.post(
+  //   `${stokPrefix}/restock`,
+  //   JWTAuthMiddleWare,
+  //   withActivityLog("Restocking", (req) => req.body, handleResctock)
+  // );
   router.get(`${stokPrefix}/search`, JWTAuthMiddleWare, handleSearchStock);
   router.get(`${stokPrefix}/all`, JWTAuthMiddleWare, handleGetAllStocks);
   router.get(`${stokPrefix}/top`, JWTAuthMiddleWare, handleGetTopStocks);

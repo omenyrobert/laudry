@@ -315,7 +315,8 @@ const Stock = () => {
         unitSell: runitsell,
         id: rStockId,
       };
-      let res = await axiosInstance.post("/stock/restock", formData);
+      // console.log("form data", formData);
+      let res = await axiosInstance.put("/stock/restock", formData);
 
       const { status, payload } = res.data;
       if (status) {
