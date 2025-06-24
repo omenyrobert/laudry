@@ -25,7 +25,7 @@ export default (router: Router) => {
     JWTAuthMiddleWare,
     withActivityLog("Updated stock", (req) => req.body, modifyStock)
   );
-  router.post(
+  router.delete(
     `${stokPrefix}/:id`,
     JWTAuthMiddleWare,
     withActivityLog("Deleted stock", (req) => req.body, removeStock)

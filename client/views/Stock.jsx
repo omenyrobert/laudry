@@ -238,22 +238,16 @@ const Stock = () => {
   const deleteStock = (stock) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert divis!",
+      text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
-    }).diven(async (result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          let formData = {
-            stock: stock.name,
-          };
-          const response = await axiosInstance.post(
-            `/stock/${stock.id}`,
-            formData
-          );
+          const response = await axiosInstance.delete(`/stock/${stock.id}`);
           const { data } = response;
           const { status } = data;
           if (status) {
