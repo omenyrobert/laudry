@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { customPayloadResponse } from "../Helpers/Helpers";
-import { getSales, createSale, getSalesByDate, searchSales, getSalesAndExpenses, deleteSale } from "../Entities/Sales";
+import { getSales, createSale, getSalesByDate, searchSales, getSalesAndExpenses, deleteSale, getStockSalesHistory } from "../Entities/Sales";
 
 
 export const getSalesController = async (req: Request, res: Response) => {
@@ -10,6 +10,16 @@ export const getSalesController = async (req: Request, res: Response) => {
     const sales = await getSales(
       page ? parseInt(page.toString()) : 1
     );
+    return res.json(customPayloadResponse(true, sales)).status(200).end();
+  } catch (error) {
+    console.log(error)
+    return res.json(customPayloadResponse(false, "Internal Server Error")).status(500).end();
+  }
+}
+
+export const handleGetStockHistory = async (req: Request, res: Response) => {
+  try {
+    const sales = await getStockSalesHistory();
     return res.json(customPayloadResponse(true, sales)).status(200).end();
   } catch (error) {
     console.log(error)

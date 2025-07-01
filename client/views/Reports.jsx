@@ -11,6 +11,7 @@ import axiosInstance from "../axios-instance";
 import { useFeedback } from "../hooks/feedback";
 import { usePrint } from "../hooks/print";
 import Swal from "sweetalert2";
+import StockLevels from "../components/StockLevels";
 
 const Reports = () => {
   const dispatch = useDispatch();
@@ -146,6 +147,9 @@ const Reports = () => {
           </div>
           <div className="ml-2">
             <ReStock />
+          </div>
+          <div>
+            <StockLevels/>
           </div>
           <div className="ml-2">
             <ButtonAlt

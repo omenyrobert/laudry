@@ -7,12 +7,14 @@ import {
   searchSalesController,
   getSalesAndExpensesController,
   handleDeleteSale,
+  handleGetStockHistory,
 } from "../Controllers/SalesController";
 import { withActivityLog } from "../Middlewares/ActivityLoggerMiddleware";
 
 export default (router: Router) => {
   const salesPrefix = "/sales";
   router.get(`${salesPrefix}`, JWTAuthMiddleWare, getSalesController);
+    router.get(`${salesPrefix}/stock`, JWTAuthMiddleWare, handleGetStockHistory);
   router.post(
     `${salesPrefix}`,
     JWTAuthMiddleWare,
