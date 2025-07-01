@@ -104,7 +104,7 @@ const Users = () => {
         </div>
         <div className="w-4/12 ">
 
-          <InputField
+          {/* <InputField
             type="text"
             placeholder="Search For Staff ..."
             name="lastName"
@@ -114,7 +114,7 @@ const Users = () => {
                 type="button"
               />
             }
-          />
+          /> */}
         </div>
         <div className="mt-5" onClick={openModal}>
           <Button2 value={"Add User"} />

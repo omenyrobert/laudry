@@ -6,7 +6,7 @@ import {
   OneToMany,
   ManyToOne,
   OneToOne,
-  JoinColumn
+  JoinColumn,
 } from "typeorm";
 import { Customer } from "./Customer";
 import { Sales } from "./Sales";
@@ -20,7 +20,6 @@ export class Account extends BaseEntity {
   @Column()
   balance!: number;
 
-
   @Column()
   date!: Date;
 
@@ -33,7 +32,6 @@ export class Account extends BaseEntity {
   @JoinColumn()
   sales!: Sales;
 
-
   @ManyToOne(() => Customer, (customer) => customer.accounts, {
     onDelete: "CASCADE",
   })
@@ -44,17 +42,14 @@ export class Account extends BaseEntity {
     eager: true,
   })
   payments!: Payment[];
-
 }
-
 
 export const createAccount = async (
   date: string,
   amount: number,
   customerId: number,
-  salesId: number,
+  salesId: number
 ) => {
-
   const customer = await Customer.findOne({
     where: {
       id: customerId,
@@ -75,7 +70,6 @@ export const createAccount = async (
     throw new Error("Sale not found");
   }
 
-
   const account = new Account();
   account.date = new Date(date);
   account.amount = amount;
@@ -85,14 +79,9 @@ export const createAccount = async (
   account.save();
 
   return account;
-}
+};
 
-
-export const payAccount = async (
-  id: number,
-  amount: number,
-  date: string,
-) => {
+export const payAccount = async (id: number, amount: number, date: string) => {
   const account = await Account.findOne({
     where: {
       id,
@@ -118,7 +107,64 @@ export const payAccount = async (
   payment.account = account;
   payment.balance = balance;
   payment.save();
-}
+};
+
+export const deletePayment = async (paymentId: number) => {
+  const payment = await Payment.findOne({
+    where: { id: paymentId },
+    relations: ["account"],
+  });
+
+  if (!payment) {
+    throw new Error("Payment not found");
+  }
+
+  const account = payment.account;
+
+  // Restore the deleted payment amount back to the account balance
+  account.balance += payment.amount;
+  await account.save();
+
+  await payment.remove(); // or `await Payment.delete(paymentId);`
+};
+
+export const updatePayment = async (
+  paymentId: number,
+  newAmount: number,
+  newDate: string,
+  // accountId: number
+) => {
+  const payment = await Payment.findOne({
+    where: { id: paymentId },
+    relations: ["account"],
+  });
+
+  if (!payment) {
+    throw new Error("Payment not found");
+  }
+
+  const account = payment.account;
+
+  // Reverse the old amount
+  const adjustedBalance = account.balance + payment.amount;
+
+  // Subtract the new amount
+  const finalBalance = adjustedBalance - newAmount;
+
+  if (finalBalance < 0) {
+    throw new Error("New payment amount is greater than available balance");
+  }
+
+  // Update account balance
+  account.balance = finalBalance;
+  await account.save();
+
+  // Update payment fields
+  payment.amount = newAmount;
+  payment.date = new Date(newDate);
+  payment.balance = finalBalance;
+  await payment.save();
+};
 
 export const getAccounts = async () => {
   const accounts = await Account.find({
@@ -128,4 +174,4 @@ export const getAccounts = async () => {
     relations: ["customer"],
   });
   return accounts;
-}
+};

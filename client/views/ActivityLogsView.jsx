@@ -68,12 +68,12 @@ const ActivityLogsView = () => {
           <p className="font-bold text-lg">Activity Logs</p>
         </div>
         <div className="w-72 -mt-5">
-          <InputField
+          {/* <InputField
             placeholder="search"
             icon={<BsSearch className="mt-2 mr-2" />}
             value={searchTerm}
             onChange={handleSearchChange}
-          />
+          /> */}
         </div>
         <div className="flex gap-3 -mt-5">
           <InputField
