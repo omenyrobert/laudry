@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllStock } from "../store/slices/store";
 import axiosInstance from "../axios-instance";
 import Loader from "./Loader";
+import InputField from "./InputField";
 
 const StockLevels = () => {
   const [modal, setModal] = useState(false);
@@ -42,6 +43,28 @@ const StockLevels = () => {
   useEffect(() => {
     fetchStockHistory();
   }, []);
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value);
+  };
+
+  const handleEndDateChange = (e) => {
+    setEndDate(e.target.value);
+  };
+
+  const isWithinDateRange = (date) => {
+    if (!startDate && !endDate) return true;
+    const d = new Date(date);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+
+    if (start && end) return d >= start && d <= end;
+    if (start) return d >= start;
+    if (end) return d <= end;
+  };
   return (
     <div>
       <div className="ml-2" onClick={openModal}>
@@ -52,8 +75,26 @@ const StockLevels = () => {
         <div className="flex bg-black/50 z-50 absolute top-0 right-0 left-0 h-full w-full">
           <div className="w-2/12" onClick={closeModal}></div>
           <div className="w-10/12 bg-white p-5 ">
-            <p className="font-bold text-lg">Stock Levels Reduction history</p>
-            <div className="h-[calc(100vh-80px)] overflow-y-auto">
+            <div className="flex justify-between">
+              <div>
+                <p className="font-bold text-lg">
+                  Stock Levels Reduction history
+                </p>
+              </div>
+              <div className="flex gap-2 -mt-8">
+                <InputField
+                  type="date"
+                  value={startDate}
+                  onChange={handleStartDateChange}
+                />
+                <InputField
+                  type="date"
+                  value={endDate}
+                  onChange={handleEndDateChange}
+                />
+              </div>
+            </div>
+            <div className="h-[calc(100vh-80px)] -mt-5 overflow-y-auto">
               {loading ? <Loader /> : null}
               {stocks?.map((stock) => {
                 return (
@@ -66,7 +107,7 @@ const StockLevels = () => {
                       <div className="p-2 border border-gray2">Qty before</div>
                       <div className="p-2 border border-gray2">Qty After</div>
                     </div>
-                    {stock.history.map((his) => {
+                    {stock.history.filter((his) => isWithinDateRange(his.soldAt)).map((his) => {
                       return (
                         <div className="grid hover:bg-gray1 cursor-pointer grid-cols-5 text-gray5 text-sm">
                           <div className="p-2 border border-gray2">
