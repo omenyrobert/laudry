@@ -287,26 +287,27 @@ export const deleteSale = async (saleId: number) => {
   return { message: "Sale deleted successfully" };
 };
 
-export const getStockSalesHistory = async ()=> {
+export const getStockSalesHistory = async () => {
   const stocks = await Stock.find({ relations: ["sales"] });
 
   const result = stocks.map((stock) => {
-    let currentBalance = stock.qty;
+    // Calculate initial quantity by adding back all sales
+    const totalSold = stock.sales.reduce((sum, sale) => sum + sale.quantity, 0);
+    let currentBalance = stock.qty + totalSold;
+
     const sortedSales = stock.sales.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     const salesHistory = sortedSales.map((sale) => {
-      const record = {
+      const balanceBefore = currentBalance;
+      currentBalance -= sale.quantity;
+
+      return {
         stockName: stock.name,
         soldAt: sale.date,
         quantitySold: sale.quantity,
-        balanceBefore: currentBalance,
-        balanceAfter: currentBalance - sale.quantity,
+        balanceBefore: balanceBefore,
+        currentBalance: currentBalance,
       };
-
-      // Update balance for next iteration
-      currentBalance -= sale.quantity;
-
-      return record;
     });
 
     return {
@@ -317,4 +318,5 @@ export const getStockSalesHistory = async ()=> {
   });
 
   return result;
-}
+};
+

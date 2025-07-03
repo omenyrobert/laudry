@@ -123,7 +123,7 @@ const StockLevels = () => {
                             {his.balanceBefore}
                           </div>
                           <div className="p-2 border border-gray2">
-                            {his.balanceAfter}
+                            {his.currentBalance}
                           </div>
                         </div>
                       );
