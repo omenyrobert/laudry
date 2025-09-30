@@ -80,7 +80,7 @@ const Dashboard = () => {
 						<p className="my-2 text-xl font-semibold text-primary">Most Bought items</p>
 						<div className="flex font-medium text-primary bg-gray1">
 							<div className="p-2 w-1/4">
-								Products
+								Stock
 							</div>
 							<div className="p-2 w-1/4">
 								Qty

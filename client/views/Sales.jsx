@@ -167,7 +167,7 @@ const Sales = () => {
                 <div className="w-full flex justify-between">
                     <div className=''>
                         <h1 className="text-secondary font-semibold text-xl mt-5 ml-3">
-                            Products
+                            Stock
                         </h1>
                     </div>
 
