@@ -44,12 +44,12 @@ function Sidebar() {
         />
         <DashboardLinks
           Icon={AiOutlineTeam}
-          name="debtors"
+          name="Pending Orders"
           link={"/customers"}
         />
-        <DashboardLinks Icon={FaUsers} name="users" link={"/users"} />
-        <DashboardLinks Icon={MdHardware} name="stock" link={"/stock"} />
-        <DashboardLinks Icon={MdSell} name="Sales" link={"/sales"} />
+        <DashboardLinks Icon={FaUsers} name="settings" link={"/users"} />
+        <DashboardLinks Icon={MdHardware} name="Orders" link={"/orders"} />
+        <DashboardLinks Icon={MdSell} name="Paid Orders" link={"/sales"} />
         <DashboardLinks
           Icon={BsGraphUpArrow}
           name="Reports"
@@ -60,7 +60,7 @@ function Sidebar() {
         <DashboardLinks
           Icon={BsWallet}
           name="expenses"
-          link={"/banking-auto"}
+          link={"/expenses"}
         />
       </div>
 

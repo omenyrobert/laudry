@@ -10,6 +10,9 @@ import CustomerRoutes from "./CustomerRoutes";
 import AccountRoutes from "./AccountRoutes";
 import BankingRoutes from "./BankingRoutes";
 import ActivityLogsRoutes from "./ActivityLogsRoutes";
+import ItemsRoutes from "./ItemsRoutes";
+import { OrderItem } from "../Entities/OrderItem";
+import OrdersRoutes from "./OrdersRoutes";
 
 const router = Router();
 
@@ -25,5 +28,7 @@ export default (): Router => {
   AccountRoutes(router);
   BankingRoutes(router);
   ActivityLogsRoutes(router);
+  ItemsRoutes(router);
+  OrdersRoutes(router);
   return router;
 };

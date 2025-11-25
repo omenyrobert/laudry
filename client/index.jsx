@@ -18,6 +18,7 @@ import PasswordReset from './views/auth/PasswordReset'
 import EditCustomersForm from './components/Customers/EditCustomersForm'
 import DesktopLoading from './components/DesktopLoading'
 import Users from './views/Users'
+import Orders from './views/Orders'
 import Reports from './views/Reports'
 import Customers from './views/Customers/Customers'
 import AddcustomerForm from './components/Customers/AddCustomerForm'
@@ -27,6 +28,7 @@ import Banking from './views/Banking'
 import RoleGuard from './components/RoleGuard'
 import ActivityLogsView from './views/ActivityLogsView'
 import BankingAuto from './views/BankingAuto'
+import Expenses from './components/Expenses'
 
 const router = createBrowserRouter([
   {
@@ -117,11 +119,19 @@ const router = createBrowserRouter([
           </RoleGuard>
         )
       },
+       {
+        path: '/expenses',
+        element: (
+          <RoleGuard allowedRoles={['admin', 'reports']} >
+            <Expenses />
+          </RoleGuard>
+        )
+      },
       {
-        path: '/stock',
+        path: '/orders',
         element: (
           <RoleGuard allowedRoles={['admin', 'stock']} >
-            <Stock />
+            <Orders />
           </RoleGuard>
         )
       },

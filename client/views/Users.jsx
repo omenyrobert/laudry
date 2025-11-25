@@ -9,42 +9,37 @@ import axiosInstance from "../axios-instance";
 import ButtonLoader from "../components/ButtonLoader";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import Select from "react-select"
+import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import { getStaff } from "../store/slices/store";
-
-
-
+import ItemsComp from "../components/ItemsComp";
 
 const Users = () => {
-  const [modal, setModal] = useState(false)
-  const dispatch = useDispatch()
+  const [modal, setModal] = useState(false);
+  const dispatch = useDispatch();
 
   const openModal = () => {
     setModal(true);
-  }
+  };
 
   const closeModal = () => {
     setModal(false);
-  }
+  };
 
-  const [posting, setPosting] = useState(false)
+  const [posting, setPosting] = useState(false);
 
-  const [firstName, setFirstName] = useState("")
-  const [middleName, setMiddleName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [email, setEmail] = useState("")
-  const [phone, setPhone] = useState("")
-  const [location, setLocation] = useState("")
-  const [roles, setRoles] = useState([])
-
-
+  const [firstName, setFirstName] = useState("");
+  const [middleName, setMiddleName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
+  const [roles, setRoles] = useState([]);
 
   const postUser = async () => {
-
     if (firstName !== "" && lastName !== "" && email !== "") {
       try {
-        setPosting(true)
+        setPosting(true);
         let formData = {
           firstName: firstName,
           middleName: middleName,
@@ -52,12 +47,12 @@ const Users = () => {
           email: email,
           phone: phone,
           location: location,
-          roles: roles.map((role) => role.value)
-        }
+          roles: roles.map((role) => role.value),
+        };
         let res = await axiosInstance.post("/staff", formData);
         const { status, payload } = res.data;
         if (status) {
-          dispatch(getStaff())
+          dispatch(getStaff());
           setFirstName("");
           setMiddleName("");
           setLastName("");
@@ -65,7 +60,7 @@ const Users = () => {
           setPhone("");
           setLocation("");
           setRoles([]);
-          setPosting(false)
+          setPosting(false);
           closeModal();
           const MySwal = withReactContent(Swal);
           MySwal.fire({
@@ -79,32 +74,28 @@ const Users = () => {
             icon: "error",
             showConfirmButton: true,
             //timer: 500,
-            text: payload
+            text: payload,
           });
         }
-
       } catch (error) {
-        setPosting(false)
+        setPosting(false);
       } finally {
-        setPosting(false)
+        setPosting(false);
       }
     }
-  }
-
-
-
+  };
 
   return (
-    <div className="w-full bg-white rounded-md shadow pr-5">
-      <div className="flex w-full justify-between">
-        <div className=''>
-          <h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">
-            User
-          </h1>
-        </div>
-        <div className="w-4/12 ">
-
-          {/* <InputField
+    <div className="w-full flex  ">
+      <div className=" w-1/2 bg-white p-2 rounded-md shadow ">
+        <div className="flex justify-between">
+          <div className="">
+            <h1 className="text-secondary font-semibold text-2xl mt-5 ml-3">
+              User
+            </h1>
+          </div>
+          <div className="w-4/12 ">
+            {/* <InputField
             type="text"
             placeholder="Search For Staff ..."
             name="lastName"
@@ -115,86 +106,102 @@ const Users = () => {
               />
             }
           /> */}
+          </div>
+          <div className="mt-5" onClick={openModal}>
+            <Button2 value={"Add User"} />
+          </div>
         </div>
-        <div className="mt-5" onClick={openModal}>
-          <Button2 value={"Add User"} />
-        </div>
+
+        {modal ? (
+          <div className="z-50 bg-black/50 h-full w-full top-0 right-0 left-0 absolute flex">
+            <div className="w-3/12" onClick={closeModal}></div>
+            <div className="w-6/12">
+              <div className="rounded-lg bg-white mt-[10vh]">
+                <div className="flex text-xl justify-between font-semibold text-primary p-2 bg-gray1">
+                  <div>
+                    <p>Add User</p>
+                  </div>
+                  <div>
+                    <p onClick={closeModal} className="cursor-pointer">
+                      X
+                    </p>
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="w-1/2 p-2">
+                    <InputField
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      label="First Name"
+                      placeholder="Enter First Name"
+                    />
+                    <InputField
+                      value={middleName}
+                      onChange={(e) => setMiddleName(e.target.value)}
+                      label="Middle Name"
+                      placeholder="Enter Middle Name"
+                    />
+                  </div>
+                  <div className="w-1/2 p-2">
+                    <InputField
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      label="Last Name"
+                      placeholder="Last Name"
+                    />
+                    <InputField
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      label="Email"
+                      placeholder="Enter Email"
+                    />
+                  </div>
+                  <div className="w-1/2 p-2">
+                    <p className="text-sm text-gray5">Select Roles</p>
+                    <Select
+                      options={[
+                        { value: "admin", label: "Admin" },
+                        { value: "stock", label: "Stock" },
+                        { value: "reports", label: "Reports" },
+                        { value: "sales", label: "Sales" },
+                      ]}
+                      placeholder="Select Role"
+                      isMulti
+                      onChange={(e) => setRoles(e)}
+                      value={roles}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-between p-2 bg-gray1">
+                  <div onClick={closeModal}>
+                    <ButtonSecondary value={"Close"} />
+                  </div>
+                  <div className="w-32">
+                    {posting ? (
+                      <ButtonLoader />
+                    ) : (
+                      <div onClick={postUser}>
+                        <Button value={"Add User"} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="h-1/4" onClick={closeModal}></div>
+            </div>
+            <div className="w-3/12" onClick={closeModal}></div>
+          </div>
+        ) : null}
+
+        <UserTable />
       </div>
 
-
-      {modal ? <div className='z-50 bg-black/50 h-full w-full top-0 right-0 left-0 absolute flex'>
-        <div className='w-3/12' onClick={closeModal}>
-
-        </div>
-        <div className='w-6/12'>
-          <div className='rounded-lg bg-white mt-[10vh]'>
-            <div className='flex text-xl justify-between font-semibold text-primary p-2 bg-gray1'>
-              <div>
-                <p>Add User</p>
-              </div>
-              <div>
-                <p onClick={closeModal} className='cursor-pointer'>X</p>
-              </div>
-
-            </div>
-            <div className='flex'>
-              <div className='w-1/2 p-2'>
-                <InputField value={firstName} onChange={(e) => setFirstName(e.target.value)} label="First Name" placeholder="Enter First Name" />
-                <InputField value={middleName} onChange={(e) => setMiddleName(e.target.value)} label="Middle Name" placeholder="Enter Middle Name" />
-              </div>
-              <div className='w-1/2 p-2'>
-                <InputField value={lastName} onChange={(e) => setLastName(e.target.value)} label="Last Name" placeholder="Last Name" />
-                <InputField value={email} onChange={(e) => setEmail(e.target.value)} label="Email" placeholder="Enter Email" />
-              </div>
-              <div className='w-1/2 p-2'>
-                <p className='text-sm text-gray5'>Select Roles</p>
-                <Select
-                  options={[
-                    { value: 'admin', label: 'Admin' },
-                    { value: 'stock', label: 'Stock' },
-                    { value: 'reports', label: 'Reports' },
-                    { value: 'sales', label: 'Sales' },
-                  ]}
-                  placeholder="Select Role"
-                  isMulti
-                  onChange={(e) => setRoles(e)}
-                  value={roles}
-                />
-              </div>
-
-
-            </div>
-
-            <div className='flex justify-between p-2 bg-gray1'>
-              <div onClick={closeModal}>
-                <ButtonSecondary value={"Close"} />
-
-              </div>
-              <div className="w-32">
-
-                {posting ? <ButtonLoader /> : <div onClick={postUser}>
-                  <Button value={"Add User"} />
-                </div>}
-
-              </div>
-
-            </div>
-
-          </div>
-          <div className='h-1/4' onClick={closeModal}>
-
-          </div>
-
-        </div>
-        <div className='w-3/12' onClick={closeModal}>
-
-        </div>
-
-      </div> : null}
-
-      <UserTable />
+      <div className="ml-2 p-2 bg-white rounded-md shadow  w-1/2">
+        <ItemsComp/>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Users
+export default Users;

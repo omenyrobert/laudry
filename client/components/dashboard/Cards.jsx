@@ -3,7 +3,7 @@ import { FaUsers, FaFileInvoiceDollar, FaTooth } from "react-icons/fa";
 import { TbZoomMoney } from "react-icons/tb"
 
 
-function Cards({ allStock, warningStock, accounts, customers, staff }) {
+function Cards({ totalOrders, totalPaidOrders, totalPendingOrders, totalExpenseThisWeek, totalPendingAmount }) {
 
 
 
@@ -12,11 +12,11 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 
 			<div className="w-1/4 my-2 mr-2 p-3 h-24  bg-primary text-white shadow  rounded-md">
 				<p className="text-lg font-semibold">
-					Customers
+					Orders
 				</p>
 				<div className="flex justify-between mt-3 text-sm">
 					<div>
-						{customers?.length}
+						{totalOrders}
 					</div>
 					<div>
 						View All
@@ -30,7 +30,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">
-							<p className="text-gray5">Users</p>
+							<p className="text-gray5">Paid Orders</p>
 						</div>
 					</div>
 					<div className="">
@@ -40,7 +40,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between mt-5">
 					<div className="">
 						<p className="text-2xl">{
-							staff.length.toLocaleString()
+							totalPaidOrders?.toLocaleString()
 						}</p>
 					</div>
 					<div className="">
@@ -55,7 +55,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">
-							<p className="text-gray5">Products</p>
+							<p className="text-gray5">Pending Orders</p>
 						</div>
 					</div>
 					<div className="">
@@ -65,7 +65,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between mt-5">
 					<div className="">
 						<p className="text-2xl">
-							{allStock.length.toLocaleString()}
+							{totalPendingOrders?.toLocaleString()}
 						</p>
 					</div>
 					<div className="">
@@ -80,7 +80,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">
-							<p className="text-gray5">ReStocks</p>
+							<p className="text-gray5">Expenses this week</p>
 						</div>
 					</div>
 					<div className="">
@@ -90,7 +90,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between mt-5">
 					<div className="">
 						<p className="text-2xl">
-							{warningStock.length.toLocaleString()}
+							{totalExpenseThisWeek?.toLocaleString()}
 						</p>
 					</div>
 					<div className="">
@@ -105,7 +105,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between">
 					<div className="">
 						<div className="">
-							<p className="text-gray5">Uncleared Supply</p>
+							<p className="text-gray5">Pending Amount</p>
 						</div>
 					</div>
 					<div className="">
@@ -115,7 +115,7 @@ function Cards({ allStock, warningStock, accounts, customers, staff }) {
 				<div className="flex justify-between mt-5">
 					<div className="">
 						<p>
-							{accounts.length.toLocaleString()}
+							{totalPendingAmount?.toLocaleString()}
 						</p>
 					</div>
 					<div className="">

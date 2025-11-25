@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 
-function BarGraph({ allStock }) {
+function BarGraph({ mostOrderItems }) {
 	const [chartData, setChartData] = useState(null);
 
 	useEffect(() => {
-		const labels = allStock.map((stock) => {
-			return stock.name;
+		const labels = mostOrderItems?.map((stock) => {
+			return stock?.itemName;
 		});
 
-		const data = allStock.map((stock) => {
-			return stock.sales?.length;
+		const data = mostOrderItems?.map((stock) => {
+			return stock?.totalQty;
 		});
 
 		setChartData({
@@ -20,11 +20,11 @@ function BarGraph({ allStock }) {
 				{
 					label: "Stock",
 					data: data,
-					backgroundColor: "#149A1A",
+					backgroundColor: "#01B763",
 				},
 			],
 		});
-	}, [allStock]);
+	}, [mostOrderItems]);
 
 
 
@@ -49,7 +49,7 @@ function BarGraph({ allStock }) {
 				<div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
 			</div>
 		) : (
-			<Line
+			<Bar
 				data={chartData}
 				options={{
 					plugins: {
