@@ -61,14 +61,14 @@ const Login = () => {
   return (
     <>
       <div className="flex overflow-hidden h-screen w-full">
-        <div className="w-7/12">
+        <div className="w-8/12 p-3">
           <img
             src="bac.jpg"
-            className="h-full w-full m-3 object-cover rounded-xl"
+            className="h-full w-full object-cover rounded-xl"
           />
         </div>
 
-        <div className="w-5/12 p-2 flex justify-center items-center">
+        <div className="w-4/12 p-2 flex justify-center items-center">
           <div className="bg-white p-10 w-[400px]">
             <h1 className="text-3xl font-bold">
               <span className="text-primary">Laundry</span> Management

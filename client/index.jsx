@@ -1,168 +1,169 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from 'react-router-dom'
-import './index.css'
-import store from './store'
-import { Provider } from 'react-redux'
-import reportWebVitals from './reportWebVitals'
-import Root from './routes/root'
-import ErrorPage from './errorPage'
-import Dashboard from './views/Dashboard'
-import Login from './views/Login'
-import Email from './views/auth/Email'
-import Code from './views/auth/Code'
-import PasswordReset from './views/auth/PasswordReset'
-import EditCustomersForm from './components/Customers/EditCustomersForm'
-import DesktopLoading from './components/DesktopLoading'
-import Users from './views/Users'
-import Orders from './views/Orders'
-import Reports from './views/Reports'
-import Customers from './views/Customers/Customers'
-import AddcustomerForm from './components/Customers/AddCustomerForm'
-import Stock from './views/Stock'
-import Sales from './views/Sales'
-import Banking from './views/Banking'
-import RoleGuard from './components/RoleGuard'
-import ActivityLogsView from './views/ActivityLogsView'
-import BankingAuto from './views/BankingAuto'
-import Expenses from './components/Expenses'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./index.css";
+import store from "./store";
+import { Provider } from "react-redux";
+import reportWebVitals from "./reportWebVitals";
+import Root from "./routes/root";
+import ErrorPage from "./errorPage";
+import Dashboard from "./views/Dashboard";
+import Login from "./views/Login";
+import Email from "./views/auth/Email";
+import Code from "./views/auth/Code";
+import PasswordReset from "./views/auth/PasswordReset";
+import EditCustomersForm from "./components/Customers/EditCustomersForm";
+import DesktopLoading from "./components/DesktopLoading";
+import Users from "./views/Users";
+import Orders from "./views/Orders";
+import Reports from "./views/Reports";
+import Customers from "./views/Customers/Customers";
+import PaidOrders from "./views/PaidOrders";
+import PendingOrders from "./views/PendingOrders";
+import AddcustomerForm from "./components/Customers/AddCustomerForm";
+import Stock from "./views/Stock";
+import Sales from "./views/Sales";
+import Banking from "./views/Banking";
+import RoleGuard from "./components/RoleGuard";
+import ActivityLogsView from "./views/ActivityLogsView";
+import BankingAuto from "./views/BankingAuto";
+import Expenses from "./components/Expenses";
 
 const router = createBrowserRouter([
   {
-    path: '/email',
+    path: "/email",
     element: <Email />,
   },
   {
-    path: '/passwordReset',
+    path: "/passwordReset",
     element: <PasswordReset />,
   },
   {
-    path: '/',
+    path: "/",
     element: <Login />,
   },
   {
-    path: '/code',
+    path: "/code",
     element: <Code />,
   },
   // component to show the user is in the wrong route
   {
-    path: '/error-page',
+    path: "/error-page",
     element: <ErrorPage />,
   },
   {
-    path: '/desktop-loading-page',
+    path: "/desktop-loading-page",
     element: <DesktopLoading />,
   },
   {
-    path: '/',
+    path: "/",
     element: <Root />,
     errorElement: <ErrorPage />,
     children: [
       {
-        path: '/dashboard',
+        path: "/dashboard",
         element: (
-          <RoleGuard allowedRoles={['admin', 'reports']}>
+          <RoleGuard allowedRoles={["admin", "reports"]}>
             <Dashboard />
           </RoleGuard>
-        )
+        ),
       },
       {
-        path: '/customers',
+        path: "/customers",
         element: (
-          <RoleGuard allowedRoles={['admin']} >
+          <RoleGuard allowedRoles={["admin"]}>
             <Customers />
           </RoleGuard>
         ),
       },
       {
-        path: '/addCustomersForm',
-        element: (
-          <AddcustomerForm />
-        ),
+        path: "/addCustomersForm",
+        element: <AddcustomerForm />,
       },
       {
-        path: '/editStudentsForm',
-        element: (
-          <EditCustomersForm />
-        ),
-      },
-       {
-        path: '/logs',
-        element: (
-          <ActivityLogsView />
-        ),
+        path: "/editStudentsForm",
+        element: <EditCustomersForm />,
       },
       {
-        path: '/users',
+        path: "/paid-orders",
+        element: <PaidOrders />,
+      },
+      {
+        path: "/pending-orders",
+        element: <PendingOrders />,
+      },
+      {
+        path: "/logs",
+        element: <ActivityLogsView />,
+      },
+      {
+        path: "/users",
         element: (
-          <RoleGuard allowedRoles={['admin']} >
+          <RoleGuard allowedRoles={["admin"]}>
             <Users />
           </RoleGuard>
-        )
+        ),
       },
       {
-        path: '/sales',
+        path: "/sales",
         element: (
-          <RoleGuard allowedRoles={['admin', 'sales']} >
+          <RoleGuard allowedRoles={["admin", "sales"]}>
             <Sales />
           </RoleGuard>
-        )
+        ),
       },
       {
-        path: '/reports',
+        path: "/reports",
         element: (
-          <RoleGuard allowedRoles={['admin', 'reports']} >
+          <RoleGuard allowedRoles={["admin", "reports"]}>
             <Reports />
           </RoleGuard>
-        )
-      },
-       {
-        path: '/expenses',
-        element: (
-          <RoleGuard allowedRoles={['admin', 'reports']} >
-            <Expenses />
-          </RoleGuard>
-        )
+        ),
       },
       {
-        path: '/orders',
+        path: "/expenses",
         element: (
-          <RoleGuard allowedRoles={['admin', 'stock']} >
+          <RoleGuard allowedRoles={["admin", "reports"]}>
+            <Expenses />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: "/orders",
+        element: (
+          <RoleGuard allowedRoles={["admin", "stock"]}>
             <Orders />
           </RoleGuard>
-        )
+        ),
       },
       {
         path: "/banking",
         element: (
-          <RoleGuard allowedRoles={['admin', 'reports']} >
+          <RoleGuard allowedRoles={["admin", "reports"]}>
             <Banking />
           </RoleGuard>
-        )
+        ),
       },
-        {
+      {
         path: "/banking-auto",
         element: (
-          <RoleGuard allowedRoles={['admin', 'reports']} >
+          <RoleGuard allowedRoles={["admin", "reports"]}>
             <BankingAuto />
           </RoleGuard>
-        )
-      }
+        ),
+      },
     ],
   },
-])
+]);
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
     <RouterProvider router={router} />
-  </Provider>,
-)
+  </Provider>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals()
+reportWebVitals();

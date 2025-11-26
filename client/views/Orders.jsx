@@ -30,7 +30,8 @@ const Orders = () => {
     : { toggleFeedback: () => {} };
 
   const [loading, setLoading] = useState(false);
-
+  // keep both: allOrders (source) and orders (filtered)
+  const [allOrders, setAllOrders] = useState([]);
   const [orders, setOrders] = useState([]);
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(1);
@@ -69,12 +70,14 @@ const Orders = () => {
 
   // ====== FETCH DATA ======
 
-  const fetchOrders = async () => {
+   const fetchOrders = async () => {
     try {
       setLoading(true);
       const res = await axiosInstance.get("/orders");
       if (res.status) {
-        setOrders(res.data.payload);
+        const data = res.data.payload || [];
+        setAllOrders(data);
+        setOrders(data); // initialize filtered list
       }
     } catch (error) {
       console.log(error);
@@ -419,52 +422,7 @@ const Orders = () => {
     }
   };
 
-  // ====== PRINT ORDER ======
-
-  // const printOrder = (order) => {
-  //   const printContents = `
-  //     <h2>Order #${order.id}</h2>
-  //     <div className="grid grid-cols-2 gap-2">
-  //     <p><strong>Date:</strong> ${order.date}</p>
-  //     <p><strong>Name:</strong> ${order.name}</p>
-  //     <p><strong>Phone:</strong> ${order.phone}</p>
-  //     <p><strong>Address:</strong> ${order.address}</p>
-  //     <p><strong>Status:</strong> ${order.orderStatus}</p>
-  //     <div>
-
-  //     <h3>Items</h3>
-  //     <ul>
-  //       ${order.items
-  //         .map(
-  //           (oi) =>
-  //             `<li>${oi.item.name} x ${
-  //               oi.quantity
-  //             } @ ${oi.item.cost.toLocaleString()}</li>`
-  //         )
-  //         .join("")}
-  //     </ul>
-  //     <p><strong>Amount:</strong> ${order.amount.toLocaleString()}</p>
-  //     <p><strong>Paid:</strong> ${order.paid.toLocaleString()}</p>
-  //     <p><strong>Balance:</strong> ${(
-  //       order.amount - order.paid
-  //     ).toLocaleString()}</p>
-  //   `;
-
-  //   const w = window.open("", "_blank");
-  //   if (!w) return;
-  //   w.document.write(`
-  //     <html>
-  //       <head>
-  //         <title>Print Order #${order.id}</title>
-  //       </head>
-  //       <body>${printContents}</body>
-  //     </html>
-  //   `);
-  //   w.document.close();
-  //   w.focus();
-  //   w.print();
-  //   w.close();
-  // };
+ 
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isPrinting, setIsPrinting] = useState(false);
@@ -511,14 +469,43 @@ const Orders = () => {
     }
   };
 
+  // ====== LIVE SEARCH (client-side) ======
+  useEffect(() => {
+    // if there is no search text, show all orders
+    if (!search.trim()) {
+      setOrders(allOrders);
+      return;
+    }
+
+    const lower = search.toLowerCase();
+
+    const filtered = allOrders.filter((order) => {
+      const idStr = String(order.id || "").toLowerCase();
+      const name = order.name?.toLowerCase() || "";
+      const phone = order.phone?.toLowerCase() || "";
+      const address = order.address?.toLowerCase() || "";
+      const date = order.date?.toLowerCase() || "";
+      const status = order.orderStatus?.toLowerCase() || "";
+
+      return (
+        idStr.includes(lower) ||
+        name.includes(lower) ||
+        phone.includes(lower) ||
+        address.includes(lower) ||
+        date.includes(lower) ||
+        status.includes(lower)
+      );
+    });
+
+    setOrders(filtered);
+  }, [search, allOrders]);
+
   return (
     <div className="w-full bg-white rounded-md shadow p-2">
       {/* HEADER ROW */}
       <div className="flex w-full justify-between -mt-5">
         <div className="flex">
-          <h1 className="text-secondary font-semibold text-2xl mt-2">
-            Orders
-          </h1>
+          <h1 className="text-secondary font-semibold text-2xl mt-2">Orders</h1>
         </div>
         <div className="w-4/12 ">
           <InputField

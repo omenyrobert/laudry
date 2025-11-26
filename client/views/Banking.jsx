@@ -6,10 +6,12 @@ import Loader from "../components/Loader";
 import ButtonLoader from "../components/ButtonLoader";
 import { BsPencilSquare, BsTrash } from "react-icons/bs";
 import Swal from "sweetalert2";
+import { usePrint } from "../hooks/print";
 import withReactContent from "sweetalert2-react-content";
 const Banking = () => {
   const [loading, setLoading] = useState(false);
   const [bankings, setBankings] = useState([]);
+  const { printContent } = usePrint();
   const fetchBanking = async () => {
     try {
       setLoading(true);
@@ -131,22 +133,21 @@ const Banking = () => {
   const [endDate, setEndDate] = useState("");
 
   const filteredBankings = bankings.filter((bank) => {
-  const bankDate = new Date(bank.date);
-  const start = startDate ? new Date(startDate) : null;
-  const end = endDate ? new Date(endDate) : null;
+    const bankDate = new Date(bank.date);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
 
-  if (start && end) {
-    return bankDate >= start && bankDate <= end;
-  }
-  if (start && !end) {
-    return bankDate >= start;
-  }
-  if (!start && end) {
-    return bankDate <= end;
-  }
-  return true; // if no filters applied
-});
-
+    if (start && end) {
+      return bankDate >= start && bankDate <= end;
+    }
+    if (start && !end) {
+      return bankDate >= start;
+    }
+    if (!start && end) {
+      return bankDate <= end;
+    }
+    return true; // if no filters applied
+  });
 
   return (
     <div className="w-full bg-white p-5">
@@ -212,43 +213,48 @@ const Banking = () => {
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
+            <div className="" onClick={() => printContent("print-temp")}>
+              <Button value={"Print"} />
+            </div>
+          </div>
+          <div id="print-temp">
+            <div className="grid grid-cols-4 -mt-5 text-sm font-bold border-b">
+              <div className="p-2">Date</div>
+              <div className="p-2">Amount</div>
+              <div className="p-2">Date</div>
+              <div className="p-2">#</div>
+            </div>
+            <div className="h-[calc(100vh-220px)] overflow-y-auto">
+              {filteredBankings.map((bank) => {
+                return (
+                  <div className="grid grid-cols-4 text-sm border-gray3 hover:bg-gray1 cursor-pointer border-b">
+                    <div className="p-2">{bank.date}</div>
+                    <div className="p-2">{bank.amount.toLocaleString()}</div>
+                    <div className="p-2">{bank.comment}</div>
+                    <div className="p-2 flex gap-2">
+                      <BsPencilSquare onClick={() => editBankings(bank)} />{" "}
+                      <BsTrash
+                        onClick={() => deleteBanking(bank)}
+                        className="text-red"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="grid grid-cols-4 text-sm font-bold bg-secondary text-white">
+              <div className="p-2">Total</div>
+              <div className="p-2">
+                {" "}
+                {bankings
+                  .reduce((total, bank) => total + bank.amount, 0)
+                  .toLocaleString()}
+              </div>
+              <div className="p-2"></div>
+              <div className="p-2"></div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-4 -mt-5 text-sm font-bold border-b">
-            <div className="p-2">Date</div>
-            <div className="p-2">Amount</div>
-            <div className="p-2">Date</div>
-            <div className="p-2">#</div>
-          </div>
-          <div className="h-[calc(100vh-220px)] overflow-y-auto">
-            {filteredBankings.map((bank) => {
-              return (
-                <div className="grid grid-cols-4 text-sm border-gray3 hover:bg-gray1 cursor-pointer border-b">
-                  <div className="p-2">{bank.date}</div>
-                  <div className="p-2">{bank.amount.toLocaleString()}</div>
-                  <div className="p-2">{bank.comment}</div>
-                  <div className="p-2 flex gap-2">
-                    <BsPencilSquare onClick={() => editBankings(bank)} />{" "}
-                    <BsTrash
-                      onClick={() => deleteBanking(bank)}
-                      className="text-red"
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="grid grid-cols-4 text-sm font-bold bg-secondary text-white">
-            <div className="p-2">Total</div>
-            <div className="p-2">
-              {" "}
-              {bankings
-                .reduce((total, bank) => total + bank.amount, 0)
-                .toLocaleString()}
-            </div>
-            <div className="p-2"></div>
-            <div className="p-2"></div>
-          </div>
           {loading ? <Loader /> : null}
         </div>
       </div>

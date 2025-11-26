@@ -11,24 +11,20 @@ import ButtonLoader from "./ButtonLoader";
 import Loader from "./Loader";
 import Button2 from "./Button2";
 import ButtonSecondary from "./ButtonSecondary";
+import { usePrint } from "../hooks/print";
 
 const Expenses = () => {
   const [modal, setModal] = useState(false);
-
-  const openModal = () => {
-    setModal(true);
-  };
-
-  const closeModal = () => {
-    setModal(false);
-  };
+  const openModal = () => setModal(true);
+  const closeModal = () => setModal(false);
 
   const [modal2, setModal2] = useState(false);
+  const { printContent } = usePrint();
 
   const openModal2 = (expense) => {
     seteDate(expense.date);
     seteAmount(expense.amount);
-    seteType(expense.type);
+    seteType({ label: expense.type, value: expense.type }); // fix type for Select
     seteReceivedby(expense.receivedBy);
     seteExpense(expense.expense);
     setModal2(true);
@@ -48,7 +44,7 @@ const Expenses = () => {
     if (
       edate === "" ||
       eamount === "" ||
-      etype === "" ||
+      !etype || // etype is an object now
       ereceivedby === "" ||
       eexpense === ""
     ) {
@@ -94,9 +90,7 @@ const Expenses = () => {
     }
   };
 
-  const closeModal2 = () => {
-    setModal2(false);
-  };
+  const closeModal2 = () => setModal2(false);
 
   // posting sales
   const [posting, setPosting] = useState(false);
@@ -107,7 +101,6 @@ const Expenses = () => {
   const [expense, setExpense] = useState("");
 
   const postExpense = async () => {
-    // alert(type)
     if (
       date !== "" &&
       amount !== "" &&
@@ -149,23 +142,29 @@ const Expenses = () => {
 
   const [loading, setLoading] = useState(false);
 
+  // keep original list + filtered list
+  const [allExpenses, setAllExpenses] = useState([]);
   const [expenseData, setExpenseData] = useState([]);
   const [total, setTotal] = useState("");
+
+  // filter states
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
   const fetchExpenses = async () => {
     try {
       setLoading(true);
       let res = await axiosInstance.get("/expenses");
       if (res.status) {
         setLoading(false);
-        setExpenseData(res.data.payload);
-        const sumOfAges = res.data.payload.reduce(
-          (accumulator, currentValue) => {
-            return accumulator + currentValue.amount;
-          },
-          0
-        );
+        const data = res.data.payload || [];
+        setAllExpenses(data);
+        setExpenseData(data);
 
-        setTotal(sumOfAges);
+        const sum = data.reduce((accumulator, currentValue) => {
+          return accumulator + currentValue.amount;
+        }, 0);
+        setTotal(sum);
       }
     } catch (error) {
       console.log(error);
@@ -177,6 +176,31 @@ const Expenses = () => {
   useEffect(() => {
     fetchExpenses();
   }, []);
+
+  // FILTER BY DATE RANGE (client-side)
+  useEffect(() => {
+    // if no filters, show all
+    if (!fromDate && !toDate) {
+      setExpenseData(allExpenses);
+      const sum = allExpenses.reduce((acc, cur) => acc + cur.amount, 0);
+      setTotal(sum);
+      return;
+    }
+
+    const from = fromDate ? new Date(fromDate).setHours(0, 0, 0, 0) : null;
+    const to = toDate ? new Date(toDate).setHours(23, 59, 59, 999) : null;
+
+    const filtered = allExpenses.filter((exp) => {
+      const d = new Date(exp.date).getTime();
+      if (from && d < from) return false;
+      if (to && d > to) return false;
+      return true;
+    });
+
+    setExpenseData(filtered);
+    const sum = filtered.reduce((acc, cur) => acc + cur.amount, 0);
+    setTotal(sum);
+  }, [fromDate, toDate, allExpenses]);
 
   const deleteExpense = (expense) => {
     Swal.fire({
@@ -271,7 +295,7 @@ const Expenses = () => {
               <br />
               <label className="text-gray5">Expense Type</label>
               <Select
-                defaultValue={etype}
+                value={etype}
                 onChange={seteType}
                 placeholder="Select Expense Type"
                 options={types}
@@ -296,117 +320,148 @@ const Expenses = () => {
           </div>
         </div>
       ) : null}
+
       <div>
         <p className="text-xl font-semibold">Expenses</p>
       </div>
-      <div className="grid grid-cols-4 -mt-8">
-        <div className=" p-2">
-          <InputField
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            label="date"
-            type="date"
-          />
-        </div>
-        <div className=" p-2">
-          <InputField
-            label="Amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            type="number"
-            placeholder="Enter amount"
-          />
-        </div>
-        <div className=" p-2">
-          <InputField
-            value={expense}
-            onChange={(e) => setExpense(e.target.value)}
-            label="Expense"
-            placeholder="Expense"
-          />
+      <div className="flex">
+        {/* LEFT: Add Expense */}
+        <div className="w-[350px] -mt-8">
+          <div className=" p-2">
+            <InputField
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              label="date"
+              type="date"
+            />
+          </div>
+          <div className="-mt-12 p-2">
+            <InputField
+              label="Amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              type="number"
+              placeholder="Enter amount"
+            />
+          </div>
+          <div className="-mt-12 p-2">
+            <InputField
+              value={expense}
+              onChange={(e) => setExpense(e.target.value)}
+              label="Expense"
+              placeholder="Expense"
+            />
+          </div>
+
+          <div className="-mt-12 p-2">
+            <InputField
+              value={receivedby}
+              onChange={(e) => setReceivedby(e.target.value)}
+              label="Received By"
+              placeholder="Recieved by"
+            />
+          </div>
+          <div className="-mt-5 p-2">
+            <label className="text-gray5">Expense Type</label>
+            <Select
+              value={type}
+              onChange={setType}
+              placeholder="Select Expense Type"
+              options={types}
+            />
+          </div>
+          <div className="w-32">
+            {posting ? (
+              <ButtonLoader />
+            ) : (
+              <div onClick={postExpense}>
+                <Button value={"Add"} />
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className=" p-2">
-          <InputField
-            value={receivedby}
-            onChange={(e) => setReceivedby(e.target.value)}
-            label="Received By"
-            placeholder="Recieved by"
-          />
-        </div>
-        <div className="-mt-5 p-2">
-          
-          <label className="text-gray5">Expense Type</label>
-          <Select
-            defaultValue={type}
-            onChange={setType}
-            placeholder="Select Expense Type"
-            options={types}
-          />
-        </div>
-        <div className="w-32 mt-5">
-          {posting ? (
-            <ButtonLoader />
-          ) : (
-            <div onClick={postExpense}>
-              <Button value={"Add"} />
+        {/* RIGHT: Filters + Table */}
+        <div className="w-full">
+          <div className="flex -mb-5 justify-between">
+            <div className="flex gap-2 -mt-14">
+              {/* FROM DATE */}
+              <InputField
+                type="date"
+                label="From"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+              />
+              {/* TO DATE */}
+              <InputField
+                type="date"
+                label="To"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+              />
             </div>
-          )}
-        </div>
-      </div>
-
-      <div className="flex bg-gray1 font-medium">
-        <div className="w-2/12 p-2">Date</div>
-        <div className="w-2/12 p-2">Expenses</div>
-        <div className="w-3/12 p-2">Received By</div>
-        <div className="w-2/12 p-2">Type</div>
-        <div className="w-2/12 p-2">Amount</div>
-
-        <div className="w-1/12 p-2">Action</div>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center items-center">
-          {" "}
-          <Loader />{" "}
-        </div>
-      ) : null}
-
-      <div className="h-[calc(100vh-310px)] overflow-y-auto">
-        {expenseData.map((expense) => {
-          return (
-            <div className="flex hover:bg-gray1 text-sm text-gray5 border-b border-gray1 cursor-pointer">
-              <div className="w-2/12 p-2">
-                {new Date(expense.date).toLocaleDateString()}
-              </div>
-              <div className="w-2/12 p-2">{expense.expense}</div>
-              <div className="w-3/12 p-2">{expense.receivedBy}</div>
-              <div className="w-2/12 p-2">{expense.type}</div>
-              <div className="w-2/12 p-2">
-                {expense.amount.toLocaleString()}
-              </div>
-              <div className="w-1/12 flex p-2">
-                <BsTrash
-                  onClick={() => deleteExpense(expense)}
-                  className="text-red"
-                />
-                <BsPencilSquare
-                  onClick={() => openModal2(expense)}
-                  className="text-yellow ml-5"
-                />
-              </div>
+            <div className="-mt-8" onClick={() => printContent("print-temp")}>
+              <Button value={"Print"} />
             </div>
-          );
-        })}
-      </div>
-      <div className="flex bg-secondary text-white font-medium mt-2">
-        <div className="w-2/12 p-2">Total</div>
-        <div className="w-2/12 p-2"></div>
-        <div className="w-3/12 p-2"></div>
-        <div className="w-2/12 p-2"></div>
-        <div className="w-2/12 p-2">{total.toLocaleString()}</div>
+          </div>
 
-        <div className="w-1/12 p-2"></div>
+          <div id="print-temp">
+            <div className="flex bg-gray1 font-medium">
+              <div className="w-2/12 p-2">Date</div>
+              <div className="w-2/12 p-2">Expenses</div>
+              <div className="w-3/12 p-2">Received By</div>
+              <div className="w-2/12 p-2">Type</div>
+              <div className="w-2/12 p-2">Amount</div>
+              <div className="w-1/12 p-2">Action</div>
+            </div>
+
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <Loader />
+              </div>
+            ) : null}
+
+            <div className="h-[calc(100vh-200px)] overflow-y-auto">
+              {expenseData.map((expense) => {
+                return (
+                  <div
+                    key={expense.id}
+                    className="flex hover:bg-gray1 text-sm text-gray5 border-b border-gray1 cursor-pointer"
+                  >
+                    <div className="w-2/12 p-2">
+                      {new Date(expense.date).toLocaleDateString()}
+                    </div>
+                    <div className="w-2/12 p-2">{expense.expense}</div>
+                    <div className="w-3/12 p-2">{expense.receivedBy}</div>
+                    <div className="w-2/12 p-2">{expense.type}</div>
+                    <div className="w-2/12 p-2">
+                      {expense.amount.toLocaleString()}
+                    </div>
+                    <div className="w-1/12 flex p-2">
+                      <BsTrash
+                        onClick={() => deleteExpense(expense)}
+                        className="text-red"
+                      />
+                      <BsPencilSquare
+                        onClick={() => openModal2(expense)}
+                        className="text-yellow ml-5"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="flex bg-secondary text-white font-medium mt-2">
+              <div className="w-2/12 p-2">Total</div>
+              <div className="w-2/12 p-2"></div>
+              <div className="w-3/12 p-2"></div>
+              <div className="w-2/12 p-2"></div>
+              <div className="w-2/12 p-2">{total.toLocaleString()}</div>
+              <div className="w-1/12 p-2"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

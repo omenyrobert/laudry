@@ -17,10 +17,10 @@ import { BsSearch } from "react-icons/bs";
 import { usePrint } from "../hooks/print";
 import Button from "../components/Button";
 
-const Reports = () => {
-  const [orders, setorders] = useState(null);
+const PaidOrders = () => {
+  const [paidOrders, setPaidOrders] = useState(null);
   const [filteredOrders, setFilteredOrders] = useState(null);
-  const [totalorders, setTotalorders] = useState(null);
+  const [totalPaidOrders, setTotalPaidOrders] = useState(null);
   const [totalPaidAmount, setTotalPaidAmount] = useState(null);
   const { printContent } = usePrint();
   // filters
@@ -30,13 +30,13 @@ const Reports = () => {
 
   const fetchDashboard = async () => {
     try {
-      let res = await axiosInstance.get("/orders");
+      let res = await axiosInstance.get("/orders/dashboard");
       if (res.data.status) {
         let dataObj = res?.data?.payload;
         console.log("orders dashhboard", res?.data?.payload);
-        setTotalorders(dataObj?.totalorders);
+        setTotalPaidOrders(dataObj?.totalPaidOrders);
         setTotalPaidAmount(dataObj?.totalPaidAmount);
-        setorders(dataObj || []);
+        setPaidOrders(dataObj?.paidOrders || []);
       }
     } catch (error) {
       console.error(error);
@@ -75,9 +75,9 @@ const Reports = () => {
 
   // ====== APPLY FILTERS (LIVE) ======
   useEffect(() => {
-    if (!orders) return;
+    if (!paidOrders) return;
 
-    let data = [...orders];
+    let data = [...paidOrders];
 
     // --- text search ---
     if (searchTerm.trim() !== "") {
@@ -113,10 +113,10 @@ const Reports = () => {
     }
 
     setFilteredOrders(data);
-  }, [orders, searchTerm, startDate, endDate]);
+  }, [paidOrders, searchTerm, startDate, endDate]);
 
   // ====== TOTALS (for current view: filtered or all) ======
-  const currentOrders = filteredOrders || orders || [];
+  const currentOrders = filteredOrders || paidOrders || [];
 
   const totals = currentOrders.reduce(
     (acc, order) => {
@@ -138,7 +138,7 @@ const Reports = () => {
         <div>
           <p>
             <span className="text-primary">
-              {currentOrders.length || totalorders}
+              {currentOrders.length || totalPaidOrders}
             </span>{" "}
             Paid Orders
           </p>
@@ -169,7 +169,9 @@ const Reports = () => {
           />
         </div>
 
-       
+        <div>
+          <p>UGX: {totalPaidAmount?.toLocaleString()}</p>
+        </div>
         <div onClick={() => printContent("print-temp")}>
           <Button value={"Print"} />
         </div>
@@ -261,4 +263,4 @@ const Reports = () => {
   );
 };
 
-export default Reports;
+export default PaidOrders;
